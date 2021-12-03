@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/root_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 
@@ -59,7 +59,7 @@ class LoginScreenState extends State<LoginScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const ResetPasswordScreen(),
+              builder: (context) => const ForgotPasswordScreen(),
             ),
           );
         },

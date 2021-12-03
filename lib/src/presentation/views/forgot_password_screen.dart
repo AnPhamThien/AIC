@@ -3,14 +3,14 @@ import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 
-class ResetPasswordScreen extends StatefulWidget {
-  const ResetPasswordScreen({Key? key}) : super(key: key);
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({Key? key}) : super(key: key);
 
   @override
-  _ResetPasswordScreenState createState() => _ResetPasswordScreenState();
+  _ForgotPasswordScreenState createState() => _ForgotPasswordScreenState();
 }
 
-class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

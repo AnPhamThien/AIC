@@ -32,8 +32,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                getConfirmationHeadline(),
-                getRegisterForm(),
+                getVerifycationHeadline(),
+                getVerificationForm(),
                 getLoginButton(),
               ],
             ),
@@ -80,7 +80,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
     );
   }
 
-  Container getRegisterForm() {
+  Container getVerificationForm() {
     Size size = MediaQuery.of(context).size;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 25),
@@ -131,14 +131,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15)),
                 actionsAlignment: MainAxisAlignment.center,
-                title: const Text('congratulation !',
+                title: const Text('Congratulation !',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontSize: 25,
                         color: Colors.black87,
                         letterSpacing: 1.25,
                         fontWeight: FontWeight.bold)),
-                content: const Text('your account has been verified',
+                content: const Text('Your account has been verified',
                     style: TextStyle(
                         fontSize: 20,
                         color: Colors.black87,
@@ -207,7 +207,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
     );
   }
 
-  Padding getConfirmationHeadline() {
+  Padding getVerifycationHeadline() {
     Size size = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.only(top: size.height * .07),

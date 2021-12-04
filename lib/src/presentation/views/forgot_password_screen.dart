@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 
@@ -32,8 +33,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                getLoginHeadline(),
-                getLoginForm(),
+                getForgotPasswordHeadline(),
+                getForgotPasswordForm(),
                 getLoginButton(),
               ],
             ),
@@ -80,7 +81,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  Container getLoginForm() {
+  Container getForgotPasswordForm() {
     Size size = MediaQuery.of(context).size;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 25),
@@ -104,12 +105,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
           TextButton(
             onPressed: () {
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) => const RootScreen(),
-              //   ),
-              // );
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const EmailConfirmationScreen(),
+                ),
+              );
             },
             style: TextButton.styleFrom(
                 fixedSize: Size(size.width * .94, 55),
@@ -129,7 +130,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     );
   }
 
-  Padding getLoginHeadline() {
+  Padding getForgotPasswordHeadline() {
     Size size = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.only(top: size.height * .07),

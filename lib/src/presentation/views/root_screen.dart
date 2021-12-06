@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -22,7 +24,13 @@ class _RootScreenState extends State<RootScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: getBody(),
+      body: Theme(
+        child: getBody(),
+        data: Theme.of(context).copyWith(
+          dividerTheme:
+              const DividerThemeData(color: Colors.grey, thickness: 0.65),
+        ),
+      ),
       bottomNavigationBar: getBottomNavigationBar(),
     );
   }
@@ -33,7 +41,7 @@ class _RootScreenState extends State<RootScreen> {
       children: const [
         HomePage(),
         SearchPage(),
-        UploadPage(),
+        SizedBox(),
         NotificationPage(),
         ProfilePage(),
       ],
@@ -59,26 +67,95 @@ class _RootScreenState extends State<RootScreen> {
           children: List.generate(
             icons.length,
             (index) {
-              return IconButton(
-                splashRadius: 45,
-                onPressed: () {
-                  setState(
-                    () {
+              if (index != 2) {
+                return IconButton(
+                  splashRadius: 45,
+                  onPressed: () {
+                    setState(() {
                       indexPage = index;
-                    },
-                  );
-                },
-                icon: SvgPicture.asset(
-                  indexPage == index
-                      ? icons[index]['active']!
-                      : icons[index]['inactive']!,
-                  width: 27,
-                  height: 27,
-                  color: Colors.black,
-                ),
-              );
+                    });
+                  },
+                  icon: SvgPicture.asset(
+                    indexPage == index
+                        ? icons[index]['active']!
+                        : icons[index]['inactive']!,
+                    width: 27,
+                    height: 27,
+                    color: Colors.black,
+                  ),
+                );
+              }
+              return getUploadButton();
             },
           ),
+        ),
+      ),
+    );
+  }
+
+  Theme getUploadButton() {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        dividerTheme:
+            const DividerThemeData(color: Colors.grey, thickness: 0.5),
+      ),
+      child: PopupMenuButton(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        offset: const Offset(65, -150),
+        elevation: 10,
+        itemBuilder: (context) {
+          final list = <PopupMenuEntry<int>>[];
+          list.add(
+            PopupMenuItem(
+              onTap: null, //TODO : thêm function chuyển màn gallery
+              textStyle: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Gallery"),
+                  Icon(
+                    Icons.grid_on_rounded,
+                    color: Colors.black87,
+                    size: 30,
+                  ),
+                ],
+              ),
+            ),
+          );
+          list.add(
+            const PopupMenuDivider(),
+          );
+          list.add(
+            PopupMenuItem(
+              onTap: null, //TODO : thêm function chuyển màn camera
+              textStyle: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Camera"),
+                  Icon(
+                    Icons.camera_enhance_outlined,
+                    color: Colors.black87,
+                    size: 30,
+                  ),
+                ],
+              ),
+            ),
+          );
+          return list;
+        },
+        icon: SvgPicture.asset(
+          "assets/icons/upload_icon.svg",
+          width: 27,
+          height: 27,
+          color: Colors.black,
         ),
       ),
     );

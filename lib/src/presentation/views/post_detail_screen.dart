@@ -13,8 +13,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: bgApp,
       body: Scaffold(
+        backgroundColor: bgApp,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(

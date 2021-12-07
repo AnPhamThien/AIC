@@ -1,8 +1,11 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
@@ -20,6 +23,24 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   int indexPage = 0;
+
+  Future pickImage(ImageSource source) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+      if (image == null) return;
+      final imageTemp = File(image.path);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UploadScreen(
+            image: imageTemp,
+          ),
+        ),
+      );
+    } on PlatformException catch (e) {
+      log('Failed to pick image: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +73,7 @@ class _RootScreenState extends State<RootScreen> {
     return Container(
       height: 70.h,
       decoration: BoxDecoration(
-        color: bgLightGrey,
+        color: bgGrey,
         border: Border(
           top: BorderSide(
             width: 0.5,
@@ -61,6 +82,7 @@ class _RootScreenState extends State<RootScreen> {
         ),
       ),
       child: Material(
+        color: Colors.white,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,7 +103,7 @@ class _RootScreenState extends State<RootScreen> {
                         : icons[index]['inactive']!,
                     width: 27,
                     height: 27,
-                    color: Colors.black,
+                    color: Colors.black87,
                   ),
                 );
               }
@@ -107,47 +129,15 @@ class _RootScreenState extends State<RootScreen> {
         itemBuilder: (context) {
           final list = <PopupMenuEntry<int>>[];
           list.add(
-            PopupMenuItem(
-              onTap: null, //TODO : thêm function chuyển màn gallery
-              textStyle: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text("Gallery"),
-                  Icon(
-                    Icons.grid_on_rounded,
-                    color: Colors.black87,
-                    size: 30,
-                  ),
-                ],
-              ),
-            ),
+            getPopupMenuItem(
+                ImageSource.gallery, "Gallery", Icons.grid_on_rounded),
           );
           list.add(
             const PopupMenuDivider(),
           );
           list.add(
-            PopupMenuItem(
-              onTap: null, //TODO : thêm function chuyển màn camera
-              textStyle: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
-                  Text("Camera"),
-                  Icon(
-                    Icons.camera_enhance_outlined,
-                    color: Colors.black87,
-                    size: 30,
-                  ),
-                ],
-              ),
-            ),
+            getPopupMenuItem(
+                ImageSource.camera, "Camera", Icons.camera_enhance_outlined),
           );
           return list;
         },
@@ -155,8 +145,30 @@ class _RootScreenState extends State<RootScreen> {
           "assets/icons/upload_icon.svg",
           width: 27,
           height: 27,
-          color: Colors.black,
+          color: Colors.black87,
         ),
+      ),
+    );
+  }
+
+  PopupMenuItem<int> getPopupMenuItem(
+      ImageSource source, String label, IconData iconData) {
+    return PopupMenuItem(
+      onTap: () {
+        pickImage(source);
+      },
+      textStyle: const TextStyle(
+          fontSize: 20, fontWeight: FontWeight.w400, color: Colors.black),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label),
+          Icon(
+            iconData,
+            color: Colors.black87,
+            size: 30,
+          ),
+        ],
       ),
     );
   }

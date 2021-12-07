@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);

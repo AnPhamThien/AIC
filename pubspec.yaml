@@ -20,6 +20,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  image_picker: ^0.8.4+4
+
+  material_floating_search_bar: ^0.3.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

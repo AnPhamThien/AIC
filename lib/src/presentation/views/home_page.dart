@@ -41,12 +41,13 @@ class _HomePageState extends State<HomePage> {
       title: const Text(
         "Image Captioning",
         style: TextStyle(
-            color: Colors.black,
-            fontFamily: "Billabong",
-            fontWeight: FontWeight.w400,
-            fontSize: 27.0),
+          color: Colors.black87,
+          fontFamily: "Billabong",
+          fontWeight: FontWeight.w400,
+          fontSize: 27.0,
+        ),
       ),
-      backgroundColor: bgLightGrey,
+      backgroundColor: Colors.white,
       elevation: 0,
       actions: [
         RadiantGradientMask(

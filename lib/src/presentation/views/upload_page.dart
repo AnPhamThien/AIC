@@ -61,6 +61,7 @@ class _UploadScreenState extends State<UploadScreen> {
       'Food around the world',
       'Mood pictures'
     ];
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
       width: double.infinity,
@@ -224,8 +225,8 @@ class _UploadScreenState extends State<UploadScreen> {
           suffixIcon: IconButton(
             padding: const EdgeInsets.all(0),
             onPressed: () {
-              /*fetch captions mới*/
-            }, //TODO: Fetch caption mới ở đây
+              //TODO: Fetch caption mới ở đây
+            },
             icon: const Icon(
               Icons.refresh_rounded,
               size: 40,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({Key? key}) : super(key: key);
@@ -11,10 +12,12 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   @override
   Widget build(BuildContext context) {
+    String username = "thieen_aan";
     return Scaffold(
       appBar: AppBar(
-        title: const Text("thieen__aan"),
-        elevation: .5,
+        title: AppBarTitle(title: username),
+        elevation: 0,
+        titleSpacing: 0,
       ),
       body: SafeArea(
         child: SingleChildScrollView(

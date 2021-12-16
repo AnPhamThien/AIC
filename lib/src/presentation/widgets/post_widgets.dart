@@ -1,18 +1,76 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:imagecaptioning/src/data_local/markup_model.dart';
+import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
 
+class PostWidget extends StatefulWidget {
+  const PostWidget({Key? key, required this.post}) : super(key: key);
+
+  @override
+  _PostWidgetState createState() => _PostWidgetState();
+
+  final Post post;
+}
+
+class _PostWidgetState extends State<PostWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      height: 580.h,
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(25),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PostHeadlineWidget(
+                username: widget.post.postUsername,
+                time: widget.post.postTime,
+                avatar: widget.post.postAvatar,
+              ),
+              PostImgWidget(image: widget.post.postImage),
+              const PostIconWidget(),
+              GestureDetector(
+                child: PostDescription(
+                  username: widget.post.postUsername,
+                  caption: widget.post.postCaption,
+                  likeCount: widget.post.postLikeCount,
+                  commentCount: widget.post.postCommentCount,
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PostDetailScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+//* HEADLINE CỦA POST
 class PostHeadlineWidget extends StatelessWidget {
   const PostHeadlineWidget({
     Key? key,
     required this.username,
-    required this.posttime,
-    required this.imagepath,
+    required this.time,
+    required this.avatar,
   }) : super(key: key);
 
   final String username;
-  final int posttime;
-  final String imagepath;
+  final int time;
+  final String avatar;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +85,7 @@ class PostHeadlineWidget extends StatelessWidget {
         child: CircleAvatar(
           child: ClipOval(
             child: Image(
-              image: AssetImage(imagepath),
+              image: AssetImage(avatar),
               height: 45,
               width: 45,
               fit: BoxFit.cover,
@@ -37,24 +95,71 @@ class PostHeadlineWidget extends StatelessWidget {
       ),
       title: Text(
         username,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
       ),
-      subtitle: Text(posttime.toString() + " min"),
+      subtitle: Text(time.toString() + " min"),
 
       ///options
-      trailing: IconButton(
-        splashRadius: 30,
-        onPressed: () {},
-        icon: Icon(
+      trailing: PopupMenuButton(
+        icon: const Icon(
           Icons.more_vert_rounded,
-          color: Colors.black,
-          size: 27.sp,
+          color: Colors.black87,
+          size: 27,
+        ),
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        offset: const Offset(-10, 45),
+        elevation: 10,
+        itemBuilder: (context) => <PopupMenuEntry>[
+          PopupMenuItem(
+            onTap: () {}, //TODO hàm Report ở đây
+            child: Row(
+              children: const [
+                Text("Report"),
+                Icon(
+                  Icons.error_outline_rounded,
+                  color: Colors.black87,
+                  size: 30,
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+//* ẢNH CỦA POST
+class PostImgWidget extends StatelessWidget {
+  const PostImgWidget({
+    Key? key,
+    required this.image,
+  }) : super(key: key);
+
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 7),
+      child: AspectRatio(
+        aspectRatio: 1,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25),
+            image: DecorationImage(
+              image: AssetImage(image),
+              fit: BoxFit.fill,
+            ),
+          ),
         ),
       ),
     );
   }
 }
 
+//* ICON CỦA POST
 class PostIconWidget extends StatelessWidget {
   const PostIconWidget({
     Key? key,
@@ -80,7 +185,7 @@ class PostIconWidget extends StatelessWidget {
                     splashRadius: 23,
                     icon: const Icon(Icons.favorite_border_rounded),
                     iconSize: 30.0,
-                    onPressed: () {},
+                    onPressed: () {}, //TODO hàm Like ở đây
                   ),
                   likeCount == null
                       ? const SizedBox.shrink()
@@ -100,7 +205,7 @@ class PostIconWidget extends StatelessWidget {
                 children: [
                   IconButton(
                     splashRadius: 23,
-                    onPressed: () {},
+                    onPressed: () {}, //TODO hàm comment ở đây
                     icon: SvgPicture.asset(
                       "assets/icons/comment_icon.svg",
                       color: Colors.black,
@@ -124,7 +229,7 @@ class PostIconWidget extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.bookmark_border),
             iconSize: 30.0,
-            onPressed: () {},
+            onPressed: () {}, //TODO hàm save ở đây
           ),
         ],
       ),
@@ -132,29 +237,61 @@ class PostIconWidget extends StatelessWidget {
   }
 }
 
-class PostImgWidget extends StatelessWidget {
-  const PostImgWidget({
+//* DESCRIPTION CỦA POST
+class PostDescription extends StatelessWidget {
+  const PostDescription({
     Key? key,
-    required this.imgPath,
+    required this.likeCount,
+    required this.commentCount,
+    required this.username,
+    required this.caption,
   }) : super(key: key);
 
-  final String imgPath;
+  final int likeCount;
+  final int commentCount;
+  final String username;
+  final String caption;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 7),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            image: DecorationImage(
-              image: AssetImage(imgPath),
-              fit: BoxFit.fill,
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          //LIKES
+          Padding(
+            padding: const EdgeInsets.only(bottom: 5),
+            child: Text(
+              "$likeCount likes",
+              style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
-        ),
+          //USERNAME & CAPTIONS
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: username,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextSpan(
+                  text: "  " + caption,
+                )
+              ],
+            ),
+          ),
+          //COMMENTS
+          Padding(
+            padding: const EdgeInsets.only(top: 5),
+            child: Text(
+              "View all $commentCount comments",
+              style: const TextStyle(color: bgGrey),
+            ),
+          ),
+        ],
       ),
     );
   }

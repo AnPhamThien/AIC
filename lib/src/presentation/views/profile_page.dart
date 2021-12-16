@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/presentation/views/album_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
 import 'gallery_page.dart';
 
@@ -15,7 +19,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    bool isMe = false;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: getProfileAppBar("thieen_aan"),
@@ -31,7 +35,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     getUserHeader("assets/images/Kroni.jpg", 1, 40, 130),
                     getUserDescription("Thiên Ân",
                         "Hello, DIO DA!\nWRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"),
-                    getEditProfileButton(size),
+                    isMe == true
+                        ? getEditProfileButton()
+                        : getFollowMessageButton()
                   ],
                 ),
               ),
@@ -60,9 +66,8 @@ class _ProfilePageState extends State<ProfilePage> {
               Expanded(
                 child: TabBarView(
                   children: [
-                    // Gallery(),
                     GalleryPage(),
-                    Center(child: Text("CDE")),
+                    Center(child: Text("Saved post")),
                   ],
                 ),
               ),
@@ -75,18 +80,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   AppBar getProfileAppBar(String username) {
     return AppBar(
-      title: Text(
-        username,
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w500,
-        ),
+      automaticallyImplyLeading: false,
+      elevation: 0,
+      title: AppBarTitle(
+        title: username,
       ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 5),
           child: IconButton(
-            onPressed: () => {},
+            onPressed: () {
+              getSheet(context);
+            },
             icon: const Icon(
               Icons.dehaze_rounded,
               size: 30,
@@ -98,11 +103,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Row getUserHeader(
-    String imagePath,
-    int postCount,
-    int followerCount,
-    int followingCount,
-  ) {
+      String imagePath, int postCount, int followerCount, int followingCount) {
     return Row(
       children: [
         //AVATAR
@@ -177,7 +178,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Padding getEditProfileButton(Size size) {
+  Padding getEditProfileButton() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: OutlinedButton(
@@ -202,6 +204,120 @@ class _ProfilePageState extends State<ProfilePage> {
         },
         child: const Text("Edit Profile"),
       ),
+    );
+  }
+
+  Row getFollowMessageButton() {
+    Size size = MediaQuery.of(context).size;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            fixedSize: Size(size.width / 2.2, 35),
+            primary: Colors.white,
+            backgroundColor: Colors.black87,
+            side: const BorderSide(
+              width: 1,
+              color: bgGrey,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
+          ),
+          onPressed: () {
+            //TODO function follow ở đây
+          },
+          child: const Text("Follow"),
+        ),
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            fixedSize: Size(size.width / 2.2, 35),
+            primary: Colors.black,
+            side: const BorderSide(
+              width: 1,
+              color: bgGrey,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ConversationScreen(),
+              ),
+            );
+          },
+          child: const Text("Message"),
+        ),
+      ],
+    );
+  }
+
+  Future<dynamic> getSheet(BuildContext context) {
+    return showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      enableDrag: true,
+      context: context,
+      builder: (context) {
+        return Wrap(
+          direction: Axis.vertical,
+          children: [
+            const SizedBox(height: 10),
+            const SheetLine(),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ListTile(
+                leading: const Icon(
+                  Icons.photo_album_outlined,
+                  color: Colors.black87,
+                  size: 35,
+                ),
+                title: const Text(
+                  "Album",
+                  style: TextStyle(fontSize: 19),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AlbumScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ListTile(
+                leading: const Icon(
+                  Icons.logout_rounded,
+                  color: Colors.black87,
+                  size: 35,
+                ),
+                title: const Text(
+                  "Log out",
+                  style: TextStyle(fontSize: 19),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+          ],
+        );
+      },
     );
   }
 }

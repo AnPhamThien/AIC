@@ -137,7 +137,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         fontSize: 25,
                         color: Colors.black87,
                         letterSpacing: 1.25,
-                        fontWeight: FontWeight.bold)),
+                        fontWeight: FontWeight.w500)),
                 content: const Text('Your account has been verified',
                     style: TextStyle(
                         fontSize: 20,

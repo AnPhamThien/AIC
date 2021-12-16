@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -80,6 +81,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   AppBar getAppBar(BuildContext context) {
     return AppBar(
+      titleSpacing: 0,
       elevation: 0,
       leading: IconButton(
         icon: const Icon(
@@ -90,7 +92,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           Navigator.pop(context);
         },
       ),
-      title: const Text("Edit Profile"),
+      title: const AppBarTitle(title: "Edit Profile"),
       actions: [
         IconButton(
           onPressed: () {

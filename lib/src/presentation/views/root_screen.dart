@@ -1,8 +1,4 @@
-import 'dart:developer';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,8 +7,8 @@ import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/search_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/upload_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -23,24 +19,6 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   int indexPage = 0;
-
-  Future pickImage(ImageSource source) async {
-    try {
-      final image = await ImagePicker().pickImage(source: source);
-      if (image == null) return;
-      final imageTemp = File(image.path);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => UploadScreen(
-            image: imageTemp,
-          ),
-        ),
-      );
-    } on PlatformException catch (e) {
-      log('Failed to pick image: $e');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +49,7 @@ class _RootScreenState extends State<RootScreen> {
 
   Widget getBottomNavigationBar() {
     return Container(
-      height: 70.h,
+      height: 55.h,
       decoration: BoxDecoration(
         color: bgGrey,
         border: Border(
@@ -129,14 +107,14 @@ class _RootScreenState extends State<RootScreen> {
         itemBuilder: (context) {
           final list = <PopupMenuEntry<int>>[];
           list.add(
-            getPopupMenuItem(
+            getUploadMenuItem(
                 ImageSource.gallery, "Gallery", Icons.grid_on_rounded),
           );
           list.add(
             const PopupMenuDivider(),
           );
           list.add(
-            getPopupMenuItem(
+            getUploadMenuItem(
                 ImageSource.camera, "Camera", Icons.camera_enhance_outlined),
           );
           return list;
@@ -151,11 +129,11 @@ class _RootScreenState extends State<RootScreen> {
     );
   }
 
-  PopupMenuItem<int> getPopupMenuItem(
+  PopupMenuItem<int> getUploadMenuItem(
       ImageSource source, String label, IconData iconData) {
     return PopupMenuItem(
       onTap: () {
-        pickImage(source);
+        pickImage(source, context);
       },
       textStyle: const TextStyle(
           fontSize: 20, fontWeight: FontWeight.w400, color: Colors.black),

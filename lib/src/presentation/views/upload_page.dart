@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({
@@ -135,15 +136,9 @@ class _UploadScreenState extends State<UploadScreen> {
       ),
       backgroundColor: Colors.white,
       foregroundColor: Colors.black87,
-      leadingWidth: 30,
+      titleSpacing: 0,
       elevation: 0,
-      title: const Text(
-        'New Post',
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
+      title: const AppBarTitle(title: "New Post"),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 5),

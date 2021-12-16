@@ -101,13 +101,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               const Expanded(
                 child: PostHeadlineWidget(
                   username: "thieen_aan",
-                  posttime: 15,
-                  imagepath: "assets/images/Kroni.jpg",
+                  time: 15,
+                  avatar: "assets/images/Kroni.jpg",
                 ),
               ),
             ],
           ),
-          const PostImgWidget(imgPath: "assets/images/WTF.jpg"),
+          const PostImgWidget(image: "assets/images/WTF.jpg"),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Text(

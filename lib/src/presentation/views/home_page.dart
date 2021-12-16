@@ -2,10 +2,11 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:imagecaptioning/src/data_local/markup_model.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,6 +17,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<Post> postList = Post.getPostList();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,12 +25,17 @@ class _HomePageState extends State<HomePage> {
       appBar: getAppBar(),
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            children: const [
-              NewsFeed(),
-              NewsFeed(),
-              NewsFeed(),
-            ],
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: ListView.builder(
+              itemCount: postList.length,
+              itemBuilder: (_, index) {
+                final Post post = postList[index];
+                return PostWidget(
+                  post: post,
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -52,7 +59,14 @@ class _HomePageState extends State<HomePage> {
       actions: [
         RadiantGradientMask(
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ContestListScreen(),
+                ),
+              );
+            },
             icon: const Icon(
               Icons.emoji_events_outlined,
               color: Colors.white,
@@ -77,120 +91,6 @@ class _HomePageState extends State<HomePage> {
           ),
         ), //Message
       ],
-    );
-  }
-}
-
-class NewsFeed extends StatelessWidget {
-  const NewsFeed({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      height: 580.h,
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const PostHeadlineWidget(
-                username: "thieen_aan",
-                posttime: 15,
-                imagepath: "assets/images/Kroni.jpg",
-              ),
-              const PostImgWidget(imgPath: "assets/images/WTF.jpg"),
-              const PostIconWidget(),
-              GestureDetector(
-                child: const PostDescription(),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PostDetailScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class PostDescription extends StatelessWidget {
-  const PostDescription({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          //LIKES
-          Padding(
-            padding: EdgeInsets.only(bottom: 5),
-            child: Text(
-              "2,109 likes",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          //USERNAME & CAPTIONS
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: "thieen_ann",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextSpan(
-                  text: "  Help, I'm Tired !",
-                )
-              ],
-            ),
-          ),
-          //COMMENTS
-          Padding(
-            padding: EdgeInsets.only(top: 5),
-            child: Text(
-              "View all 170 comments",
-              style: TextStyle(color: bgGrey),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class RadiantGradientMask extends StatelessWidget {
-  const RadiantGradientMask({Key? key, this.child}) : super(key: key);
-
-  final Widget? child;
-
-  @override
-  Widget build(BuildContext context) {
-    return ShaderMask(
-      shaderCallback: (bounds) => const LinearGradient(
-        begin: Alignment.centerLeft,
-        end: Alignment.centerRight,
-        stops: [0.2, 0.3, 0.35, 0.4, 0.5, 0.65, 0.8],
-        colors: bgStoryColors,
-        tileMode: TileMode.mirror,
-      ).createShader(bounds),
-      child: child,
     );
   }
 }

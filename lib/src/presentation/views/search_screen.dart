@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/data_local/markup_model.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -13,8 +12,8 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
-    List<Users> searchedUser =
-        Users.getSearchedUser(); //TODO mốt chuyển vào controller nè
+    List<User> searchedUser =
+        User.getSearchedUser(); //TODO mốt chuyển vào controller nè
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -61,7 +60,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemCount: searchedUser
                         .length, //TODO: độ dài list user đã từng search ở đây
                     itemBuilder: (_, index) {
-                      final Users user =
+                      final User user =
                           searchedUser[index]; //TODO: moi user ra ở đây
                       return getUserItem(user);
                     },
@@ -75,7 +74,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   itemCount: searchedUser
                       .length, //TODO: độ dài list user đã từng search ở đây
                   itemBuilder: (_, index) {
-                    final Users user =
+                    final User user =
                         searchedUser[index]; //TODO: moi user ra ở đây
                     return getUserItem(user);
                   },
@@ -88,7 +87,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  ListTile getUserItem(Users user) {
+  ListTile getUserItem(User user) {
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(20, 13, 10, 0),
       leading: Container(
@@ -131,38 +130,3 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
-class Users {
-  //TODO mốt bỏ cái này nè
-  final String img;
-  final String userName;
-  final String userRealName;
-
-  Users(this.img, this.userName, this.userRealName);
-
-  static List<Users> getSearchedUser() {
-    return [
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-      Users("assets/images/Kroni.jpg", "Kroni", "OuroKroni"),
-    ];
-  }
-}

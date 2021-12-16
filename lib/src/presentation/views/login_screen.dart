@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constanct/error_message.dart';
+import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
+import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
+import 'package:imagecaptioning/src/controller/navigator/navigator_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/root_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -13,38 +18,61 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.fill,
-          image: AssetImage("assets/images/bg1.jpg"),
+    return BlocListener<LoginBloc, LoginState>(
+      listenWhen: (previous, current) =>
+          previous.formStatus != current.formStatus,
+      listener: (context, state) {
+        final status = state.formStatus;
+        if (status is FormSubmissionSuccess) {
+          Navigator.of(context).pushNamed(AppRouter.rootScreen);
+        } else if (status is FormSubmissionFailed) {
+          String errorMessage = getErrorMessage(status.exception.toString());
+          print(errorMessage);
+          if (errorMessage ==
+              MessageCode.errorMap[MessageCode.userAccountInActivated]) {
+            context
+                .read<NavigatorBloc>()
+                .add(NavigateToPageEvent(AppRouter.verificationScreen));
+            //Navigator.of(context).pushNamed(AppRouter.verificationScreen);
+          }
+        }
+      },
+      child: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.fill,
+            image: AssetImage("assets/images/bg1.jpg"),
+          ),
         ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.black12,
-        body: SingleChildScrollView(
-          child: Container(
-            height: size.height,
-            width: size.width,
-            padding: EdgeInsets.symmetric(horizontal: size.width * .07),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                getLoginHeadline(),
-                const SizedBox(
-                  height: 10,
-                ),
-                getLoginForm(),
-                getForgotButton(),
-                const SizedBox(
-                  height: 20,
-                ),
-                getSignupButton(),
-              ],
+        child: Scaffold(
+          backgroundColor: Colors.black12,
+          body: SingleChildScrollView(
+            child: Container(
+              height: size.height,
+              width: size.width,
+              padding: EdgeInsets.symmetric(horizontal: size.width * .07),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  getLoginHeadline(),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  getLoginForm(),
+                  getForgotButton(),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  getSignupButton(),
+                ],
+              ),
             ),
           ),
         ),
@@ -56,12 +84,10 @@ class LoginScreenState extends State<LoginScreen> {
     return Center(
       child: TextButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const ForgotPasswordScreen(),
-            ),
-          );
+          context
+              .read<NavigatorBloc>()
+              .add(NavigateToPageEvent(AppRouter.forgotPasswordScreen));
+          //Navigator.of(context).pushNamed(AppRouter.forgotPasswordScreen);
         },
         child: const Text(
           "Forgot password ?",
@@ -86,12 +112,10 @@ class LoginScreenState extends State<LoginScreen> {
       ),
       child: TextButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const RegistrationScreen(),
-            ),
-          );
+          context
+              .read<NavigatorBloc>()
+              .add(NavigateToPageEvent(AppRouter.registrationScreen));
+          //Navigator.of(context).pushNamed(AppRouter.registrationScreen);
         },
         child: RichText(
           text: const TextSpan(
@@ -120,51 +144,62 @@ class LoginScreenState extends State<LoginScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          const GetUserInput(
-            label: 'Username',
-            hint: 'Email, Username or Phone number',
-            isPassword: false,
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          const GetUserInput(
-            label: 'Password',
-            hint: 'Your account password',
-            isPassword: true,
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const RootScreen(),
-                ),
-              );
-            },
-            style: TextButton.styleFrom(
-                fixedSize: Size(size.width * .94, 55),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                backgroundColor: Colors.black87,
-                alignment: Alignment.center,
-                primary: Colors.white,
-                textStyle:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            child: const Text(
-              "Login",
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const SizedBox(
+              height: 10,
             ),
-          ),
-        ],
+            GetUserInput(
+              controller: _usernameController,
+              label: 'Username',
+              hint: 'Email, Username or Phone number',
+              isPassword: false,
+              validator: Validation.loginValidation,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            GetUserInput(
+              controller: _passwordController,
+              label: 'Password',
+              hint: 'Your account password',
+              isPassword: true,
+              validator: Validation.loginValidation,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            BlocBuilder<LoginBloc, LoginState>(
+              buildWhen: (previous, current) =>
+                  previous.formStatus != current.formStatus,
+              builder: (context, state) {
+                return TextButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      context.read<LoginBloc>().add(LoginSubmitted(
+                          _usernameController.text, _passwordController.text));
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                      fixedSize: Size(size.width * .94, 55),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      backgroundColor: Colors.black87,
+                      alignment: Alignment.center,
+                      primary: Colors.white,
+                      textStyle: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20)),
+                  child: const Text(
+                    "Login",
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

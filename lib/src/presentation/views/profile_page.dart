@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
+import 'package:imagecaptioning/src/controller/navigator/navigator_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 import 'gallery_page.dart';
 
@@ -14,61 +18,91 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
+  void initState() {
+    super.initState();
+    context.read<ProfileBloc>().add(Initializing());
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: getProfileAppBar("thieen_aan"),
-      body: DefaultTabController(
-        length: 2,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, _) {
-            return [
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    const SizedBox(height: 10),
-                    getUserHeader("assets/images/Kroni.jpg", 1, 40, 130),
-                    getUserDescription("Thiên Ân",
-                        "Hello, DIO DA!\nWRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"),
-                    getEditProfileButton(size),
-                  ],
-                ),
-              ),
-            ];
-          },
-          body: Column(
-            children: const [
-              TabBar(
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                indicatorWeight: 1,
-                indicatorColor: Colors.black,
-                tabs: [
-                  Tab(
-                    icon: Icon(
-                      Icons.grid_on_rounded,
-                    ),
-                  ),
-                  Tab(
-                    icon: Icon(
-                      Icons.save_alt_rounded,
+    return BlocListener<ProfileBloc, ProfileState>(
+      listenWhen: (previous, current) =>
+          previous.formStatus != current.formStatus,
+      listener: (context, state) {
+        if (state.formStatus is InitialFormStatus) {
+          context.read<ProfileBloc>().add(Initializing());
+        }
+      },
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        buildWhen: (previous, current) =>
+            previous.formStatus != current.formStatus,
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: (state.user != null)
+                ? getProfileAppBar(state.user!.userName ?? "")
+                : null,
+            body: (state.user != null)
+                ? DefaultTabController(
+                    length: 2,
+                    child: NestedScrollView(
+                      headerSliverBuilder: (context, _) {
+                        return [
+                          SliverList(
+                            delegate: SliverChildListDelegate(
+                              [
+                                const SizedBox(height: 10),
+                                getUserHeader(
+                                    "assets/images/Kroni.jpg",
+                                    state.user!.numberOfpost ?? 0,
+                                    state.user!.numberFollower ?? 0,
+                                    state.user!.numberFollowee ?? 0),
+                                getUserDescription(
+                                    state.user!.userRealName ?? "",
+                                    state.user!.description ?? ""),
+                                getEditProfileButton(size),
+                              ],
+                            ),
+                          ),
+                        ];
+                      },
+                      body: Column(
+                        children: const [
+                          TabBar(
+                            labelColor: Colors.black,
+                            unselectedLabelColor: Colors.grey,
+                            indicatorWeight: 1,
+                            indicatorColor: Colors.black,
+                            tabs: [
+                              Tab(
+                                icon: Icon(
+                                  Icons.grid_on_rounded,
+                                ),
+                              ),
+                              Tab(
+                                icon: Icon(
+                                  Icons.save_alt_rounded,
+                                ),
+                              )
+                            ],
+                          ),
+                          Expanded(
+                            child: TabBarView(
+                              children: [
+                                // Gallery(),
+                                GalleryPage(),
+                                Center(child: Text("CDE")),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   )
-                ],
-              ),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    // Gallery(),
-                    GalleryPage(),
-                    Center(child: Text("CDE")),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+                : null,
+          );
+        },
       ),
     );
   }
@@ -193,12 +227,10 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const EditProfileScreen(),
-            ),
-          );
+          context
+              .read<NavigatorBloc>()
+              .add(NavigateToPageEvent(AppRouter.editProfileScreen));
+          //Navigator.of(context).pushNamed(AppRouter.editProfileScreen);
         },
         child: const Text("Edit Profile"),
       ),

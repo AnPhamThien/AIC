@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
-
-import 'login_screen.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({Key? key}) : super(key: key);
@@ -56,12 +55,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       ),
       child: TextButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-          );
+          Navigator.of(context).pushNamed(AppRouter.loginScreen);
         },
         child: RichText(
           text: const TextSpan(
@@ -138,11 +132,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ));
+                      Navigator.of(context).pushNamed(AppRouter.loginScreen);
                     },
                     child: const Text(
                       'OK',

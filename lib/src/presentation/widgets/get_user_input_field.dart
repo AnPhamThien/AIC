@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class GetUserInput extends StatelessWidget {
+<<<<<<< HEAD
   const GetUserInput(
       {Key? key,
       required this.label,
@@ -15,14 +16,33 @@ class GetUserInput extends StatelessWidget {
   final Function(String?)? onChangeFunction;
   final String? Function(String?)? validator;
   final TextEditingController? controller;
+=======
+  const GetUserInput({
+    Key? key,
+    this.label,
+    this.hint,
+    this.isPassword,
+    this.function,
+    this.initValue,
+  }) : super(key: key);
+  final String? label, hint;
+  final bool? isPassword;
+  final String Function(String?)? function;
+  final String? initValue;
+>>>>>>> master
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+<<<<<<< HEAD
       controller: controller,
       validator: validator,
       onChanged: onChangeFunction,
       obscureText: isPassword,
+=======
+      initialValue: initValue,
+      obscureText: isPassword ?? false,
+>>>>>>> master
       decoration: InputDecoration(
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey),

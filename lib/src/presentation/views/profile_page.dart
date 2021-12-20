@@ -4,8 +4,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
+<<<<<<< HEAD
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/album_screen.dart';
+=======
+import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
+>>>>>>> master
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
@@ -21,6 +25,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     Map<String, dynamic>? args =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
     String userID = args?["userID"] ?? "";
@@ -101,6 +106,48 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
+=======
+    bool isMe = true;
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: getProfileAppBar("thieen_aan"),
+      body: DefaultTabController(
+        length: 2,
+        child: NestedScrollView(
+          headerSliverBuilder: (context, _) {
+            return [
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    const SizedBox(height: 10),
+                    getUserHeader("assets/images/Kroni.jpg", 1, 40, 130),
+                    getUserDescription("Thiên Ân",
+                        "Hello, DIO DA!\nWRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"),
+                    isMe == true
+                        ? getEditProfileButton()
+                        : getFollowMessageButton()
+                  ],
+                ),
+              ),
+            ];
+          },
+          body: Column(
+            children: const [
+              TabBar(
+                labelColor: Colors.black,
+                unselectedLabelColor: Colors.grey,
+                indicatorWeight: 1,
+                indicatorColor: Colors.black,
+                tabs: [
+                  Tab(
+                    icon: Icon(
+                      Icons.grid_on_rounded,
+                    ),
+                  ),
+                  Tab(
+                    icon: Icon(
+                      Icons.save_alt_rounded,
+>>>>>>> master
                     ),
                   )
                 : null,
@@ -315,7 +362,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AlbumScreen(),
+                      builder: (context) => const AlbumListScreen(),
                     ),
                   );
                 },

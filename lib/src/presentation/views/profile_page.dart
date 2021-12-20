@@ -4,12 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-<<<<<<< HEAD
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
-import 'package:imagecaptioning/src/presentation/views/album_screen.dart';
-=======
 import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
->>>>>>> master
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
@@ -25,88 +21,6 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
-    Map<String, dynamic>? args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-    String userID = args?["userID"] ?? "";
-    bool isMe = false;
-    context.read<ProfileBloc>().add(Initializing(userID));
-    return BlocListener<ProfileBloc, ProfileState>(
-      listenWhen: (previous, current) =>
-          previous.formStatus != current.formStatus,
-      listener: (context, state) {
-        final status = state.formStatus;
-        if (state.user == null) {
-          //context.read<ProfileBloc>().add(Initializing(userID));
-        }
-        if (state.isCurrentUser) {
-          isMe = true;
-        }
-      },
-      child: BlocBuilder<ProfileBloc, ProfileState>(
-        builder: (context, state) {
-          return Scaffold(
-            backgroundColor: Colors.white,
-            appBar: (state.user != null)
-                ? getProfileAppBar(state.user?.userName ?? "")
-                : null,
-            body: (state.user != null)
-                ? DefaultTabController(
-                    length: 2,
-                    child: NestedScrollView(
-                      headerSliverBuilder: (context, _) {
-                        return [
-                          SliverList(
-                            delegate: SliverChildListDelegate(
-                              [
-                                const SizedBox(height: 10),
-                                getUserHeader(
-                                    state.user?.avataUrl ?? "",
-                                    state.user?.numberOfpost ?? 0,
-                                    state.user?.numberFollower ?? 0,
-                                    state.user?.numberFollowee ?? 0),
-                                getUserDescription(
-                                    state.user?.userRealName ?? "",
-                                    state.user?.description ?? ""),
-                                isMe == true
-                                    ? getEditProfileButton()
-                                    : getFollowMessageButton()
-                              ],
-                            ),
-                          ),
-                        ];
-                      },
-                      body: Column(
-                        children: const [
-                          TabBar(
-                            labelColor: Colors.black,
-                            unselectedLabelColor: Colors.grey,
-                            indicatorWeight: 1,
-                            indicatorColor: Colors.black,
-                            tabs: [
-                              Tab(
-                                icon: Icon(
-                                  Icons.grid_on_rounded,
-                                ),
-                              ),
-                              Tab(
-                                icon: Icon(
-                                  Icons.save_alt_rounded,
-                                ),
-                              )
-                            ],
-                          ),
-                          Expanded(
-                            child: TabBarView(
-                              children: [
-                                GalleryPage(),
-                                Center(child: Text("Saved post")),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-=======
     bool isMe = true;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -147,12 +61,21 @@ class _ProfilePageState extends State<ProfilePage> {
                   Tab(
                     icon: Icon(
                       Icons.save_alt_rounded,
->>>>>>> master
                     ),
                   )
-                : null,
-          );
-        },
+                ],
+              ),
+              Expanded(
+                child: TabBarView(
+                  children: [
+                    GalleryPage(),
+                    Center(child: Text("Saved post")),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

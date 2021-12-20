@@ -5,7 +5,6 @@ import 'package:imagecaptioning/src/controller/auth/authentication_status.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 
-import 'package:imagecaptioning/src/data_local/markup_model.dart';
 import 'package:imagecaptioning/src/repositories/data_repository.dart';
 
 part 'auth_event.dart';

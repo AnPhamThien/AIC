@@ -28,9 +28,7 @@ class DataRepository implements RestClient {
               String refreshToken = getIt<AppPref>().getRefreshToken;
 
               Response? response = await refreshJwtToken(token, refreshToken);
-              print(response);
               Map<String, dynamic> value = json.decode(response.data);
-              print(value);
               getIt<AppPref>().setToken(value['data']);
 
               setJwtInHeader();
@@ -47,7 +45,6 @@ class DataRepository implements RestClient {
     _dio.options.headers.remove('Authorization');
     _dio.options.headers['Authorization'] =
         'Bearer ${getIt<AppPref>().getToken}';
-    print(_dio.options.headers['Authorization']);
   }
 
   @override

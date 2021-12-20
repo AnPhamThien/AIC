@@ -1,4 +1,4 @@
-#Fri Dec 17 13:21:46 ICT 2021
-base.0=C\:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\imagecaptioning\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
-renamed.0=classes.dex
+#Mon Dec 20 15:42:06 ICT 2021
+base.0=D\:\\Capstone\\CapstoneProject\\AIC\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
 path.0=classes.dex
+renamed.0=classes.dex

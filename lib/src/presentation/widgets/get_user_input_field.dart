@@ -3,19 +3,22 @@ import 'package:flutter/material.dart';
 class GetUserInput extends StatelessWidget {
   const GetUserInput({
     Key? key,
-    required this.label,
-    required this.hint,
-    required this.isPassword,
+    this.label,
+    this.hint,
+    this.isPassword,
     this.function,
+    this.initValue,
   }) : super(key: key);
-  final String label, hint;
-  final bool isPassword;
+  final String? label, hint;
+  final bool? isPassword;
   final String Function(String?)? function;
+  final String? initValue;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      obscureText: isPassword,
+      initialValue: initValue,
+      obscureText: isPassword ?? false,
       decoration: InputDecoration(
         focusedBorder: const OutlineInputBorder(
           borderSide: BorderSide(color: Colors.grey),

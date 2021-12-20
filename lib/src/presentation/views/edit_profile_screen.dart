@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -14,9 +15,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: getAppBar(context),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Center(
+      body: getBody(),
+    );
+  }
+
+  SafeArea getBody() {
+    List<String> genderList = [
+      'Male',
+      'Female',
+      'Other',
+    ];
+    String initValue = genderList.first;
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20,
+            ),
             child: Column(
               children: [
                 const SizedBox(
@@ -40,12 +56,81 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: const Text("Change profile picture"),
                   onPressed: () {},
                 ),
-                getUserDetail('Username', 'thieen__aan', null),
-                getUserDetail('Name', 'Thiên Ân', null),
-                getUserDetail('Bio', 'WRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY', null),
-                getUserDetail('Email', 'AnDepTrai@Gmail.com', null),
-                getUserDetail('Phone', '0123456789', null),
-                getUserDetail('Gender', 'Male', null),
+                const SizedBox(
+                  height: 20,
+                ),
+                //username
+                const GetUserInput(
+                  label: "Username",
+                  initValue: "thieen__aan",
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //name
+                const GetUserInput(
+                  label: "Name",
+                  initValue: "Thiên Ân",
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //bio
+                const GetUserInput(
+                  label: "Bio",
+                  initValue: "WRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //Email
+                const GetUserInput(
+                  label: "Email",
+                  initValue: "AnDepTrai@Gmail.com",
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //Phone
+                const GetUserInput(
+                  label: "Phone",
+                  initValue: "0123456789",
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                //Gender
+                Stack(
+                  children: [
+                    const AbsorbPointer(
+                        child: GetUserInput(
+                      label: "Gender",
+                    )),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 22.0, vertical: 4.5),
+                      child: DropdownButton<String>(
+                        isExpanded: true,
+                        borderRadius: BorderRadius.circular(25),
+                        underline: const SizedBox.shrink(),
+                        value: initValue,
+                        iconSize: 24,
+                        onChanged: (String? newValue) {
+                          setState(() {
+                            initValue = newValue!;
+                          });
+                        },
+                        items: genderList
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),

@@ -6,6 +6,7 @@ import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 
 import 'package:imagecaptioning/src/data_local/markup_model.dart';
+import 'package:imagecaptioning/src/repositories/data_repository.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -33,6 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthenticate(AuthenticateEvent event, Emitter emit) {
     emit(state.copyWith(authStatus: AuthenticationAuthenticated()));
+    DataRepository.setJwtInHeader();
     navigatorKey.currentState!.pushNamed(AppRouter.rootScreen);
   }
 
@@ -40,6 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(authStatus: AuthenticationUnauthenticated()));
     getIt<AppPref>().setToken("");
     getIt<AppPref>().setRefreshToken("");
+    DataRepository.setJwtInHeader();
     navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
   }
 }

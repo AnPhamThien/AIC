@@ -4,7 +4,6 @@ import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart'
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/repositories/data_repository.dart';
 import 'package:imagecaptioning/src/repositories/user/user_repository.dart';
 
 part 'login_event.dart';
@@ -49,7 +48,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         getIt<AppPref>().setRefreshToken(refreshToken);
         //getIt<AppPref>()
         //    .setRefreshToken("4f0edded-139c-4ff1-aab9-96f0937876ac");
-        DataRepository.setJwtInHeader();
+
         emit(state.copyWith(formStatus: FormSubmissionSuccess()));
       } else {
         String messageCode = response.messageCode ?? "";

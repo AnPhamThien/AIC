@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/album_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
@@ -19,7 +19,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    bool isMe = false;
+    bool isMe = true;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: getProfileAppBar("thieen_aan"),
@@ -284,7 +284,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AlbumScreen(),
+                      builder: (context) => const AlbumListScreen(),
                     ),
                   );
                 },

@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -23,46 +25,52 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           _showImageSourceActionSheet(context);
         }
       },
-      child: Scaffold(
-        appBar: getAppBar(context),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Center(
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Container(
-                    height: 100.h,
-                    width: 100.h,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/Kroni.jpg"),
-                        fit: BoxFit.cover,
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          return Scaffold(
+            appBar: getAppBar(context),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                child: Center(
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
+                      Container(
+                        height: 100.h,
+                        width: 100.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: AssetImage(state.user!.avataUrl ??
+                                'assets/images/Kroni.jpg'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                            primary: Colors.blue,
+                            textStyle: TextStyle(fontSize: 19.sp)),
+                        child: const Text("Change profile picture"),
+                        onPressed: () {},
+                      ),
+                      getUserDetail(
+                          'Username', state.user!.userName ?? '', null),
+                      getUserDetail(
+                          'Name', state.user!.userRealName ?? '', null),
+                      getUserDetail('Bio', state.user!.description ?? '', null),
+                      getUserDetail('Email', state.user!.userEmail ?? '',
+                          Validation.emailValidation),
+                      getUserDetail('Phone', state.user!.phone ?? '', null),
+                    ],
                   ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                        primary: Colors.blue,
-                        textStyle: TextStyle(fontSize: 19.sp)),
-                    child: const Text("Change profile picture"),
-                    onPressed: () {},
-                  ),
-                  getUserDetail('Username', 'thieen__aan', null),
-                  getUserDetail('Name', 'Thiên Ân', null),
-                  getUserDetail(
-                      'Bio', 'WRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY', null),
-                  getUserDetail('Email', 'AnDepTrai@Gmail.com', null),
-                  getUserDetail('Phone', '0123456789', null),
-                  getUserDetail('Gender', 'Male', null),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -70,7 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Padding getUserDetail(
     String label,
     String value,
-    String Function(String?)? function,
+    String? Function(String?)? function,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -94,27 +102,37 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   AppBar getAppBar(BuildContext context) {
     return AppBar(
+      titleSpacing: 0,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.clear_rounded,
-          size: 35,
-        ),
-        onPressed: () {
-          Navigator.pop(context);
+      leading: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          return IconButton(
+            icon: const Icon(
+              Icons.clear_rounded,
+              size: 35,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          );
         },
       ),
-      title: const Text("Edit Profile"),
+      title: const AppBarTitle(title: "Edit Profile"),
       actions: [
-        IconButton(
-          onPressed: () {
-            Navigator.pop(context);
+        BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            return IconButton(
+              onPressed: () {
+                //context.read<ProfileBloc>().add(SaveProfileChanges(username: ,email: , phone: , desc: , userRealName: , avatar: ));
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.done_rounded,
+                size: 35,
+                color: Colors.lightBlue,
+              ),
+            );
           },
-          icon: const Icon(
-            Icons.done_rounded,
-            size: 35,
-            color: Colors.lightBlue,
-          ),
         )
       ],
     );

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/controller/navigator/navigator_bloc.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => NavigatorBloc(_navigatorKey),
+      create: (context) => AuthBloc(_navigatorKey),
       child: ScreenUtilInit(
         designSize: const Size(411.5, 775),
         builder: () => MaterialApp(

@@ -25,10 +25,20 @@ class AppRouter {
   static const String emailConfirmScreen = '/emailconfirm';
   static const String resetPasswordScreen = '/resetpassword';
   static const String rootScreen = '/home';
-  static const String profileScreen = '/profile';
+  static const String currentUserProfileScreen = '/profile';
+  static const String otherUserProfileScreen = '/otherprofile';
   static const String editProfileScreen = '/editprofile';
 
-  final ProfileBloc profileBloc = ProfileBloc();
+  final ProfileBloc profileBloc = ProfileBloc(true);
+
+  static const List<String> noAuthNeededScreens = [
+    loginScreen,
+    registrationScreen,
+    verificationScreen,
+    forgotPasswordScreen,
+    emailConfirmScreen,
+    resetPasswordScreen
+  ];
 
   Route? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
@@ -76,10 +86,17 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => const ResetPasswordScreen(),
         );
-      case profileScreen:
+      case currentUserProfileScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider.value(
             value: profileBloc,
+            child: const ProfilePage(),
+          ),
+        );
+      case otherUserProfileScreen:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => ProfileBloc(false),
             child: const ProfilePage(),
           ),
         );

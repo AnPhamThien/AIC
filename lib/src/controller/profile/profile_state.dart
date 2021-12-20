@@ -2,7 +2,7 @@ part of "profile_bloc.dart";
 
 class ProfileState {
   final UserDetails? user;
-  final bool? isCurrentUser;
+  final bool isCurrentUser;
   //final String? avatarPath;
 
   final FormSubmissionStatus formStatus;
@@ -10,7 +10,7 @@ class ProfileState {
 
   ProfileState({
     this.user,
-    this.isCurrentUser,
+    required this.isCurrentUser,
     //String? avatarPath,
     this.imageSourceActionSheetIsVisible = false,
     this.formStatus = const InitialFormStatus(),

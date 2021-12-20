@@ -22,11 +22,14 @@ dependencies:
   dio: ^4.0.4
   shared_preferences: ^2.0.9
   flutter_bloc: ^7.3.3
-  image_picker: ^0.8.4+4
   retrofit: ^2.0.1
   get_it: ^7.2.0
   injectable: ^1.4.1
 
+
+  image_picker: ^0.8.4+4
+
+  material_floating_search_bar: ^0.3.6
 
 dev_dependencies:
   flutter_test:

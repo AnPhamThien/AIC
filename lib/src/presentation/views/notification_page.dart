@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -92,13 +92,8 @@ class _NotificationPageState extends State<NotificationPage> {
 
   AppBar getAppBar() {
     return AppBar(
-      title: const Text(
-        "Notification",
-        style: TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    );
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        title: const AppBarTitle(title: "Notification"));
   }
 }

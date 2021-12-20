@@ -522,4 +522,59 @@ class MessageCode {
   /// ST111 : Wrong type of status
   /// </summary>
   static const String wrongTypeStatus = "ST111";
+
+  /// <summary>
+  /// TK111 : Jwt token is not expired
+  /// </summary>
+  static const String tokenIsNotExpired = "TK111";
+
+  /// <summary>
+  /// TK112 : refresh token is not existed
+  /// </summary>
+  static const String refreshTokenNotExisted = "TK112";
+
+  /// <summary>
+  /// TK113 : token expired
+  /// </summary>
+  static const String tokenExpired = "TK113";
+
+  /// <summary>
+  /// TK114 : token role not valid
+  /// </summary>
+  static const String tokenRoleNotValid = "TK114";
+
+  /// <summary>
+  /// TK115 : refresh token expired
+  /// </summary>
+  static const String refreshTokenExpired = "TK115";
+
+  /// <summary>
+  /// TK116 : jwt token not match refresh token
+  /// </summary>
+  static const String jwtTokenNotMatchRefreshToken = "TK116";
+
+  /// <summary>
+  /// TK117 : refresh token fail
+  /// </summary>
+  static const String refreshTokenFail = "TK117";
+
+  /// <summary>
+  /// TK118 : generate new jwt token fail
+  /// </summary>
+  static const String generateNewTokenFail = "TK118";
+
+  /// <summary>
+  /// TK119 : refresh token not found
+  /// </summary>
+  static const String tokenNotFound = "TK119";
+
+  /// <summary>
+  /// TK120 : delete refresh token fail
+  /// </summary>
+  static const String deleteTokenFail = "TK120";
+
+  /// <summary>
+  /// TK121 : token invalid
+  /// </summary>
+  static const String tokenInvalid = "TK121";
 }

@@ -57,7 +57,8 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
       }
       if (response is int) {
         if (response == StatusCode.successStatus) {
-          emit(state.copyWith(formStatus: FormSubmissionSuccess()));
+          emit(state.copyWith(
+              formStatus: FormSubmissionSuccess(), absorbing: true));
         } else {
           throw Exception("");
         }

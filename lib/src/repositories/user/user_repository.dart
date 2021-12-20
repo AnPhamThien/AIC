@@ -15,9 +15,16 @@ abstract class UserBehavior {
   Future<dynamic> activateAccount(
       {required String userID, required String code});
   Future<dynamic> regenerateCodeForRegister({required String userID});
-  Future<UserDetails?> getUserDetail(
+  Future<GetUserDetailsResponseMessage?> getUserDetail(
       {required String userID, required int limitPost});
   Future<dynamic> regenerateResetPasswordCode({required String email});
+  Future<dynamic> updateUserProfile(
+      {required String username,
+      required String email,
+      required String phone,
+      required String desc,
+      required String userRealName,
+      required String avatarImg});
 }
 
 class UserRepository extends UserBehavior {
@@ -32,9 +39,11 @@ class UserRepository extends UserBehavior {
       return resMessage;
     } catch (e) {
       if (e is DioError) {
-        AuthenticationResponseMessage resMessage =
-            AuthenticationResponseMessage.fromJson(e.response!.data);
-        return resMessage;
+        if (e.response != null) {
+          AuthenticationResponseMessage resMessage =
+              AuthenticationResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
       }
       return null;
     }
@@ -51,9 +60,11 @@ class UserRepository extends UserBehavior {
       return resMessage;
     } catch (e) {
       if (e is DioError) {
-        RegisterDefaultResponseMessage resMessage =
-            RegisterDefaultResponseMessage.fromJson(e.response!.data);
-        return resMessage;
+        if (e.response != null) {
+          RegisterDefaultResponseMessage resMessage =
+              RegisterDefaultResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
       }
       return null;
     }
@@ -68,9 +79,11 @@ class UserRepository extends UserBehavior {
       return response;
     } catch (e) {
       if (e is DioError) {
-        Map<String, dynamic> resMessage = json.decode(e.response!.data);
-        final response = resMessage['messageCode'];
-        return response;
+        if (e.response != null) {
+          Map<String, dynamic> resMessage = json.decode(e.response!.data);
+          final response = resMessage['messageCode'];
+          return response;
+        }
       }
       return null;
     }
@@ -86,26 +99,29 @@ class UserRepository extends UserBehavior {
       return response;
     } catch (e) {
       if (e is DioError) {
-        Map<String, dynamic> resMessage = json.decode(e.response!.data);
-        final response = resMessage['messageCode'];
-        return response;
+        if (e.response != null) {
+          Map<String, dynamic> resMessage = json.decode(e.response!.data);
+          final response = resMessage['messageCode'];
+          return response;
+        }
       }
       return null;
     }
   }
 
   @override
-  Future<UserDetails?> getUserDetail(
+  Future<GetUserDetailsResponseMessage?> getUserDetail(
       {required String userID, required int limitPost}) async {
     try {
       final resMessage = await _dataRepository.getUserDetail(userID, limitPost);
-      final userDetails = resMessage.data;
-      return userDetails;
+      return resMessage;
     } catch (e) {
       if (e is DioError) {
-        Map<String, dynamic> resMessage = json.decode(e.response!.data);
-        final response = resMessage['messageCode'];
-        return response;
+        if (e.response != null) {
+          GetUserDetailsResponseMessage resMessage =
+              GetUserDetailsResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
       }
       return null;
     }
@@ -120,9 +136,37 @@ class UserRepository extends UserBehavior {
       return response;
     } catch (e) {
       if (e is DioError) {
-        Map<String, dynamic> resMessage = json.decode(e.response!.data);
-        final response = resMessage['messageCode'];
-        return response;
+        if (e.response != null) {
+          Map<String, dynamic> resMessage = json.decode(e.response!.data);
+          final response = resMessage['messageCode'];
+          return response;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<dynamic> updateUserProfile(
+      {required String username,
+      required String email,
+      required String phone,
+      required String desc,
+      required String userRealName,
+      required String avatarImg}) async {
+    try {
+      final resMessage = await _dataRepository.updateUserProfile(
+          username, email, phone, desc, userRealName, avatarImg);
+      final response = resMessage['messageCode'] ?? resMessage['statusCode'];
+
+      return response;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          Map<String, dynamic> resMessage = json.decode(e.response!.data);
+          final response = resMessage['messageCode'];
+          return response;
+        }
       }
       return null;
     }

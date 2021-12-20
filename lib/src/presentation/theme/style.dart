@@ -11,16 +11,16 @@ const Color bgWhite = Color(0xffffffff);
 const Color bgDark = Color(0xff000000);
 const Color bgGrey = Color(0xffC8C8C8);
 const Color bgLightGrey = Color(0xffFAFAFA);
-const Color bgApp =  Color(0xFFEDF0F6);
+const Color bgApp = Color(0xFFF2F2F2);
 
 const bgStoryColors = [
-   Color(0xffA844A1),
-   Color(0xffAB429A),
-   Color(0xffB43C88),
-   Color(0xffC33269),
-   Color(0xffD7243F),
-   Color(0xffF9A326),
-   Color(0xffF9DD26),
+  Color(0xffA844A1),
+  Color(0xffAB429A),
+  Color(0xffB43C88),
+  Color(0xffC33269),
+  Color(0xffD7243F),
+  Color(0xffF9A326),
+  Color(0xffF9DD26),
 ];
 
 const Color success = Color(0xff44c93a);

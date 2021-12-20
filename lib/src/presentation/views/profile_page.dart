@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/navigator/navigator_bloc.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/album_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
 import 'gallery_page.dart';
 
@@ -18,30 +20,30 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   @override
-  void initState() {
-    super.initState();
-    context.read<ProfileBloc>().add(Initializing());
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    Map<String, dynamic>? args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+    String userID = args?["userID"] ?? "";
+    bool isMe = false;
+    context.read<ProfileBloc>().add(Initializing(userID));
     return BlocListener<ProfileBloc, ProfileState>(
       listenWhen: (previous, current) =>
           previous.formStatus != current.formStatus,
       listener: (context, state) {
-        if (state.formStatus is InitialFormStatus) {
-          context.read<ProfileBloc>().add(Initializing());
+        final status = state.formStatus;
+        if (state.user == null) {
+          //context.read<ProfileBloc>().add(Initializing(userID));
+        }
+        if (state.isCurrentUser) {
+          isMe = true;
         }
       },
       child: BlocBuilder<ProfileBloc, ProfileState>(
-        buildWhen: (previous, current) =>
-            previous.formStatus != current.formStatus,
         builder: (context, state) {
           return Scaffold(
             backgroundColor: Colors.white,
             appBar: (state.user != null)
-                ? getProfileAppBar(state.user!.userName ?? "")
+                ? getProfileAppBar(state.user?.userName ?? "")
                 : null,
             body: (state.user != null)
                 ? DefaultTabController(
@@ -54,14 +56,16 @@ class _ProfilePageState extends State<ProfilePage> {
                               [
                                 const SizedBox(height: 10),
                                 getUserHeader(
-                                    "assets/images/Kroni.jpg",
-                                    state.user!.numberOfpost ?? 0,
-                                    state.user!.numberFollower ?? 0,
-                                    state.user!.numberFollowee ?? 0),
+                                    state.user?.avataUrl ?? "",
+                                    state.user?.numberOfpost ?? 0,
+                                    state.user?.numberFollower ?? 0,
+                                    state.user?.numberFollowee ?? 0),
                                 getUserDescription(
-                                    state.user!.userRealName ?? "",
-                                    state.user!.description ?? ""),
-                                getEditProfileButton(size),
+                                    state.user?.userRealName ?? "",
+                                    state.user?.description ?? ""),
+                                isMe == true
+                                    ? getEditProfileButton()
+                                    : getFollowMessageButton()
                               ],
                             ),
                           ),
@@ -90,9 +94,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           Expanded(
                             child: TabBarView(
                               children: [
-                                // Gallery(),
                                 GalleryPage(),
-                                Center(child: Text("CDE")),
+                                Center(child: Text("Saved post")),
                               ],
                             ),
                           ),
@@ -109,18 +112,18 @@ class _ProfilePageState extends State<ProfilePage> {
 
   AppBar getProfileAppBar(String username) {
     return AppBar(
-      title: Text(
-        username,
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.w500,
-        ),
+      automaticallyImplyLeading: false,
+      elevation: 0,
+      title: AppBarTitle(
+        title: username,
       ),
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 5),
           child: IconButton(
-            onPressed: () => {},
+            onPressed: () {
+              getSheet(context);
+            },
             icon: const Icon(
               Icons.dehaze_rounded,
               size: 30,
@@ -132,11 +135,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Row getUserHeader(
-    String imagePath,
-    int postCount,
-    int followerCount,
-    int followingCount,
-  ) {
+      String imagePath, int postCount, int followerCount, int followingCount) {
     return Row(
       children: [
         //AVATAR
@@ -169,7 +168,8 @@ class _ProfilePageState extends State<ProfilePage> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-            image: AssetImage(imagePath),
+            image: AssetImage(
+                imagePath.isNotEmpty ? imagePath : "assets/images/Kroni.jpg"),
             fit: BoxFit.cover,
           ),
         ),
@@ -211,7 +211,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Padding getEditProfileButton(Size size) {
+  Padding getEditProfileButton() {
+    Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       child: OutlinedButton(
@@ -228,12 +229,121 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         onPressed: () {
           context
-              .read<NavigatorBloc>()
+              .read<AuthBloc>()
               .add(NavigateToPageEvent(AppRouter.editProfileScreen));
           //Navigator.of(context).pushNamed(AppRouter.editProfileScreen);
         },
         child: const Text("Edit Profile"),
       ),
+    );
+  }
+
+  Row getFollowMessageButton() {
+    Size size = MediaQuery.of(context).size;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            fixedSize: Size(size.width / 2.2, 35),
+            primary: Colors.white,
+            backgroundColor: Colors.black87,
+            side: const BorderSide(
+              width: 1,
+              color: bgGrey,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
+          ),
+          onPressed: () {
+            //TODO function follow ở đây
+          },
+          child: const Text("Follow"),
+        ),
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            fixedSize: Size(size.width / 2.2, 35),
+            primary: Colors.black,
+            side: const BorderSide(
+              width: 1,
+              color: bgGrey,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7),
+            ),
+          ),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const ConversationScreen(),
+              ),
+            );
+          },
+          child: const Text("Message"),
+        ),
+      ],
+    );
+  }
+
+  Future<dynamic> getSheet(BuildContext context) {
+    return showModalBottomSheet(
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
+      enableDrag: true,
+      context: context,
+      builder: (context) {
+        return Wrap(
+          direction: Axis.vertical,
+          children: [
+            const SizedBox(height: 10),
+            const SheetLine(),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ListTile(
+                leading: const Icon(
+                  Icons.photo_album_outlined,
+                  color: Colors.black87,
+                  size: 35,
+                ),
+                title: const Text(
+                  "Album",
+                  style: TextStyle(fontSize: 19),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AlbumScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ListTile(
+                leading: const Icon(
+                  Icons.logout_rounded,
+                  color: Colors.black87,
+                  size: 35,
+                ),
+                title: const Text(
+                  "Log out",
+                  style: TextStyle(fontSize: 19),
+                ),
+                onTap: () {
+                  context.read<AuthBloc>().add(LogoutEvent());
+                },
+              ),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+          ],
+        );
+      },
     );
   }
 }

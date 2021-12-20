@@ -4,7 +4,7 @@ import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
-import 'package:imagecaptioning/src/controller/navigator/navigator_bloc.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
@@ -30,14 +30,14 @@ class LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         final status = state.formStatus;
         if (status is FormSubmissionSuccess) {
-          Navigator.of(context).pushNamed(AppRouter.rootScreen);
+          context.read<AuthBloc>().add(AuthenticateEvent());
         } else if (status is FormSubmissionFailed) {
           String errorMessage = getErrorMessage(status.exception.toString());
           print(errorMessage);
           if (errorMessage ==
               MessageCode.errorMap[MessageCode.userAccountInActivated]) {
             context
-                .read<NavigatorBloc>()
+                .read<AuthBloc>()
                 .add(NavigateToPageEvent(AppRouter.verificationScreen));
             //Navigator.of(context).pushNamed(AppRouter.verificationScreen);
           }
@@ -85,7 +85,7 @@ class LoginScreenState extends State<LoginScreen> {
       child: TextButton(
         onPressed: () {
           context
-              .read<NavigatorBloc>()
+              .read<AuthBloc>()
               .add(NavigateToPageEvent(AppRouter.forgotPasswordScreen));
           //Navigator.of(context).pushNamed(AppRouter.forgotPasswordScreen);
         },
@@ -113,7 +113,7 @@ class LoginScreenState extends State<LoginScreen> {
       child: TextButton(
         onPressed: () {
           context
-              .read<NavigatorBloc>()
+              .read<AuthBloc>()
               .add(NavigateToPageEvent(AppRouter.registrationScreen));
           //Navigator.of(context).pushNamed(AppRouter.registrationScreen);
         },
@@ -172,31 +172,25 @@ class LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 30,
             ),
-            BlocBuilder<LoginBloc, LoginState>(
-              buildWhen: (previous, current) =>
-                  previous.formStatus != current.formStatus,
-              builder: (context, state) {
-                return TextButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      context.read<LoginBloc>().add(LoginSubmitted(
-                          _usernameController.text, _passwordController.text));
-                    }
-                  },
-                  style: TextButton.styleFrom(
-                      fixedSize: Size(size.width * .94, 55),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      backgroundColor: Colors.black87,
-                      alignment: Alignment.center,
-                      primary: Colors.white,
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20)),
-                  child: const Text(
-                    "Login",
-                  ),
-                );
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  context.read<LoginBloc>().add(LoginSubmitted(
+                      _usernameController.text, _passwordController.text));
+                }
               },
+              style: TextButton.styleFrom(
+                  fixedSize: Size(size.width * .94, 55),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  backgroundColor: Colors.black87,
+                  alignment: Alignment.center,
+                  primary: Colors.white,
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20)),
+              child: const Text(
+                "Login",
+              ),
             ),
           ],
         ),

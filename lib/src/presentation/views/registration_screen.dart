@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/navigator/navigator_bloc.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
@@ -36,7 +36,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           String errorMessage = getErrorMessage(status.exception.toString());
         } else if (state.formStatus is FormSubmissionSuccess) {
           context
-              .read<NavigatorBloc>()
+              .read<AuthBloc>()
               .add(NavigateToPageEvent(AppRouter.verificationScreen));
           //Navigator.of(context).pushNamed(AppRouter.verificationScreen);
         }
@@ -83,7 +83,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       child: TextButton(
         onPressed: () {
           context
-              .read<NavigatorBloc>()
+              .read<AuthBloc>()
               .add(NavigateToPageEvent(AppRouter.loginScreen));
           //Navigator.of(context).pushNamed(AppRouter.loginScreen);
         },
@@ -160,33 +160,28 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(
               height: 30.h,
             ),
-            BlocBuilder<RegistrationBloc, RegistrationState>(
-              buildWhen: (previous, current) =>
-                  previous.formStatus != current.formStatus,
-              builder: (context, state) {
-                return TextButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      context.read<RegistrationBloc>().add(
-                          RegistrationSubmitted(_usernameController.text,
-                              _passwordController.text, _emailController.text));
-                    }
-                  },
-                  style: TextButton.styleFrom(
-                      fixedSize: Size(size.width * .94, 55),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      backgroundColor: Colors.black87,
-                      alignment: Alignment.center,
-                      primary: Colors.white,
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20)),
-                  child: const Text(
-                    "Register",
-                  ),
-                );
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  context.read<RegistrationBloc>().add(RegistrationSubmitted(
+                      _usernameController.text,
+                      _passwordController.text,
+                      _emailController.text));
+                }
               },
-            ),
+              style: TextButton.styleFrom(
+                  fixedSize: Size(size.width * .94, 55),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  backgroundColor: Colors.black87,
+                  alignment: Alignment.center,
+                  primary: Colors.white,
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20)),
+              child: const Text(
+                "Register",
+              ),
+            )
           ],
         ),
       ),

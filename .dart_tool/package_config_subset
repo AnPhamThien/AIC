@@ -214,6 +214,10 @@ matcher
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/matcher-0.12.10/
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/matcher-0.12.10/lib/
+material_floating_search_bar
+2.12
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/material_floating_search_bar-0.3.6/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/material_floating_search_bar-0.3.6/lib/
 meta
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/meta-1.7.0/
@@ -283,9 +287,9 @@ pub_semver
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/pub_semver-2.1.0/
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/pub_semver-2.1.0/lib/
 pubspec_parse
-2.12
-file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/pubspec_parse-1.1.0/
-file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/pubspec_parse-1.1.0/lib/
+2.14
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/pubspec_parse-1.2.0/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/pubspec_parse-1.2.0/lib/
 quiver
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/quiver-3.0.1+1/
@@ -300,8 +304,8 @@ file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.o
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/retrofit_generator-2.2.0/lib/
 shared_preferences
 2.14
-file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-2.0.9/
-file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-2.0.9/lib/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-2.0.11/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences-2.0.11/lib/
 shared_preferences_android
 2.14
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/shared_preferences_android-2.0.9/

@@ -112,7 +112,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   AppBar getAppBar(String img, name, username) {
     return AppBar(
-      centerTitle: false,
       titleSpacing: 0,
       elevation: 0,
       title: ListTile(

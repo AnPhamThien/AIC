@@ -41,4 +41,17 @@ abstract class RestClient {
     @Query('user_id') String userID,
     @Query('limitpost') int limitPost,
   );
+
+  @POST('/users/refreshtoken')
+  Future<Response> refreshJwtToken(@Field('JwtToken') String token,
+      @Field('RefreshToken') String refreshToken);
+
+  @POST('/users/updateuserprofile')
+  Future<Map<String, dynamic>> updateUserProfile(
+      @Field('user_name') String username,
+      @Field('user_email') String email,
+      @Field('phone') String phone,
+      @Field('description') String desc,
+      @Field('user_real_name') String userRealName,
+      @Field('avatar_img') String avatarImg);
 }

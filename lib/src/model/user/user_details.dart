@@ -33,7 +33,7 @@ class GetUserDetailsResponseMessage {
       GetUserDetailsResponseMessage(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: UserDetails.fromJson(json["data"]),
+        data: json["data"] == null ? null : UserDetails.fromJson(json["data"]),
         totalLike: json["totalLike"],
         totalComment: json["totalComment"],
         total: json["total"],

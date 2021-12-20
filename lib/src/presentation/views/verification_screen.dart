@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/navigator/navigator_bloc.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
@@ -54,7 +54,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 TextButton(
                   onPressed: () {
                     context
-                        .read<NavigatorBloc>()
+                        .read<AuthBloc>()
                         .add(NavigateToPageEvent(AppRouter.loginScreen));
                     //Navigator.of(context).pushNamed(AppRouter.loginScreen);
                   },
@@ -110,7 +110,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
       child: TextButton(
         onPressed: () {
           context
-              .read<NavigatorBloc>()
+              .read<AuthBloc>()
               .add(NavigateToPageEvent(AppRouter.loginScreen));
           //Navigator.of(context).pushNamed(AppRouter.loginScreen);
         },
@@ -180,59 +180,83 @@ class _VerificationScreenState extends State<VerificationScreen> {
             height: 20.h,
           ),
           //verify button
-          BlocBuilder<VerificationBloc, VerificationState>(
-            builder: (context, state) {
-              return TextButton(
-                onPressed: () {
-                  _formFieldKey.currentState!.validate()
-                      ? context.read<VerificationBloc>().add(
-                          VerificationSubmitted(_codeController.value.text))
-                      : "Must not be empty"; //TODO: show error message
-                },
-                style: TextButton.styleFrom(
-                    fixedSize: Size(size.width * .94, 55),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    backgroundColor: Colors.black87,
-                    alignment: Alignment.center,
-                    primary: Colors.white,
-                    textStyle: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 20)),
-                child: const Text(
-                  "Verify",
-                ),
-              );
-            },
+          TextButton(
+            onPressed: () => showDialog<String>(
+              context: context,
+              builder: (BuildContext context) => AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15)),
+                actionsAlignment: MainAxisAlignment.center,
+                title: const Text('Congratulation !',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 25,
+                        color: Colors.black87,
+                        letterSpacing: 1.25,
+                        fontWeight: FontWeight.w500)),
+                content: const Text('Your account has been verified',
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w600)),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      _formFieldKey.currentState!.validate()
+                          ? context
+                              .read<VerificationBloc>()
+                              .add(VerificationSubmitted(_codeController.text))
+                          : "Must not be empty";
+                    },
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(color: Colors.black87, fontSize: 20),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            style: TextButton.styleFrom(
+                fixedSize: Size(size.width * .94, 55),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+                backgroundColor: Colors.black87,
+                alignment: Alignment.center,
+                primary: Colors.white,
+                textStyle:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+            child: const Text(
+              "Verify",
+            ),
           ),
           SizedBox(
             height: 15.h,
           ),
           //Resend button
-          AbsorbPointer(
-            absorbing: false,
-            child: BlocBuilder<VerificationBloc, VerificationState>(
-              builder: (context, state) {
-                return TextButton(
-                  onPressed: () {
-                    context
-                        .read<VerificationBloc>()
-                        .add(const VerificationResendButtonPushed());
-                  },
-                  style: TextButton.styleFrom(
-                      fixedSize: Size(size.width * .94, 55),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      backgroundColor: Colors.grey.shade200,
-                      alignment: Alignment.center,
-                      primary: Colors.black87,
-                      textStyle: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 20)),
-                  child: const Text(
-                    "Resend code",
-                  ),
-                );
-              },
-            ),
+          BlocBuilder<VerificationBloc, VerificationState>(
+            builder: (context, state) {
+              return AbsorbPointer(
+                  absorbing: state.absorbing,
+                  child: TextButton(
+                    onPressed: () {
+                      context
+                          .read<VerificationBloc>()
+                          .add(const VerificationResendButtonPushed());
+                    },
+                    style: TextButton.styleFrom(
+                        fixedSize: Size(size.width * .94, 55),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        backgroundColor: Colors.grey.shade200,
+                        alignment: Alignment.center,
+                        primary: Colors.black87,
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20)),
+                    child: const Text(
+                      "Resend code",
+                    ),
+                  ));
+            },
           )
         ],
       ),

@@ -118,6 +118,45 @@ class _RestClient implements RestClient {
     return value;
   }
 
+  @override
+  Future<Response> refreshJwtToken(token, refreshToken) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'JwtToken': token, 'RefreshToken': refreshToken};
+    Response _result = await _dio.fetch<String>(_setStreamType<String>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/users/refreshtoken',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+
+    return _result;
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateUserProfile(
+      username, email, phone, desc, userRealName, avatarImg) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'user_name': username,
+      'user_email': email,
+      'phone': phone,
+      'description': desc,
+      'user_real_name': userRealName,
+      'avatar_img': avatarImg
+    };
+    Response _result = await _dio.fetch<String>(_setStreamType<String>(
+        Options(method: 'POST', headers: _headers, extra: _extra)
+            .compose(_dio.options, '/users/updateuserprofile',
+                queryParameters: queryParameters, data: _data)
+            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+
+    Map<String, dynamic> value = json.decode(_result.data);
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

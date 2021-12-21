@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -55,12 +54,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
       child: TextButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-          );
+          Navigator.of(context).pushNamed(AppRouter.loginScreen);
         },
         child: RichText(
           text: const TextSpan(
@@ -105,12 +99,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           ),
           TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const EmailConfirmationScreen(),
-                ),
-              );
+              Navigator.of(context).pushNamed(AppRouter.emailConfirmScreen);
             },
             style: TextButton.styleFrom(
                 fixedSize: Size(size.width * .94, 55),

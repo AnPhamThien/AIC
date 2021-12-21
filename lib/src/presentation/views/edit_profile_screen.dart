@@ -1,7 +1,14 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -142,7 +149,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Padding getUserDetail(
     String label,
     String value,
-    String Function(String?)? function,
+    String? Function(String?)? function,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -168,28 +175,88 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return AppBar(
       titleSpacing: 0,
       elevation: 0,
-      leading: IconButton(
-        icon: const Icon(
-          Icons.clear_rounded,
-          size: 35,
-        ),
-        onPressed: () {
-          Navigator.pop(context);
+      leading: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          return IconButton(
+            icon: const Icon(
+              Icons.clear_rounded,
+              size: 35,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          );
         },
       ),
       title: const AppBarTitle(title: "Edit Profile"),
       actions: [
-        IconButton(
-          onPressed: () {
-            Navigator.pop(context);
+        BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            return IconButton(
+              onPressed: () {
+                //context.read<ProfileBloc>().add(SaveProfileChanges(username: ,email: , phone: , desc: , userRealName: , avatar: ));
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.done_rounded,
+                size: 35,
+                color: Colors.lightBlue,
+              ),
+            );
           },
-          icon: const Icon(
-            Icons.done_rounded,
-            size: 35,
-            color: Colors.lightBlue,
-          ),
         )
       ],
     );
+  }
+
+  void _showImageSourceActionSheet(BuildContext context) {
+    selectImageSource(ImageSource imageSource) =>
+        {context.read<ProfileBloc>().add(OpenImagePicker(imageSource))};
+
+    if (Platform.isIOS) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (context) => CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+              child: const Text('Camera'),
+              onPressed: () {
+                Navigator.pop(context);
+                selectImageSource(ImageSource.camera);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: const Text('Gallery'),
+              onPressed: () {
+                Navigator.pop(context);
+                selectImageSource(ImageSource.gallery);
+              },
+            )
+          ],
+        ),
+      );
+    } else {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => Wrap(children: [
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text('Camera'),
+            onTap: () {
+              Navigator.pop(context);
+              selectImageSource(ImageSource.camera);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_album),
+            title: const Text('Gallery'),
+            onTap: () {
+              Navigator.pop(context);
+              selectImageSource(ImageSource.gallery);
+            },
+          ),
+        ]),
+      );
+    }
   }
 }

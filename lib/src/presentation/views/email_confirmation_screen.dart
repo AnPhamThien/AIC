@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
@@ -56,12 +57,7 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
       ),
       child: TextButton(
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const LoginScreen(),
-            ),
-          );
+          Navigator.of(context).pushNamed(AppRouter.loginScreen);
         },
         child: RichText(
           text: const TextSpan(
@@ -128,12 +124,7 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
           //verify button
           TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ResetPasswordScreen(),
-                ),
-              );
+              Navigator.of(context).pushNamed(AppRouter.resetPasswordScreen);
             },
             style: TextButton.styleFrom(
                 fixedSize: Size(size.width * .94, 55),

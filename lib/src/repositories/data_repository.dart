@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constanct/configs.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
@@ -18,26 +19,7 @@ class DataRepository implements RestClient {
       requestBody: true,
       responseBody: true,
     ));
-    _dio.interceptors.add(InterceptorsWrapper(
-        onRequest: (options, handler) => handler.next(options),
-        onResponse: (response, handler) => handler.next(response),
-        onError: (error, handler) async {
-          if (error.response != null) {
-            if (error.response!.statusCode == 401) {
-              String token = getIt<AppPref>().getToken;
-              String refreshToken = getIt<AppPref>().getRefreshToken;
 
-              Response? response = await refreshJwtToken(token, refreshToken);
-              Map<String, dynamic> value = json.decode(response.data);
-              getIt<AppPref>().setToken(value['data']);
-
-              setJwtInHeader();
-              handler.resolve(response);
-            } else {
-              handler.next(error);
-            }
-          }
-        }));
     setJwtInHeader();
     _client = RestClient(_dio, baseUrl: appBaseUrl);
   }
@@ -91,5 +73,10 @@ class DataRepository implements RestClient {
       String phone, String desc, String userRealName, String avatarImg) {
     return _client.updateUserProfile(
         username, email, phone, desc, userRealName, avatarImg);
+  }
+
+  @override
+  Future<PostListRespone> getPost(int postPerPerson, int limitDay) {
+    return _client.getPost(postPerPerson, limitDay);
   }
 }

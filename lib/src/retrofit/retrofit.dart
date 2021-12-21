@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/constanct/configs.dart';
+import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:retrofit/retrofit.dart';
@@ -54,4 +55,10 @@ abstract class RestClient {
       @Field('description') String desc,
       @Field('user_real_name') String userRealName,
       @Field('avatar_img') String avatarImg);
+
+  @GET('/posts/getpostver2')
+  Future<PostListRespone> getPost(
+    @Query('postPerPerson') int postPerPerson,
+    @Query('limitDay') int limitDay,
+  );
 }

@@ -8,6 +8,7 @@ import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart'
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
+import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   List<Post> postList = Post.getPostList();
   @override
   Widget build(BuildContext context) {
+    PostRepository().getPost(1, 100);
     return Scaffold(
       backgroundColor: bgApp,
       appBar: getAppBar(),

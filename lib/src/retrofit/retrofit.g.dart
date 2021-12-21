@@ -169,4 +169,23 @@ class _RestClient implements RestClient {
     }
     return requestOptions;
   }
+
+  @override
+  Future<PostListRespone> getPost(postPerPerson, limitDay) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'postPerPerson': postPerPerson,
+      r'limitDay': limitDay
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<PostListRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/getpostver2',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = PostListRespone.fromJson(_result.data!);
+    return value;
+  }
 }

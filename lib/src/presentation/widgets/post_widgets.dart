@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imagecaptioning/src/data_local/markup_model.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
 
@@ -29,18 +30,18 @@ class _PostWidgetState extends State<PostWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PostHeadlineWidget(
-                username: widget.post.postUsername,
-                time: widget.post.postTime,
-                avatar: widget.post.postAvatar,
+                username: widget.post.userName ?? "",
+                time: 5, //widget.post.dateCreate ,
+                avatar: widget.post.avataUrl ?? "",
               ),
-              PostImgWidget(image: widget.post.postImage),
+              PostImgWidget(image: widget.post.imageUrl ?? ""),
               const PostIconWidget(),
               GestureDetector(
                 child: PostDescription(
-                  username: widget.post.postUsername,
-                  caption: widget.post.postCaption,
-                  likeCount: widget.post.postLikeCount,
-                  commentCount: widget.post.postCommentCount,
+                  username: widget.post.userName ?? "",
+                  caption: widget.post.aiCaption ?? "",
+                  likeCount: widget.post.likecount ?? 1,
+                  commentCount: widget.post.likecount ?? 1,
                 ),
                 onTap: () {
                   Navigator.push(

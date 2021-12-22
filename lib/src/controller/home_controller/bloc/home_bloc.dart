@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
+import 'package:imagecaptioning/src/model/post/data.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
@@ -14,6 +19,9 @@ part 'home_state.dart';
 //   };
 // }
 
+const _postPerPerson = 10;
+const _postDate = 100;
+
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc(this._postRepository) : super(const HomeState()) {
     on<HomeEvent>((event, emit) {
@@ -25,22 +33,26 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _onPostFetched(
       PostFetched event, Emitter<HomeState> emit) async {
+    log("Vo day 36");
     if (state.hasReachedMax) return;
     try {
       if (state.status == HomeStatus.initial) {
-        final data = await _postRepository.getPost(10, 100);
+        log("Vo day 40");
+        final Data? data =
+            await _postRepository.getPost(_postPerPerson, _postDate);
+            log("Vo day 43");
         return emit(state.copyWith(
           status: HomeStatus.success,
-          posts: data?.posts,
+          postsList: data?.posts ?? [],
           hasReachedMax: false,
         ));
       }
-      // final posts = await _fetchPosts(state.posts.length);
-      // emit(posts.isEmpty
+      // final posts = await _postRepository.getPost(10, 100);
+      // emit(posts!.posts.isEmpty
       //     ? state.copyWith(hasReachedMax: true)
       //     : state.copyWith(
-      //         status: PostStatus.success,
-      //         posts: List.of(state.posts)..addAll(posts),
+      //         status: HomeStatus.success,
+      //         posts: List.of(state.posts)..addAll(posts.posts),
       //         hasReachedMax: false,
       //       ));
     } catch (_) {

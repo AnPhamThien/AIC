@@ -10,7 +10,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/presentation/views/upload_page.dart';
 
 /// viet hoa va cac chuoi
-///
 String uppercaseAndTrim(String a) {
   return a.replaceAll(' ', '').toUpperCase();
 }
@@ -72,4 +71,12 @@ Future pickImage(ImageSource source, BuildContext context) async {
   } on PlatformException catch (e) {
     log('Failed to pick image: $e');
   }
+}
+
+// scroll controller
+bool isScrollEnd(ScrollController scrollController) {
+  if (!scrollController.hasClients) return false;
+  final maxScroll = scrollController.position.maxScrollExtent;
+  final currentScroll = scrollController.offset;
+  return currentScroll >= (maxScroll * 0.9);
 }

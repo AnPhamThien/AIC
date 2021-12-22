@@ -1,5 +1,3 @@
-
-
 class User {
   //TODO mốt bỏ cái này nè
   final String img;
@@ -100,63 +98,63 @@ class Contest {
   }
 }
 
-class Post {
-  final String postAvatar;
-  final String postUsername;
-  final int postTime;
-  final String postImage;
-  final int postLikeCount;
-  final int postCommentCount;
-  final String postCaption;
+// class Post {
+//   final String postAvatar;
+//   final String postUsername;
+//   final int postTime;
+//   final String postImage;
+//   final int postLikeCount;
+//   final int postCommentCount;
+//   final String postCaption;
 
-  Post(this.postAvatar, this.postUsername, this.postTime, this.postImage,
-      this.postLikeCount, this.postCommentCount, this.postCaption);
+//   Post(this.postAvatar, this.postUsername, this.postTime, this.postImage,
+//       this.postLikeCount, this.postCommentCount, this.postCaption);
 
-  static List<Post> getPostList() {
-    return [
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "WTF?"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15,
-          "assets/images/Gumba.jpg", 2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-      Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
-          2109, 170, "Help, I'm Tired !"),
-    ];
-  }
-}
+//   static List<Post> getPostList() {
+//     return [
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "WTF?"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15,
+//           "assets/images/Gumba.jpg", 2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//       Post("assets/images/Kroni.jpg", "thieen_aan", 15, "assets/images/WTF.jpg",
+//           2109, 170, "Help, I'm Tired !"),
+//     ];
+//   }
+// }
 
 class Album {
   final String albumName;

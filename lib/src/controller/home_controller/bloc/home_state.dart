@@ -5,31 +5,31 @@ enum HomeStatus { initial, success, failure }
 class HomeState extends Equatable {
   const HomeState({
     this.status = HomeStatus.initial,
-    this.posts = const <Post>[],
+    this.postsList = const <Post>[],
     this.hasReachedMax = false,
   });
 
   final HomeStatus status;
-  final List<Post> posts;
+  final List<Post> postsList;
   final bool hasReachedMax;
 
   HomeState copyWith({
     HomeStatus? status,
-    List<Post>? posts,
+    List<Post>? postsList,
     bool? hasReachedMax,
   }) {
     return HomeState(
       status: status ?? this.status,
-      posts: posts ?? this.posts,
+      postsList: postsList ?? this.postsList,
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
     );
   }
 
   @override
   String toString() {
-    return '''PostState { status: $status, hasReachedMax: $hasReachedMax, posts: ${posts.length} }''';
+    return '''PostState { status: $status, hasReachedMax: $hasReachedMax, posts: ${postsList.length} }''';
   }
 
   @override
-  List<Object> get props => [status, posts, hasReachedMax];
+  List<Object> get props => [status, postsList, hasReachedMax];
 }

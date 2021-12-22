@@ -21,7 +21,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    bool isMe = true;
+    bool isMe = false;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: getProfileAppBar("thieen_aan"),

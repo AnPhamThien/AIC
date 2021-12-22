@@ -1,8 +1,10 @@
-import 'dart:ui';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:imagecaptioning/src/data_local/markup_model.dart';
+import 'package:imagecaptioning/src/controller/home_controller/bloc/home_bloc.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
@@ -18,28 +20,52 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Post> postList = Post.getPostList();
+  //final List<Post> postList = Post.getPostList();
   @override
   Widget build(BuildContext context) {
-    PostRepository().getPost(1, 100);
     return Scaffold(
       backgroundColor: bgApp,
       appBar: getAppBar(),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: SizedBox(
+        child: SizedBox(
             height: MediaQuery.of(context).size.height,
-            child: ListView.builder(
-              itemCount: postList.length,
-              itemBuilder: (_, index) {
-                final Post post = postList[index];
-                return PostWidget(
-                  post: post,
-                );
-              },
+            child: BlocProvider(
+              create: (_) => HomeBloc(PostRepository()),
+              child:
+                  BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
+                context.read<HomeBloc>().add(PostFetched());
+                log("ABC111");
+                switch (state.status) {
+                  case HomeStatus.failure:
+                    return const Center(child: Text('failed to fetch posts'));
+                  case HomeStatus.success:
+                    log("ABC");
+                    if (state.postsList.isEmpty) {
+                      return const Center(child: Text('no posts'));
+                    }
+                    return ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          final Post post = state.postsList[index];
+                          return PostWidget(post: post);
+                        },
+                        itemCount: state.postsList.length
+                        //controller: _scrollController,
+                        );
+                  default:
+                    return const Center(child: CircularProgressIndicator());
+                }
+              }),
+            )
+            // ListView.builder(
+            //   itemCount: postList.length,
+            //   itemBuilder: (_, index) {
+            //     final Post post = postList[index];
+            //     return PostWidget(
+            //       post: post,
+            //     );
+            //   },
+            // ),
             ),
-          ),
-        ),
       ),
     );
   }

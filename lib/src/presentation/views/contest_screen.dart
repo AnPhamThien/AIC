@@ -17,7 +17,7 @@ class ContestScreen extends StatefulWidget {
 }
 
 class _ContestScreenState extends State<ContestScreen> {
-  List<Post> postList = Post.getPostList();
+  //List<Post> postList = Post.getPostList();
   @override
   Widget build(BuildContext context) {
     Contest contest = widget.contest;
@@ -41,21 +41,21 @@ class _ContestScreenState extends State<ContestScreen> {
           )
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-            child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: ListView.builder(
-            itemCount: postList.length,
-            itemBuilder: (_, index) {
-              final Post post = postList[index];
-              return PostWidget(
-                post: post,
-              );
-            },
-          ),
-        )),
-      ),
+      // body: SafeArea(
+      //   child: SingleChildScrollView(
+      //       child: SizedBox(
+      //     height: MediaQuery.of(context).size.height,
+      //     child: ListView.builder(
+      //       itemCount: postList.length,
+      //       itemBuilder: (_, index) {
+      //         final Post post = postList[index];
+      //         return PostWidget(
+      //           post: post,
+      //         );
+      //       },
+      //     ),
+      //   )),
+      // ),
     );
   }
 

@@ -11,28 +11,25 @@ import 'package:stream_transform/stream_transform.dart';
 part 'home_event.dart';
 part 'home_state.dart';
 
-// const throttleDuration = Duration(milliseconds: 100);
+const throttleDuration = Duration(milliseconds: 100);
 
-// EventTransformer<E> throttleDroppable<E>(Duration duration) {
-//   return (events, mapper) {
-//     return droppable<E>().call(events.throttle(duration), mapper);
-//   };
-// }
+EventTransformer<E> throttleDroppable<E>(Duration duration) {
+  return (events, mapper) {
+    return droppable<E>().call(events.throttle(duration), mapper);
+  };
+}
 
-const _postPerPerson = 10;
+const _postPerPerson = 1;
 const _postDate = 100;
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  HomeBloc(this._postRepository) : super(const HomeState()) {
-    on<HomeEvent>((event, emit) {
-      on<PostFetched>(_onPostFetched);
-    });
+  HomeBloc() : super(const HomeState()) {
+    on<PostFetched>(_onPostFetched);
   }
 
-  final PostRepository _postRepository;
+  final PostRepository _postRepository = PostRepository();
 
-  Future<void> _onPostFetched(
-      PostFetched event, Emitter<HomeState> emit) async {
+  void _onPostFetched(PostFetched event, Emitter<HomeState> emit) async {
     log("Vo day 36");
     if (state.hasReachedMax) return;
     try {
@@ -40,19 +37,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         log("Vo day 40");
         final Data? data =
             await _postRepository.getPost(_postPerPerson, _postDate);
-            log("Vo day 43");
+        log("Vo day 43");
         return emit(state.copyWith(
           status: HomeStatus.success,
           postsList: data?.posts ?? [],
           hasReachedMax: false,
         ));
       }
-      // final posts = await _postRepository.getPost(10, 100);
+      // final posts = await _postRepository.getPost(1, 100);
       // emit(posts!.posts.isEmpty
       //     ? state.copyWith(hasReachedMax: true)
       //     : state.copyWith(
       //         status: HomeStatus.success,
-      //         posts: List.of(state.posts)..addAll(posts.posts),
+      //         postsList: List.of(state.postsList)..addAll(posts.posts),
       //         hasReachedMax: false,
       //       ));
     } catch (_) {

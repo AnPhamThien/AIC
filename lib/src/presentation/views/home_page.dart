@@ -10,7 +10,7 @@ import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart'
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
-import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -20,7 +20,29 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  //final List<Post> postList = Post.getPostList();
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    _scrollController.addListener(_onScroll);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (isScrollEnd(_scrollController)) {
+      log("Fetchmore");
+      context.read<HomeBloc>().add(PostFetched());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,33 +51,31 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: SizedBox(
             height: MediaQuery.of(context).size.height,
-            child: BlocProvider(
-              create: (_) => HomeBloc(PostRepository()),
-              child:
-                  BlocBuilder<HomeBloc, HomeState>(builder: (context, state) {
-                context.read<HomeBloc>().add(PostFetched());
-                log("ABC111");
-                switch (state.status) {
-                  case HomeStatus.failure:
-                    return const Center(child: Text('failed to fetch posts'));
-                  case HomeStatus.success:
-                    log("ABC");
-                    if (state.postsList.isEmpty) {
-                      return const Center(child: Text('no posts'));
-                    }
-                    return ListView.builder(
-                        itemBuilder: (BuildContext context, int index) {
-                          final Post post = state.postsList[index];
-                          return PostWidget(post: post);
-                        },
-                        itemCount: state.postsList.length
-                        //controller: _scrollController,
-                        );
-                  default:
-                    return const Center(child: CircularProgressIndicator());
-                }
-              }),
-            )
+            child: BlocBuilder<HomeBloc, HomeState>(
+                // bloc: _homeBloc,
+                builder: (context, state) {
+              log("ABC111");
+              log(state.status.toString());
+              switch (state.status) {
+                case HomeStatus.failure:
+                  return const Center(child: Text('failed to fetch posts'));
+                case HomeStatus.success:
+                  log("ABC");
+                  if (state.postsList.isEmpty) {
+                    return const Center(child: Text('no posts'));
+                  }
+                  return ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      final Post post = state.postsList[index];
+                      return PostWidget(post: post);
+                    },
+                    itemCount: state.postsList.length,
+                    controller: _scrollController,
+                  );
+                default:
+                  return const Center(child: CircularProgressIndicator());
+              }
+            })
             // ListView.builder(
             //   itemCount: postList.length,
             //   itemBuilder: (_, index) {

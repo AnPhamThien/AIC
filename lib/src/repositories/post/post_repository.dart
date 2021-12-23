@@ -18,7 +18,6 @@ class PostRepository extends PostBehavior {
       final PostListRespone respone =
           await _dataRepository.getPost(postPerPerson, limitDay);
       final Data? data = respone.data;
-      print('object');
       return data;
     } catch (e) {
       //return null;

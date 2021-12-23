@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:imagecaptioning/src/data_local/markup_model.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
@@ -30,18 +30,17 @@ class _PostWidgetState extends State<PostWidget> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               PostHeadlineWidget(
-                username: widget.post.userName ?? "",
-                time: 5, //widget.post.dateCreate ,
-                avatar: widget.post.avataUrl ?? "",
-              ),
-              PostImgWidget(image: widget.post.imageUrl ?? ""),
+                  username: widget.post.userName ?? "",
+                  time: widget.post.dateCreate ?? DateTime.now(),
+                  avatar: avatarUrl + widget.post.avataUrl!),
+              PostImgWidget(image: postImageUrl + widget.post.imageUrl!),
               const PostIconWidget(),
               GestureDetector(
                 child: PostDescription(
                   username: widget.post.userName ?? "",
-                  caption: widget.post.aiCaption ?? "",
-                  likeCount: widget.post.likecount ?? 1,
-                  commentCount: widget.post.likecount ?? 1,
+                  caption:
+                      widget.post.userCaption ?? widget.post.aiCaption ?? "",
+                  likeCount: widget.post.likecount!,
                 ),
                 onTap: () {
                   Navigator.push(
@@ -70,11 +69,25 @@ class PostHeadlineWidget extends StatelessWidget {
   }) : super(key: key);
 
   final String username;
-  final int time;
+  final DateTime time;
   final String avatar;
 
   @override
   Widget build(BuildContext context) {
+    final hourCount = DateTime.now().difference(time).inHours;
+    String timeCount;
+    if (hourCount < 1) {
+      timeCount =
+          DateTime.now().difference(time).inMinutes.toString() + " mins";
+    } else if (hourCount < 24 && hourCount > 1) {
+      timeCount = hourCount.toString() + " hours";
+    } else if (hourCount > 24 && hourCount < 730) {
+      timeCount = DateTime.now().difference(time).inDays.toString() + " days";
+    } else {
+      timeCount =
+          (DateTime.now().difference(time).inDays / 30).round().toString() +
+              " months";
+    }
     return ListTile(
       leading: Container(
         width: 45,
@@ -86,7 +99,7 @@ class PostHeadlineWidget extends StatelessWidget {
         child: CircleAvatar(
           child: ClipOval(
             child: Image(
-              image: AssetImage(avatar),
+              image: NetworkImage(avatar),
               height: 45,
               width: 45,
               fit: BoxFit.cover,
@@ -98,7 +111,7 @@ class PostHeadlineWidget extends StatelessWidget {
         username,
         style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
       ),
-      subtitle: Text(time.toString() + " min"),
+      subtitle: Text(timeCount),
 
       ///options
       trailing: PopupMenuButton(
@@ -143,14 +156,14 @@ class PostImgWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 7),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
       child: AspectRatio(
         aspectRatio: 1,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
             image: DecorationImage(
-              image: AssetImage(image),
+              image: NetworkImage(image),
               fit: BoxFit.fill,
             ),
           ),
@@ -243,13 +256,11 @@ class PostDescription extends StatelessWidget {
   const PostDescription({
     Key? key,
     required this.likeCount,
-    required this.commentCount,
     required this.username,
     required this.caption,
   }) : super(key: key);
 
   final int likeCount;
-  final int commentCount;
   final String username;
   final String caption;
 
@@ -285,11 +296,11 @@ class PostDescription extends StatelessWidget {
             ),
           ),
           //COMMENTS
-          Padding(
-            padding: const EdgeInsets.only(top: 5),
+          const Padding(
+            padding: EdgeInsets.only(top: 5),
             child: Text(
-              "View all $commentCount comments",
-              style: const TextStyle(color: bgGrey),
+              "View comments",
+              style: TextStyle(color: bgGrey),
             ),
           ),
         ],

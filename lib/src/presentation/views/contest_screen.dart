@@ -4,7 +4,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/data_local/markup_model.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 
 class ContestScreen extends StatefulWidget {

@@ -98,10 +98,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   Icons.arrow_back_rounded,
                 ),
               ),
-              const Expanded(
+              Expanded(
                 child: PostHeadlineWidget(
                   username: "thieen_aan",
-                  time: 15,
+                  time: DateTime.now(),
                   avatar: "assets/images/Kroni.jpg",
                 ),
               ),

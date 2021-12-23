@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';

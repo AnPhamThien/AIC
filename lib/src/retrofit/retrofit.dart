@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart' hide Headers;
-import 'package:imagecaptioning/src/constanct/configs.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';

@@ -32,8 +32,8 @@ class _PostWidgetState extends State<PostWidget> {
               PostHeadlineWidget(
                   username: widget.post.userName ?? "",
                   time: widget.post.dateCreate ?? DateTime.now(),
-                  avatar: avatarUrl + widget.post.avataUrl!),
-              PostImgWidget(image: postImageUrl + widget.post.imageUrl!),
+                  postAvatar: widget.post.avataUrl ?? ""),
+              PostImgWidget(postImage: widget.post.imageUrl ?? ""),
               const PostIconWidget(),
               GestureDetector(
                 child: PostDescription(
@@ -65,12 +65,12 @@ class PostHeadlineWidget extends StatelessWidget {
     Key? key,
     required this.username,
     required this.time,
-    required this.avatar,
+    required this.postAvatar,
   }) : super(key: key);
 
   final String username;
   final DateTime time;
-  final String avatar;
+  final String postAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +99,10 @@ class PostHeadlineWidget extends StatelessWidget {
         child: CircleAvatar(
           child: ClipOval(
             child: Image(
-              image: NetworkImage(avatar),
+              image: postAvatar != ""
+                  ? NetworkImage(avatarUrl + postAvatar)
+                  : const AssetImage("assets/images/Kroni.jpg")
+                      as ImageProvider,
               height: 45,
               width: 45,
               fit: BoxFit.cover,
@@ -148,10 +151,10 @@ class PostHeadlineWidget extends StatelessWidget {
 class PostImgWidget extends StatelessWidget {
   const PostImgWidget({
     Key? key,
-    required this.image,
+    required this.postImage,
   }) : super(key: key);
 
-  final String image;
+  final String postImage;
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +166,10 @@ class PostImgWidget extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
             image: DecorationImage(
-              image: NetworkImage(image),
+              image: postImage != ""
+                  ? NetworkImage(postImageUrl + postImage)
+                  : const AssetImage("assets/images/Kroni.jpg")
+                      as ImageProvider,
               fit: BoxFit.fill,
             ),
           ),

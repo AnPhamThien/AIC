@@ -2,10 +2,10 @@ part of "profile_bloc.dart";
 
 abstract class ProfileEvent {}
 
-class Initializing extends ProfileEvent {
+class ProfileInitializing extends ProfileEvent {
   final String userID;
 
-  Initializing(this.userID);
+  ProfileInitializing(this.userID);
 }
 
 class ChangeAvatarRequest extends ProfileEvent {}

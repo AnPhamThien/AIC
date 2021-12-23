@@ -13,3 +13,5 @@ class NavigateToPageEvent extends AuthEvent {
 class AuthenticateEvent extends AuthEvent {}
 
 class LogoutEvent extends AuthEvent {}
+
+class ReconnectSignalREvent extends AuthEvent {}

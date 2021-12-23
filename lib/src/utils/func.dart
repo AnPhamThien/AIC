@@ -50,9 +50,10 @@ String _decodeBase64(String str) {
 }
 
 String getErrorMessage(String errorCode) {
+  String message = '';
   final errorMessage = errorCode.substring(errorCode.indexOf(': ') + 1).trim();
-  String message =
-      MessageCode.errorMap[errorMessage] ?? MessageCode.genericError;
+  message = MessageCode.errorMap[errorMessage] ?? MessageCode.genericError;
+
   return message;
 }
 

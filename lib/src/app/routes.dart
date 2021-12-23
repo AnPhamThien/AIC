@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
+import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart'
 import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
@@ -28,6 +30,7 @@ class AppRouter {
   static const String currentUserProfileScreen = '/profile';
   static const String otherUserProfileScreen = '/otherprofile';
   static const String editProfileScreen = '/editprofile';
+  static const String notificationScreen = '/notification';
 
   final ProfileBloc profileBloc = ProfileBloc(true);
 
@@ -77,6 +80,9 @@ class AppRouter {
           builder: (context) => MultiBlocProvider(
             providers: [
               //BlocProvider(create: (context) => ProfileBloc()),
+              BlocProvider(
+                  create: (context) =>
+                      NotificationBloc()..add(NotificationInitializing())),
               BlocProvider.value(value: profileBloc)
             ],
             child: const RootScreen(),
@@ -107,6 +113,13 @@ class AppRouter {
             child: const EditProfileScreen(),
           ),
         );
+      case notificationScreen:
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => NotificationBloc(),
+                  child: const NotificationPage(),
+                ));
+
       default:
         return null;
     }

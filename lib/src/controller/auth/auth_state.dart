@@ -1,17 +1,17 @@
 part of 'auth_bloc.dart';
 
 class AuthState {
-  const AuthState({
-    this.authStatus = const InitialAuthenticationStatus(),
-  });
+  const AuthState(
+      {this.authStatus = const InitialAuthenticationStatus(),
+      this.hubConnection});
 
   final AuthenticationStatus authStatus;
+  final HubConnection? hubConnection;
 
-  AuthState copyWith({
-    AuthenticationStatus? authStatus,
-  }) {
+  AuthState copyWith(
+      {AuthenticationStatus? authStatus, HubConnection? hubConnection}) {
     return AuthState(
-      authStatus: authStatus ?? this.authStatus,
-    );
+        authStatus: authStatus ?? this.authStatus,
+        hubConnection: hubConnection ?? this.hubConnection);
   }
 }

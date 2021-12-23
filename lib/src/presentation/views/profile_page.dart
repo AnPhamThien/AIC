@@ -21,62 +21,79 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+
     bool isMe = true;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: getProfileAppBar("thieen_aan"),
-      body: DefaultTabController(
-        length: 2,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, _) {
-            return [
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    const SizedBox(height: 10),
-                    getUserHeader("assets/images/Kroni.jpg", 1, 40, 130),
-                    getUserDescription("Thiên Ân",
-                        "Hello, DIO DA!\nWRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"),
-                    isMe == true
-                        ? getEditProfileButton()
-                        : getFollowMessageButton()
-                  ],
-                ),
-              ),
-            ];
-          },
-          body: Column(
-            children: const [
-              TabBar(
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                indicatorWeight: 1,
-                indicatorColor: Colors.black,
-                tabs: [
-                  Tab(
-                    icon: Icon(
-                      Icons.grid_on_rounded,
+    String userID = args?['userID'] ?? '';
+
+    if (userID.isEmpty) {
+      isMe = false;
+    }
+    context.read<ProfileBloc>().add(ProfileInitializing(userID));
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: getProfileAppBar(state.user?.userName ?? ''),
+          body: DefaultTabController(
+            length: 2,
+            child: NestedScrollView(
+              headerSliverBuilder: (context, _) {
+                return [
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        const SizedBox(height: 10),
+                        getUserHeader(
+                            "assets/images/Kroni.jpg",
+                            state.user?.numberOfpost ?? 0,
+                            state.user?.numberFollower ?? 0,
+                            state.user?.numberFollowee ?? 0),
+                        getUserDescription(state.user?.userRealName ?? '',
+                            state.user?.description ?? ''),
+                        isMe == true
+                            ? getEditProfileButton()
+                            : getFollowMessageButton()
+                      ],
                     ),
                   ),
-                  Tab(
-                    icon: Icon(
-                      Icons.save_alt_rounded,
+                ];
+              },
+              body: Column(
+                children: const [
+                  TabBar(
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey,
+                    indicatorWeight: 1,
+                    indicatorColor: Colors.black,
+                    tabs: [
+                      Tab(
+                        icon: Icon(
+                          Icons.grid_on_rounded,
+                        ),
+                      ),
+                      Tab(
+                        icon: Icon(
+                          Icons.save_alt_rounded,
+                        ),
+                      )
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        GalleryPage(),
+                        Center(child: Text("Saved post")),
+                      ],
                     ),
-                  )
+                  ),
                 ],
               ),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    GalleryPage(),
-                    Center(child: Text("Saved post")),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 

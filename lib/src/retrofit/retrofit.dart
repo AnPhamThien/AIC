@@ -1,7 +1,7 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/constanct/configs.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:retrofit/retrofit.dart';
@@ -43,7 +43,8 @@ abstract class RestClient {
   );
 
   @POST('/users/refreshtoken')
-  Future<Response> refreshJwtToken(@Field('JwtToken') String token,
+  Future<Response<Map<String, dynamic>>> refreshJwtToken(
+      @Field('JwtToken') String token,
       @Field('RefreshToken') String refreshToken);
 
   @POST('/users/updateuserprofile')
@@ -54,4 +55,15 @@ abstract class RestClient {
       @Field('description') String desc,
       @Field('user_real_name') String userRealName,
       @Field('avatar_img') String avatarImg);
+
+  @GET('/notifications/getnotification')
+  Future<GetNotificationResponseMessage> getNotification(
+    @Query('limitNotification') int limit,
+  );
+
+  @GET('/notifications/getmorenotification')
+  Future<GetNotificationResponseMessage> getMoreNotification(
+    @Query('limitNotification') int limit,
+    @Query('dateBoundary') String dateBoundary,
+  );
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
@@ -9,6 +11,7 @@ import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/search_screen.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:signalr_core/signalr_core.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -22,15 +25,24 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Theme(
-        child: getBody(),
-        data: Theme.of(context).copyWith(
-          dividerTheme:
-              const DividerThemeData(color: Colors.grey, thickness: 0.65),
+    return BlocListener<AuthBloc, AuthState>(
+      listenWhen: (previous, current) =>
+          previous.hubConnection?.state != current.hubConnection?.state,
+      listener: (context, state) {
+        if (state.hubConnection == null) {
+          context.read<AuthBloc>().add(ReconnectSignalREvent());
+        }
+      },
+      child: Scaffold(
+        body: Theme(
+          child: getBody(),
+          data: Theme.of(context).copyWith(
+            dividerTheme:
+                const DividerThemeData(color: Colors.grey, thickness: 0.65),
+          ),
         ),
+        bottomNavigationBar: getBottomNavigationBar(),
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
     );
   }
 

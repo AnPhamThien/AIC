@@ -181,41 +181,11 @@ class _VerificationScreenState extends State<VerificationScreen> {
           ),
           //verify button
           TextButton(
-            onPressed: () => showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-                actionsAlignment: MainAxisAlignment.center,
-                title: const Text('Congratulation !',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.black87,
-                        letterSpacing: 1.25,
-                        fontWeight: FontWeight.w500)),
-                content: const Text('Your account has been verified',
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w600)),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      _formFieldKey.currentState!.validate()
-                          ? context
-                              .read<VerificationBloc>()
-                              .add(VerificationSubmitted(_codeController.text))
-                          : "Must not be empty";
-                    },
-                    child: const Text(
-                      'OK',
-                      style: TextStyle(color: Colors.black87, fontSize: 20),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            onPressed: () => _formFieldKey.currentState!.validate()
+                ? context
+                    .read<VerificationBloc>()
+                    .add(VerificationSubmitted(_codeController.text))
+                : "Must not be empty",
             style: TextButton.styleFrom(
                 fixedSize: Size(size.width * .94, 55),
                 shape: RoundedRectangleBorder(

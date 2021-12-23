@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
@@ -80,7 +78,7 @@ class UserRepository extends UserBehavior {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
-          Map<String, dynamic> resMessage = json.decode(e.response!.data);
+          Map<String, dynamic> resMessage = e.response!.data;
           final response = resMessage['messageCode'];
           return response;
         }
@@ -100,7 +98,7 @@ class UserRepository extends UserBehavior {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
-          Map<String, dynamic> resMessage = json.decode(e.response!.data);
+          Map<String, dynamic> resMessage = e.response!.data;
           final response = resMessage['messageCode'];
           return response;
         }
@@ -137,7 +135,7 @@ class UserRepository extends UserBehavior {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
-          Map<String, dynamic> resMessage = json.decode(e.response!.data);
+          Map<String, dynamic> resMessage = e.response!.data;
           final response = resMessage['messageCode'];
           return response;
         }
@@ -163,7 +161,7 @@ class UserRepository extends UserBehavior {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
-          Map<String, dynamic> resMessage = json.decode(e.response!.data);
+          Map<String, dynamic> resMessage = e.response!.data;
           final response = resMessage['messageCode'];
           return response;
         }

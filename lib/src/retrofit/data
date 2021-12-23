@@ -53,51 +53,51 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<dynamic> activateAccount(code, userID) async {
+  Future<Map<String, dynamic>> activateAccount(code, userID) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'code': code, 'user_id': userID};
-    Response _result = await _dio.fetch<String>(_setStreamType<String>(
-        Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/users/activationaccount',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    Map<String, dynamic> map = json.decode(_result.data);
-    final value = map["messageCode"] ?? map["statusCode"];
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Map<String, dynamic>>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/activationaccount',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    Map<String, dynamic> value = _result.data!;
     return value;
   }
 
   @override
-  Future<dynamic> regenerateCodeForRegister(userID) async {
+  Future<Map<String, dynamic>> regenerateCodeForRegister(userID) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'userID': userID};
-    Response _result = await _dio.fetch<String>(_setStreamType<String>(
-        Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/users/regeneratecodeforregisaccount',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    Map<String, dynamic> map = json.decode(_result.data);
-    final value = map["messageCode"] ?? map["statusCode"];
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Map<String, dynamic>>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/regeneratecodeforregisaccount',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    Map<String, dynamic> value = _result.data!;
     return value;
   }
 
   @override
-  Future<dynamic> regenerateResetPasswordCode(email) async {
+  Future<Map<String, dynamic>> regenerateResetPasswordCode(email) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'user_email': email};
-    Response _result = await _dio.fetch<String>(_setStreamType<String>(
-        Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/users/generateresetpasswordcode',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Map<String, dynamic>>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/generateresetpasswordcode',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
 
-    Map<String, dynamic> map = json.decode(_result.data);
-    final value = map["messageCode"] ?? map["data"] ?? map["statusCode"];
+    Map<String, dynamic> value = _result.data!;
     return value;
   }
 
@@ -120,6 +120,49 @@ class _RestClient implements RestClient {
     final value = GetUserDetailsResponseMessage.fromJson(_result.data!);
     return value;
   }
+
+  @override
+  Future<Response<Map<String, dynamic>>> refreshJwtToken(
+      token, refreshToken) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'JwtToken': token, 'RefreshToken': refreshToken};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Map<String, dynamic>>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/refreshtoken',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+
+    return _result;
+  }
+
+  @override
+  Future<Map<String, dynamic>> updateUserProfile(
+      username, email, phone, desc, userRealName, avatarImg) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {
+      'user_name': username,
+      'user_email': email,
+      'phone': phone,
+      'description': desc,
+      'user_real_name': userRealName,
+      'avatar_img': avatarImg
+    };
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Map<String, dynamic>>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/updateuserprofile',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+
+    Map<String, dynamic> value = _result.data!;
+    return value;
+  }
+  
 
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&

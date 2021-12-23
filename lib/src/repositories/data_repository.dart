@@ -1,8 +1,10 @@
-import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constanct/configs.dart';
+import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
@@ -23,16 +25,24 @@ class DataRepository implements RestClient {
         onResponse: (response, handler) => handler.next(response),
         onError: (error, handler) async {
           if (error.response != null) {
-            if (error.response!.statusCode == 401) {
+            log("here");
+            log(error.response!.data['messageCode']);
+            if (error.response!.statusCode == 401 &&
+                error.response!.data['messageCode'] ==
+                    MessageCode.tokenExpired) {
               String token = getIt<AppPref>().getToken;
               String refreshToken = getIt<AppPref>().getRefreshToken;
 
-              Response? response = await refreshJwtToken(token, refreshToken);
-              Map<String, dynamic> value = json.decode(response.data);
+              final response = await refreshJwtToken(token, refreshToken);
+              Map<String, dynamic> value = response.data!;
               getIt<AppPref>().setToken(value['data']);
 
               setJwtInHeader();
               handler.resolve(response);
+            } else if (error.response!.statusCode == 401 &&
+                error.response!.data['messageCode'] ==
+                    MessageCode.refreshTokenExpired) {
+              handler.next(error);
             } else {
               handler.next(error);
             }
@@ -45,6 +55,7 @@ class DataRepository implements RestClient {
     _dio.options.headers.remove('Authorization');
     _dio.options.headers['Authorization'] =
         'Bearer ${getIt<AppPref>().getToken}';
+    log(_dio.options.headers['Authorization']);
   }
 
   @override
@@ -82,7 +93,8 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<Response> refreshJwtToken(String token, String refreshToken) {
+  Future<Response<Map<String, dynamic>>> refreshJwtToken(
+      String token, String refreshToken) {
     return _client.refreshJwtToken(token, refreshToken);
   }
 
@@ -91,5 +103,16 @@ class DataRepository implements RestClient {
       String phone, String desc, String userRealName, String avatarImg) {
     return _client.updateUserProfile(
         username, email, phone, desc, userRealName, avatarImg);
+  }
+
+  @override
+  Future<GetNotificationResponseMessage> getNotification(int limit) {
+    return _client.getNotification(limit);
+  }
+
+  @override
+  Future<GetNotificationResponseMessage> getMoreNotification(
+      int limit, String dateBoundary) {
+    return _client.getMoreNotification(limit, dateBoundary);
   }
 }

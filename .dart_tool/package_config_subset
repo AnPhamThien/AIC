@@ -106,6 +106,10 @@ dio
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/dio-4.0.4/
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/dio-4.0.4/lib/
+equatable
+2.12
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/equatable-2.0.3/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/equatable-2.0.3/lib/
 fake_async
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/fake_async-1.2.0/
@@ -342,6 +346,10 @@ shelf_web_socket
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/shelf_web_socket-1.0.1/
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/shelf_web_socket-1.0.1/lib/
+signalr_core
+2.12
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/signalr_core-1.1.1/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/signalr_core-1.1.1/lib/
 source_gen
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/source_gen-1.2.0/
@@ -350,6 +358,10 @@ source_span
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/source_span-1.8.1/
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/source_span-1.8.1/lib/
+sse_client
+2.12
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/sse_client-0.1.0/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/sse_client-0.1.0/lib/
 stack_trace
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/stack_trace-1.10.0/

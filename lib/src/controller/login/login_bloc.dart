@@ -23,9 +23,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     try {
-      getIt<AppPref>().setToken("");
-      getIt<AppPref>().setRefreshToken("");
-      getIt<AppPref>().setUserID("");
+      //getIt<AppPref>().setToken("");
+      //getIt<AppPref>().setRefreshToken("");
+      //getIt<AppPref>().setUserID("");
       String username = event.username;
       String password = event.password;
 

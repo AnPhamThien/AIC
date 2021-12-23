@@ -33,7 +33,6 @@ class LoginScreenState extends State<LoginScreen> {
           context.read<AuthBloc>().add(AuthenticateEvent());
         } else if (status is FormSubmissionFailed) {
           String errorMessage = getErrorMessage(status.exception.toString());
-          print(errorMessage);
           if (errorMessage ==
               MessageCode.errorMap[MessageCode.userAccountInActivated]) {
             context

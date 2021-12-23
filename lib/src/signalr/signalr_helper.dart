@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-import 'package:imagecaptioning/src/constanct/configs.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:signalr_core/signalr_core.dart';
@@ -21,8 +21,7 @@ class SignalRHelper {
 
   Future<void> initiateConnection() async {
     try {
-      _hubConnection.serverTimeoutInMilliseconds = //24 * 60 * 60 * 1000;
-          10 * 1000;
+      _hubConnection.serverTimeoutInMilliseconds = 24 * 60 * 60 * 1000;
       if (_hubConnection.state != HubConnectionState.connected) {
         await _hubConnection.start();
         _hubConnection.on('specificnotification', _handleSpecificNotification);

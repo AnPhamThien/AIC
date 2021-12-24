@@ -1,7 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
+import 'package:imagecaptioning/src/controller/home_controller/bloc/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
 import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
@@ -82,8 +82,9 @@ class AppRouter {
               //BlocProvider(create: (context) => ProfileBloc()),
               BlocProvider(
                   create: (context) =>
-                      NotificationBloc()..add(NotificationInitializing())),
-              BlocProvider.value(value: profileBloc)
+                      NotificationBloc()..add(FetchNotification())),
+              BlocProvider.value(value: profileBloc),
+              BlocProvider(create: (context) => HomeBloc()..add(PostFetched()))
             ],
             child: const RootScreen(),
           ),

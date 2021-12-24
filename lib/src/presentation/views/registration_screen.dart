@@ -32,7 +32,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       listener: (context, state) {
         final status = state.formStatus;
         if (status is FormSubmissionFailed) {
-          // TODO: show error using status.exception.toString();
           String errorMessage = getErrorMessage(status.exception.toString());
         } else if (state.formStatus is FormSubmissionSuccess) {
           context

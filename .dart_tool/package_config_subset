@@ -20,8 +20,12 @@ file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.o
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/async-2.8.1/lib/
 bloc
 2.12
-file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/bloc-7.2.1/
-file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/bloc-7.2.1/lib/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/bloc-8.0.1/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/bloc-8.0.1/lib/
+bloc_concurrency
+2.12
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/bloc_concurrency-0.2.0/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/bloc_concurrency-0.2.0/lib/
 boolean_selector
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/boolean_selector-2.1.0/
@@ -128,8 +132,8 @@ file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.o
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/fixnum-1.0.0/lib/
 flutter_bloc
 2.12
-file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_bloc-7.3.3/
-file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_bloc-7.3.3/lib/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_bloc-8.0.0/
+file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_bloc-8.0.0/lib/
 flutter_lints
 2.12
 file:///D:/flutter_windows_2.5.2-stable/flutter/.pub-cache/hosted/pub.dartlang.org/flutter_lints-1.0.4/

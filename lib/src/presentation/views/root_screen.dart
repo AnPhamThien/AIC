@@ -29,7 +29,7 @@ class _RootScreenState extends State<RootScreen> {
       listenWhen: (previous, current) =>
           previous.hubConnection?.state != current.hubConnection?.state,
       listener: (context, state) {
-        if (state.hubConnection == null) {
+        if (state.hubConnection?.state == HubConnectionState.disconnected) {
           context.read<AuthBloc>().add(ReconnectSignalREvent());
         }
       },

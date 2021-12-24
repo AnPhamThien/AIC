@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/utils/validations.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 class EditProfileScreen extends StatefulWidget {

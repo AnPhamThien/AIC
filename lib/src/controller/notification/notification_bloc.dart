@@ -18,13 +18,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       : _notificationRepository = NotificationRepository(),
         _signalRHelper = SignalRHelper(),
         super(NotificationState()) {
-    on<NotificationInitializing>(_onInitial);
+    on<FetchNotification>(_onInitial);
   }
   final NotificationRepository _notificationRepository;
   final SignalRHelper _signalRHelper;
 
   void _onInitial(
-    NotificationInitializing event,
+    FetchNotification event,
     Emitter<NotificationState> emit,
   ) async {
     try {

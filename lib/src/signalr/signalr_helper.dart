@@ -21,8 +21,9 @@ class SignalRHelper {
 
   Future<void> initiateConnection() async {
     try {
-      _hubConnection.serverTimeoutInMilliseconds = 24 * 60 * 60 * 1000;
-      if (_hubConnection.state != HubConnectionState.connected) {
+      if (_hubConnection.state != HubConnectionState.connected &&
+          _hubConnection.state != HubConnectionState.connecting) {
+        _hubConnection.serverTimeoutInMilliseconds = 24 * 60 * 60 * 1000;
         await _hubConnection.start();
         _hubConnection.on('specificnotification', _handleSpecificNotification);
       }

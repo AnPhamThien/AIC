@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
+import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:retrofit/retrofit.dart';
@@ -62,7 +63,12 @@ abstract class RestClient {
 
   @GET('/notifications/getmorenotification')
   Future<GetNotificationResponseMessage> getMoreNotification(
-    @Query('limitNotification') int limit,
-    @Query('dateBoundary') String dateBoundary,
+      @Query('limitNotification') int limit,
+      @Query('dateBoundary') String dateBoundary);
+
+  @GET('/posts/getpostver2')
+  Future<PostListRespone> getPost(
+    @Query('postPerPerson') int postPerPerson,
+    @Query('limitDay') int limitDay,
   );
 }

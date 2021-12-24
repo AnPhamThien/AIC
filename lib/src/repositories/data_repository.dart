@@ -5,6 +5,10 @@ import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
+import 'package:dio/dio.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
@@ -55,7 +59,6 @@ class DataRepository implements RestClient {
     _dio.options.headers.remove('Authorization');
     _dio.options.headers['Authorization'] =
         'Bearer ${getIt<AppPref>().getToken}';
-    log(_dio.options.headers['Authorization']);
   }
 
   @override
@@ -114,5 +117,9 @@ class DataRepository implements RestClient {
   Future<GetNotificationResponseMessage> getMoreNotification(
       int limit, String dateBoundary) {
     return _client.getMoreNotification(limit, dateBoundary);
+  }
+
+  Future<PostListRespone> getPost(int postPerPerson, int limitDay) {
+    return _client.getPost(postPerPerson, limitDay);
   }
 }

@@ -1,13 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 import 'gallery_page.dart';
 
@@ -27,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
     bool isMe = true;
     String userID = args?['userID'] ?? '';
 
-    if (userID.isEmpty) {
+    if (userID.isNotEmpty) {
       isMe = false;
     }
     context.read<ProfileBloc>().add(ProfileInitializing(userID));

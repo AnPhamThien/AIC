@@ -7,4 +7,6 @@ abstract class HomeEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class PostFetched extends HomeEvent {}
+class InitPostFetched extends HomeEvent {}
+
+class FetchMorePost extends HomeEvent {}

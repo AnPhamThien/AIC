@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/model/post/followee.dart';
+import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
@@ -61,4 +63,7 @@ abstract class RestClient {
     @Query('postPerPerson') int postPerPerson,
     @Query('limitDay') int limitDay,
   );
+
+  @POST('/posts/getmorepostver2')
+  Future<PostListRespone> getMorePost(@Body() PostListRequest request);
 }

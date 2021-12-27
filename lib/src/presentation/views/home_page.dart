@@ -38,8 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      log("Fetchmore");
-      context.read<HomeBloc>().add(PostFetched());
+      context.read<HomeBloc>().add(FetchMorePost());
     }
   }
 
@@ -50,13 +49,26 @@ class _HomePageState extends State<HomePage> {
       appBar: getAppBar(),
       body: SafeArea(
         child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: BlocBuilder<HomeBloc, HomeState>(
-                // bloc: _homeBloc,
-                builder: (context, state) {
+          height: MediaQuery.of(context).size.height,
+          child: BlocBuilder<HomeBloc, HomeState>(
+            builder: (context, state) {
+              log(state.status.toString());
               switch (state.status) {
                 case HomeStatus.failure:
                   return const Center(child: Text('failed to fetch posts'));
+                case HomeStatus.maxpost:
+                  return ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      if (index == state.postsList.length) {
+                        return const GetEndListPost();
+                      } else {
+                        final Post post = state.postsList[index];
+                        return PostWidget(post: post);
+                      }
+                    },
+                    itemCount: state.postsList.length + 1,
+                    controller: _scrollController,
+                  );
                 case HomeStatus.success:
                   if (state.postsList.isEmpty) {
                     return const Center(child: Text('no posts'));
@@ -72,17 +84,9 @@ class _HomePageState extends State<HomePage> {
                 default:
                   return const Center(child: CircularProgressIndicator());
               }
-            })
-            // ListView.builder(
-            //   itemCount: postList.length,
-            //   itemBuilder: (_, index) {
-            //     final Post post = postList[index];
-            //     return PostWidget(
-            //       post: post,
-            //     );
-            //   },
-            // ),
-            ),
+            },
+          ),
+        ),
       ),
     );
   }

@@ -5,6 +5,8 @@ import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
+import 'package:imagecaptioning/src/model/post/followee.dart';
+import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
@@ -122,5 +124,10 @@ class DataRepository implements RestClient {
   @override
   Future<PostListRespone> getPost(int postPerPerson, int limitDay) {
     return _client.getPost(postPerPerson, limitDay);
+  }
+
+  @override
+  Future<PostListRespone> getMorePost(PostListRequest request) {
+    return _client.getMorePost(request);
   }
 }

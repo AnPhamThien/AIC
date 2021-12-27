@@ -84,7 +84,7 @@ class AppRouter {
                   create: (context) =>
                       NotificationBloc()..add(FetchNotification())),
               BlocProvider.value(value: profileBloc),
-              BlocProvider(create: (context) => HomeBloc()..add(PostFetched()))
+              BlocProvider(create: (context) => HomeBloc()..add(InitPostFetched()))
             ],
             child: const RootScreen(),
           ),

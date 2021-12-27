@@ -5,9 +5,6 @@ import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
-import 'package:dio/dio.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
@@ -29,8 +26,7 @@ class DataRepository implements RestClient {
         onResponse: (response, handler) => handler.next(response),
         onError: (error, handler) async {
           if (error.response != null) {
-            log("here");
-            log(error.response!.data['messageCode']);
+            log(error.response!.data['messageCode'].toString());
             if (error.response!.statusCode == 401 &&
                 error.response!.data['messageCode'] ==
                     MessageCode.tokenExpired) {
@@ -39,10 +35,14 @@ class DataRepository implements RestClient {
 
               final response = await refreshJwtToken(token, refreshToken);
               Map<String, dynamic> value = response.data!;
-              getIt<AppPref>().setToken(value['data']);
-
-              setJwtInHeader();
-              handler.resolve(response);
+              String? data = value['data'];
+              if (data != null) {
+                getIt<AppPref>().setToken(value['data']);
+                setJwtInHeader();
+                handler.resolve(response);
+              } else {
+                handler.next(error);
+              }
             } else if (error.response!.statusCode == 401 &&
                 error.response!.data['messageCode'] ==
                     MessageCode.refreshTokenExpired) {
@@ -119,6 +119,7 @@ class DataRepository implements RestClient {
     return _client.getMoreNotification(limit, dateBoundary);
   }
 
+  @override
   Future<PostListRespone> getPost(int postPerPerson, int limitDay) {
     return _client.getPost(postPerPerson, limitDay);
   }

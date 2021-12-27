@@ -17,6 +17,7 @@ class SignalRHelper {
           ))
       .withAutomaticReconnect()
       .build();
+
   HubConnection get hubConnection => _hubConnection;
 
   Future<void> initiateConnection() async {
@@ -25,14 +26,13 @@ class SignalRHelper {
           _hubConnection.state != HubConnectionState.connecting) {
         _hubConnection.serverTimeoutInMilliseconds = 24 * 60 * 60 * 1000;
         await _hubConnection.start();
-        _hubConnection.on('specificnotification', _handleSpecificNotification);
       }
     } on Exception catch (_) {
       log(_.toString());
     }
   }
 
-  void closeConnection() async {
+  Future<void> closeConnection() async {
     try {
       if (_hubConnection.state != HubConnectionState.disconnected) {
         await _hubConnection.stop();
@@ -40,9 +40,5 @@ class SignalRHelper {
     } on Exception catch (_) {
       log(_.toString());
     }
-  }
-
-  void _handleSpecificNotification(List<dynamic>? parameters) {
-    log("event called");
   }
 }

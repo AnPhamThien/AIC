@@ -52,6 +52,7 @@ class NotificationItem {
     this.userName,
     this.avataUrl,
     this.imageUrl,
+    this.dateCreate,
     this.totalHours,
   });
 
@@ -62,6 +63,7 @@ class NotificationItem {
   String? userName;
   dynamic avataUrl;
   dynamic imageUrl;
+  DateTime? dateCreate;
   double? totalHours;
 
   factory NotificationItem.fromJson(Map<String, dynamic> json) =>
@@ -73,6 +75,7 @@ class NotificationItem {
         userName: json["user_name"],
         avataUrl: json["avata_url"],
         imageUrl: json["image_url"],
+        dateCreate: DateTime.parse(json["date_create"]),
         totalHours: json["totalHours"].toDouble(),
       );
 
@@ -84,6 +87,7 @@ class NotificationItem {
         "user_name": userName,
         "avata_url": avataUrl,
         "image_url": imageUrl,
+        "date_create": dateCreate?.toIso8601String(),
         "totalHours": totalHours,
       };
 }

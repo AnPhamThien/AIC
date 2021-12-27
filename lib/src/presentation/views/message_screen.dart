@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
@@ -61,6 +65,9 @@ class _MessageScreenState extends State<MessageScreen> {
   ListTile getMessageItem(bool isNew, String img, username, message, int time) {
     return ListTile(
       onTap: () {
+        context
+            .read<AuthBloc>()
+            .add(NavigateToPageEvent(AppRouter.editProfileScreen));
         Navigator.push(
           context,
           MaterialPageRoute(

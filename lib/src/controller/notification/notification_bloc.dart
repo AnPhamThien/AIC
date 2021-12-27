@@ -16,20 +16,26 @@ part "notification_state.dart";
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc()
       : _notificationRepository = NotificationRepository(),
-        _signalRHelper = SignalRHelper(),
         super(NotificationState()) {
-    on<FetchNotification>(_onInitial);
+    on<FetchNotification>(_onFetch);
   }
   final NotificationRepository _notificationRepository;
-  final SignalRHelper _signalRHelper;
 
-  void _onInitial(
+  void _onFetch(
     FetchNotification event,
     Emitter<NotificationState> emit,
   ) async {
     try {
-      GetNotificationResponseMessage? resMessage =
-          await _notificationRepository.getNotification(limit: limitNoti);
+      GetNotificationResponseMessage? resMessage;
+      if (state.formStatus is InitialFormStatus) {
+        resMessage =
+            await _notificationRepository.getNotification(limit: limitNoti);
+      } else {
+        resMessage = await _notificationRepository.getMoreNotification(
+            limit: limitNoti,
+            dateBoundary: state.notificationList!.last.dateCreate.toString());
+      }
+
       if (resMessage == null) {
         throw Exception("");
       }

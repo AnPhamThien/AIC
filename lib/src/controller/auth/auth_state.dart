@@ -1,17 +1,16 @@
 part of 'auth_bloc.dart';
 
-class AuthState {
-  const AuthState(
-      {this.authStatus = const InitialAuthenticationStatus(),
-      this.hubConnection});
+class AuthState extends Equatable {
+  const AuthState({this.authStatus = const InitialAuthenticationStatus()});
 
   final AuthenticationStatus authStatus;
-  final HubConnection? hubConnection;
 
-  AuthState copyWith(
-      {AuthenticationStatus? authStatus, HubConnection? hubConnection}) {
+  AuthState copyWith({AuthenticationStatus? authStatus}) {
     return AuthState(
-        authStatus: authStatus ?? this.authStatus,
-        hubConnection: hubConnection ?? this.hubConnection);
+      authStatus: authStatus ?? this.authStatus,
+    );
   }
+
+  @override
+  List<Object?> get props => [authStatus];
 }

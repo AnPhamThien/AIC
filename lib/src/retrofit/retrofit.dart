@@ -71,4 +71,12 @@ abstract class RestClient {
     @Query('postPerPerson') int postPerPerson,
     @Query('limitDay') int limitDay,
   );
+
+  // @GET('/conversations/getconversations')
+  // Future<Map<String, dynamic>> getConversations(
+  // );
+
+  // @GET('/conversations/getmoreconversations')
+  // Future<Map<String, dynamic>> getMoreConversations(
+  //     @Query('dateBoundary') String dateBoundary);
 }

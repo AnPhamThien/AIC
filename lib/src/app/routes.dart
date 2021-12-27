@@ -1,17 +1,18 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
-import 'package:imagecaptioning/src/controller/home_controller/bloc/home_bloc.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
-
+import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
@@ -29,7 +30,8 @@ class AppRouter {
   static const String currentUserProfileScreen = '/profile';
   static const String otherUserProfileScreen = '/otherprofile';
   static const String editProfileScreen = '/editprofile';
-
+  static const String contestListScreen = '/contestlistscreen';
+  static const String postDetailScreen = '/postdetailscreen';
   final ProfileBloc profileBloc = ProfileBloc(true);
 
   static const List<String> noAuthNeededScreens = [
@@ -79,7 +81,8 @@ class AppRouter {
             providers: [
               //BlocProvider(create: (context) => ProfileBloc()),
               BlocProvider.value(value: profileBloc),
-              BlocProvider(create: (context) => HomeBloc()..add(InitPostFetched()))
+              BlocProvider(
+                  create: (context) => HomeBloc()..add(InitPostFetched()))
             ],
             child: const RootScreen(),
           ),
@@ -109,7 +112,16 @@ class AppRouter {
             child: const EditProfileScreen(),
           ),
         );
-
+      case contestListScreen:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => ContestListBloc()..add(InitContestFetched()),
+            child: const ContestListScreen(),
+          ),
+        );
+      case postDetailScreen:
+        return MaterialPageRoute(
+            builder: (context) => const PostDetailScreen());
       default:
         return null;
     }

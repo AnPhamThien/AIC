@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/post/followee.dart';
+import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
@@ -83,5 +83,11 @@ class DataRepository implements RestClient {
   @override
   Future<PostListRespone> getMorePost(PostListRequest request) {
     return _client.getMorePost(request);
+  }
+
+  @override
+  Future<ContestListRespone> getContestList(
+      String? searchName, int limitContest, String? dateUp, String? dateDown) {
+    return _client.getContestList(searchName, limitContest, dateUp, dateDown);
   }
 }

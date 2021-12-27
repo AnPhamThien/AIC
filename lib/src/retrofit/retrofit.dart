@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
@@ -65,5 +66,15 @@ abstract class RestClient {
   );
 
   @POST('/posts/getmorepostver2')
-  Future<PostListRespone> getMorePost(@Body() PostListRequest request);
+  Future<PostListRespone> getMorePost(
+    @Body() PostListRequest request,
+  );
+
+  @GET('/contests/getcontestforuser')
+  Future<ContestListRespone> getContestList(
+    @Query('searchname') String? searchName,
+    @Query('limitcontest') int limitContest,
+    @Query('date_up') String? dateUp,
+    @Query('date_dow') String? dateDown,
+  );
 }

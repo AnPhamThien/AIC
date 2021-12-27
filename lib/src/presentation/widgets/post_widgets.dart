@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
+// ignore: implementation_imports
+import 'package:provider/src/provider.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.post}) : super(key: key);
@@ -43,12 +46,11 @@ class _PostWidgetState extends State<PostWidget> {
                   likeCount: widget.post.likecount!,
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PostDetailScreen(),
-                    ),
-                  );
+                  Map<String, dynamic> args = {'postId': widget.post.postId};
+                  context.read<AuthBloc>().add(NavigateToPageEvent(
+                        AppRouter.postDetailScreen,
+                        args: args,
+                      ));
                 },
               ),
             ],

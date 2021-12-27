@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/data_local/markup_model.dart';
 import 'package:imagecaptioning/src/presentation/views/album_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
@@ -76,65 +75,65 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
   }
 
   SafeArea getBody() {
-    List<Album> albumList = Album.getAlbumList();
-    return SafeArea(
-      child: GridView.builder(
-        padding: const EdgeInsets.all(15),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            childAspectRatio: 2 / 2.35,
-            crossAxisCount: 2,
-            crossAxisSpacing: 15,
-            mainAxisSpacing: 10),
-        itemCount: albumList.length,
-        itemBuilder: (_, index) {
-          final Album album = albumList[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AlbumScreen(
-                    album: album,
-                  ),
-                ),
-              );
-            },
-            onLongPress: () {
-              getSheet(context, album.albumName);
-            },
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AspectRatio(
-                  aspectRatio: 1,
-                  child: Container(
-                    decoration: album.albumImages.isNotEmpty
-                        ? BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: DecorationImage(
-                                image: AssetImage(album.albumImages.first),
-                                fit: BoxFit.cover),
-                          )
-                        : BoxDecoration(
-                            color: Colors.grey.shade200,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                  ),
-                ),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 7.0, horizontal: 3),
-                  child: Text(
-                    album.albumName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
+    return SafeArea(child: Container());
+    // return SafeArea(
+    //   child: GridView.builder(
+    //     padding: const EdgeInsets.all(15),
+    //     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+    //         childAspectRatio: 2 / 2.35,
+    //         crossAxisCount: 2,
+    //         crossAxisSpacing: 15,
+    //         mainAxisSpacing: 10),
+    //     itemCount: albumList.length,
+    //     itemBuilder: (_, index) {
+    //       final Album album = albumList[index];
+    //       return GestureDetector(
+    //         onTap: () {
+    //           Navigator.push(
+    //             context,
+    //             MaterialPageRoute(
+    //               builder: (context) => AlbumScreen(
+    //                 album: album,
+    //               ),
+    //             ),
+    //           );
+    //         },
+    //         onLongPress: () {
+    //           getSheet(context, album.albumName);
+    //         },
+    //         child: Column(
+    //           crossAxisAlignment: CrossAxisAlignment.start,
+    //           children: [
+    //             AspectRatio(
+    //               aspectRatio: 1,
+    //               child: Container(
+    //                 decoration: album.albumImages.isNotEmpty
+    //                     ? BoxDecoration(
+    //                         borderRadius: BorderRadius.circular(12),
+    //                         image: DecorationImage(
+    //                             image: AssetImage(album.albumImages.first),
+    //                             fit: BoxFit.cover),
+    //                       )
+    //                     : BoxDecoration(
+    //                         color: Colors.grey.shade200,
+    //                         borderRadius: BorderRadius.circular(25),
+    //                       ),
+    //               ),
+    //             ),
+    //             Padding(
+    //               padding:
+    //                   const EdgeInsets.symmetric(vertical: 7.0, horizontal: 3),
+    //               child: Text(
+    //                 album.albumName,
+    //                 style: const TextStyle(fontWeight: FontWeight.bold),
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       );
+    //     },
+    //   ),
+    // );
   }
 
   Future<dynamic> getSheet(BuildContext context, String albumName) {

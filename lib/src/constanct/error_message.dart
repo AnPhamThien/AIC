@@ -244,6 +244,31 @@ class MessageCode {
   static const String updateContestFail = "CT116";
 
   /// <summary>
+  /// CT117 : No contest to display
+  /// </summary>
+  static const String noContestToDisplay = "CT117";
+
+  /// <summary>
+  /// CT118 : Active contest manually fail
+  /// </summary>
+  static const String activeContestManuallyFail = "CT118";
+
+  /// <summary>
+  /// CT119 : Extend duartion delayed fail
+  /// </summary>
+  static const String extendDurationDelayedFail = "CT119";
+
+  /// <summary>
+  /// CT120 : No user in contest
+  /// </summary>
+  static const String contestHasNoParticipater = "CT120";
+
+  /// <summary>
+  /// CT121 : get user in contest fail
+  /// </summary>
+  static const String getUserInContestFail = "CT121";
+
+  /// <summary>
   /// JO111 : job id is required to delete it
   /// </summary>
   static const String jobIdRequired = "JO111";

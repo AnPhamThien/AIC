@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PostDetailScreen extends StatefulWidget {
   const PostDetailScreen({Key? key}) : super(key: key);
-
   @override
   _PostDetailScreenState createState() => _PostDetailScreenState();
 }
@@ -12,6 +13,14 @@ class PostDetailScreen extends StatefulWidget {
 class _PostDetailScreenState extends State<PostDetailScreen> {
   @override
   Widget build(BuildContext context) {
+    @override
+    void initState() {
+      super.initState();
+      final args =
+          ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
+      context.read<PostDetailBloc>().add(PostInitEvent(args?['postId'] ?? ''));
+    }
+
     return Scaffold(
       body: Scaffold(
         backgroundColor: bgApp,

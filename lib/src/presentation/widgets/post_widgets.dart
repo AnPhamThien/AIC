@@ -6,6 +6,7 @@ import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 
@@ -33,13 +34,16 @@ class _PostWidgetState extends State<PostWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                PostHeadlineWidget(
-                    userId: widget.post.userId ?? "",
-                    username: widget.post.userName ?? "",
-                    time: widget.post.dateCreate ?? DateTime.now(),
-                    postAvatar: widget.post.avataUrl ?? ""),
+                Padding(
+                  padding: const EdgeInsets.only(left: 15),
+                  child: PostHeadlineWidget(
+                      userId: widget.post.userId ?? "",
+                      username: widget.post.userName ?? "",
+                      time: widget.post.dateCreate ?? DateTime.now(),
+                      postAvatar: widget.post.avataUrl ?? ""),
+                ),
                 PostImgWidget(postImage: widget.post.imageUrl ?? ""),
-                const PostIconWidget(),
+                PostIconWidget(isLike: widget.post.isLike),
                 PostDescription(
                   username: widget.post.userName ?? "",
                   caption:
@@ -80,22 +84,10 @@ class PostHeadlineWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hourCount = DateTime.now().difference(time).inHours;
-    String timeCount;
-    if (hourCount < 1) {
-      timeCount =
-          DateTime.now().difference(time).inMinutes.toString() + " mins";
-    } else if (hourCount < 24 && hourCount > 1) {
-      timeCount = hourCount.toString() + " hours";
-    } else if (hourCount > 24 && hourCount < 730) {
-      timeCount = DateTime.now().difference(time).inDays.toString() + " days";
-    } else {
-      timeCount =
-          (DateTime.now().difference(time).inDays / 30).round().toString() +
-              " months";
-    }
+    final _calculatedTime = timeCalculate(time);
     Map<String, dynamic> args = {'userId': userId};
     return ListTile(
+      contentPadding: const EdgeInsets.all(0),
       onTap: () => context.read<AuthBloc>().add(NavigateToPageEvent(
           route: AppRouter.otherUserProfileScreen, args: args)),
       leading: Container(
@@ -123,7 +115,7 @@ class PostHeadlineWidget extends StatelessWidget {
         username,
         style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
       ),
-      subtitle: Text(timeCount),
+      subtitle: Text(_calculatedTime),
 
       ///options
       trailing: PopupMenuButton(
@@ -301,7 +293,7 @@ class PostDescription extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 5),
             child: Text(
-              "$likeCount likes",
+              likeCount < 2 ? "$likeCount like" : "$likeCount likes",
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
@@ -323,7 +315,7 @@ class PostDescription extends StatelessWidget {
           ),
           //COMMENTS
           const Padding(
-            padding: EdgeInsets.only(top: 5),
+            padding: EdgeInsets.only(top: 7),
             child: Text(
               "View comments",
               style: TextStyle(color: bgGrey),

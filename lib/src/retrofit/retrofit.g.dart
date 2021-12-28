@@ -132,6 +132,7 @@ class _RestClient implements RestClient {
                 .compose(_dio.options, '/users/refreshtoken',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+
     return _result;
   }
 
@@ -306,6 +307,26 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = ContestListRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<PostCommentLikeRespone> getInitPostLikeComment(
+      commentPerPage, postId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'commentPerPage': commentPerPage,
+      r'postId': postId
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<PostCommentLikeRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/getpostcommentandlikeInit',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = PostCommentLikeRespone.fromJson(_result.data!);
     return value;
   }
 

@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/model/contest/contest.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/contest_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 
@@ -66,7 +65,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
                           children: [
                             getContestItem(contest),
                             const Divider(
-                              height: 15,
+                              height: 0,
                               thickness: 1.5,
                               indent: 70,
                               endIndent: 40,
@@ -95,16 +94,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
     String endDate =
         contest.dateEnd!.toLocal().toIso8601String().split('T').first;
     return ListTile(
-      onTap: () {
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => ContestScreen(
-        //       contest: contest,
-        //     ),
-        //   ),
-        // );
-      },
+      onTap: () {},
 
       minVerticalPadding: 15,
       leading: contest.status == 3
@@ -113,14 +103,14 @@ class _ContestListScreenState extends State<ContestListScreen> {
               child: Icon(
                 Icons.emoji_events_outlined,
                 color: Colors.white,
-                size: 42,
+                size: 37,
               ),
             )
           //nếu hết thời hạn
           : const Icon(
               Icons.emoji_events_outlined,
               color: Colors.grey,
-              size: 42,
+              size: 37,
             ),
       //contest title
       title: Padding(
@@ -128,7 +118,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
         child: Text(
           contest.contestName!,
           style: const TextStyle(
-              color: Colors.black87, fontSize: 22, fontWeight: FontWeight.w600),
+              color: Colors.black87, fontSize: 20, fontWeight: FontWeight.w600),
         ),
       ),
       //from end

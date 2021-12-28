@@ -8,7 +8,7 @@ class PostDetailEvent extends Equatable {
 }
 
 class PostInitEvent extends PostDetailEvent {
-  final String postId;
+  final Post post;
 
-  const PostInitEvent(this.postId);
+  const PostInitEvent(this.post);
 }

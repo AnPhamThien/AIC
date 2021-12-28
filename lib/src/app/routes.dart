@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
+import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
@@ -120,8 +123,14 @@ class AppRouter {
           ),
         );
       case postDetailScreen:
+        final post = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) => const PostDetailScreen());
+          builder: (context) => BlocProvider(
+            create: (context) =>
+                PostDetailBloc()..add(PostInitEvent(post['post'])),
+            child: const PostDetailScreen(),
+          ),
+        );
       default:
         return null;
     }

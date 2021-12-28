@@ -90,4 +90,10 @@ class DataRepository implements RestClient {
       String? searchName, int limitContest, String? dateUp, String? dateDown) {
     return _client.getContestList(searchName, limitContest, dateUp, dateDown);
   }
+
+  @override
+  Future<ContestListRespone> getPostDetail(
+      String postId, int limitComment, String? contestId) {
+    return _client.getPostDetail(postId, limitComment, contestId);
+  }
 }

@@ -77,4 +77,11 @@ abstract class RestClient {
     @Query('date_up') String? dateUp,
     @Query('date_dow') String? dateDown,
   );
+
+  @GET('/posts/getpostdetailver2')
+  Future<ContestListRespone> getPostDetail(
+    @Query('post_id') String postId,
+    @Query('limitComment') int limitComment,
+    @Query('contest_id') String? contestId,
+  );
 }

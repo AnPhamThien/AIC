@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,38 +26,39 @@ class _PostWidgetState extends State<PostWidget> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       height: 580.h,
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PostHeadlineWidget(
-                  username: widget.post.userName ?? "",
-                  time: widget.post.dateCreate ?? DateTime.now(),
-                  postAvatar: widget.post.avataUrl ?? ""),
-              PostImgWidget(postImage: widget.post.imageUrl ?? ""),
-              const PostIconWidget(),
-              GestureDetector(
-                child: PostDescription(
+      child: GestureDetector(
+        child: Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PostHeadlineWidget(
+                    username: widget.post.userName ?? "",
+                    time: widget.post.dateCreate ?? DateTime.now(),
+                    postAvatar: widget.post.avataUrl ?? ""),
+                PostImgWidget(postImage: widget.post.imageUrl ?? ""),
+                const PostIconWidget(),
+                PostDescription(
                   username: widget.post.userName ?? "",
                   caption:
                       widget.post.userCaption ?? widget.post.aiCaption ?? "",
                   likeCount: widget.post.likecount!,
                 ),
-                onTap: () {
-                  Map<String, dynamic> args = {'postId': widget.post.postId};
-                  context.read<AuthBloc>().add(NavigateToPageEvent(
-                        AppRouter.postDetailScreen,
-                        args: args,
-                      ));
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
+        onTap: () {
+          Map<String, dynamic> args = {'post': widget.post};
+
+          context.read<AuthBloc>().add(NavigateToPageEvent(
+                AppRouter.postDetailScreen,
+                args: args,
+              ));
+        },
       ),
     );
   }
@@ -187,11 +190,12 @@ class PostIconWidget extends StatelessWidget {
     Key? key,
     this.likeCount,
     this.commentCount,
+    this.isLike,
   }) : super(key: key);
 
   final int? likeCount;
   final int? commentCount;
-
+  final int? isLike;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -203,12 +207,22 @@ class PostIconWidget extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  IconButton(
-                    splashRadius: 23,
-                    icon: const Icon(Icons.favorite_border_rounded),
-                    iconSize: 30.0,
-                    onPressed: () {}, //TODO hàm Like ở đây
-                  ),
+                  isLike == 0
+                      ? IconButton(
+                          splashRadius: 23,
+                          icon: const Icon(Icons.favorite_border_rounded),
+                          iconSize: 30.0,
+                          onPressed: () {}, //TODO hàm Like ở đây
+                        )
+                      : IconButton(
+                          splashRadius: 23,
+                          icon: const Icon(
+                            Icons.favorite_rounded,
+                          ),
+                          color: Colors.red,
+                          iconSize: 30.0,
+                          onPressed: () {}, //TODO hàm DisLike ở đây
+                        ),
                   likeCount == null
                       ? const SizedBox.shrink()
                       : Padding(

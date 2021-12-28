@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\values-pt-rBR\\values-pt-rBR.xml",
+            "outputFile": "D:\\Capstone\\CapstoneProject\\AIC\\build\\shared_preferences_android\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-pt-rBR\\values-pt-rBR.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Pham Thien An\\.gradle\\caches\\transforms-2\\files-2.1\\67ff0aaf930f65024e6c37d99bc9e852\\core-1.6.0\\res\\values-pt-rBR\\values-pt-rBR.xml",
+                    "source": "C:\\Users\\HOME\\.gradle\\caches\\transforms-2\\files-2.1\\d67cd79abd1ca209502f51c69d23182b\\core-1.1.0\\res\\values-pt-rBR\\values-pt-rBR.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -16,10 +16,10 @@
             ]
         },
         {
-            "outputFile": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\shared_preferences_android\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-pt-rBR\\values-pt-rBR.xml",
+            "outputFile": "D:\\Capstone\\CapstoneProject\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\values-pt-rBR\\values-pt-rBR.xml",
             "map": [
                 {
-                    "source": "C:\\Users\\Pham Thien An\\.gradle\\caches\\transforms-2\\files-2.1\\67ff0aaf930f65024e6c37d99bc9e852\\core-1.6.0\\res\\values-pt-rBR\\values-pt-rBR.xml",
+                    "source": "C:\\Users\\HOME\\.gradle\\caches\\transforms-2\\files-2.1\\d67cd79abd1ca209502f51c69d23182b\\core-1.1.0\\res\\values-pt-rBR\\values-pt-rBR.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",

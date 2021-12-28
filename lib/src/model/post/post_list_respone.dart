@@ -31,7 +31,7 @@ class PostListRespone {
       PostListRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: Data.fromJson(json["data"]),
+        data: json["data"] != null ? Data.fromJson(json["data"]) : null,
         total: json["total"],
         sunOfPages: json["sunOfPages"],
       );
@@ -44,5 +44,3 @@ class PostListRespone {
         "sunOfPages": sunOfPages,
       };
 }
-
-

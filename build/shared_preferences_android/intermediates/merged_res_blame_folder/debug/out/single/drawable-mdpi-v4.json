@@ -1,22 +1,22 @@
 [
     {
-        "merged": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notification_bg_normal_pressed.9.png",
-        "source": "C:\\Users\\Pham Thien An\\.gradle\\caches\\transforms-2\\files-2.1\\67ff0aaf930f65024e6c37d99bc9e852\\core-1.6.0\\res\\drawable-mdpi-v4\\notification_bg_normal_pressed.9.png"
+        "merged": "D:\\Capstone\\CapstoneProject\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notification_bg_low_pressed.9.png",
+        "source": "C:\\Users\\HOME\\.gradle\\caches\\transforms-2\\files-2.1\\d67cd79abd1ca209502f51c69d23182b\\core-1.1.0\\res\\drawable-mdpi-v4\\notification_bg_low_pressed.9.png"
     },
     {
-        "merged": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notification_bg_low_normal.9.png",
-        "source": "C:\\Users\\Pham Thien An\\.gradle\\caches\\transforms-2\\files-2.1\\67ff0aaf930f65024e6c37d99bc9e852\\core-1.6.0\\res\\drawable-mdpi-v4\\notification_bg_low_normal.9.png"
+        "merged": "D:\\Capstone\\CapstoneProject\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notification_bg_normal_pressed.9.png",
+        "source": "C:\\Users\\HOME\\.gradle\\caches\\transforms-2\\files-2.1\\d67cd79abd1ca209502f51c69d23182b\\core-1.1.0\\res\\drawable-mdpi-v4\\notification_bg_normal_pressed.9.png"
     },
     {
-        "merged": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notification_bg_normal.9.png",
-        "source": "C:\\Users\\Pham Thien An\\.gradle\\caches\\transforms-2\\files-2.1\\67ff0aaf930f65024e6c37d99bc9e852\\core-1.6.0\\res\\drawable-mdpi-v4\\notification_bg_normal.9.png"
+        "merged": "D:\\Capstone\\CapstoneProject\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notification_bg_normal.9.png",
+        "source": "C:\\Users\\HOME\\.gradle\\caches\\transforms-2\\files-2.1\\d67cd79abd1ca209502f51c69d23182b\\core-1.1.0\\res\\drawable-mdpi-v4\\notification_bg_normal.9.png"
     },
     {
-        "merged": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notify_panel_notification_icon_bg.png",
-        "source": "C:\\Users\\Pham Thien An\\.gradle\\caches\\transforms-2\\files-2.1\\67ff0aaf930f65024e6c37d99bc9e852\\core-1.6.0\\res\\drawable-mdpi-v4\\notify_panel_notification_icon_bg.png"
+        "merged": "D:\\Capstone\\CapstoneProject\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notify_panel_notification_icon_bg.png",
+        "source": "C:\\Users\\HOME\\.gradle\\caches\\transforms-2\\files-2.1\\d67cd79abd1ca209502f51c69d23182b\\core-1.1.0\\res\\drawable-mdpi-v4\\notify_panel_notification_icon_bg.png"
     },
     {
-        "merged": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notification_bg_low_pressed.9.png",
-        "source": "C:\\Users\\Pham Thien An\\.gradle\\caches\\transforms-2\\files-2.1\\67ff0aaf930f65024e6c37d99bc9e852\\core-1.6.0\\res\\drawable-mdpi-v4\\notification_bg_low_pressed.9.png"
+        "merged": "D:\\Capstone\\CapstoneProject\\AIC\\build\\shared_preferences_android\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\notification_bg_low_normal.9.png",
+        "source": "C:\\Users\\HOME\\.gradle\\caches\\transforms-2\\files-2.1\\d67cd79abd1ca209502f51c69d23182b\\core-1.1.0\\res\\drawable-mdpi-v4\\notification_bg_low_normal.9.png"
     }
 ]

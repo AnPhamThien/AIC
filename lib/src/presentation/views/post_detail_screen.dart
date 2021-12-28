@@ -141,6 +141,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
               Expanded(
                 child: PostHeadlineWidget(
+                  userId: post.userId!,
                   username: post.userName!,
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl!,

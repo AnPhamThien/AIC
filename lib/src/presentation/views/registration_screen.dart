@@ -36,8 +36,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         } else if (state.formStatus is FormSubmissionSuccess) {
           context
               .read<AuthBloc>()
-              .add(NavigateToPageEvent(AppRouter.verificationScreen));
-          //Navigator.of(context).pushNamed(AppRouter.verificationScreen);
+              .add(NavigateToPageEvent(route: AppRouter.verificationScreen));
         }
       },
       child: Container(
@@ -83,8 +82,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         onPressed: () {
           context
               .read<AuthBloc>()
-              .add(NavigateToPageEvent(AppRouter.loginScreen));
-          //Navigator.of(context).pushNamed(AppRouter.loginScreen);
+              .add(NavigateToPageEvent(route: AppRouter.loginScreen));
         },
         child: RichText(
           text: const TextSpan(

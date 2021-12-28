@@ -53,48 +53,50 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<Map<String, dynamic>> activateAccount(code, userID) async {
+  Future<GetResponseMessage> activateAccount(code, userID) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'code': code, 'user_id': userID};
-    Response _result = await _dio.fetch<String>(_setStreamType<String>(
-        Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/users/activationaccount',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    Map<String, dynamic> value = json.decode(_result.data);
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/activationaccount',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<Map<String, dynamic>> regenerateCodeForRegister(userID) async {
+  Future<GetResponseMessage> regenerateCodeForRegister(userID) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'userID': userID};
-    Response _result = await _dio.fetch<String>(_setStreamType<String>(
-        Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/users/regeneratecodeforregisaccount',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    Map<String, dynamic> value = json.decode(_result.data);
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/regeneratecodeforregisaccount',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<Map<String, dynamic>> regenerateResetPasswordCode(email) async {
+  Future<GetResponseMessage> regenerateResetPasswordCode(email) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'user_email': email};
-    Response _result = await _dio.fetch<String>(_setStreamType<String>(
-        Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/users/generateresetpasswordcode',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-
-    Map<String, dynamic> value = json.decode(_result.data);
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/generateresetpasswordcode',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
     return value;
   }
 
@@ -106,7 +108,6 @@ class _RestClient implements RestClient {
       r'limitpost': limitPost
     };
     final _headers = <String, dynamic>{};
-    _headers.removeWhere((k, v) => v == null);
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetUserDetailsResponseMessage>(
@@ -119,22 +120,23 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<Response> refreshJwtToken(token, refreshToken) async {
+  Future<Response<Map<String, dynamic>>> refreshJwtToken(
+      token, refreshToken) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     final _data = {'JwtToken': token, 'RefreshToken': refreshToken};
-    Response _result = await _dio.fetch<String>(_setStreamType<String>(
-        Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/users/refreshtoken',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<Response<Map<String, dynamic>>>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/refreshtoken',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     return _result;
   }
 
   @override
-  Future<Map<String, dynamic>> updateUserProfile(
+  Future<GetResponseMessage> updateUserProfile(
       username, email, phone, desc, userRealName, avatarImg) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
@@ -147,13 +149,49 @@ class _RestClient implements RestClient {
       'user_real_name': userRealName,
       'avatar_img': avatarImg
     };
-    Response _result = await _dio.fetch<String>(_setStreamType<String>(
-        Options(method: 'POST', headers: _headers, extra: _extra)
-            .compose(_dio.options, '/users/updateuserprofile',
-                queryParameters: queryParameters, data: _data)
-            .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/updateuserprofile',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
 
-    Map<String, dynamic> value = json.decode(_result.data);
+  @override
+  Future<GetNotificationResponseMessage> getNotification(limit) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'limitNotification': limit};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetNotificationResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/notifications/getnotification',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetNotificationResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetNotificationResponseMessage> getMoreNotification(
+      limit, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limitNotification': limit,
+      r'dateBoundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetNotificationResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/notifications/getmorenotification',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetNotificationResponseMessage.fromJson(_result.data!);
     return value;
   }
 
@@ -194,6 +232,39 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<GetConversationResponseMessage> getConversations() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetConversationResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/conversations/getconversations',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetConversationResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetConversationResponseMessage> getMoreConversations(
+      dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'dateBoundary': dateBoundary};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetConversationResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/conversations/getmoreconversations',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetConversationResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<ContestListRespone> getContestList(
       searchName, limitContest, dateUp, dateDown) async {
     const _extra = <String, dynamic>{};
@@ -216,18 +287,6 @@ class _RestClient implements RestClient {
     return value;
   }
 
-  RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
-    if (T != dynamic &&
-        !(requestOptions.responseType == ResponseType.bytes ||
-            requestOptions.responseType == ResponseType.stream)) {
-      if (T == String) {
-        requestOptions.responseType = ResponseType.plain;
-      } else {
-        requestOptions.responseType = ResponseType.json;
-      }
-    }
-    return requestOptions;
-  }
   @override
   Future<ContestListRespone> getPostDetail(
       postId, limitComment, contestId) async {
@@ -250,4 +309,16 @@ class _RestClient implements RestClient {
     return value;
   }
 
+  RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
+    if (T != dynamic &&
+        !(requestOptions.responseType == ResponseType.bytes ||
+            requestOptions.responseType == ResponseType.stream)) {
+      if (T == String) {
+        requestOptions.responseType = ResponseType.plain;
+      } else {
+        requestOptions.responseType = ResponseType.json;
+      }
+    }
+    return requestOptions;
+  }
 }

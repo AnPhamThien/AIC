@@ -17,7 +17,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc(bool isCurrentUser)
       : _userRepository = UserRepository(),
         super(ProfileState(isCurrentUser: isCurrentUser)) {
-    on<Initializing>(_onInitial);
+    on<ProfileInitializing>(_onInitial);
     on<OpenImagePicker>(_onOpenImagePicker);
     on<SaveProfileChanges>(_onSaveProfileChanges);
   }
@@ -25,7 +25,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final _picker = ImagePicker();
 
   void _onInitial(
-    Initializing event,
+    ProfileInitializing event,
     Emitter<ProfileState> emit,
   ) async {
     try {
@@ -38,16 +38,21 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         } else {
           throw Exception("");
         }
-      }
+      } else {}
 
-      GetUserDetailsResponseMessage? user =
+      GetUserDetailsResponseMessage? userRes =
           await _userRepository.getUserDetail(userID: userID, limitPost: 5);
 
-      if (user == null) {
+      if (userRes == null) {
         throw Exception("");
       }
-
-      emit(state.copyWith(user: user.data, formStatus: FinishInitializing()));
+      if (userRes.statusCode == StatusCode.successStatus &&
+          userRes.data != null) {
+        emit(state.copyWith(
+            user: userRes.data, formStatus: FinishInitializing()));
+      } else {
+        throw Exception(userRes.messageCode);
+      }
     } on Exception catch (_) {
       emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
     }

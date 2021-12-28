@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/auth/authentication_status.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/search_screen.dart';
+import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:signalr_core/signalr_core.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -19,18 +24,36 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   int indexPage = 0;
+  final SignalRHelper _signalRHelper = SignalRHelper();
+
+  @override
+  void initState() {
+    _signalRHelper.hubConnection.onclose((exception) {
+      context.read<AuthBloc>().add(ReconnectSignalREvent());
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Theme(
-        child: getBody(),
-        data: Theme.of(context).copyWith(
-          dividerTheme:
-              const DividerThemeData(color: Colors.grey, thickness: 0.65),
+    return BlocListener<AuthBloc, AuthState>(
+      listenWhen: (previous, current) =>
+          previous.authStatus != current.authStatus,
+      listener: (context, state) {
+        if (state.authStatus is AuthenticationForceLogout) {
+          context.read<AuthBloc>().add(LogoutEvent());
+        }
+      },
+      child: Scaffold(
+        body: Theme(
+          child: getBody(),
+          data: Theme.of(context).copyWith(
+            dividerTheme:
+                const DividerThemeData(color: Colors.grey, thickness: 0.65),
+          ),
         ),
+        bottomNavigationBar: getBottomNavigationBar(),
       ),
-      bottomNavigationBar: getBottomNavigationBar(),
     );
   }
 

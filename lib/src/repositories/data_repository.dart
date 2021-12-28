@@ -1,6 +1,13 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/conversation/conversation.dart';
+import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/notification/notification.dart';
+import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
@@ -19,7 +26,37 @@ class DataRepository implements RestClient {
       requestBody: true,
       responseBody: true,
     ));
+    _dio.interceptors.add(InterceptorsWrapper(
+        onRequest: (options, handler) => handler.next(options),
+        onResponse: (response, handler) => handler.next(response),
+        onError: (error, handler) async {
+          if (error.response != null) {
+            log(error.response!.data['messageCode'].toString());
+            if (error.response!.statusCode == 401 &&
+                error.response!.data['messageCode'] ==
+                    MessageCode.tokenExpired) {
+              String token = getIt<AppPref>().getToken;
+              String refreshToken = getIt<AppPref>().getRefreshToken;
 
+              final response = await refreshJwtToken(token, refreshToken);
+              Map<String, dynamic> value = response.data!;
+              String? data = value['data'];
+              if (data != null) {
+                getIt<AppPref>().setToken(value['data']);
+                setJwtInHeader();
+                handler.resolve(response);
+              } else {
+                handler.next(error);
+              }
+            } else if (error.response!.statusCode == 401 &&
+                error.response!.data['messageCode'] ==
+                    MessageCode.refreshTokenExpired) {
+              handler.next(error);
+            } else {
+              handler.next(error);
+            }
+          }
+        }));
     setJwtInHeader();
     _client = RestClient(_dio, baseUrl: appBaseUrl);
   }
@@ -42,13 +79,12 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<Map<String, dynamic>> activateAccount(
-      String code, String userID) async {
+  Future<GetResponseMessage> activateAccount(String code, String userID) async {
     return _client.activateAccount(code, userID);
   }
 
   @override
-  Future<Map<String, dynamic>> regenerateCodeForRegister(String userID) async {
+  Future<GetResponseMessage> regenerateCodeForRegister(String userID) async {
     return _client.regenerateCodeForRegister(userID);
   }
 
@@ -59,20 +95,32 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<Map<String, dynamic>> regenerateResetPasswordCode(String email) {
+  Future<GetResponseMessage> regenerateResetPasswordCode(String email) {
     return _client.regenerateResetPasswordCode(email);
   }
 
   @override
-  Future<Response> refreshJwtToken(String token, String refreshToken) {
+  Future<Response<Map<String, dynamic>>> refreshJwtToken(
+      String token, String refreshToken) {
     return _client.refreshJwtToken(token, refreshToken);
   }
 
   @override
-  Future<Map<String, dynamic>> updateUserProfile(String username, String email,
+  Future<GetResponseMessage> updateUserProfile(String username, String email,
       String phone, String desc, String userRealName, String avatarImg) {
     return _client.updateUserProfile(
         username, email, phone, desc, userRealName, avatarImg);
+  }
+
+  @override
+  Future<GetNotificationResponseMessage> getNotification(int limit) {
+    return _client.getNotification(limit);
+  }
+
+  @override
+  Future<GetNotificationResponseMessage> getMoreNotification(
+      int limit, String dateBoundary) {
+    return _client.getMoreNotification(limit, dateBoundary);
   }
 
   @override
@@ -86,6 +134,16 @@ class DataRepository implements RestClient {
   }
 
   @override
+  Future<GetConversationResponseMessage> getConversations() {
+    return _client.getConversations();
+  }
+
+  @override
+  Future<GetConversationResponseMessage> getMoreConversations(
+      String dateBoundary) {
+    return _client.getMoreConversations(dateBoundary);
+  }
+
   Future<ContestListRespone> getContestList(
       String? searchName, int limitContest, String? dateUp, String? dateDown) {
     return _client.getContestList(searchName, limitContest, dateUp, dateDown);

@@ -1,12 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 import 'gallery_page.dart';
 
@@ -20,62 +24,70 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    bool isMe = false;
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: getProfileAppBar("thieen_aan"),
-      body: DefaultTabController(
-        length: 2,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, _) {
-            return [
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  [
-                    const SizedBox(height: 10),
-                    getUserHeader("assets/images/Kroni.jpg", 1, 40, 130),
-                    getUserDescription("Thiên Ân",
-                        "Hello, DIO DA!\nWRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY"),
-                    isMe == true
-                        ? getEditProfileButton()
-                        : getFollowMessageButton()
-                  ],
-                ),
-              ),
-            ];
-          },
-          body: Column(
-            children: const [
-              TabBar(
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.grey,
-                indicatorWeight: 1,
-                indicatorColor: Colors.black,
-                tabs: [
-                  Tab(
-                    icon: Icon(
-                      Icons.grid_on_rounded,
+    bool isMe = context.read<ProfileBloc>().state.isCurrentUser;
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: getProfileAppBar(state.user?.userName ?? ''),
+          body: DefaultTabController(
+            length: 2,
+            child: NestedScrollView(
+              headerSliverBuilder: (context, _) {
+                return [
+                  SliverList(
+                    delegate: SliverChildListDelegate(
+                      [
+                        const SizedBox(height: 10),
+                        getUserHeader(
+                            state.user?.avataUrl ?? "",
+                            state.user?.numberOfpost ?? 0,
+                            state.user?.numberFollower ?? 0,
+                            state.user?.numberFollowee ?? 0),
+                        getUserDescription(state.user?.userRealName ?? '',
+                            state.user?.description ?? ''),
+                        isMe == true
+                            ? getEditProfileButton()
+                            : getFollowMessageButton()
+                      ],
                     ),
                   ),
-                  Tab(
-                    icon: Icon(
-                      Icons.save_alt_rounded,
+                ];
+              },
+              body: Column(
+                children: const [
+                  TabBar(
+                    labelColor: Colors.black,
+                    unselectedLabelColor: Colors.grey,
+                    indicatorWeight: 1,
+                    indicatorColor: Colors.black,
+                    tabs: [
+                      Tab(
+                        icon: Icon(
+                          Icons.grid_on_rounded,
+                        ),
+                      ),
+                      Tab(
+                        icon: Icon(
+                          Icons.save_alt_rounded,
+                        ),
+                      )
+                    ],
+                  ),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        GalleryPage(),
+                        Center(child: Text("Saved post")),
+                      ],
                     ),
-                  )
+                  ),
                 ],
               ),
-              Expanded(
-                child: TabBarView(
-                  children: [
-                    GalleryPage(),
-                    Center(child: Text("Saved post")),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -137,8 +149,9 @@ class _ProfilePageState extends State<ProfilePage> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-            image: AssetImage(
-                imagePath.isNotEmpty ? imagePath : "assets/images/Kroni.jpg"),
+            image: imagePath.isNotEmpty
+                ? NetworkImage(avatarUrl + imagePath)
+                : const AssetImage("assets/images/Kroni.jpg") as ImageProvider,
             fit: BoxFit.cover,
           ),
         ),
@@ -199,8 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
         onPressed: () {
           context
               .read<AuthBloc>()
-              .add(NavigateToPageEvent(AppRouter.editProfileScreen));
-          //Navigator.of(context).pushNamed(AppRouter.editProfileScreen);
+              .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
         },
         child: const Text("Edit Profile"),
       ),
@@ -246,7 +258,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ConversationScreen(),
+                builder: (context) => const MessageScreen(),
               ),
             );
           },

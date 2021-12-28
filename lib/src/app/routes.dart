@@ -1,20 +1,23 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
+import 'dart:developer';
 import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
-import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
+import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
+import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
@@ -33,6 +36,9 @@ class AppRouter {
   static const String currentUserProfileScreen = '/profile';
   static const String otherUserProfileScreen = '/otherprofile';
   static const String editProfileScreen = '/editprofile';
+  static const String notificationScreen = '/notification';
+  static const String conversationScreen = '/conversation';
+
   static const String contestListScreen = '/contestlistscreen';
   static const String postDetailScreen = '/postdetailscreen';
   final ProfileBloc profileBloc = ProfileBloc(true);
@@ -83,6 +89,9 @@ class AppRouter {
           builder: (context) => MultiBlocProvider(
             providers: [
               //BlocProvider(create: (context) => ProfileBloc()),
+              BlocProvider(
+                  create: (context) =>
+                      NotificationBloc()..add(FetchNotification())),
               BlocProvider.value(value: profileBloc),
               BlocProvider(
                   create: (context) => HomeBloc()..add(InitPostFetched()))
@@ -102,9 +111,11 @@ class AppRouter {
           ),
         );
       case otherUserProfileScreen:
+        final userId = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => ProfileBloc(false),
+            create: (context) =>
+                ProfileBloc(false)..add(ProfileInitializing(userId['userId'])),
             child: const ProfilePage(),
           ),
         );
@@ -115,6 +126,19 @@ class AppRouter {
             child: const EditProfileScreen(),
           ),
         );
+      case notificationScreen:
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => NotificationBloc(),
+                  child: const NotificationPage(),
+                ));
+      case conversationScreen:
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      ConversationBloc()..add(FetchConversation()),
+                  child: const ConversationScreen(),
+                ));
       case contestListScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(

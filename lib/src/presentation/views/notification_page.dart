@@ -1,5 +1,14 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+
+import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
+import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class NotificationPage extends StatefulWidget {
   const NotificationPage({Key? key}) : super(key: key);
@@ -9,45 +18,68 @@ class NotificationPage extends StatefulWidget {
 }
 
 class _NotificationPageState extends State<NotificationPage> {
+  final _scrollController = ScrollController();
+  final SignalRHelper _signalRHelper = SignalRHelper();
+
+  @override
+  void initState() {
+    _scrollController.addListener(_onScroll);
+    _signalRHelper.hubConnection
+        .on('specificnotification', _handleSpecificNotification);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (isScrollEnd(_scrollController)) {
+      log("Fetchmore");
+      context.read<NotificationBloc>().add(FetchNotification());
+    }
+  }
+
+  void _handleSpecificNotification(List<dynamic>? parameters) {
+    context.read<NotificationBloc>().add(FetchNotification());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: getAppBar(),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              getNotificationItem("assets/images/JOKERONI.jpg", "Kronii",
-                  "đã thích bài viết của bạn", 15),
-              getNotificationItem("assets/images/Veibae.jpeg", "Veibae",
-                  "Đã bình luận vào bài viết của bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem(
-                  "assets/images/Gumba.jpg", "Gumba", "Đã theo dõi bạn", 15),
-              getNotificationItem("assets/images/WTF.jpg", "",
-                  "1 bài viết của bạn đã bị xóa", 15),
-            ],
+    return BlocListener<NotificationBloc, NotificationState>(
+      listenWhen: (previous, current) =>
+          previous.formStatus != current.formStatus,
+      listener: (context, state) {},
+      child: Scaffold(
+        appBar: getAppBar(),
+        body: SafeArea(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: BlocBuilder<NotificationBloc, NotificationState>(
+              builder: (context, state) {
+                List<NotificationItem>? notiList = state.notificationList;
+                if (notiList != null) {
+                  return ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      final NotificationItem noti = notiList[index];
+                      return getNotificationItem(
+                          noti.imageUrl ?? '',
+                          noti.userName,
+                          noti.notifyContent ?? '',
+                          noti.totalHours?.toInt() ?? 0);
+                    },
+                    itemCount: state.notificationList?.length,
+                    controller: _scrollController,
+                  );
+                } else {
+                  return const Center(child: CircularProgressIndicator());
+                }
+              },
+            ),
           ),
         ),
       ),
@@ -65,7 +97,10 @@ class _NotificationPageState extends State<NotificationPage> {
             child: Image(
               height: 45.0,
               width: 45.0,
-              image: AssetImage(imgLink),
+              image: (imgLink.isNotEmpty)
+                  ? NetworkImage(postImageUrl + imgLink)
+                  : const AssetImage('assets/images/Veibae.jpeg')
+                      as ImageProvider,
               fit: BoxFit.cover,
             ),
           ),

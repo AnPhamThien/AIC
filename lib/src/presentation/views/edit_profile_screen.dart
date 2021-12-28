@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
@@ -17,6 +18,13 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final _usernameController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _descController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +39,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       'Female',
       'Other',
     ];
-    String initValue = genderList.first;
     return SafeArea(
       child: SingleChildScrollView(
         child: Center(
@@ -39,105 +46,89 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             padding: const EdgeInsets.symmetric(
               horizontal: 20,
             ),
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                Container(
-                  height: 100.h,
-                  width: 100.h,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    image: DecorationImage(
-                      image: AssetImage("assets/images/Kroni.jpg"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  style: TextButton.styleFrom(
-                      primary: Colors.blue,
-                      textStyle: TextStyle(fontSize: 19.sp)),
-                  child: const Text("Change profile picture"),
-                  onPressed: () {},
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //username
-                const GetUserInput(
-                  label: "Username",
-                  initValue: "thieen__aan",
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //name
-                const GetUserInput(
-                  label: "Name",
-                  initValue: "Thiên Ân",
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //bio
-                const GetUserInput(
-                  label: "Bio",
-                  initValue: "WRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY",
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //Email
-                const GetUserInput(
-                  label: "Email",
-                  initValue: "AnDepTrai@Gmail.com",
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //Phone
-                const GetUserInput(
-                  label: "Phone",
-                  initValue: "0123456789",
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                //Gender
-                Stack(
-                  children: [
-                    const AbsorbPointer(
-                        child: GetUserInput(
-                      label: "Gender",
-                    )),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 22.0, vertical: 4.5),
-                      child: DropdownButton<String>(
-                        isExpanded: true,
-                        borderRadius: BorderRadius.circular(25),
-                        underline: const SizedBox.shrink(),
-                        value: initValue,
-                        iconSize: 24,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            initValue = newValue!;
-                          });
-                        },
-                        items: genderList
-                            .map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
+            child: BlocBuilder<ProfileBloc, ProfileState>(
+              builder: (context, state) {
+                return Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      const SizedBox(
+                        height: 10,
                       ),
-                    ),
-                  ],
-                )
-              ],
+                      Container(
+                        height: 100.h,
+                        width: 100.h,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: state.user?.avataUrl != null
+                                ? NetworkImage(
+                                    avatarUrl + state.user!.avataUrl.toString())
+                                : const AssetImage("assets/images/Kroni.jpg")
+                                    as ImageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      TextButton(
+                        style: TextButton.styleFrom(
+                            primary: Colors.blue,
+                            textStyle: TextStyle(fontSize: 19.sp)),
+                        child: const Text("Change profile picture"),
+                        onPressed: () {},
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //username
+                      GetUserInput(
+                        controller: _usernameController,
+                        label: "Username",
+                        initValue: state.user?.userName ?? '',
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //name
+                      GetUserInput(
+                        controller: _nameController,
+                        label: "Name",
+                        initValue: state.user?.userRealName ?? '',
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //bio
+                      GetUserInput(
+                        controller: _descController,
+                        label: "Bio",
+                        initValue: state.user?.description ?? '',
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //Email
+                      GetUserInput(
+                        controller: _emailController,
+                        label: "Email",
+                        initValue: state.user?.userEmail ?? '',
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      //Phone
+                      GetUserInput(
+                        controller: _phoneController,
+                        label: "Phone",
+                        initValue: state.user?.phone ?? '',
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ),

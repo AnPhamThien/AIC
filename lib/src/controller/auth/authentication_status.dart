@@ -10,4 +10,6 @@ class AuthenticationAuthenticated extends AuthenticationStatus {}
 
 class AuthenticationUnactivated extends AuthenticationStatus {}
 
+class AuthenticationForceLogout extends AuthenticationStatus {}
+
 class AuthenticationUnauthenticated extends AuthenticationStatus {}

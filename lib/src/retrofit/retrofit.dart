@@ -1,7 +1,8 @@
-import 'dart:convert';
-
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/model/conversation/conversation.dart';
+import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
@@ -30,14 +31,14 @@ abstract class RestClient {
       @Field('user_email') String email);
 
   @POST('/users/activationaccount')
-  Future<Map<String, dynamic>> activateAccount(
+  Future<GetResponseMessage> activateAccount(
       @Field('code') String code, @Field('user_id') String userID);
   @POST('/users/regeneratecodeforregisaccount')
-  Future<Map<String, dynamic>> regenerateCodeForRegister(
+  Future<GetResponseMessage> regenerateCodeForRegister(
       @Field('userID') String userID);
 
   @POST('/users/generateresetpasswordcode')
-  Future<Map<String, dynamic>> regenerateResetPasswordCode(
+  Future<GetResponseMessage> regenerateResetPasswordCode(
       @Field('user_email') String email);
 
   @GET('/users/getuserdetail')
@@ -47,17 +48,28 @@ abstract class RestClient {
   );
 
   @POST('/users/refreshtoken')
-  Future<Response> refreshJwtToken(@Field('JwtToken') String token,
+  Future<Response<Map<String, dynamic>>> refreshJwtToken(
+      @Field('JwtToken') String token,
       @Field('RefreshToken') String refreshToken);
 
   @POST('/users/updateuserprofile')
-  Future<Map<String, dynamic>> updateUserProfile(
+  Future<GetResponseMessage> updateUserProfile(
       @Field('user_name') String username,
       @Field('user_email') String email,
       @Field('phone') String phone,
       @Field('description') String desc,
       @Field('user_real_name') String userRealName,
       @Field('avatar_img') String avatarImg);
+
+  @GET('/notifications/getnotification')
+  Future<GetNotificationResponseMessage> getNotification(
+    @Query('limitNotification') int limit,
+  );
+
+  @GET('/notifications/getmorenotification')
+  Future<GetNotificationResponseMessage> getMoreNotification(
+      @Query('limitNotification') int limit,
+      @Query('dateBoundary') String dateBoundary);
 
   @GET('/posts/getpostver2')
   Future<PostListRespone> getPost(
@@ -66,9 +78,14 @@ abstract class RestClient {
   );
 
   @POST('/posts/getmorepostver2')
-  Future<PostListRespone> getMorePost(
-    @Body() PostListRequest request,
-  );
+  Future<PostListRespone> getMorePost(@Body() PostListRequest request);
+
+  @GET('/conversations/getconversations')
+  Future<GetConversationResponseMessage> getConversations();
+
+  @GET('/conversations/getmoreconversations')
+  Future<GetConversationResponseMessage> getMoreConversations(
+      @Query('dateBoundary') String dateBoundary);
 
   @GET('/contests/getcontestforuser')
   Future<ContestListRespone> getContestList(

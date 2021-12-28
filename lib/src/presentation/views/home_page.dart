@@ -8,8 +8,6 @@ import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
@@ -113,7 +111,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               context
                   .read<AuthBloc>()
-                  .add(NavigateToPageEvent(AppRouter.contestListScreen));
+                  .add(NavigateToPageEvent(route: AppRouter.contestListScreen));
             },
             icon: const Icon(
               Icons.emoji_events_outlined,
@@ -124,12 +122,9 @@ class _HomePageState extends State<HomePage> {
         ),
         IconButton(
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MessageScreen(),
-              ),
-            );
+            context
+                .read<AuthBloc>()
+                .add(NavigateToPageEvent(route: AppRouter.conversationScreen));
           },
           icon: SvgPicture.asset(
             "assets/icons/message_icon.svg",

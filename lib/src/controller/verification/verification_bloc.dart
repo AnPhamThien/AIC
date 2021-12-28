@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:imagecaptioning/src/constanct/status_code.dart';
 import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
@@ -11,12 +14,17 @@ part 'verification_state.dart';
 class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
   VerificationBloc()
       : _userRepository = UserRepository(),
-        super(const VerificationState()) {
+        //_ticker = Ticker(_onTick);
+        super(VerificationState()) {
     on<VerificationSubmitted>(_onSubmitted);
     on<VerificationResendButtonPushed>(_onResendButtonPushed);
   }
 
   final UserRepository _userRepository;
+  //final Ticker _ticker ;
+  static const int _duration = 10;
+
+  StreamSubscription<int>? _tickerSubscription;
 
   void _onSubmitted(
     VerificationSubmitted event,
@@ -30,12 +38,8 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
       if (response == null) {
         throw Exception("");
       }
-      if (response is int) {
-        if (response == StatusCode.successStatus) {
-          emit(state.copyWith(formStatus: FormSubmissionSuccess()));
-        } else {
-          throw Exception("");
-        }
+      if (response == StatusCode.successStatus) {
+        emit(state.copyWith(formStatus: FormSubmissionSuccess()));
       } else {
         throw Exception(response);
       }
@@ -57,8 +61,7 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
       }
       if (response is int) {
         if (response == StatusCode.successStatus) {
-          emit(state.copyWith(
-              formStatus: FormSubmissionSuccess(), absorbing: true));
+          //emit(state.copyWith(absorbing: true));
         } else {
           throw Exception("");
         }
@@ -69,4 +72,16 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
       emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
     }
   }
+
+  void _onStarted(TimerStarted event, Emitter<VerificationState> emit) {
+    _tickerSubscription?.cancel();
+    //_ticker.start();
+
+    //_tickerSubscription = _ticker.tick(ticks: event.duration)
+    //   .listen((duration) => add(TimerTicked(duration: duration)));
+  }
+
+  void _onTicked(TimerTicked event, Emitter<VerificationState> emit) {}
+
+  void _onTick(Duration duration) {}
 }

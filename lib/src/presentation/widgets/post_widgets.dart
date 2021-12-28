@@ -34,6 +34,7 @@ class _PostWidgetState extends State<PostWidget> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 PostHeadlineWidget(
+                    userId: widget.post.userId ?? "",
                     username: widget.post.userName ?? "",
                     time: widget.post.dateCreate ?? DateTime.now(),
                     postAvatar: widget.post.avataUrl ?? ""),
@@ -53,7 +54,7 @@ class _PostWidgetState extends State<PostWidget> {
           Map<String, dynamic> args = {'post': widget.post};
 
           context.read<AuthBloc>().add(NavigateToPageEvent(
-                AppRouter.postDetailScreen,
+                route: AppRouter.postDetailScreen,
                 args: args,
               ));
         },
@@ -66,11 +67,13 @@ class _PostWidgetState extends State<PostWidget> {
 class PostHeadlineWidget extends StatelessWidget {
   const PostHeadlineWidget({
     Key? key,
+    required this.userId,
     required this.username,
     required this.time,
     required this.postAvatar,
   }) : super(key: key);
 
+  final String userId;
   final String username;
   final DateTime time;
   final String postAvatar;
@@ -91,7 +94,10 @@ class PostHeadlineWidget extends StatelessWidget {
           (DateTime.now().difference(time).inDays / 30).round().toString() +
               " months";
     }
+    Map<String, dynamic> args = {'userId': userId};
     return ListTile(
+      onTap: () => context.read<AuthBloc>().add(NavigateToPageEvent(
+          route: AppRouter.otherUserProfileScreen, args: args)),
       leading: Container(
         width: 45,
         height: 45,

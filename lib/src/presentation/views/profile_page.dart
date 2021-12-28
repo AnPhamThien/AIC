@@ -24,16 +24,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    final args =
-        ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>?;
-
-    bool isMe = true;
-    String userID = args?['userID'] ?? '';
-
-    if (userID.isNotEmpty) {
-      isMe = false;
-    }
-    context.read<ProfileBloc>().add(ProfileInitializing(userID));
+    bool isMe = context.read<ProfileBloc>().state.isCurrentUser;
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         return Scaffold(

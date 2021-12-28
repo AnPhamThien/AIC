@@ -4,7 +4,6 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/constanct/status_code.dart';
 import 'package:imagecaptioning/src/controller/auth/authentication_status.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
@@ -13,7 +12,6 @@ import 'package:imagecaptioning/src/repositories/auth/auth_repository.dart';
 
 import 'package:imagecaptioning/src/repositories/data_repository.dart';
 import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
-import 'package:signalr_core/signalr_core.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

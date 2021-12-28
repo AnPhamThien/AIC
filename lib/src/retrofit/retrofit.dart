@@ -3,6 +3,7 @@ import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
+import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
@@ -85,4 +86,19 @@ abstract class RestClient {
   @GET('/conversations/getmoreconversations')
   Future<GetConversationResponseMessage> getMoreConversations(
       @Query('dateBoundary') String dateBoundary);
+
+  @GET('/contests/getcontestforuser')
+  Future<ContestListRespone> getContestList(
+    @Query('searchname') String? searchName,
+    @Query('limitcontest') int limitContest,
+    @Query('date_up') String? dateUp,
+    @Query('date_dow') String? dateDown,
+  );
+
+  @GET('/posts/getpostdetailver2')
+  Future<ContestListRespone> getPostDetail(
+    @Query('post_id') String postId,
+    @Query('limitComment') int limitComment,
+    @Query('contest_id') String? contestId,
+  );
 }

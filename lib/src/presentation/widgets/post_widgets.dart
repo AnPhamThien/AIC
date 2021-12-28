@@ -1,10 +1,15 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
+// ignore: implementation_imports
+import 'package:provider/src/provider.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.post}) : super(key: key);
@@ -21,39 +26,40 @@ class _PostWidgetState extends State<PostWidget> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       height: 580.h,
-      child: Material(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              PostHeadlineWidget(
-                  username: widget.post.userName ?? "",
-                  time: widget.post.dateCreate ?? DateTime.now(),
-                  postAvatar: widget.post.avataUrl ?? ""),
-              PostImgWidget(postImage: widget.post.imageUrl ?? ""),
-              const PostIconWidget(),
-              GestureDetector(
-                child: PostDescription(
+      child: GestureDetector(
+        child: Material(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                PostHeadlineWidget(
+                    userId: widget.post.userId ?? "",
+                    username: widget.post.userName ?? "",
+                    time: widget.post.dateCreate ?? DateTime.now(),
+                    postAvatar: widget.post.avataUrl ?? ""),
+                PostImgWidget(postImage: widget.post.imageUrl ?? ""),
+                const PostIconWidget(),
+                PostDescription(
                   username: widget.post.userName ?? "",
                   caption:
                       widget.post.userCaption ?? widget.post.aiCaption ?? "",
                   likeCount: widget.post.likecount!,
                 ),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PostDetailScreen(),
-                    ),
-                  );
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ),
+        onTap: () {
+          Map<String, dynamic> args = {'post': widget.post};
+
+          context.read<AuthBloc>().add(NavigateToPageEvent(
+                route: AppRouter.postDetailScreen,
+                args: args,
+              ));
+        },
       ),
     );
   }
@@ -63,11 +69,13 @@ class _PostWidgetState extends State<PostWidget> {
 class PostHeadlineWidget extends StatelessWidget {
   const PostHeadlineWidget({
     Key? key,
+    required this.userId,
     required this.username,
     required this.time,
     required this.postAvatar,
   }) : super(key: key);
 
+  final String userId;
   final String username;
   final DateTime time;
   final String postAvatar;
@@ -88,7 +96,10 @@ class PostHeadlineWidget extends StatelessWidget {
           (DateTime.now().difference(time).inDays / 30).round().toString() +
               " months";
     }
+    Map<String, dynamic> args = {'userId': userId};
     return ListTile(
+      onTap: () => context.read<AuthBloc>().add(NavigateToPageEvent(
+          route: AppRouter.otherUserProfileScreen, args: args)),
       leading: Container(
         width: 45,
         height: 45,
@@ -185,11 +196,12 @@ class PostIconWidget extends StatelessWidget {
     Key? key,
     this.likeCount,
     this.commentCount,
+    this.isLike,
   }) : super(key: key);
 
   final int? likeCount;
   final int? commentCount;
-
+  final int? isLike;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -201,12 +213,22 @@ class PostIconWidget extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  IconButton(
-                    splashRadius: 23,
-                    icon: const Icon(Icons.favorite_border_rounded),
-                    iconSize: 30.0,
-                    onPressed: () {}, //TODO hàm Like ở đây
-                  ),
+                  isLike == 0
+                      ? IconButton(
+                          splashRadius: 23,
+                          icon: const Icon(Icons.favorite_border_rounded),
+                          iconSize: 30.0,
+                          onPressed: () {}, //TODO hàm Like ở đây
+                        )
+                      : IconButton(
+                          splashRadius: 23,
+                          icon: const Icon(
+                            Icons.favorite_rounded,
+                          ),
+                          color: Colors.red,
+                          iconSize: 30.0,
+                          onPressed: () {}, //TODO hàm DisLike ở đây
+                        ),
                   likeCount == null
                       ? const SizedBox.shrink()
                       : Padding(

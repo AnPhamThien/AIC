@@ -19,7 +19,10 @@ class EditProfileScreen extends StatefulWidget {
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
   final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _descController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -79,6 +82,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       //username
                       GetUserInput(
+                        controller: _usernameController,
                         label: "Username",
                         initValue: state.user?.userName ?? '',
                       ),
@@ -87,6 +91,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       //name
                       GetUserInput(
+                        controller: _nameController,
                         label: "Name",
                         initValue: state.user?.userRealName ?? '',
                       ),
@@ -95,6 +100,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       //bio
                       GetUserInput(
+                        controller: _descController,
                         label: "Bio",
                         initValue: state.user?.description ?? '',
                       ),
@@ -103,6 +109,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       //Email
                       GetUserInput(
+                        controller: _emailController,
                         label: "Email",
                         initValue: state.user?.userEmail ?? '',
                       ),
@@ -111,6 +118,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       ),
                       //Phone
                       GetUserInput(
+                        controller: _phoneController,
                         label: "Phone",
                         initValue: state.user?.phone ?? '',
                       ),

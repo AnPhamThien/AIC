@@ -5,11 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/controller/home_controller/bloc/home_bloc.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
@@ -111,12 +109,9 @@ class _HomePageState extends State<HomePage> {
         RadiantGradientMask(
           child: IconButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ContestListScreen(),
-                ),
-              );
+              context
+                  .read<AuthBloc>()
+                  .add(NavigateToPageEvent(route: AppRouter.contestListScreen));
             },
             icon: const Icon(
               Icons.emoji_events_outlined,

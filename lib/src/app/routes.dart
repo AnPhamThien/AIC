@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
+import 'dart:developer';
+import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
-import 'package:imagecaptioning/src/controller/home_controller/bloc/home_bloc.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
 import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
-
+import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
+import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
@@ -35,6 +39,8 @@ class AppRouter {
   static const String notificationScreen = '/notification';
   static const String conversationScreen = '/conversation';
 
+  static const String contestListScreen = '/contestlistscreen';
+  static const String postDetailScreen = '/postdetailscreen';
   final ProfileBloc profileBloc = ProfileBloc(true);
 
   static const List<String> noAuthNeededScreens = [
@@ -105,9 +111,11 @@ class AppRouter {
           ),
         );
       case otherUserProfileScreen:
+        final userId = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => ProfileBloc(false),
+            create: (context) =>
+                ProfileBloc(false)..add(ProfileInitializing(userId['userId'])),
             child: const ProfilePage(),
           ),
         );
@@ -131,6 +139,22 @@ class AppRouter {
                       ConversationBloc()..add(FetchConversation()),
                   child: const ConversationScreen(),
                 ));
+      case contestListScreen:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => ContestListBloc()..add(InitContestFetched()),
+            child: const ContestListScreen(),
+          ),
+        );
+      case postDetailScreen:
+        final post = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) =>
+                PostDetailBloc()..add(PostInitEvent(post['post'])),
+            child: const PostDetailScreen(),
+          ),
+        );
       default:
         return null;
     }

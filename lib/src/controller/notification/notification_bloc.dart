@@ -4,9 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/constanct/status_code.dart';
 import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
 
 part "notification_event.dart";

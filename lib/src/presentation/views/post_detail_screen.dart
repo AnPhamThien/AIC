@@ -1,15 +1,42 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class PostDetailScreen extends StatefulWidget {
   const PostDetailScreen({Key? key}) : super(key: key);
-
   @override
   _PostDetailScreenState createState() => _PostDetailScreenState();
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
+  final _scrollController = ScrollController();
+  @override
+  void initState() {
+    _scrollController.addListener(_onScroll);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (isScrollEnd(_scrollController)) {
+      //TODO fetch more comment
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,13 +44,27 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         backgroundColor: bgApp,
         body: SafeArea(
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                getPostSection(),
-                const SizedBox(height: 10.0),
-                getCommentSection(),
-                const SizedBox(height: 10.0),
-              ],
+            child: BlocBuilder<PostDetailBloc, PostDetailState>(
+              builder: (context, state) {
+                switch (state.status) {
+                  case PostDetailStatus.success:
+                    final Post post = state.post!;
+                    return Column(
+                      children: [
+                        getPostSection(post),
+                        const SizedBox(height: 10.0),
+                        getCommentSection(),
+                        const SizedBox(height: 10.0),
+                      ],
+                    );
+                  case PostDetailStatus.failure:
+                    return const Center(
+                      child: Text('Some thing went wrong'),
+                    );
+                  default:
+                    return const Center(child: CircularProgressIndicator());
+                }
+              },
             ),
           ),
         ),
@@ -78,7 +119,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
-  Container getPostSection() {
+  Container getPostSection(Post post) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -100,26 +141,28 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
               Expanded(
                 child: PostHeadlineWidget(
-                  username: "thieen_aan",
-                  time: DateTime.now(),
-                  postAvatar: "assets/images/Kroni.jpg",
+                  userId: post.userId!,
+                  username: post.userName!,
+                  time: post.dateCreate!,
+                  postAvatar: post.avataUrl!,
                 ),
               ),
             ],
           ),
-          const PostImgWidget(postImage: "assets/images/WTF.jpg"),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          PostImgWidget(postImage: post.imageUrl!),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
             child: Text(
-              "Why im i still here? \n just to suffer ?",
+              post.userCaption ?? post.aiCaption!,
               softWrap: true,
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w400),
+              style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w400),
             ),
           ),
-          const PostIconWidget(
-            likeCount: 170,
+          PostIconWidget(
+            isLike: post.isLike,
+            likeCount: post.likecount,
             commentCount: 190,
           ),
           const SizedBox(height: 10),

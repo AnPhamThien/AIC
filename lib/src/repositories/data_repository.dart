@@ -8,6 +8,7 @@ import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
+import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
@@ -141,5 +142,16 @@ class DataRepository implements RestClient {
   Future<GetConversationResponseMessage> getMoreConversations(
       String dateBoundary) {
     return _client.getMoreConversations(dateBoundary);
+  }
+
+  Future<ContestListRespone> getContestList(
+      String? searchName, int limitContest, String? dateUp, String? dateDown) {
+    return _client.getContestList(searchName, limitContest, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestListRespone> getPostDetail(
+      String postId, int limitComment, String? contestId) {
+    return _client.getPostDetail(postId, limitComment, contestId);
   }
 }

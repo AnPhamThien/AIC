@@ -55,7 +55,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                   onPressed: () {
                     context
                         .read<AuthBloc>()
-                        .add(NavigateToPageEvent(AppRouter.loginScreen));
+                        .add(NavigateToPageEvent(route: AppRouter.loginScreen));
                     //Navigator.of(context).pushNamed(AppRouter.loginScreen);
                   },
                   child: const Text(
@@ -111,7 +111,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
         onPressed: () {
           context
               .read<AuthBloc>()
-              .add(NavigateToPageEvent(AppRouter.loginScreen));
+              .add(NavigateToPageEvent(route: AppRouter.loginScreen));
           //Navigator.of(context).pushNamed(AppRouter.loginScreen);
         },
         child: RichText(

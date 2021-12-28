@@ -1,20 +1,20 @@
 part of 'conversation_bloc.dart';
 
-class NotificationState {
-  final List<NotificationItem>? notificationList;
+class ConversationState {
+  final List<Conversation>? conversationList;
   final FormSubmissionStatus formStatus;
 
-  NotificationState({
-    this.notificationList,
+  ConversationState({
+    this.conversationList,
     this.formStatus = const InitialFormStatus(),
   });
 
-  NotificationState copyWith({
-    List<NotificationItem>? notificationList,
+  ConversationState copyWith({
+    List<Conversation>? conversationList,
     FormSubmissionStatus? formStatus,
   }) {
-    return NotificationState(
-        notificationList: notificationList ?? this.notificationList,
+    return ConversationState(
+        conversationList: conversationList ?? this.conversationList,
         formStatus: formStatus ?? this.formStatus);
   }
 }

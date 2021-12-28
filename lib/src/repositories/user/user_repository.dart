@@ -73,7 +73,7 @@ class UserRepository extends UserBehavior {
       {required String code, required String userID}) async {
     try {
       final resMessage = await _dataRepository.activateAccount(code, userID);
-      final response = resMessage['messageCode'] ?? resMessage['statusCode'];
+      final response = resMessage.messageCode ?? resMessage.statusCode;
       return response;
     } catch (e) {
       if (e is DioError) {
@@ -92,7 +92,7 @@ class UserRepository extends UserBehavior {
     try {
       final resMessage =
           await _dataRepository.regenerateCodeForRegister(userID);
-      final response = resMessage['messageCode'] ?? resMessage['statusCode'];
+      final response = resMessage.messageCode ?? resMessage.statusCode;
 
       return response;
     } catch (e) {
@@ -130,7 +130,7 @@ class UserRepository extends UserBehavior {
     try {
       final resMessage =
           await _dataRepository.regenerateResetPasswordCode(email);
-      final response = resMessage['messageCode'] ?? resMessage['statusCode'];
+      final response = resMessage.messageCode ?? resMessage.statusCode;
       return response;
     } catch (e) {
       if (e is DioError) {
@@ -155,7 +155,7 @@ class UserRepository extends UserBehavior {
     try {
       final resMessage = await _dataRepository.updateUserProfile(
           username, email, phone, desc, userRealName, avatarImg);
-      final response = resMessage['messageCode'] ?? resMessage['statusCode'];
+      final response = resMessage.messageCode ?? resMessage.statusCode;
 
       return response;
     } catch (e) {

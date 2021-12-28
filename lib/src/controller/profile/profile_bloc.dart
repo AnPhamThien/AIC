@@ -38,7 +38,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         } else {
           throw Exception("");
         }
-      }
+      } else {}
 
       GetUserDetailsResponseMessage? userRes =
           await _userRepository.getUserDetail(userID: userID, limitPost: 5);

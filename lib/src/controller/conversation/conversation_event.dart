@@ -1,7 +1,7 @@
 part of 'conversation_bloc.dart';
 
-abstract class NotificationEvent {}
+abstract class ConversationEvent {}
 
-class FetchNotification extends NotificationEvent {
-  FetchNotification();
+class FetchConversation extends ConversationEvent {
+  FetchConversation();
 }

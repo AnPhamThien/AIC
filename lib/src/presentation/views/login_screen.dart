@@ -37,8 +37,7 @@ class LoginScreenState extends State<LoginScreen> {
               MessageCode.errorMap[MessageCode.userAccountInActivated]) {
             context
                 .read<AuthBloc>()
-                .add(NavigateToPageEvent(AppRouter.verificationScreen));
-            //Navigator.of(context).pushNamed(AppRouter.verificationScreen);
+                .add(NavigateToPageEvent(route: AppRouter.verificationScreen));
           }
         }
       },
@@ -85,8 +84,7 @@ class LoginScreenState extends State<LoginScreen> {
         onPressed: () {
           context
               .read<AuthBloc>()
-              .add(NavigateToPageEvent(AppRouter.forgotPasswordScreen));
-          //Navigator.of(context).pushNamed(AppRouter.forgotPasswordScreen);
+              .add(NavigateToPageEvent(route: AppRouter.forgotPasswordScreen));
         },
         child: const Text(
           "Forgot password ?",
@@ -113,8 +111,7 @@ class LoginScreenState extends State<LoginScreen> {
         onPressed: () {
           context
               .read<AuthBloc>()
-              .add(NavigateToPageEvent(AppRouter.registrationScreen));
-          //Navigator.of(context).pushNamed(AppRouter.registrationScreen);
+              .add(NavigateToPageEvent(route: AppRouter.registrationScreen));
         },
         child: RichText(
           text: const TextSpan(

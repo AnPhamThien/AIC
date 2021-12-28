@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/conversation/conversation.dart';
+import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
@@ -76,13 +78,12 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<Map<String, dynamic>> activateAccount(
-      String code, String userID) async {
+  Future<GetResponseMessage> activateAccount(String code, String userID) async {
     return _client.activateAccount(code, userID);
   }
 
   @override
-  Future<Map<String, dynamic>> regenerateCodeForRegister(String userID) async {
+  Future<GetResponseMessage> regenerateCodeForRegister(String userID) async {
     return _client.regenerateCodeForRegister(userID);
   }
 
@@ -93,7 +94,7 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<Map<String, dynamic>> regenerateResetPasswordCode(String email) {
+  Future<GetResponseMessage> regenerateResetPasswordCode(String email) {
     return _client.regenerateResetPasswordCode(email);
   }
 
@@ -104,7 +105,7 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<Map<String, dynamic>> updateUserProfile(String username, String email,
+  Future<GetResponseMessage> updateUserProfile(String username, String email,
       String phone, String desc, String userRealName, String avatarImg) {
     return _client.updateUserProfile(
         username, email, phone, desc, userRealName, avatarImg);
@@ -129,5 +130,16 @@ class DataRepository implements RestClient {
   @override
   Future<PostListRespone> getMorePost(PostListRequest request) {
     return _client.getMorePost(request);
+  }
+
+  @override
+  Future<GetConversationResponseMessage> getConversations() {
+    return _client.getConversations();
+  }
+
+  @override
+  Future<GetConversationResponseMessage> getMoreConversations(
+      String dateBoundary) {
+    return _client.getMoreConversations(dateBoundary);
   }
 }

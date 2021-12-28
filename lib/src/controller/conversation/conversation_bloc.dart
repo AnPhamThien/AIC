@@ -5,47 +5,49 @@ import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/constanct/status_code.dart';
 import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
+import 'package:imagecaptioning/src/repositories/conversation/conversation_repostitory.dart';
 import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
 import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 
 part 'conversation_event.dart';
 part 'conversation_state.dart';
 
-class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
-  NotificationBloc()
-      : _notificationRepository = NotificationRepository(),
+class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
+  ConversationBloc()
+      : _conversationRepository = ConversationRepository(),
         _signalRHelper = SignalRHelper(),
-        super(NotificationState()) {
-    on<FetchNotification>(_onInitial);
+        super(ConversationState()) {
+    on<FetchConversation>(_onInitial);
   }
-  final NotificationRepository _notificationRepository;
+  final ConversationRepository _conversationRepository;
   final SignalRHelper _signalRHelper;
 
   void _onInitial(
-    FetchNotification event,
-    Emitter<NotificationState> emit,
+    FetchConversation event,
+    Emitter<ConversationState> emit,
   ) async {
     try {
-      GetNotificationResponseMessage? resMessage;
+      GetConversationResponseMessage? resMessage;
       if (state.formStatus is InitialFormStatus) {
-        resMessage =
-            await _notificationRepository.getNotification(limit: limitNoti);
+        resMessage = await _conversationRepository.getConversations();
       } else {
-        resMessage = await _notificationRepository.getMoreNotification(
-            limit: limitNoti,
-            dateBoundary: state.notificationList!.last.dateCreate.toString());
+        resMessage = await _conversationRepository.getMoreConversations(
+            dateBoundary:
+                state.conversationList!.last.conversationDate.toString());
       }
 
       if (resMessage == null) {
         throw Exception("");
       }
 
-      List<NotificationItem>? notiList = resMessage.data;
+      List<Conversation>? conversationList = resMessage.data;
 
       emit(state.copyWith(
-          formStatus: FinishInitializing(), notificationList: notiList));
+          formStatus: FinishInitializing(),
+          conversationList: conversationList));
     } on Exception catch (_) {
       emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
     }

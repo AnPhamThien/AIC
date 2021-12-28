@@ -2,34 +2,35 @@
 //
 //     final userMessage = userMessageFromJson(jsonString);
 
-
 class User {
-  User({this.id, this.name, this.avatar, this.phone, this.role, this.email});
+  User({
+    this.avatar,
+    this.phone,
+    this.role,
+    this.email,
+    this.userName,
+  });
 
-  String? id;
-  String? name;
   String? avatar;
   String? phone;
   String? role;
   String? email;
+  dynamic userName;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
-      id: json[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
-      name: json["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
-      avatar: json[""],
-      role:
-          json["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"],
-      email: json[
-          "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"]);
+        avatar: json["avatar"],
+        phone: json["phone"],
+        role: json["role"],
+        email: json["email"],
+        userName: json["userName"],
+      );
 
   Map<String, dynamic> toJson() => {
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier":
-            id,
-        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name": name,
         "avatar": avatar,
         "phone": phone,
         "role": role,
+        "email": email,
+        "userName": userName,
       };
 }
 
@@ -50,7 +51,7 @@ class AuthenticationResponseMessage {
   factory AuthenticationResponseMessage.fromJson(Map<String, dynamic> json) =>
       AuthenticationResponseMessage(
           data: json["data"],
-          user: json["user"] == null ? null : User.fromJson(json["user"]),
+          user: json["user"] != null ? User.fromJson(json["user"]) : null,
           messageCode: json["messageCode"],
           statusCode: json["statusCode"],
           refreshToken: json["refreshToken"]);

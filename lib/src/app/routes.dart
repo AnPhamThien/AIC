@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home_controller/bloc/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:imagecaptioning/src/controller/notification/notification_bloc.da
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 
 import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
@@ -31,6 +33,7 @@ class AppRouter {
   static const String otherUserProfileScreen = '/otherprofile';
   static const String editProfileScreen = '/editprofile';
   static const String notificationScreen = '/notification';
+  static const String conversationScreen = '/conversation';
 
   final ProfileBloc profileBloc = ProfileBloc(true);
 
@@ -84,7 +87,8 @@ class AppRouter {
                   create: (context) =>
                       NotificationBloc()..add(FetchNotification())),
               BlocProvider.value(value: profileBloc),
-              BlocProvider(create: (context) => HomeBloc()..add(InitPostFetched()))
+              BlocProvider(
+                  create: (context) => HomeBloc()..add(InitPostFetched()))
             ],
             child: const RootScreen(),
           ),
@@ -120,7 +124,13 @@ class AppRouter {
                   create: (context) => NotificationBloc(),
                   child: const NotificationPage(),
                 ));
-
+      case conversationScreen:
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      ConversationBloc()..add(FetchConversation()),
+                  child: const ConversationScreen(),
+                ));
       default:
         return null;
     }

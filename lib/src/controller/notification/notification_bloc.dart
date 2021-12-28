@@ -8,7 +8,6 @@ import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
-import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 
 part "notification_event.dart";
 part "notification_state.dart";
@@ -38,12 +37,15 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
 
       if (resMessage == null) {
         throw Exception("");
+      } else if (resMessage.statusCode == StatusCode.successStatus &&
+          resMessage.data != null) {
+        List<NotificationItem>? notiList = resMessage.data;
+
+        emit(state.copyWith(
+            formStatus: FinishInitializing(), notificationList: notiList));
+      } else {
+        throw Exception(resMessage.messageCode);
       }
-
-      List<NotificationItem>? notiList = resMessage.data;
-
-      emit(state.copyWith(
-          formStatus: FinishInitializing(), notificationList: notiList));
     } on Exception catch (_) {
       emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
     }

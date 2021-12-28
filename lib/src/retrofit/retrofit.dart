@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/model/conversation/conversation.dart';
+import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
@@ -28,14 +30,14 @@ abstract class RestClient {
       @Field('user_email') String email);
 
   @POST('/users/activationaccount')
-  Future<Map<String, dynamic>> activateAccount(
+  Future<GetResponseMessage> activateAccount(
       @Field('code') String code, @Field('user_id') String userID);
   @POST('/users/regeneratecodeforregisaccount')
-  Future<Map<String, dynamic>> regenerateCodeForRegister(
+  Future<GetResponseMessage> regenerateCodeForRegister(
       @Field('userID') String userID);
 
   @POST('/users/generateresetpasswordcode')
-  Future<Map<String, dynamic>> regenerateResetPasswordCode(
+  Future<GetResponseMessage> regenerateResetPasswordCode(
       @Field('user_email') String email);
 
   @GET('/users/getuserdetail')
@@ -50,7 +52,7 @@ abstract class RestClient {
       @Field('RefreshToken') String refreshToken);
 
   @POST('/users/updateuserprofile')
-  Future<Map<String, dynamic>> updateUserProfile(
+  Future<GetResponseMessage> updateUserProfile(
       @Field('user_name') String username,
       @Field('user_email') String email,
       @Field('phone') String phone,
@@ -74,13 +76,13 @@ abstract class RestClient {
     @Query('limitDay') int limitDay,
   );
 
-  // @GET('/conversations/getconversations')
-  // Future<Map<String, dynamic>> getConversations(
-  // );
-
-  // @GET('/conversations/getmoreconversations')
-  // Future<Map<String, dynamic>> getMoreConversations(
-  //     @Query('dateBoundary') String dateBoundary);
   @POST('/posts/getmorepostver2')
   Future<PostListRespone> getMorePost(@Body() PostListRequest request);
+
+  @GET('/conversations/getconversations')
+  Future<GetConversationResponseMessage> getConversations();
+
+  @GET('/conversations/getmoreconversations')
+  Future<GetConversationResponseMessage> getMoreConversations(
+      @Query('dateBoundary') String dateBoundary);
 }

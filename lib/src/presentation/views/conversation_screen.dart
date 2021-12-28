@@ -1,5 +1,17 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
+import 'package:imagecaptioning/src/model/conversation/conversation.dart';
+import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({Key? key}) : super(key: key);
@@ -9,139 +21,122 @@ class ConversationScreen extends StatefulWidget {
 }
 
 class _ConversationScreenState extends State<ConversationScreen> {
+  final _scrollController = ScrollController();
+  final SignalRHelper _signalRHelper = SignalRHelper();
+
+  @override
+  void initState() {
+    _scrollController.addListener(_onScroll);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (isScrollEnd(_scrollController)) {
+      log("Fetchmore");
+      context.read<ConversationBloc>().add(FetchConversation());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    String username = "thieen_aan";
     return Scaffold(
-      body: Scaffold(
-        appBar: getAppBar(
-          "assets/images/Kroni.jpg",
-          "Kronii",
-          "Ouro_Kronii",
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                getMessageItem(false, "Hi!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(false, "How are you?"),
-                getMessageItem(true, "Oh, I'm fine"),
-                getMessageItem(true, "I'm going to make some breakfast, you ?"),
-                getMessageItem(false,
-                    "I'm eating right now ;)\nIt's Bacon, egg and toast but i but some effort and including the cheese!"),
-                getMessageItem(true, "Nice!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-              ],
-            ),
-          ),
-        ),
-        bottomNavigationBar: getMessageBottomBar(),
+      appBar: AppBar(
+        title: AppBarTitle(title: username),
+        elevation: 0,
+        titleSpacing: 0,
       ),
-    );
-  }
-
-  Row getMessageItem(bool isSelf, String message) {
-    return Row(
-      mainAxisAlignment:
-          isSelf ? MainAxisAlignment.end : MainAxisAlignment.start,
-      children: [
-        Flexible(
-          child: Container(
-            constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * .6, minWidth: 0),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-            margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 3),
-            decoration: BoxDecoration(
-              color: isSelf ? bgGrey.withOpacity(.75) : bgApp,
-              borderRadius: const BorderRadius.all(
-                Radius.circular(30),
-              ),
-            ),
-            child: Text(
-              message,
-              style: const TextStyle(fontSize: 18),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Container getMessageBottomBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
-      decoration: const BoxDecoration(
-        color: bgApp,
-        borderRadius: BorderRadius.all(Radius.circular(45)),
-      ),
-      child: TextField(
-        textAlignVertical: TextAlignVertical.center,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: -3),
-          hintText: 'Message ..',
-          suffixIcon: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.send,
-              size: 25.0,
-              color: Colors.black87,
-            ),
-          ),
+      body: SafeArea(
+        child: BlocBuilder<ConversationBloc, ConversationState>(
+          builder: (context, state) {
+            List<Conversation>? conversationList = state.conversationList;
+            if (conversationList != null) {
+              return ListView.builder(
+                itemBuilder: (BuildContext context, int index) {
+                  final Conversation conversation = conversationList[index];
+                  return getConversationItem(
+                      conversation.isSeen == 1,
+                      conversation.avataUrl ?? '',
+                      conversation.userName,
+                      conversation.messageContent,
+                      conversation.totalTime!.toInt());
+                },
+                itemCount: state.conversationList?.length,
+                controller: _scrollController,
+              );
+            } else {
+              return const Center(child: CircularProgressIndicator());
+            }
+          },
         ),
       ),
     );
   }
 
-  AppBar getAppBar(String img, name, username) {
-    return AppBar(
-      titleSpacing: 0,
-      elevation: 0,
-      title: ListTile(
-        onTap: () {},
-        contentPadding: const EdgeInsets.fromLTRB(0, 10, 20, 10),
-        leading: SizedBox(
-          child: CircleAvatar(
-            child: ClipOval(
-              child: Image(
-                height: 60.0,
-                width: 60.0,
-                image: AssetImage(img),
-                fit: BoxFit.cover,
-              ),
+  ListTile getConversationItem(
+      bool isNew, String img, username, message, int time) {
+    return ListTile(
+      onTap: () {
+        context
+            .read<AuthBloc>()
+            .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const ConversationScreen(),
+          ),
+        );
+      },
+      onLongPress: () {},
+      contentPadding: const EdgeInsets.fromLTRB(15, 10, 20, 10),
+      leading: SizedBox(
+        width: 60.0,
+        height: 60.0,
+        child: CircleAvatar(
+          child: ClipOval(
+            child: Image(
+              height: 60.0,
+              width: 60.0,
+              image: (img.isNotEmpty)
+                  ? NetworkImage(avatarUrl + img)
+                  : const AssetImage('assets/images/Kroni.jpg')
+                      as ImageProvider,
+              fit: BoxFit.cover,
             ),
           ),
         ),
-        title: Text(
-          name,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+      ),
+      title: Text(
+        username,
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: isNew ? FontWeight.bold : FontWeight.w500,
         ),
-        subtitle: Text(
-          username,
-          style: const TextStyle(
-            overflow: TextOverflow.ellipsis,
-          ),
-          maxLines: 1,
-          softWrap: true,
+      ),
+      subtitle: Text(
+        message,
+        style: TextStyle(
+          fontSize: 16,
+          overflow: TextOverflow.ellipsis,
+          fontWeight: isNew ? FontWeight.bold : null,
+          color: isNew ? Colors.black : null,
+        ),
+        maxLines: 1,
+        softWrap: true,
+      ),
+      trailing: Text(
+        time.toString() + " min",
+        style: TextStyle(
+          fontWeight: isNew ? FontWeight.bold : null,
+          color: isNew ? Colors.black : null,
         ),
       ),
     );

@@ -4,10 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
-import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
@@ -48,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       [
                         const SizedBox(height: 10),
                         getUserHeader(
-                            "assets/images/Kroni.jpg",
+                            state.user?.avataUrl ?? "",
                             state.user?.numberOfpost ?? 0,
                             state.user?.numberFollower ?? 0,
                             state.user?.numberFollowee ?? 0),
@@ -157,8 +158,9 @@ class _ProfilePageState extends State<ProfilePage> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-            image: AssetImage(
-                imagePath.isNotEmpty ? imagePath : "assets/images/Kroni.jpg"),
+            image: imagePath.isNotEmpty
+                ? NetworkImage(avatarUrl + imagePath)
+                : const AssetImage("assets/images/Kroni.jpg") as ImageProvider,
             fit: BoxFit.cover,
           ),
         ),
@@ -219,8 +221,7 @@ class _ProfilePageState extends State<ProfilePage> {
         onPressed: () {
           context
               .read<AuthBloc>()
-              .add(NavigateToPageEvent(AppRouter.editProfileScreen));
-          //Navigator.of(context).pushNamed(AppRouter.editProfileScreen);
+              .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
         },
         child: const Text("Edit Profile"),
       ),
@@ -266,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const ConversationScreen(),
+                builder: (context) => const MessageScreen(),
               ),
             );
           },

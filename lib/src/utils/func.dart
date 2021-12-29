@@ -93,7 +93,7 @@ String timeCalculate(DateTime time) {
     } else {
       _calculatedTime = _bellow2.toString() + ' mins';
     }
-  } else if (hourCount < 24 && hourCount > 1) {
+  } else if (hourCount < 24 && hourCount >= 1) {
     if (hourCount < 2) {
       _calculatedTime = hourCount.toString() + " hour";
     } else {

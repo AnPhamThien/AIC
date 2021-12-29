@@ -30,7 +30,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   HomeBloc() : super(const HomeState()) {
     on<InitPostFetched>(
-      _onPostFetched,
+      _onInitPostFetched,
       transformer: throttleDroppable(throttleDuration),
     );
     on<FetchMorePost>(
@@ -43,7 +43,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   final PostRepository _postRepository = PostRepository();
 
-  void _onPostFetched(InitPostFetched event, Emitter<HomeState> emit) async {
+  void _onInitPostFetched(
+      InitPostFetched event, Emitter<HomeState> emit) async {
     try {
       if (state.status == HomeStatus.initial) {
         final ListPostData? data =
@@ -78,7 +79,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _listFollowee = data?.followees ?? [];
         emit(state.copyWith(
           status: HomeStatus.success,
-          postsList: state.postsList..addAll(posts),
+          postsList: [...state.postsList, ...posts],
           hasReachedMax: false,
         ));
       }

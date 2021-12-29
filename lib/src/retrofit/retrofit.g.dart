@@ -132,7 +132,6 @@ class _RestClient implements RestClient {
                 .compose(_dio.options, '/users/refreshtoken',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-
     return _result;
   }
 
@@ -327,6 +326,27 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = PostCommentLikeRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<PostCommentRespone> getMoreComment(
+      dateBoundary, commentPerPage, postId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'date_boundary': dateBoundary,
+      r'commentPerPage': commentPerPage,
+      r'postId': postId
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<PostCommentRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/getpagecomment',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = PostCommentRespone.fromJson(_result.data!);
     return value;
   }
 

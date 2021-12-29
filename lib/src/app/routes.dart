@@ -150,7 +150,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                PostDetailBloc()..add(PostInitEvent(post['post'])),
+                PostDetailBloc()..add(PostDetailInitEvent(post['post'])),
             child: const PostDetailScreen(),
           ),
         );

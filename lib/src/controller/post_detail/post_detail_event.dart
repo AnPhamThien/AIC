@@ -7,8 +7,10 @@ class PostDetailEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class PostInitEvent extends PostDetailEvent {
+class PostDetailInitEvent extends PostDetailEvent {
   final Post post;
 
-  const PostInitEvent(this.post);
+  const PostDetailInitEvent(this.post);
 }
+
+class PostDetailFetchMoreComment extends PostDetailEvent {}

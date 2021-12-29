@@ -18,11 +18,11 @@ class PostDetailScreen extends StatefulWidget {
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
+  Post post = Post();
   final _scrollController = ScrollController();
   @override
   void initState() {
     _scrollController.addListener(_onScroll);
-
     super.initState();
   }
 
@@ -36,8 +36,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      //TODO fetch more comment
+      context.read<PostDetailBloc>().add(PostDetailFetchMoreComment());
     }
+  }
+
+  Future<void> _refresh() {
+    setState(() {
+      context.read<PostDetailBloc>().add(PostDetailInitEvent(post));
+    });
+    return Future.delayed(const Duration(seconds: 1));
   }
 
   @override
@@ -46,34 +53,50 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       body: Scaffold(
         backgroundColor: bgApp,
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: BlocBuilder<PostDetailBloc, PostDetailState>(
-              builder: (context, state) {
-                switch (state.status) {
-                  case PostDetailStatus.success:
-                    final Post _post = state.post!;
-                    final int _commentCount = state.commentCount ?? 0;
-                    final List<Comment>? _commentList =
-                        state.commentList; //TODO add comment
-                    return Column(
-                      children: [
-                        getPostSection(
-                          _post,
-                          _commentCount,
-                        ),
-                        const SizedBox(height: 10.0),
-                        getCommentSection(_commentList),
-                        const SizedBox(height: 10.0),
-                      ],
-                    );
-                  case PostDetailStatus.failure:
-                    return const Center(
-                      child: Text('Some thing went wrong'),
-                    );
-                  default:
-                    return const Center(child: CircularProgressIndicator());
-                }
-              },
+          child: RefreshIndicator(
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: BlocBuilder<PostDetailBloc, PostDetailState>(
+                builder: (context, state) {
+                  switch (state.status) {
+                    case PostDetailStatus.success:
+                      final Post _post = state.post!;
+                      post = state.post!;
+                      final int _commentCount = state.commentCount ?? 0;
+                      final List<Comment>? _commentList = state.commentList;
+                      return Column(
+                        children: [
+                          getPostSection(
+                            _post,
+                            _commentCount,
+                          ),
+                          const SizedBox(height: 10.0),
+                          getCommentSection(_commentList),
+                          const SizedBox(height: 10.0),
+                        ],
+                      );
+                    case PostDetailStatus.maxcomment:
+                      return Column(
+                        children: [
+                          getPostSection(
+                            state.post!,
+                            state.commentCount!,
+                          ),
+                          const SizedBox(height: 10.0),
+                          getCommentSection(state.commentList),
+                          const SizedBox(height: 10.0),
+                        ],
+                      );
+                    case PostDetailStatus.failure:
+                      return const Center(
+                        child: Text('Some thing went wrong'),
+                      );
+                    default:
+                      return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
             ),
           ),
         ),
@@ -183,19 +206,20 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Widget getCommentSection(List<Comment>? commentList) {
     return commentList!.isNotEmpty
         ? Container(
-            width: double.infinity,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(25),
             ),
             child: ListView.builder(
               shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (BuildContext _, int index) {
                 final Comment _comment = commentList[index];
                 return getComment(_comment);
               },
               itemCount: commentList.length,
-            ))
+            ),
+          )
         : const SizedBox.shrink();
   }
 

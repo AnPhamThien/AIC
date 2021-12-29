@@ -9,6 +9,7 @@ import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_comment_like_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_comment_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
@@ -160,5 +161,11 @@ class DataRepository implements RestClient {
   Future<PostCommentLikeRespone> getInitPostLikeComment(
       int commentPerPage, String postId) {
     return _client.getInitPostLikeComment(commentPerPage, postId);
+  }
+
+  @override
+  Future<PostCommentRespone> getMoreComment(
+      String dateBoundary, int commentPerPage, String postId) {
+    return _client.getMoreComment(dateBoundary, commentPerPage, postId);
   }
 }

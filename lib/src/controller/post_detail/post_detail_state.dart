@@ -13,7 +13,7 @@ class PostDetailState extends Equatable {
 
   final PostDetailStatus status;
   final Post? post;
-  final List<Comment>? commentList;
+  final List<Comment> commentList;
   final int? commentCount;
   final bool hasReachMax;
 
@@ -34,5 +34,5 @@ class PostDetailState extends Equatable {
   }
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [status, commentList, hasReachMax];
 }

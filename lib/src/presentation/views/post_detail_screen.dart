@@ -1,7 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
+import 'package:imagecaptioning/src/model/post/comment.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
@@ -15,11 +18,11 @@ class PostDetailScreen extends StatefulWidget {
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
+  Post post = Post();
   final _scrollController = ScrollController();
   @override
   void initState() {
     _scrollController.addListener(_onScroll);
-
     super.initState();
   }
 
@@ -33,8 +36,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      //TODO fetch more comment
+      context.read<PostDetailBloc>().add(PostDetailFetchMoreComment());
     }
+  }
+
+  Future<void> _refresh() {
+    setState(() {
+      context.read<PostDetailBloc>().add(PostDetailInitEvent(post));
+    });
+    return Future.delayed(const Duration(seconds: 1));
   }
 
   @override
@@ -43,28 +53,50 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       body: Scaffold(
         backgroundColor: bgApp,
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: BlocBuilder<PostDetailBloc, PostDetailState>(
-              builder: (context, state) {
-                switch (state.status) {
-                  case PostDetailStatus.success:
-                    final Post post = state.post!;
-                    return Column(
-                      children: [
-                        getPostSection(post),
-                        const SizedBox(height: 10.0),
-                        getCommentSection(),
-                        const SizedBox(height: 10.0),
-                      ],
-                    );
-                  case PostDetailStatus.failure:
-                    return const Center(
-                      child: Text('Some thing went wrong'),
-                    );
-                  default:
-                    return const Center(child: CircularProgressIndicator());
-                }
-              },
+          child: RefreshIndicator(
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: BlocBuilder<PostDetailBloc, PostDetailState>(
+                builder: (context, state) {
+                  switch (state.status) {
+                    case PostDetailStatus.success:
+                      final Post _post = state.post!;
+                      post = state.post!;
+                      final int _commentCount = state.commentCount ?? 0;
+                      final List<Comment>? _commentList = state.commentList;
+                      return Column(
+                        children: [
+                          getPostSection(
+                            _post,
+                            _commentCount,
+                          ),
+                          const SizedBox(height: 10.0),
+                          getCommentSection(_commentList),
+                          const SizedBox(height: 10.0),
+                        ],
+                      );
+                    case PostDetailStatus.maxcomment:
+                      return Column(
+                        children: [
+                          getPostSection(
+                            state.post!,
+                            state.commentCount!,
+                          ),
+                          const SizedBox(height: 10.0),
+                          getCommentSection(state.commentList),
+                          const SizedBox(height: 10.0),
+                        ],
+                      );
+                    case PostDetailStatus.failure:
+                      return const Center(
+                        child: Text('Some thing went wrong'),
+                      );
+                    default:
+                      return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
             ),
           ),
         ),
@@ -119,7 +151,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
-  Container getPostSection(Post post) {
+  Container getPostSection(Post post, int commentCount) {
     return Container(
       width: double.infinity,
       decoration: const BoxDecoration(
@@ -163,7 +195,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           PostIconWidget(
             isLike: post.isLike,
             likeCount: post.likecount,
-            commentCount: 190,
+            commentCount: commentCount,
           ),
           const SizedBox(height: 10),
         ],
@@ -171,27 +203,28 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     );
   }
 
-  Container getCommentSection() {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-      ),
-      child: Column(
-        children: <Widget>[
-          getComment("Jokeroni", "What the ?", "assets/images/JOKERONI.jpg"),
-          getComment("Veibae", "Nice !", "assets/images/Veibae.jpeg"),
-          getComment("Gawr_Gura", "Oh My Gah!", "assets/images/Gumba.jpg"),
-          getComment("Its_Chirstmas", "This is so cursed ~",
-              "assets/images/padoru.jpg"),
-          getComment("HandsomeGuy", "What the ?", "assets/images/Whut.jpg"),
-        ],
-      ),
-    );
+  Widget getCommentSection(List<Comment>? commentList) {
+    return commentList!.isNotEmpty
+        ? Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemBuilder: (BuildContext _, int index) {
+                final Comment _comment = commentList[index];
+                return getComment(_comment);
+              },
+              itemCount: commentList.length,
+            ),
+          )
+        : const SizedBox.shrink();
   }
 
-  ListTile getComment(String username, String comment, String img) {
+  ListTile getComment(Comment comment) {
+    final _calculatedTime = timeCalculate(comment.dateCreate ?? DateTime.now());
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(15, 10, 5, 10),
       leading: SizedBox(
@@ -199,22 +232,38 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         height: 60.0,
         child: CircleAvatar(
           child: ClipOval(
+            //avatar
             child: Image(
               height: 60.0,
               width: 60.0,
-              image: AssetImage(img),
+              image: comment.avataUrl != ""
+                  ? NetworkImage(avatarUrl + comment.avataUrl!)
+                  : const AssetImage("assets/images/Kroni.jpg")
+                      as ImageProvider,
               fit: BoxFit.cover,
             ),
           ),
         ),
       ),
-      title: Text(
-        username,
-        style: const TextStyle(
-          fontWeight: FontWeight.w500,
+      //username, comment content
+      title: RichText(
+        text: TextSpan(
+          style: const TextStyle(
+            color: Colors.black,
+          ),
+          children: [
+            TextSpan(
+              text: comment.userName ?? '',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
+            ),
+            const TextSpan(text: "  "),
+            TextSpan(text: comment.content ?? ''),
+          ],
         ),
       ),
-      subtitle: Text(comment),
+      //datecreate
+      subtitle: Text(_calculatedTime),
+      //like button
       trailing: Material(
         color: Colors.white,
         child: IconButton(

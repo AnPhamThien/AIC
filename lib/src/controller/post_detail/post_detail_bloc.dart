@@ -1,34 +1,87 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
+import 'package:imagecaptioning/src/model/post/comment.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
-
+import 'package:imagecaptioning/src/model/post/post_comment_like_data.dart';
+import 'package:imagecaptioning/src/model/post/post_comment_respone.dart';
+import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
+import 'package:stream_transform/stream_transform.dart';
 part 'post_detail_event.dart';
 part 'post_detail_state.dart';
 
+const throttleDuration = Duration(milliseconds: 10);
+
+EventTransformer<E> throttleDroppable<E>(Duration duration) {
+  return (events, mapper) {
+    return droppable<E>().call(events.throttle(duration), mapper);
+  };
+}
+
+const _commentPerPage = 10;
+
 class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
   PostDetailBloc() : super(const PostDetailState()) {
-    on<PostInitEvent>(_onPostDetailInitial);
+    on<PostDetailInitEvent>(
+      _onPostDetailInitial,
+      transformer: throttleDroppable(throttleDuration),
+    );
+    on<PostDetailFetchMoreComment>(
+      _fetchMoreComment,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
+  final PostRepository _postRepository = PostRepository();
   void _onPostDetailInitial(
-      PostInitEvent event, Emitter<PostDetailState> emit) async {
+      PostDetailInitEvent event, Emitter<PostDetailState> emit) async {
     try {
       if (state.status == PostDetailStatus.initial) {
-        // if (event.post!.postId == '') {
-        //   throw Exception("no post");
-        // }
-        log(event.post.postId.toString());
+        final PostCommentLikeData? data = await _postRepository
+            .getInitLikeComment(_commentPerPage, event.post.postId!);
+        state.post?.likecount = data?.totalLike;
         emit(state.copyWith(
             status: PostDetailStatus.success,
             post: event.post,
+            commentList: data?.comments,
+            commentCount: data?.totalComment,
             hasReachMax: false));
       }
     } on Exception catch (_) {
+      emit(state.copyWith(status: PostDetailStatus.failure));
       if (_.toString() == "postID Empty") {
         log("post ID rỗng, post detail bloc dòng 23");
       }
+    }
+  }
+
+  void _fetchMoreComment(
+      PostDetailFetchMoreComment event, Emitter<PostDetailState> emit) async {
+    if (state.hasReachMax) {
+      emit(state.copyWith(status: PostDetailStatus.maxcomment));
+      return;
+    }
+    try {
+      final String _dateBoundary = state.commentList.last.dateCreate.toString();
+      final String? _postId = state.post?.postId;
+      final PostCommentRespone? respone = await _postRepository.getMoreComment(
+          _dateBoundary, _commentPerPage, _postId!);
+      final List<Comment> _newComments = respone?.data ?? [];
+      if (respone!.data == null) {
+        emit(state.copyWith(hasReachMax: true));
+      } else {
+        emit(
+          state.copyWith(
+            status: PostDetailStatus.success,
+            commentList: [...state.commentList, ..._newComments],
+            hasReachMax: false,
+          ),
+        );
+      }
+    } catch (_) {
+      emit(state.copyWith(status: PostDetailStatus.failure));
     }
   }
 }

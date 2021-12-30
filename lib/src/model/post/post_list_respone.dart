@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'data.dart';
+import 'list_post_data.dart';
 
 PostListRespone postListResponeFromJson(String str) =>
     PostListRespone.fromJson(json.decode(str));
@@ -23,7 +23,7 @@ class PostListRespone {
 
   dynamic messageCode;
   int? statusCode;
-  Data? data;
+  ListPostData? data;
   dynamic total;
   int? sunOfPages;
 
@@ -31,7 +31,7 @@ class PostListRespone {
       PostListRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: json["data"] != null ? Data.fromJson(json["data"]) : null,
+        data: json["data"] != null ? ListPostData.fromJson(json["data"]) : null,
         total: json["total"],
         sunOfPages: json["sunOfPages"],
       );

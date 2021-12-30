@@ -52,7 +52,6 @@ class _HomePageState extends State<HomePage> {
           height: MediaQuery.of(context).size.height,
           child: BlocBuilder<HomeBloc, HomeState>(
             builder: (context, state) {
-              log(state.status.toString());
               switch (state.status) {
                 case HomeStatus.failure:
                   return const Center(child: Text('failed to fetch posts'));

@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "D:\\Capstone\\CapstoneProject\\AIC\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
+            "outputFile": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\app\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-night-v8\\values-night-v8.xml",
             "map": [
                 {
-                    "source": "D:\\Capstone\\CapstoneProject\\AIC\\android\\app\\src\\main\\res\\values-night\\styles.xml",
+                    "source": "C:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\android\\app\\src\\main\\res\\values-night\\styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

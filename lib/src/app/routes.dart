@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
-import 'dart:developer';
 import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
@@ -167,7 +166,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                PostDetailBloc()..add(PostInitEvent(post['post'])),
+                PostDetailBloc()..add(PostDetailInitEvent(post['post'])),
             child: const PostDetailScreen(),
           ),
         );

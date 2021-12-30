@@ -1,8 +1,10 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/model/post/data.dart';
+import 'package:imagecaptioning/src/model/post/list_post_data.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
@@ -12,7 +14,7 @@ import 'package:stream_transform/stream_transform.dart';
 part 'home_event.dart';
 part 'home_state.dart';
 
-const throttleDuration = Duration(milliseconds: 100);
+const throttleDuration = Duration(milliseconds: 10);
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
   return (events, mapper) {
@@ -27,22 +29,28 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   HomeBloc() : super(const HomeState()) {
-    on<InitPostFetched>(_onPostFetched,
-        transformer: throttleDroppable(throttleDuration));
-    on<FetchMorePost>(_fetchMorePost,
-        transformer: throttleDroppable(throttleDuration));
+    on<InitPostFetched>(
+      _onInitPostFetched,
+      transformer: throttleDroppable(throttleDuration),
+    );
+    on<FetchMorePost>(
+      _fetchMorePost,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
   List<Followee> _listFollowee = [];
 
   final PostRepository _postRepository = PostRepository();
 
-  void _onPostFetched(InitPostFetched event, Emitter<HomeState> emit) async {
+  void _onInitPostFetched(
+      InitPostFetched event, Emitter<HomeState> emit) async {
     try {
       if (state.status == HomeStatus.initial) {
-        final Data? data =
+        final ListPostData? data =
             await _postRepository.getPost(_postPerPerson, _postDate);
         _listFollowee = data?.followees ?? [];
+        log(_listFollowee.first.id.toString());
         emit(state.copyWith(
           status: HomeStatus.success,
           postsList: data?.posts ?? [],
@@ -59,10 +67,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(state.copyWith(status: HomeStatus.maxpost));
     }
     try {
-      final Data? data = await _postRepository.getMorePost(PostListRequest(
-          postPerPerson: _postPerPerson,
-          limitDay: _postDate,
-          listFollowees: _listFollowee));
+      final ListPostData? data = await _postRepository.getMorePost(
+          PostListRequest(
+              postPerPerson: _postPerPerson,
+              limitDay: _postDate,
+              listFollowees: _listFollowee));
       final List<Post>? posts = data?.posts ?? [];
       if (posts!.isEmpty) {
         emit(state.copyWith(hasReachedMax: true));
@@ -70,7 +79,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         _listFollowee = data?.followees ?? [];
         emit(state.copyWith(
           status: HomeStatus.success,
-          postsList: List.of(state.postsList)..addAll(posts),
+          postsList: [...state.postsList, ...posts],
           hasReachedMax: false,
         ));
       }

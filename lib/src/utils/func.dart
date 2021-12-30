@@ -81,3 +81,38 @@ bool isScrollEnd(ScrollController scrollController) {
   final currentScroll = scrollController.offset;
   return currentScroll >= (maxScroll * 0.9);
 }
+
+String timeCalculate(DateTime time) {
+  final hourCount = DateTime.now().difference(time).inHours;
+  String _calculatedTime;
+  int _bellow2;
+  if (hourCount < 1) {
+    int _bellow2 = DateTime.now().difference(time).inMinutes;
+    if (_bellow2 < 2) {
+      _calculatedTime = _bellow2.toString() + ' min';
+    } else {
+      _calculatedTime = _bellow2.toString() + ' mins';
+    }
+  } else if (hourCount < 24 && hourCount >= 1) {
+    if (hourCount < 2) {
+      _calculatedTime = hourCount.toString() + " hour";
+    } else {
+      _calculatedTime = hourCount.toString() + " hours";
+    }
+  } else if (hourCount > 24 && hourCount < 730) {
+    _bellow2 = DateTime.now().difference(time).inDays;
+    if (_bellow2 < 2) {
+      _calculatedTime = _bellow2.toString() + " day";
+    } else {
+      _calculatedTime = _bellow2.toString() + " days";
+    }
+  } else {
+    _bellow2 = (DateTime.now().difference(time).inDays / 30).round();
+    if (_bellow2 < 2) {
+      _calculatedTime = _bellow2.toString() + ' month';
+    } else {
+      _calculatedTime = _bellow2.toString() + ' months';
+    }
+  }
+  return _calculatedTime;
+}

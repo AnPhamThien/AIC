@@ -5,7 +5,8 @@ import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/conversation/message.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
-import 'package:imagecaptioning/src/model/post/followee.dart';
+import 'package:imagecaptioning/src/model/post/post_comment_like_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_comment_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
@@ -110,5 +111,18 @@ abstract class RestClient {
     @Query('post_id') String postId,
     @Query('limitComment') int limitComment,
     @Query('contest_id') String? contestId,
+  );
+
+  @GET('/posts/getpostcommentandlikeInit')
+  Future<PostCommentLikeRespone> getInitPostLikeComment(
+    @Query('commentPerPage') int commentPerPage,
+    @Query('postId') String postId,
+  );
+
+  @GET('/posts/getpagecomment')
+  Future<PostCommentRespone> getMoreComment(
+    @Query('date_boundary') String dateBoundary,
+    @Query('commentPerPage') int commentPerPage,
+    @Query('postId') String postId,
   );
 }

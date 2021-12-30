@@ -27,8 +27,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   HomeBloc() : super(const HomeState()) {
-    on<InitPostFetched>(_onPostFetched);
-    on<FetchMorePost>(_fetchMorePost);
+    on<InitPostFetched>(_onPostFetched,
+        transformer: throttleDroppable(throttleDuration));
+    on<FetchMorePost>(_fetchMorePost,
+        transformer: throttleDroppable(throttleDuration));
   }
 
   List<Followee> _listFollowee = [];

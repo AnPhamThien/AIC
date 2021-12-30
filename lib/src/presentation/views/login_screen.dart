@@ -30,7 +30,7 @@ class LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         final status = state.formStatus;
         if (status is FormSubmissionSuccess) {
-          context.read<AuthBloc>().add(AuthenticateEvent());
+          context.read<AuthBloc>().add(AuthenticateEvent(state.user));
         } else if (status is FormSubmissionFailed) {
           String errorMessage = getErrorMessage(status.exception.toString());
           if (errorMessage ==

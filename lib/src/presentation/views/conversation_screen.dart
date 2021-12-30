@@ -7,7 +7,9 @@ import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/conversation/conversation.dart';
+import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
@@ -47,7 +49,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    String username = "thieen_aan";
+    String username = getIt<AppPref>().getUsername;
     return Scaffold(
       appBar: AppBar(
         title: AppBarTitle(title: username),
@@ -67,7 +69,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       conversation.avataUrl ?? '',
                       conversation.userName,
                       conversation.messageContent,
-                      conversation.totalTime!.toInt());
+                      conversation.totalTime!.toInt(),
+                      conversation.conversationId);
                 },
                 itemCount: state.conversationList?.length,
                 controller: _scrollController,
@@ -82,18 +85,16 @@ class _ConversationScreenState extends State<ConversationScreen> {
   }
 
   ListTile getConversationItem(
-      bool isNew, String img, username, message, int time) {
+      bool isNew, String img, username, message, int time, conversationId) {
     return ListTile(
       onTap: () {
-        context
-            .read<AuthBloc>()
-            .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const ConversationScreen(),
-          ),
-        );
+        Map<String, dynamic> args = {
+          "username": username,
+          "avatar": img,
+          "conversationId": conversationId
+        };
+        context.read<AuthBloc>().add(
+            NavigateToPageEvent(route: AppRouter.messageScreen, args: args));
       },
       onLongPress: () {},
       contentPadding: const EdgeInsets.fromLTRB(15, 10, 20, 10),

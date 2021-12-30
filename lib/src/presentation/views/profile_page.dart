@@ -11,6 +11,7 @@ import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 
 import 'gallery_page.dart';
 
@@ -29,7 +30,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context, state) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: getProfileAppBar(state.user?.userName ?? ''),
+          appBar: getProfileAppBar(state.user?.userName ?? '', isMe),
           body: DefaultTabController(
             length: 2,
             child: NestedScrollView(
@@ -91,9 +92,10 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  AppBar getProfileAppBar(String username) {
+  AppBar getProfileAppBar(String username, bool isCurrentUser) {
     return AppBar(
-      automaticallyImplyLeading: false,
+      automaticallyImplyLeading: !isCurrentUser,
+      leadingWidth: 30,
       elevation: 0,
       title: AppBarTitle(
         title: username,
@@ -210,9 +212,11 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         onPressed: () {
-          context
-              .read<AuthBloc>()
-              .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
+          // context
+          //     .read<AuthBloc>()
+          //     .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
+          log(SignalRHelper.hubConnection?.state.toString() ?? "null");
+          log(SignalRHelper.hubConnection?.connectionId ?? "null");
         },
         child: const Text("Edit Profile"),
       ),

@@ -23,6 +23,14 @@ class AppPref extends BasePrefs {
     return setValueForKey(PrefKey.userID, userID);
   }
 
+  String get getUsername {
+    return getValueForKey(PrefKey.username) ?? '';
+  }
+
+  Future<void> setUsername(String username) {
+    return setValueForKey(PrefKey.username, username);
+  }
+
   String get getRefreshToken {
     return getValueForKey(PrefKey.refreshToken) ?? '';
   }
@@ -35,5 +43,6 @@ class AppPref extends BasePrefs {
 class PrefKey {
   static const String token = 'TOKEN';
   static const String userID = 'ID';
+  static const String username = 'USERNAME';
   static const String refreshToken = 'REFRESHTOKEN';
 }

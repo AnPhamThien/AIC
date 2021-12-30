@@ -10,10 +10,15 @@ class NavigateToPageEvent extends AuthEvent {
   NavigateToPageEvent({required this.route, this.args});
 }
 
-class AuthenticateEvent extends AuthEvent {}
+class AuthenticateEvent extends AuthEvent {
+  User? user;
+  AuthenticateEvent(this.user);
+}
 
 class LogoutEvent extends AuthEvent {}
 
 class ConnectSignalREvent extends AuthEvent {}
 
 class ReconnectSignalREvent extends AuthEvent {}
+
+class FinishReconnectEvent extends AuthEvent {}

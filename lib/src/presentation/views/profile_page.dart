@@ -1,9 +1,6 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
@@ -11,7 +8,6 @@ import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
-import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 
 import 'gallery_page.dart';
 
@@ -215,8 +211,8 @@ class _ProfilePageState extends State<ProfilePage> {
           // context
           //     .read<AuthBloc>()
           //     .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
-          log(SignalRHelper.hubConnection?.state.toString() ?? "null");
-          log(SignalRHelper.hubConnection?.connectionId ?? "null");
+          // log(SignalRHelper.hubConnection?.state.toString() ?? "null");
+          // log(SignalRHelper.hubConnection?.connectionId ?? "null");
         },
         child: const Text("Edit Profile"),
       ),

@@ -2,8 +2,6 @@
 //
 //     final getMessageResponseMessage = getMessageResponseMessageFromJson(jsonString);
 
-import 'dart:convert';
-
 class GetResponseMessage {
   GetResponseMessage({
     this.messageCode,

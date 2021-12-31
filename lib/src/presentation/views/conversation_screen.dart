@@ -10,9 +10,7 @@ import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.da
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 
 class ConversationScreen extends StatefulWidget {

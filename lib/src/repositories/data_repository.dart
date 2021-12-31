@@ -175,6 +175,7 @@ class DataRepository implements RestClient {
     return _client.getMoreMessages(conversationId, dateBoundary);
   }
 
+  @override
   Future<PostCommentLikeRespone> getInitPostLikeComment(
       int commentPerPage, String postId) {
     return _client.getInitPostLikeComment(commentPerPage, postId);

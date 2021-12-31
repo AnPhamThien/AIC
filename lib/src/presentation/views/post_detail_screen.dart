@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
@@ -107,8 +105,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   Container getCommentInputSection() {
-    String initComment;
-
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,

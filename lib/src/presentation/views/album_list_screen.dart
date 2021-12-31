@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/presentation/views/album_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 

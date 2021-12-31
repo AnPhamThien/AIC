@@ -20,7 +20,6 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   final _scrollController = ScrollController();
-  final SignalRHelper _signalRHelper = SignalRHelper();
 
   @override
   void initState() {

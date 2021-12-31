@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
 import 'package:imagecaptioning/src/model/conversation/message.dart';

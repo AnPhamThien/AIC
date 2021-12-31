@@ -6,14 +6,14 @@ import 'dart:convert';
 
 import 'comment.dart';
 
-PostCommentRespone postCommentResponeFromJson(String str) =>
-    PostCommentRespone.fromJson(json.decode(str));
+PostCommentListRespone postCommentResponeFromJson(String str) =>
+    PostCommentListRespone.fromJson(json.decode(str));
 
-String postCommentResponeToJson(PostCommentRespone data) =>
+String postCommentResponeToJson(PostCommentListRespone data) =>
     json.encode(data.toJson());
 
-class PostCommentRespone {
-  PostCommentRespone({
+class PostCommentListRespone {
+  PostCommentListRespone({
     this.messageCode,
     this.statusCode,
     this.data,
@@ -27,8 +27,8 @@ class PostCommentRespone {
   int? total;
   int? sunOfPages;
 
-  factory PostCommentRespone.fromJson(Map<String, dynamic> json) =>
-      PostCommentRespone(
+  factory PostCommentListRespone.fromJson(Map<String, dynamic> json) =>
+      PostCommentListRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
         data: json["data"] != null

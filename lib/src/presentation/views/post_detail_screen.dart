@@ -20,6 +20,7 @@ class PostDetailScreen extends StatefulWidget {
 class _PostDetailScreenState extends State<PostDetailScreen> {
   Post post = Post();
   final _scrollController = ScrollController();
+  final _commentController = TextEditingController();
   @override
   void initState() {
     _scrollController.addListener(_onScroll);
@@ -106,6 +107,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   Container getCommentInputSection() {
+    String initComment;
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -121,7 +124,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       child: Padding(
         padding: const EdgeInsets.all(7.0),
         child: TextField(
+          autocorrect: false,
+          controller: _commentController,
           textAlignVertical: TextAlignVertical.center,
+          maxLines: null,
+          keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
             icon: const CircleAvatar(
               child: ClipOval(
@@ -138,7 +145,21 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             hintText: 'Add a comment',
             suffixIcon: IconButton(
               padding: const EdgeInsets.only(right: 10),
-              onPressed: () {},
+              onPressed: () {
+                if (containsChar(_commentController.text)) {
+                  context
+                      .read<PostDetailBloc>()
+                      .add(PostDetailAddComment(_commentController.text));
+                  _commentController.clear();
+                  TextInputAction.done;
+                  if (context.read<PostDetailBloc>().state.status ==
+                      PostDetailStatus.success) {
+                    context
+                        .read<PostDetailBloc>()
+                        .add(PostDetailInitEvent(post));
+                  }
+                }
+              },
               icon: const Icon(
                 Icons.send,
                 size: 25.0,

@@ -1,0 +1,1 @@
+ D:\\Capstone\\CapstoneProject\\AIC\\.dart_tool\\flutter_gen\\gen_l10n\\app_localizations_en.dart D:\\Capstone\\CapstoneProject\\AIC\\.dart_tool\\flutter_gen\\gen_l10n\\app_localizations.dart:  D:\\Capstone\\CapstoneProject\\AIC\\l10n.yaml D:\\Capstone\\CapstoneProject\\AIC\\lib/src/localization\\app_en.arb

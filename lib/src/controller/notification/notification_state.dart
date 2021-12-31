@@ -2,19 +2,38 @@ part of "notification_bloc.dart";
 
 class NotificationState {
   final List<NotificationItem>? notificationList;
-  final FormSubmissionStatus formStatus;
+  final NotificationStatus status;
+  final bool hasReachedMax;
 
-  NotificationState({
-    this.notificationList,
-    this.formStatus = const InitialFormStatus(),
-  });
+  NotificationState(
+      {this.notificationList,
+      this.status = const InitialStatus(),
+      this.hasReachedMax = false});
 
-  NotificationState copyWith({
-    List<NotificationItem>? notificationList,
-    FormSubmissionStatus? formStatus,
-  }) {
+  NotificationState copyWith(
+      {List<NotificationItem>? notificationList,
+      NotificationStatus? status,
+      bool? hasReachedMax}) {
     return NotificationState(
         notificationList: notificationList ?? this.notificationList,
-        formStatus: formStatus ?? this.formStatus);
+        status: status ?? this.status,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax);
   }
+}
+
+abstract class NotificationStatus {
+  const NotificationStatus();
+}
+
+class InitialStatus extends NotificationStatus {
+  const InitialStatus();
+}
+
+class FinishInitializing extends NotificationStatus {}
+
+class ReachedMaxedStatus extends NotificationStatus {}
+
+class ErrorStatus extends NotificationStatus {
+  final Exception exception;
+  ErrorStatus(this.exception);
 }

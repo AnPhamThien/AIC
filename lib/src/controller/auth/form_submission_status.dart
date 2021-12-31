@@ -6,8 +6,6 @@ class InitialFormStatus extends FormSubmissionStatus {
   const InitialFormStatus();
 }
 
-class FinishInitializing extends FormSubmissionStatus {}
-
 class FormSubmitting extends FormSubmissionStatus {}
 
 class FormValidating extends FormSubmissionStatus {}

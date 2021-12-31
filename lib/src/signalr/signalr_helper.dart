@@ -22,7 +22,7 @@ class SignalRHelper {
                 accessTokenFactory: () async => getIt<AppPref>().getToken,
                 logging: (level, message) => log(message),
               ))
-          //.withAutomaticReconnect()
+          .withAutomaticReconnect()
           .build();
 
       if (hubConnection?.state != HubConnectionState.connected &&
@@ -30,8 +30,6 @@ class SignalRHelper {
         //hubConnection?.keepAliveIntervalInMilliseconds = 24 * 60 * 60 * 1000;
         hubConnection?.serverTimeoutInMilliseconds = 24 * 60 * 60 * 1000;
         await hubConnection?.start();
-
-        //hubConnection?.onclose(_handleOnClose);
       }
     } catch (_) {
       log("Fail to initiate connection");
@@ -57,9 +55,6 @@ class _HttpClient extends BaseClient {
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
     try {
-      log(request.method);
-
-      log(request.contentLength.toString());
       return _httpClient.send(request);
     } catch (_) {
       log("Request failed");

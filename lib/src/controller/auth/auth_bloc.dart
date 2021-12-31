@@ -98,7 +98,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           await _signalRHelper.initiateConnection();
           emit(state.copyWith(reconnected: true));
         } else {
-          //await _signalRHelper.initiateConnection();
           emit(state.copyWith(
               authStatus: AuthenticationForceLogout(), reconnected: false));
         }

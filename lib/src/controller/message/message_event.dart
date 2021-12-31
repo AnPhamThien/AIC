@@ -6,7 +6,9 @@ class FetchMessage extends MessageEvent {
   String conversationId;
   String? avatar;
   String? username;
-  FetchMessage(this.conversationId, this.avatar, this.username);
+  String? userRealName;
+  FetchMessage(
+      this.conversationId, this.avatar, this.username, this.userRealName);
 }
 
 class FetchMoreMessage extends MessageEvent {

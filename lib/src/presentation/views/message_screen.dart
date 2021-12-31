@@ -65,7 +65,7 @@ class _MessageScreenState extends State<MessageScreen> {
             body: Scaffold(
           appBar: getAppBar(
             state.avatar ?? '',
-            state.userId ?? '',
+            state.userRealName ?? state.username ?? '',
             state.username ?? '',
           ),
           body: SafeArea(

@@ -1,20 +1,32 @@
-
-
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/constanct/status_code.dart';
 import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 part "notification_event.dart";
 part "notification_state.dart";
+
+const throttleDuration = Duration(milliseconds: 10);
+
+EventTransformer<E> throttleDroppable<E>(Duration duration) {
+  return (events, mapper) {
+    return droppable<E>().call(events.throttle(duration), mapper);
+  };
+}
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   NotificationBloc()
       : _notificationRepository = NotificationRepository(),
         super(NotificationState()) {
-    on<FetchNotification>(_onFetch);
+    on<FetchNotification>(_onFetch,
+        transformer: throttleDroppable(throttleDuration));
+    // on<FetchMoreNotification>(_onFetchMore,
+    //     transformer: throttleDroppable(throttleDuration));
   }
   final NotificationRepository _notificationRepository;
 
@@ -23,29 +35,29 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     try {
-      GetNotificationResponseMessage? resMessage;
-      if (state.formStatus is InitialFormStatus) {
-        resMessage =
-            await _notificationRepository.getNotification(limit: limitNoti);
-      } else {
-        resMessage = await _notificationRepository.getMoreNotification(
-            limit: limitNoti,
-            dateBoundary: state.notificationList!.last.dateCreate.toString());
-      }
+      GetNotificationResponseMessage? resMessage =
+          await _notificationRepository.getNotification(limit: limitNoti);
 
       if (resMessage == null) {
         throw Exception("");
-      } else if (resMessage.statusCode == StatusCode.successStatus &&
-          resMessage.data != null) {
-        List<NotificationItem>? notiList = resMessage.data;
+      }
 
+      final status = resMessage.statusCode ?? 0;
+      final message = resMessage.messageCode ?? "";
+      final data = resMessage.data ?? [];
+
+      if (status == StatusCode.successStatus && data.isNotEmpty) {
         emit(state.copyWith(
-            formStatus: FinishInitializing(), notificationList: notiList));
+            status: FinishInitializing(),
+            notificationList: data,
+            hasReachedMax: false));
+      } else if (message == MessageCode.noNotificationToDisplay) {
+        emit(state.copyWith(status: FinishInitializing(), hasReachedMax: true));
       } else {
-        throw Exception(resMessage.messageCode);
+        throw Exception(message);
       }
     } on Exception catch (_) {
-      emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
+      emit(state.copyWith(status: ErrorStatus(_)));
     }
   }
 }

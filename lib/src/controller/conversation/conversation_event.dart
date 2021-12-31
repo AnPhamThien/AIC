@@ -9,3 +9,5 @@ class FetchConversation extends ConversationEvent {
 class FetchMoreConversation extends ConversationEvent {
   FetchMoreConversation();
 }
+
+class ReceiveNewConversation extends ConversationEvent {}

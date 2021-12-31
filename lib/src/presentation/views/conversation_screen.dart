@@ -24,7 +24,6 @@ class ConversationScreen extends StatefulWidget {
 
 class _ConversationScreenState extends State<ConversationScreen> {
   final _scrollController = ScrollController();
-  final SignalRHelper _signalRHelper = SignalRHelper();
 
   @override
   void initState() {
@@ -43,7 +42,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
       log("Fetchmore");
-      context.read<ConversationBloc>().add(FetchConversation());
+      context.read<ConversationBloc>().add(FetchMoreConversation());
     }
   }
 
@@ -70,7 +69,8 @@ class _ConversationScreenState extends State<ConversationScreen> {
                       conversation.userName,
                       conversation.messageContent,
                       conversation.totalTime!.toInt(),
-                      conversation.conversationId);
+                      conversation.conversationId,
+                      conversation.userRealName);
                 },
                 itemCount: state.conversationList?.length,
                 controller: _scrollController,
@@ -84,14 +84,15 @@ class _ConversationScreenState extends State<ConversationScreen> {
     );
   }
 
-  ListTile getConversationItem(
-      bool isNew, String img, username, message, int time, conversationId) {
+  ListTile getConversationItem(bool isNew, String img, username, message,
+      int time, conversationId, userRealName) {
     return ListTile(
       onTap: () {
         Map<String, dynamic> args = {
           "username": username,
           "avatar": img,
-          "conversationId": conversationId
+          "conversationId": conversationId,
+          "userRealName": userRealName
         };
         context.read<AuthBloc>().add(
             NavigateToPageEvent(route: AppRouter.messageScreen, args: args));

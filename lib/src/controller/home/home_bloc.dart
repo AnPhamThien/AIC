@@ -26,8 +26,6 @@ const _postPerPerson = 1;
 const _postDate = 100;
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
-  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
-
   HomeBloc() : super(const HomeState()) {
     on<InitPostFetched>(
       _onInitPostFetched,
@@ -65,6 +63,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _fetchMorePost(FetchMorePost event, Emitter<HomeState> emit) async {
     if (state.hasReachedMax) {
       emit(state.copyWith(status: HomeStatus.maxpost));
+      return;
     }
     try {
       final ListPostData? data = await _postRepository.getMorePost(

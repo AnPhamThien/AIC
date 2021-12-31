@@ -2,37 +2,62 @@ part of 'message_bloc.dart';
 
 class MessageState {
   final List<Message>? messageList;
-  final FormSubmissionStatus formStatus;
+  final MessageStatus status;
   final String? conversationId;
   final String? otherUserId;
   final String? avatar;
   final String? userId;
   final String? username;
+  final String? userRealName;
+  final bool hasReachedMax;
 
   MessageState(
       {this.messageList,
-      this.formStatus = const InitialFormStatus(),
+      this.status = const InitialStatus(),
       this.conversationId,
       this.otherUserId,
       this.avatar,
       this.userId,
-      this.username});
+      this.username,
+      this.userRealName,
+      this.hasReachedMax = false});
 
   MessageState copyWith(
       {List<Message>? messageList,
-      FormSubmissionStatus? formStatus,
+      MessageStatus? status,
       String? conversationId,
       String? otherUserId,
       String? avatar,
       String? userId,
-      String? username}) {
+      String? username,
+      String? userRealName,
+      bool? hasReachedMax}) {
     return MessageState(
         messageList: messageList ?? this.messageList,
-        formStatus: formStatus ?? this.formStatus,
+        status: status ?? this.status,
         conversationId: conversationId ?? this.conversationId,
         otherUserId: otherUserId ?? this.otherUserId,
         avatar: avatar ?? this.avatar,
         userId: userId ?? this.userId,
-        username: username ?? this.username);
+        username: username ?? this.username,
+        userRealName: userRealName ?? this.userRealName,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax);
   }
+}
+
+abstract class MessageStatus {
+  const MessageStatus();
+}
+
+class InitialStatus extends MessageStatus {
+  const InitialStatus();
+}
+
+class FinishInitializing extends MessageStatus {}
+
+class ReachedMaxedStatus extends MessageStatus {}
+
+class ErrorStatus extends MessageStatus {
+  final Exception exception;
+  ErrorStatus(this.exception);
 }

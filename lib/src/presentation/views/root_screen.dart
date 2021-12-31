@@ -34,13 +34,11 @@ class _RootScreenState extends State<RootScreen> {
 
   void registerOnClose() {
     if (SignalRHelper.hubConnection != null) {
-      log("here");
       SignalRHelper.hubConnection!.onclose(_handleOnClose);
     }
   }
 
   void _handleOnClose(Exception? e) {
-    log("Attempt reconnecting");
     context.read<AuthBloc>().add(ReconnectSignalREvent());
   }
 
@@ -52,15 +50,10 @@ class _RootScreenState extends State<RootScreen> {
           context.read<AuthBloc>().add(LogoutEvent());
         }
         if (state.reconnected) {
-          log("registeronclose");
+          log("Register on close");
           registerOnClose();
           context.read<AuthBloc>().add(FinishReconnectEvent());
         }
-
-        // else if (state.hubConnection!.state ==
-        //     HubConnectionState.disconnected) {
-        //   context.read<AuthBloc>().add(ReconnectSignalREvent());
-        // }
       },
       child: Scaffold(
         body: Theme(

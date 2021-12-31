@@ -66,8 +66,7 @@ class _NotificationPageState extends State<NotificationPage> {
         }
       },
       child: BlocListener<NotificationBloc, NotificationState>(
-        listenWhen: (previous, current) =>
-            previous.formStatus != current.formStatus,
+        listenWhen: (previous, current) => previous.status != current.status,
         listener: (context, state) {},
         child: Scaffold(
           appBar: getAppBar(),

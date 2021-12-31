@@ -151,7 +151,7 @@ class AppRouter {
             builder: (context) => BlocProvider(
                   create: (context) => MessageBloc()
                     ..add(FetchMessage(args['conversationId'], args['avatar'],
-                        args['username'])),
+                        args['username'], args['userRealName'])),
                   child: const MessageScreen(),
                 ));
       case contestListScreen:

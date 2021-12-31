@@ -8,8 +8,10 @@ import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_add_comment_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_add_comment_request.dart';
 import 'package:imagecaptioning/src/model/post/post_comment_like_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_comment_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
@@ -164,8 +166,13 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<PostCommentRespone> getMoreComment(
+  Future<PostCommentListRespone> getMoreComment(
       String dateBoundary, int commentPerPage, String postId) {
     return _client.getMoreComment(dateBoundary, commentPerPage, postId);
+  }
+
+  @override
+  Future<PostAddCommentRespone> addComment(PostAddCommentRequest request) {
+    return _client.addComment(request);
   }
 }

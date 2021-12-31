@@ -1,6 +1,12 @@
 part of 'post_detail_bloc.dart';
 
-enum PostDetailStatus { initial, success, failure, maxcomment }
+enum PostDetailStatus {
+  initial,
+  success,
+  failure,
+  maxcomment,
+  addcommentfailed
+}
 
 class PostDetailState extends Equatable {
   const PostDetailState({

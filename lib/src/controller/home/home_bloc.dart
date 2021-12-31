@@ -50,7 +50,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         final ListPostData? data =
             await _postRepository.getPost(_postPerPerson, _postDate);
         _listFollowee = data?.followees ?? [];
-        log(_listFollowee.first.id.toString());
+
         emit(state.copyWith(
           status: HomeStatus.success,
           postsList: data?.posts ?? [],
@@ -72,14 +72,14 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
               postPerPerson: _postPerPerson,
               limitDay: _postDate,
               listFollowees: _listFollowee));
-      final List<Post>? posts = data?.posts ?? [];
-      if (posts!.isEmpty) {
+      final List<Post>? _newPosts = data?.posts;
+      if (_newPosts == null) {
         emit(state.copyWith(hasReachedMax: true));
       } else {
         _listFollowee = data?.followees ?? [];
         emit(state.copyWith(
           status: HomeStatus.success,
-          postsList: [...state.postsList, ...posts],
+          postsList: [...state.postsList, ..._newPosts],
           hasReachedMax: false,
         ));
       }

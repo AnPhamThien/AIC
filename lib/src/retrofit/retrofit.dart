@@ -4,8 +4,10 @@ import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_add_comment_request.dart';
+import 'package:imagecaptioning/src/model/post/post_add_comment_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_comment_like_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_comment_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_list_request.dart';
 import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
@@ -110,9 +112,13 @@ abstract class RestClient {
   );
 
   @GET('/posts/getpagecomment')
-  Future<PostCommentRespone> getMoreComment(
+  Future<PostCommentListRespone> getMoreComment(
     @Query('date_boundary') String dateBoundary,
     @Query('commentPerPage') int commentPerPage,
     @Query('postId') String postId,
   );
+
+  @POST('/comments/addcomment')
+  Future<PostAddCommentRespone> addComment(
+      @Body() PostAddCommentRequest request);
 }

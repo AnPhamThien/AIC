@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/model/contest/contest.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
@@ -38,50 +39,71 @@ class _ContestListScreenState extends State<ContestListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 0,
-        elevation: 0,
-        title: const AppBarTitle(title: "Contest List"),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: BlocBuilder<ContestListBloc, ContestListState>(
-              builder: (context, state) {
-                switch (state.status) {
-                  case ContestListStatus.failure:
-                    return const Center(child: Text('failed to fetch contest'));
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          titleSpacing: 0,
+          elevation: 0,
+          title: const AppBarTitle(title: "Contest List"),
+          bottom: TabBar(
+            
+            labelStyle: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700),
+            indicatorColor: Colors.black54,
+            labelColor: Colors.black,
+            unselectedLabelColor: Colors.black45,
+            tabs: const [
+              Tab(
+                text: 'On-going',
+              ),
+              Tab(
+                text: 'Closed',
+              ),
+            ],
+          ),
+        ),
+        body: SafeArea(
+          child: TabBarView(
+            children: [
+              BlocBuilder<ContestListBloc, ContestListState>(
+                builder: (context, state) {
+                  switch (state.status) {
+                    case ContestListStatus.failure:
+                      return const Center(
+                          child: Text('failed to fetch contest'));
 
-                  case ContestListStatus.success:
-                    if (state.contestsList.isEmpty) {
-                      return const Center(child: Text('no contest'));
-                    }
-                    return ListView.builder(
-                      itemBuilder: (BuildContext context, int index) {
-                        final Contest contest = state.contestsList[index];
-                        return Column(
-                          children: [
-                            getContestItem(contest),
-                            const Divider(
-                              height: 0,
-                              thickness: 1.5,
-                              indent: 70,
-                              endIndent: 40,
-                              color: bgGrey,
-                            ),
-                          ],
-                        );
-                      },
-                      itemCount: state.contestsList.length,
-                      controller: _scrollController,
-                    );
-                  default:
-                    return const Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
+                    case ContestListStatus.success:
+                      if (state.onGoingContestList.isEmpty) {
+                        return const Center(child: Text('no contest'));
+                      }
+                      return ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          final Contest contest = state.onGoingContestList[index];
+                          return Column(
+                            children: [
+                              getContestItem(contest),
+                              const Divider(
+                                height: 0,
+                                thickness: 1.5,
+                                indent: 70,
+                                endIndent: 40,
+                                color: bgGrey,
+                              ),
+                            ],
+                          );
+                        },
+                        itemCount: state.onGoingContestList.length,
+                        controller: _scrollController,
+                      );
+                    default:
+                      return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+              const Center(
+                child: Text('Closed Contest'),
+              )
+            ],
           ),
         ),
       ),

@@ -330,7 +330,7 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<PostCommentRespone> getMoreComment(
+  Future<PostCommentListRespone> getMoreComment(
       dateBoundary, commentPerPage, postId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -341,12 +341,29 @@ class _RestClient implements RestClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<PostCommentRespone>(
+        _setStreamType<PostCommentListRespone>(
             Options(method: 'GET', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/posts/getpagecomment',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = PostCommentRespone.fromJson(_result.data!);
+    final value = PostCommentListRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<PostAddCommentRespone> addComment(request) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    _data.addAll(request.toJson());
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<PostAddCommentRespone>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/comments/addcomment',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = PostAddCommentRespone.fromJson(_result.data!);
     return value;
   }
 

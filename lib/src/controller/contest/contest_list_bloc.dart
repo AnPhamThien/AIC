@@ -16,7 +16,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-const _limitContest = 1;
+const _limitContest = 5;
 
 class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
   ContestListBloc() : super(const ContestListState()) {
@@ -33,7 +33,7 @@ class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
             await _contestRepository.getContest(_limitContest);
         return emit(state.copyWith(
           status: ContestListStatus.success,
-          contestsList: contestList,
+          onGoingContestList: contestList,
           hasReachedMax: false,
         ));
       }

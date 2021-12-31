@@ -3,10 +3,13 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
+import 'package:imagecaptioning/src/constanct/status_code.dart';
 import 'package:imagecaptioning/src/model/post/comment.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
+import 'package:imagecaptioning/src/model/post/post_add_comment_request.dart';
+import 'package:imagecaptioning/src/model/post/post_add_comment_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_comment_like_data.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_comment_list_respone.dart';
 import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 part 'post_detail_event.dart';
@@ -32,23 +35,26 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
       _fetchMoreComment,
       transformer: throttleDroppable(throttleDuration),
     );
+
+    on<PostDetailAddComment>(
+      _addComment,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
   final PostRepository _postRepository = PostRepository();
   void _onPostDetailInitial(
       PostDetailInitEvent event, Emitter<PostDetailState> emit) async {
     try {
-      if (state.status == PostDetailStatus.initial) {
-        final PostCommentLikeData? data = await _postRepository
-            .getInitLikeComment(_commentPerPage, event.post.postId!);
-        state.post?.likecount = data?.totalLike;
-        emit(state.copyWith(
-            status: PostDetailStatus.success,
-            post: event.post,
-            commentList: data?.comments,
-            commentCount: data?.totalComment,
-            hasReachMax: false));
-      }
+      final PostCommentLikeData? data = await _postRepository
+          .getInitLikeComment(_commentPerPage, event.post.postId!);
+      state.post?.likecount = data?.totalLike;
+      emit(state.copyWith(
+          status: PostDetailStatus.success,
+          post: event.post,
+          commentList: data?.comments,
+          commentCount: data?.totalComment,
+          hasReachMax: false));
     } on Exception catch (_) {
       emit(state.copyWith(status: PostDetailStatus.failure));
       if (_.toString() == "postID Empty") {
@@ -66,10 +72,11 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
     try {
       final String _dateBoundary = state.commentList.last.dateCreate.toString();
       final String? _postId = state.post?.postId;
-      final PostCommentRespone? respone = await _postRepository.getMoreComment(
-          _dateBoundary, _commentPerPage, _postId!);
-      final List<Comment> _newComments = respone?.data ?? [];
-      if (respone!.data == null) {
+      final PostCommentListRespone? respone = await _postRepository
+          .getMoreComment(_dateBoundary, _commentPerPage, _postId!);
+      final List<Comment>? _newComments = respone?.data;
+
+      if (_newComments == null) {
         emit(state.copyWith(hasReachMax: true));
       } else {
         emit(
@@ -83,5 +90,31 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
     } catch (_) {
       emit(state.copyWith(status: PostDetailStatus.failure));
     }
+  }
+
+  void _addComment(
+      PostDetailAddComment event, Emitter<PostDetailState> emit) async {
+    try {
+      
+      String _comment = event.comment;
+      String _postId = state.post!.postId!;
+      PostAddCommentRespone? _respone = await _postRepository.addComment(
+        PostAddCommentRequest(
+          content: _comment,
+          postId: _postId,
+        ),
+      );
+      if (_respone == null) {
+        throw Exception('respone null');
+      }
+      int _statusCode = _respone.statusCode ?? 0;
+      if (_statusCode == StatusCode.successStatus) {
+        emit(state.copyWith(
+          status: PostDetailStatus.success,
+        ));
+      } else {
+        emit(state.copyWith(status: PostDetailStatus.addcommentfailed));
+      }
+    } catch (_) {}
   }
 }

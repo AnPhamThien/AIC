@@ -14,3 +14,9 @@ class PostDetailInitEvent extends PostDetailEvent {
 }
 
 class PostDetailFetchMoreComment extends PostDetailEvent {}
+
+class PostDetailAddComment extends PostDetailEvent {
+  final String comment;
+
+  const PostDetailAddComment(this.comment);
+}

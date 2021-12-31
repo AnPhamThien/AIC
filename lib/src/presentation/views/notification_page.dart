@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 
 import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
@@ -24,8 +25,7 @@ class _NotificationPageState extends State<NotificationPage> {
   @override
   void initState() {
     _scrollController.addListener(_onScroll);
-    _signalRHelper.hubConnection
-        .on('specificnotification', _handleSpecificNotification);
+    registerSpecificNotification();
     super.initState();
   }
 
@@ -44,41 +44,56 @@ class _NotificationPageState extends State<NotificationPage> {
     }
   }
 
+  void registerSpecificNotification() {
+    if (SignalRHelper.hubConnection != null) {
+      SignalRHelper.hubConnection!
+          .on('specificnotification', _handleSpecificNotification);
+    }
+  }
+
   void _handleSpecificNotification(List<dynamic>? parameters) {
     context.read<NotificationBloc>().add(FetchNotification());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<NotificationBloc, NotificationState>(
-      listenWhen: (previous, current) =>
-          previous.formStatus != current.formStatus,
-      listener: (context, state) {},
-      child: Scaffold(
-        appBar: getAppBar(),
-        body: SafeArea(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height,
-            child: BlocBuilder<NotificationBloc, NotificationState>(
-              builder: (context, state) {
-                List<NotificationItem>? notiList = state.notificationList;
-                if (notiList != null) {
-                  return ListView.builder(
-                    itemBuilder: (BuildContext context, int index) {
-                      final NotificationItem noti = notiList[index];
-                      return getNotificationItem(
-                          noti.imageUrl ?? '',
-                          noti.userName,
-                          noti.notifyContent ?? '',
-                          noti.totalHours?.toInt() ?? 0);
-                    },
-                    itemCount: state.notificationList?.length,
-                    controller: _scrollController,
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              },
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state.reconnected) {
+          log("registerSpecific");
+          registerSpecificNotification();
+          context.read<AuthBloc>().add(FinishReconnectEvent());
+        }
+      },
+      child: BlocListener<NotificationBloc, NotificationState>(
+        listenWhen: (previous, current) => previous.status != current.status,
+        listener: (context, state) {},
+        child: Scaffold(
+          appBar: getAppBar(),
+          body: SafeArea(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: BlocBuilder<NotificationBloc, NotificationState>(
+                builder: (context, state) {
+                  List<NotificationItem>? notiList = state.notificationList;
+                  if (notiList != null) {
+                    return ListView.builder(
+                      itemBuilder: (BuildContext context, int index) {
+                        final NotificationItem noti = notiList[index];
+                        return getNotificationItem(
+                            noti.imageUrl ?? '',
+                            noti.userName,
+                            noti.notifyContent ?? '',
+                            noti.totalHours?.toInt() ?? 0);
+                      },
+                      itemCount: state.notificationList?.length,
+                      controller: _scrollController,
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
             ),
           ),
         ),

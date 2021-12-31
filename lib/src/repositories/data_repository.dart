@@ -6,6 +6,7 @@ import 'package:imagecaptioning/src/constanct/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/conversation/message.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_add_comment_respone.dart';
@@ -40,21 +41,25 @@ class DataRepository implements RestClient {
                     MessageCode.tokenExpired) {
               String token = getIt<AppPref>().getToken;
               String refreshToken = getIt<AppPref>().getRefreshToken;
-
-              final response = await refreshJwtToken(token, refreshToken);
-              Map<String, dynamic> value = response.data!;
-              String? data = value['data'];
-              if (data != null) {
-                getIt<AppPref>().setToken(value['data']);
-                setJwtInHeader();
-                handler.resolve(response);
-              } else {
+              try {
+                final response = await refreshJwtToken(token, refreshToken);
+                Map<String, dynamic> value = response.data!;
+                String? data = value['data'];
+                if (data != null) {
+                  getIt<AppPref>().setToken(value['data']);
+                  setJwtInHeader();
+                  handler.resolve(response);
+                } else {
+                  handler.reject(error);
+                }
+              } catch (_) {
+                log(_.toString());
                 handler.next(error);
               }
             } else if (error.response!.statusCode == 401 &&
                 error.response!.data['messageCode'] ==
                     MessageCode.refreshTokenExpired) {
-              handler.next(error);
+              handler.reject(error);
             } else {
               handler.next(error);
             }
@@ -160,6 +165,16 @@ class DataRepository implements RestClient {
   }
 
   @override
+  Future<GetMessageResponseMessage> getMessages(String conversationId) {
+    return _client.getMessages(conversationId);
+  }
+
+  @override
+  Future<GetMessageResponseMessage> getMoreMessages(
+      String conversationId, String dateBoundary) {
+    return _client.getMoreMessages(conversationId, dateBoundary);
+  }
+
   Future<PostCommentLikeRespone> getInitPostLikeComment(
       int commentPerPage, String postId) {
     return _client.getInitPostLikeComment(commentPerPage, postId);

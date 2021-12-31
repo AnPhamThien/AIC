@@ -5,6 +5,7 @@ import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
+import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
 import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
@@ -16,6 +17,7 @@ import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart'
 import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
@@ -37,10 +39,11 @@ class AppRouter {
   static const String editProfileScreen = '/editprofile';
   static const String notificationScreen = '/notification';
   static const String conversationScreen = '/conversation';
-
+  static const String messageScreen = '/message';
   static const String contestListScreen = '/contestlistscreen';
   static const String postDetailScreen = '/postdetailscreen';
-  final ProfileBloc profileBloc = ProfileBloc(true);
+  // final ProfileBloc currentUSerProfileBloc = ProfileBloc(true)
+  //   ..add(ProfileInitializing(''));
 
   static const List<String> noAuthNeededScreens = [
     loginScreen,
@@ -91,7 +94,9 @@ class AppRouter {
               BlocProvider(
                   create: (context) =>
                       NotificationBloc()..add(FetchNotification())),
-              BlocProvider.value(value: profileBloc),
+              BlocProvider(
+                  create: (context) =>
+                      ProfileBloc(true)..add(ProfileInitializing(''))),
               BlocProvider(
                   create: (context) => HomeBloc()..add(InitPostFetched()))
             ],
@@ -104,8 +109,9 @@ class AppRouter {
         );
       case currentUserProfileScreen:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: profileBloc,
+          builder: (context) => BlocProvider(
+            create: (context) =>
+                ProfileBloc(false)..add(ProfileInitializing('')),
             child: const ProfilePage(),
           ),
         );
@@ -120,8 +126,9 @@ class AppRouter {
         );
       case editProfileScreen:
         return MaterialPageRoute(
-          builder: (context) => BlocProvider.value(
-            value: profileBloc,
+          builder: (context) => BlocProvider(
+            create: (context) =>
+                ProfileBloc(false)..add(ProfileInitializing('')),
             child: const EditProfileScreen(),
           ),
         );
@@ -137,6 +144,15 @@ class AppRouter {
                   create: (context) =>
                       ConversationBloc()..add(FetchConversation()),
                   child: const ConversationScreen(),
+                ));
+      case messageScreen:
+        final args = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => MessageBloc()
+                    ..add(FetchMessage(args['conversationId'], args['avatar'],
+                        args['username'], args['userRealName'])),
+                  child: const MessageScreen(),
                 ));
       case contestListScreen:
         return MaterialPageRoute(

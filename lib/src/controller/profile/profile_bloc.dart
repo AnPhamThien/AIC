@@ -18,8 +18,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       : _userRepository = UserRepository(),
         super(ProfileState(isCurrentUser: isCurrentUser)) {
     on<ProfileInitializing>(_onInitial);
-    on<OpenImagePicker>(_onOpenImagePicker);
-    on<SaveProfileChanges>(_onSaveProfileChanges);
+    //on<OpenImagePicker>(_onOpenImagePicker);
+    //on<SaveProfileChanges>(_onSaveProfileChanges);
   }
   final UserRepository _userRepository;
   final _picker = ImagePicker();
@@ -48,65 +48,64 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
       if (userRes.statusCode == StatusCode.successStatus &&
           userRes.data != null) {
-        emit(state.copyWith(
-            user: userRes.data, formStatus: FinishInitializing()));
+        emit(state.copyWith(user: userRes.data, status: FinishInitializing()));
       } else {
         throw Exception(userRes.messageCode);
       }
     } on Exception catch (_) {
-      emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
+      emit(state.copyWith(status: ErrorStatus(_)));
     }
   }
 
-  void _onOpenImagePicker(
-      OpenImagePicker event, Emitter<ProfileState> emit) async {
-    try {
-      emit(state.copyWith(imageSourceActionSheetIsVisible: false));
-      final pickedImage = await _picker.pickImage(source: event.imageSource);
-      if (pickedImage == null) return;
+  // void _onOpenImagePicker(
+  //     OpenImagePicker event, Emitter<ProfileState> emit) async {
+  //   try {
+  //     emit(state.copyWith(imageSourceActionSheetIsVisible: false));
+  //     final pickedImage = await _picker.pickImage(source: event.imageSource);
+  //     if (pickedImage == null) return;
 
-      //final imageKey = await storageRepo.uploadFile(File(pickedImage.path));
+  //     //final imageKey = await storageRepo.uploadFile(File(pickedImage.path));
 
-      final updatedUser =
-          state.user!.copyWith(avataUrl: File(pickedImage.path));
+  //     final updatedUser =
+  //         state.user!.copyWith(avataUrl: File(pickedImage.path));
 
-      emit(state.copyWith(user: updatedUser));
-    } on Exception catch (_) {
-      emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
-    }
-  }
+  //     emit(state.copyWith(user: updatedUser));
+  //   } on Exception catch (_) {
+  //     emit(state.copyWith(status: ErrorStatus(_)));
+  //   }
+  // }
 
-  void _onSaveProfileChanges(
-      SaveProfileChanges event, Emitter<ProfileState> emit) async {
-    try {
-      String username = event.username;
-      String email = event.email;
-      String phone = event.phone;
-      String desc = event.desc;
-      String userRealName = event.userRealName;
-      String avatarImg = event.avatar;
+  // void _onSaveProfileChanges(
+  //     SaveProfileChanges event, Emitter<ProfileState> emit) async {
+  //   try {
+  //     String username = event.username;
+  //     String email = event.email;
+  //     String phone = event.phone;
+  //     String desc = event.desc;
+  //     String userRealName = event.userRealName;
+  //     String avatarImg = event.avatar;
 
-      final response = await _userRepository.updateUserProfile(
-          username: username,
-          email: email,
-          phone: phone,
-          desc: desc,
-          userRealName: userRealName,
-          avatarImg: avatarImg);
-      if (response == null) {
-        throw Exception("");
-      }
-      if (response is int) {
-        if (response == StatusCode.successStatus) {
-          emit(state.copyWith(formStatus: FormSubmissionSuccess()));
-        } else {
-          throw Exception("");
-        }
-      } else {
-        throw Exception(response);
-      }
-    } on Exception catch (_) {
-      emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
-    }
-  }
+  //     final response = await _userRepository.updateUserProfile(
+  //         username: username,
+  //         email: email,
+  //         phone: phone,
+  //         desc: desc,
+  //         userRealName: userRealName,
+  //         avatarImg: avatarImg);
+  //     if (response == null) {
+  //       throw Exception("");
+  //     }
+  //     if (response is int) {
+  //       if (response == StatusCode.successStatus) {
+  //         emit(state.copyWith(status: ()));
+  //       } else {
+  //         throw Exception("");
+  //       }
+  //     } else {
+  //       throw Exception(response);
+  //     }
+  //   } on Exception catch (_) {
+  //     emit(state.copyWith(status: ErrorStatus(_)));
+  //   }
+  // }
 }

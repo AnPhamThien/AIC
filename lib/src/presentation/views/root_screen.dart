@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -13,7 +15,6 @@ import 'package:imagecaptioning/src/presentation/views/search_screen.dart';
 import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
-import 'package:signalr_core/signalr_core.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -24,24 +25,34 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   int indexPage = 0;
-  final SignalRHelper _signalRHelper = SignalRHelper();
 
   @override
   void initState() {
-    _signalRHelper.hubConnection.onclose((exception) {
-      context.read<AuthBloc>().add(ReconnectSignalREvent());
-    });
+    registerOnClose();
     super.initState();
+  }
+
+  void registerOnClose() {
+    if (SignalRHelper.hubConnection != null) {
+      SignalRHelper.hubConnection!.onclose(_handleOnClose);
+    }
+  }
+
+  void _handleOnClose(Exception? e) {
+    context.read<AuthBloc>().add(ReconnectSignalREvent());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listenWhen: (previous, current) =>
-          previous.authStatus != current.authStatus,
       listener: (context, state) {
         if (state.authStatus is AuthenticationForceLogout) {
           context.read<AuthBloc>().add(LogoutEvent());
+        }
+        if (state.reconnected) {
+          log("Register on close");
+          registerOnClose();
+          context.read<AuthBloc>().add(FinishReconnectEvent());
         }
       },
       child: Scaffold(

@@ -5,7 +5,7 @@ class ProfileState {
   final bool isCurrentUser;
   //final String? avatarPath;
 
-  final FormSubmissionStatus formStatus;
+  final ProfileStatus status;
   bool imageSourceActionSheetIsVisible;
 
   ProfileState({
@@ -13,23 +13,40 @@ class ProfileState {
     required this.isCurrentUser,
     //String? avatarPath,
     this.imageSourceActionSheetIsVisible = false,
-    this.formStatus = const InitialFormStatus(),
+    this.status = const InitialStatus(),
   });
 
   ProfileState copyWith({
     UserDetails? user,
     bool? isCurrentUser,
     //String? avatarPath,
-    FormSubmissionStatus? formStatus,
+    ProfileStatus? status,
     bool? imageSourceActionSheetIsVisible,
   }) {
     return ProfileState(
       user: user ?? this.user,
       isCurrentUser: this.isCurrentUser,
       //avatarPath: avatarPath ?? this.avatarPath,
-      formStatus: formStatus ?? this.formStatus,
+      status: status ?? this.status,
       imageSourceActionSheetIsVisible: imageSourceActionSheetIsVisible ??
           this.imageSourceActionSheetIsVisible,
     );
   }
+}
+
+abstract class ProfileStatus {
+  const ProfileStatus();
+}
+
+class InitialStatus extends ProfileStatus {
+  const InitialStatus();
+}
+
+class FinishInitializing extends ProfileStatus {}
+
+class ReachedMaxedStatus extends ProfileStatus {}
+
+class ErrorStatus extends ProfileStatus {
+  final Exception exception;
+  ErrorStatus(this.exception);
 }

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/conversation/message.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_add_comment_request.dart';
@@ -88,6 +89,15 @@ abstract class RestClient {
 
   @GET('/conversations/getmoreconversations')
   Future<GetConversationResponseMessage> getMoreConversations(
+      @Query('dateBoundary') String dateBoundary);
+
+  @GET('/conversations/getmessages')
+  Future<GetMessageResponseMessage> getMessages(
+      @Query('conversationId') String conversationId);
+
+  @GET('/conversations/getmoremessages')
+  Future<GetMessageResponseMessage> getMoreMessages(
+      @Query('conversationId') String conversationId,
       @Query('dateBoundary') String dateBoundary);
 
   @GET('/contests/getcontestforuser')

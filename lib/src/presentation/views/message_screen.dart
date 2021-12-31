@@ -1,5 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
+import 'package:imagecaptioning/src/model/conversation/message.dart';
+import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({Key? key}) : super(key: key);
@@ -9,50 +20,73 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
+  final _scrollController = ScrollController();
+  final _messageController = TextEditingController();
+
+  @override
+  void initState() {
+    _scrollController.addListener(_onScroll);
+    registerGetMessages();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (isScrollEnd(_scrollController)) {
+      log("Fetchmore");
+      //context.read<MessageBloc>().add(FetchMessage());
+    }
+  }
+
+  void registerGetMessages() {
+    if (SignalRHelper.hubConnection != null) {
+      SignalRHelper.hubConnection!
+          .on('specificnotification', _handleGetMessage);
+    }
+  }
+
+  void _handleGetMessage(List<dynamic>? parameters) {
+    context.read<MessageBloc>().add(FetchMoreMessage());
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Scaffold(
-        appBar: getAppBar(
-          "assets/images/Kroni.jpg",
-          "Kronii",
-          "Ouro_Kronii",
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(
-                  height: 10,
-                ),
-                getMessageItem(false, "Hi!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(false, "How are you?"),
-                getMessageItem(true, "Oh, I'm fine"),
-                getMessageItem(true, "I'm going to make some breakfast, you ?"),
-                getMessageItem(false,
-                    "I'm eating right now ;)\nIt's Bacon, egg and toast but i but some effort and including the cheese!"),
-                getMessageItem(true, "Nice!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-                getMessageItem(true, "Hello!"),
-              ],
-            ),
+    return BlocBuilder<MessageBloc, MessageState>(
+      builder: (context, state) {
+        List<Message>? notiList = state.messageList;
+        return Scaffold(
+            body: Scaffold(
+          appBar: getAppBar(
+            state.avatar ?? '',
+            state.userRealName ?? state.username ?? '',
+            state.username ?? '',
           ),
-        ),
-        bottomNavigationBar: getMessageBottomBar(),
-      ),
+          body: SafeArea(
+            child: notiList != null
+                ? ListView.builder(
+                    itemBuilder: (BuildContext context, int index) {
+                      final Message noti = notiList[index];
+                      log(noti.userId.toString());
+                      log(getIt<AppPref>().getUserID);
+                      return getMessageItem(
+                          noti.userId == getIt<AppPref>().getUserID,
+                          noti.content ?? '');
+                    },
+                    itemCount: state.messageList?.length,
+                    controller: _scrollController,
+                  )
+                : const Center(child: CircularProgressIndicator()),
+          ),
+          bottomNavigationBar: getMessageBottomBar(),
+        ));
+      },
     );
   }
 
@@ -92,6 +126,7 @@ class _MessageScreenState extends State<MessageScreen> {
         borderRadius: BorderRadius.all(Radius.circular(45)),
       ),
       child: TextField(
+        controller: _messageController,
         textAlignVertical: TextAlignVertical.center,
         decoration: InputDecoration(
           border: InputBorder.none,
@@ -123,7 +158,10 @@ class _MessageScreenState extends State<MessageScreen> {
               child: Image(
                 height: 60.0,
                 width: 60.0,
-                image: AssetImage(img),
+                image: (img.isNotEmpty)
+                    ? NetworkImage(avatarUrl + img)
+                    : const AssetImage('assets/images/Kroni.jpg')
+                        as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),

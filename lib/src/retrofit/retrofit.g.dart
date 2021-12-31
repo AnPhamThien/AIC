@@ -265,6 +265,44 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<GetMessageResponseMessage> getMessages(conversationId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'conversationId': conversationId
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetMessageResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/conversations/getmessages',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetMessageResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetMessageResponseMessage> getMoreMessages(
+      conversationId, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'conversationId': conversationId,
+      r'dateBoundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetMessageResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/conversations/getmoremessages',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetMessageResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<ContestListRespone> getContestList(
       searchName, limitContest, dateUp, dateDown) async {
     const _extra = <String, dynamic>{};

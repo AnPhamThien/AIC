@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:imagecaptioning/src/model/contest/contest.dart';
-import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
+import '../../model/contest/contest.dart';
+import '../../model/contest/contest_list_respone.dart';
 
 import '../data_repository.dart';
 

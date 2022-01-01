@@ -1,19 +1,16 @@
 import 'dart:developer';
-
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
-import 'package:imagecaptioning/src/controller/auth/authentication_status.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/user/user.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/repositories/auth/auth_repository.dart';
+import '../../app/routes.dart';
+import '../../constanct/status_code.dart';
+import 'authentication_status.dart';
+import '../get_it/get_it.dart';
+import '../../model/user/user.dart';
+import '../../prefs/app_prefs.dart';
+import '../../repositories/auth/auth_repository.dart';
 
-import 'package:imagecaptioning/src/repositories/data_repository.dart';
-import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
-import 'package:signalr_core/signalr_core.dart';
+import '../../repositories/data_repository.dart';
+import '../../signalr/signalr_helper.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

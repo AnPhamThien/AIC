@@ -1,11 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
-import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/model/notification/notification.dart';
-import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
+import '../../constanct/env.dart';
+import '../../constanct/error_message.dart';
+import '../../constanct/status_code.dart';
+import '../../model/notification/notification.dart';
+import '../../repositories/notification/notification_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part "notification_event.dart";

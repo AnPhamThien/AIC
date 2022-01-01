@@ -1,13 +1,13 @@
 import 'dart:developer';
 
-import 'package:imagecaptioning/src/model/post/list_post_data.dart';
-import 'package:imagecaptioning/src/model/post/post_add_comment_request.dart';
-import 'package:imagecaptioning/src/model/post/post_add_comment_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_like_data.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_like_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_list_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_list_request.dart';
-import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
+import '../../model/post/list_post_data.dart';
+import '../../model/post/post_add_comment_request.dart';
+import '../../model/post/post_add_comment_respone.dart';
+import '../../model/post/post_comment_like_data.dart';
+import '../../model/post/post_comment_like_respone.dart';
+import '../../model/post/post_comment_list_respone.dart';
+import '../../model/post/post_list_request.dart';
+import '../../model/post/post_list_respone.dart';
 
 import '../data_repository.dart';
 

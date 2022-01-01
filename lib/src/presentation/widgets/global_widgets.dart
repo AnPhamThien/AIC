@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import '../theme/style.dart';
 
 //* title của appbar
 class AppBarTitle extends StatelessWidget {

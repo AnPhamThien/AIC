@@ -1,8 +1,8 @@
 import 'dart:developer';
 
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
+import '../constanct/env.dart';
+import '../controller/get_it/get_it.dart';
+import '../prefs/app_prefs.dart';
 import 'package:signalr_core/signalr_core.dart';
 import 'package:http/http.dart';
 

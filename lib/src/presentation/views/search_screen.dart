@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/data_local/markup_model.dart';
+import '../../data_local/markup_model.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class SearchScreen extends StatefulWidget {

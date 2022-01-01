@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/repositories/user/user_repository.dart';
+import '../../constanct/error_message.dart';
+import '../auth/form_submission_status.dart';
+import '../../repositories/user/user_repository.dart';
 
 part 'forgot_password_event.dart';
 part 'forgot_password_state.dart';

@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
-import 'package:imagecaptioning/src/model/contest/contest.dart';
-import 'package:imagecaptioning/src/repositories/contest/contest_repository.dart';
+import '../../model/contest/contest.dart';
+import '../../repositories/contest/contest_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'contest_list_event.dart';

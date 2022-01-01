@@ -1,16 +1,16 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
-import 'package:imagecaptioning/src/model/conversation/message.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import '../../constanct/env.dart';
+import '../../controller/auth/auth_bloc.dart';
+import '../../controller/get_it/get_it.dart';
+import '../../controller/message/message_bloc.dart';
+import '../../model/conversation/message.dart';
+import '../../prefs/app_prefs.dart';
+import '../theme/style.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
+import '../../signalr/signalr_helper.dart';
+import '../../utils/func.dart';
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({Key? key}) : super(key: key);

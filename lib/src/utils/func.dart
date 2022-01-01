@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:imagecaptioning/src/constanct/error_message.dart';
+import '../constanct/error_message.dart';
 import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imagecaptioning/src/presentation/views/upload_page.dart';
+import '../presentation/views/upload_page.dart';
 
 /// viet hoa va cac chuoi
 String uppercaseAndTrim(String a) {

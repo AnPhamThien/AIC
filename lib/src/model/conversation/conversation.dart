@@ -2,7 +2,6 @@
 //
 //     final conversationResponseMessage = conversationResponseMessageFromJson(jsonString);
 
-import 'dart:convert';
 
 class GetConversationResponseMessage {
   GetConversationResponseMessage({

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
-import 'package:imagecaptioning/src/utils/validations.dart';
+import '../../app/routes.dart';
+import '../../constanct/error_message.dart';
+import '../../controller/auth/form_submission_status.dart';
+import '../../controller/login/login_bloc.dart';
+import '../../controller/auth/auth_bloc.dart';
+import '../theme/style.dart';
+import '../widgets/get_user_input_field.dart';
+import '../../utils/func.dart';
+import '../../utils/validations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

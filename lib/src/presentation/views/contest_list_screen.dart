@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
-import 'package:imagecaptioning/src/model/contest/contest.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
+import '../../controller/contest/contest_list_bloc.dart';
+import '../../model/contest/contest.dart';
+import '../theme/style.dart';
+import '../widgets/global_widgets.dart';
+import '../../utils/func.dart';
 
 class ContestListScreen extends StatefulWidget {
   const ContestListScreen({Key? key}) : super(key: key);

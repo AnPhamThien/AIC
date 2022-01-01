@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imagecaptioning/src/data_local/markup_model.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
+import '../../data_local/markup_model.dart';
+import '../theme/style.dart';
+import '../widgets/global_widgets.dart';
+import '../../utils/func.dart';
 
 class ContestScreen extends StatefulWidget {
   const ContestScreen({Key? key, required this.contest}) : super(key: key);

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:imagecaptioning/src/repositories/data_repository.dart';
+import '../data_repository.dart';
 
 abstract class UserBehavior {
   Future<Map<String, dynamic>?> refreshJwtToken(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
+import '../../app/routes.dart';
+import '../theme/style.dart';
+import '../widgets/get_user_input_field.dart';
 
 class ResetPasswordScreen extends StatefulWidget {
   const ResetPasswordScreen({Key? key}) : super(key: key);

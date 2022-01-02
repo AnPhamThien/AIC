@@ -153,9 +153,10 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<ContestListRespone> getContestList(
+  Future<ContestListRespone> getActiveContestList(
       String? searchName, int limitContest, String? dateUp, String? dateDown) {
-    return _client.getContestList(searchName, limitContest, dateUp, dateDown);
+    return _client.getActiveContestList(
+        searchName, limitContest, dateUp, dateDown);
   }
 
   @override
@@ -175,6 +176,7 @@ class DataRepository implements RestClient {
     return _client.getMoreMessages(conversationId, dateBoundary);
   }
 
+  @override
   Future<PostCommentLikeRespone> getInitPostLikeComment(
       int commentPerPage, String postId) {
     return _client.getInitPostLikeComment(commentPerPage, postId);
@@ -189,5 +191,26 @@ class DataRepository implements RestClient {
   @override
   Future<PostAddCommentRespone> addComment(PostAddCommentRequest request) {
     return _client.addComment(request);
+  }
+
+  @override
+  Future<ContestListRespone> getInactiveContestList(
+      String? searchName, int limitContest, String? dateUp, String? dateDown) {
+    return _client.getInactiveContestList(
+        searchName, limitContest, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestListRespone> getMoreActiveContestList(String? searchName,
+      int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
+    return _client.getMoreActiveContestList(
+        searchName, limitContest, dateBoundary, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestListRespone> getMoreInactiveContestList(String? searchName,
+      int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
+    return _client.getMoreInactiveContestList(
+        searchName, limitContest, dateBoundary, dateUp, dateDown);
   }
 }

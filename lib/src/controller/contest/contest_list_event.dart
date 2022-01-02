@@ -9,4 +9,8 @@ abstract class ContestListEvent extends Equatable {
 
 class InitContestFetched extends ContestListEvent {}
 
-class FetchMoreContest extends ContestListEvent {}
+class FetchMoreContest extends ContestListEvent {
+  final int indexTab;
+
+  const FetchMoreContest(this.indexTab);
+}

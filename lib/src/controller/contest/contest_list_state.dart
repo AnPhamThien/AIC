@@ -12,35 +12,36 @@ enum ContestListStatus {
 class ContestListState extends Equatable {
   const ContestListState({
     this.status = ContestListStatus.initial,
-    this.onGoingContestList = const <Contest>[],
-    this.closedContestList = const <Contest>[],
+    this.activeContestList = const <Contest>[],
+    this.inactiveContestList = const <Contest>[],
     this.searchContestList = const <Contest>[],
-    this.hasReachedMax = false,
   });
 
   final ContestListStatus status;
-  final List<Contest> onGoingContestList;
-  final List<Contest> closedContestList;
+  final List<Contest> activeContestList;
+  final List<Contest> inactiveContestList;
   final List<Contest> searchContestList;
-  final bool hasReachedMax;
 
   ContestListState copyWith({
     ContestListStatus? status,
-    List<Contest>? onGoingContestList,
+    List<Contest>? activeContestList,
+    List<Contest>? inactiveContestList,
+    List<Contest>? searchContestList,
     bool? hasReachedMax,
   }) {
     return ContestListState(
       status: status ?? this.status,
-      onGoingContestList: onGoingContestList ?? this.onGoingContestList,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+      activeContestList: activeContestList ?? this.activeContestList,
+      inactiveContestList: inactiveContestList ?? this.inactiveContestList,
+      searchContestList: searchContestList ?? this.searchContestList,
     );
   }
 
   @override
-  String toString() {
-    return '''PostState { status: $status, hasReachedMax: $hasReachedMax, posts: ${onGoingContestList.length} }''';
-  }
-
-  @override
-  List<Object> get props => [status, onGoingContestList, hasReachedMax];
+  List<Object> get props => [
+        status,
+        activeContestList,
+        inactiveContestList,
+        searchContestList,
+      ];
 }

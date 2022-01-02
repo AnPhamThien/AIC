@@ -20,7 +20,10 @@ const _limitContest = 5;
 
 class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
   ContestListBloc() : super(const ContestListState()) {
-    on<InitContestFetched>(_onContestFetched);
+    on<InitContestFetched>(
+      _onContestFetched,
+      transformer: throttleDroppable(throttleDuration),
+    );
     //on<FetchMoreContest>(_fetchMorePost);
   }
 
@@ -29,11 +32,14 @@ class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
       InitContestFetched event, Emitter<ContestListState> emit) async {
     try {
       if (state.status == ContestListStatus.initial) {
-        final List<Contest>? contestList =
-            await _contestRepository.getContest(_limitContest);
+        final List<Contest>? _activeContestList =
+            await _contestRepository.getActiveContestList(_limitContest);
+        final List<Contest>? _inactiveContestList =
+            await _contestRepository.getInactiveContestList(_limitContest);
         return emit(state.copyWith(
           status: ContestListStatus.success,
-          onGoingContestList: contestList,
+          activeContestList: _activeContestList,
+          inactiveContestList: _inactiveContestList,
           hasReachedMax: false,
         ));
       }
@@ -42,29 +48,35 @@ class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
     }
   }
 
-  // void _fetchMorePost(FetchMoreContest event, Emitter<ContestListState> emit) async {
-  //   if (state.hasReachedMax) {
-  //     emit(state.copyWith(status: ContestListStatus.maxcontest));
-  //     return;
-  //   }
-  //   try {
-  //     final Data? data = await _postRepository.getMorePost(PostListRequest(
-  //         postPerPerson: _postPerPerson,
-  //         limitDay: _postDate,
-  //         listFollowees: _listFollowee));
-  //     final List<Post>? posts = data?.posts ?? [];
-  //     if (posts!.isEmpty) {
-  //       emit(state.copyWith(hasReachedMax: true));
-  //     } else {
-  //       _listFollowee = data?.followees ?? [];
-  //       emit(state.copyWith(
-  //         status: ContestListStatus.success,
-  //         contestsList: List.of(state.contestList)..addAll(posts),
-  //         hasReachedMax: false,
-  //       ));
-  //     }
-  //   } catch (_) {
-  //     emit(state.copyWith(status: ContestListStatus.failure));
-  //   }
-  // }
+  void _fetchMorePost(
+      FetchMoreContest event, Emitter<ContestListState> emit) async {
+    // if (state.hasReachedMax) {
+    //   emit(state.copyWith(status: ContestListStatus.maxcontest));
+    //   return;
+    // }
+    try {
+      if (event.indexTab == 0) {
+        //TODO fetch more contest active
+      } else {
+        //TODO fetch more contest inactive
+      }
+      // final Data? data = await _postRepository.getMorePost(PostListRequest(
+      //     postPerPerson: _postPerPerson,
+      //     limitDay: _postDate,
+      //     listFollowees: _listFollowee));
+      // final List<Post>? posts = data?.posts ?? [];
+      // if (posts!.isEmpty) {
+      //   emit(state.copyWith(hasReachedMax: true));
+      // } else {
+      //   _listFollowee = data?.followees ?? [];
+      //   emit(state.copyWith(
+      //     status: ContestListStatus.success,
+      //     contestsList: List.of(state.contestList)..addAll(posts),
+      //     hasReachedMax: false,
+      //   ));
+      // }
+    } catch (_) {
+      emit(state.copyWith(status: ContestListStatus.failure));
+    }
+  }
 }

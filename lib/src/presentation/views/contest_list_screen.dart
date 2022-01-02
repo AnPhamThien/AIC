@@ -47,7 +47,6 @@ class _ContestListScreenState extends State<ContestListScreen> {
           elevation: 0,
           title: const AppBarTitle(title: "Contest List"),
           bottom: TabBar(
-            
             labelStyle: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700),
             indicatorColor: Colors.black54,
             labelColor: Colors.black,
@@ -73,12 +72,13 @@ class _ContestListScreenState extends State<ContestListScreen> {
                           child: Text('failed to fetch contest'));
 
                     case ContestListStatus.success:
-                      if (state.onGoingContestList.isEmpty) {
+                      if (state.activeContestList.isEmpty) {
                         return const Center(child: Text('no contest'));
                       }
                       return ListView.builder(
                         itemBuilder: (BuildContext context, int index) {
-                          final Contest contest = state.onGoingContestList[index];
+                          final Contest contest =
+                              state.activeContestList[index];
                           return Column(
                             children: [
                               getContestItem(contest),
@@ -92,7 +92,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
                             ],
                           );
                         },
-                        itemCount: state.onGoingContestList.length,
+                        itemCount: state.activeContestList.length,
                         controller: _scrollController,
                       );
                     default:
@@ -100,9 +100,41 @@ class _ContestListScreenState extends State<ContestListScreen> {
                   }
                 },
               ),
-              const Center(
-                child: Text('Closed Contest'),
-              )
+              BlocBuilder<ContestListBloc, ContestListState>(
+                builder: (context, state) {
+                  switch (state.status) {
+                    case ContestListStatus.failure:
+                      return const Center(
+                          child: Text('failed to fetch contest'));
+                    case ContestListStatus.success:
+                      if (state.inactiveContestList.isEmpty) {
+                        return const Center(child: Text('no contest'));
+                      }
+                      return ListView.builder(
+                        itemBuilder: (BuildContext context, int index) {
+                          final Contest contest =
+                              state.inactiveContestList[index];
+                          return Column(
+                            children: [
+                              getContestItem(contest),
+                              const Divider(
+                                height: 0,
+                                thickness: 1.5,
+                                indent: 70,
+                                endIndent: 40,
+                                color: bgGrey,
+                              ),
+                            ],
+                          );
+                        },
+                        itemCount: state.activeContestList.length,
+                        controller: _scrollController,
+                      );
+                    default:
+                      return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
             ],
           ),
         ),
@@ -119,7 +151,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
       onTap: () {},
 
       minVerticalPadding: 15,
-      leading: contest.status == 3
+      leading: contest.timeLeft == 'Present'
           //nếu còn thời hạn
           ? const RadiantGradientMask(
               child: Icon(

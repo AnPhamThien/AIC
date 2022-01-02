@@ -101,7 +101,15 @@ abstract class RestClient {
       @Query('dateBoundary') String dateBoundary);
 
   @GET('/contests/getcontestforuser')
-  Future<ContestListRespone> getContestList(
+  Future<ContestListRespone> getActiveContestList(
+    @Query('searchname') String? searchName,
+    @Query('limitcontest') int limitContest,
+    @Query('date_up') String? dateUp,
+    @Query('date_dow') String? dateDown,
+  );
+
+  @GET('/contests/getcontestinactiveforuser')
+  Future<ContestListRespone> getInactiveContestList(
     @Query('searchname') String? searchName,
     @Query('limitcontest') int limitContest,
     @Query('date_up') String? dateUp,
@@ -131,4 +139,22 @@ abstract class RestClient {
   @POST('/comments/addcomment')
   Future<PostAddCommentRespone> addComment(
       @Body() PostAddCommentRequest request);
+
+  @GET('/contests/getmorecontestforuser')
+  Future<ContestListRespone> getMoreActiveContestList(
+    @Query('searchname') String? searchName,
+    @Query('limitcontest') int limitContest,
+    @Query('date_boundary') String dateBoundary,
+    @Query('date_up') String? dateUp,
+    @Query('date_dow') String? dateDown,
+  );
+
+  @GET('/contests/getmorecontestinactiveforuser')
+  Future<ContestListRespone> getMoreInactiveContestList(
+    @Query('searchname') String? searchName,
+    @Query('limitcontest') int limitContest,
+    @Query('date_boundary') String dateBoundary,
+    @Query('date_up') String? dateUp,
+    @Query('date_dow') String? dateDown,
+  );
 }

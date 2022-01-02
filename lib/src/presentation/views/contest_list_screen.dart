@@ -1,6 +1,10 @@
+import 'dart:developer';
+
+import 'package:backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 import '../../controller/contest/contest_list_bloc.dart';
 import '../../model/contest/contest.dart';
 import '../theme/style.dart';
@@ -15,51 +19,105 @@ class ContestListScreen extends StatefulWidget {
 }
 
 class _ContestListScreenState extends State<ContestListScreen> {
-  final _scrollController = ScrollController();
-
+  String _searchText = '';
+  final _scrollInitController = ScrollController();
+  final _scrollSearchController = ScrollController();
+  DateTime? selectedDateDown;
+  DateTime? selectedDateUp;
+  bool isDatePicked = false;
+  final _searchTextEditingController = TextEditingController();
   @override
   void initState() {
-    _scrollController.addListener(_onScroll);
+    _scrollInitController.addListener(_onScroll);
+    _scrollSearchController.addListener(_onSearchScroll);
     super.initState();
   }
 
   @override
   void dispose() {
-    _scrollController
+    _scrollInitController
       ..removeListener(_onScroll)
       ..dispose();
     super.dispose();
   }
 
   void _onScroll() {
-    if (isScrollEnd(_scrollController)) {
-      // context.read<HomeBloc>().add(FetchMorePost());
+    if (isScrollEnd(_scrollInitController)) {
+      log(DefaultTabController.of(context)!.index.toString());
+      context
+          .read<ContestListBloc>()
+          .add(FetchMoreContest(DefaultTabController.of(context)!.index));
+    }
+  }
+
+  void _onSearchScroll() {
+    if (isScrollEnd(_scrollInitController)) {
+      log(DefaultTabController.of(context)!.index.toString());
+      context
+          .read<ContestListBloc>()
+          .add(FetchMoreContest(DefaultTabController.of(context)!.index));
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context, bool start) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDateUp ?? DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: selectedDateUp ?? DateTime.now());
+    if (picked != null && picked != selectedDateDown) {
+      if (start) {
+        setState(
+          () {
+            selectedDateDown = picked;
+            isDatePicked = true;
+          },
+        );
+      } else {
+        setState(
+          () {
+            selectedDateUp = picked;
+            selectedDateDown ??= selectedDateUp;
+            isDatePicked = true;
+          },
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    return BackdropScaffold(
+        backLayerBackgroundColor: bgApp,
+        appBar: getAppBar(),
+        backLayer: getBackLayer(),
+        resizeToAvoidBottomInset: true,
+        headerHeight: 49,
+        frontLayerScrim: Colors.white54,
+        frontLayerBorderRadius: const BorderRadius.vertical(
+          top: Radius.circular(25),
+        ),
+        frontLayer: getFrontLayer());
+  }
+
+  DefaultTabController getFrontLayer() {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
-        appBar: AppBar(
-          titleSpacing: 0,
-          elevation: 0,
-          title: const AppBarTitle(title: "Contest List"),
-          bottom: TabBar(
-            labelStyle: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700),
-            indicatorColor: Colors.black54,
-            labelColor: Colors.black,
-            unselectedLabelColor: Colors.black45,
-            tabs: const [
-              Tab(
-                text: 'On-going',
-              ),
-              Tab(
-                text: 'Closed',
-              ),
-            ],
-          ),
+        backgroundColor: Colors.white,
+        appBar: TabBar(
+          labelStyle: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700),
+          indicatorColor: Colors.black54,
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.black45,
+          tabs: const [
+            Tab(
+              text: 'On-going',
+            ),
+            Tab(
+              text: 'Closed',
+            ),
+          ],
         ),
         body: SafeArea(
           child: TabBarView(
@@ -93,7 +151,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
                           );
                         },
                         itemCount: state.activeContestList.length,
-                        controller: _scrollController,
+                        controller: _scrollInitController,
                       );
                     default:
                       return const Center(child: CircularProgressIndicator());
@@ -128,7 +186,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
                           );
                         },
                         itemCount: state.activeContestList.length,
-                        controller: _scrollController,
+                        controller: _scrollInitController,
                       );
                     default:
                       return const Center(child: CircularProgressIndicator());
@@ -136,6 +194,163 @@ class _ContestListScreenState extends State<ContestListScreen> {
                 },
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  BackdropAppBar getAppBar() {
+    return BackdropAppBar(
+      title: Text(_searchText == '' ? 'Contest list' : _searchText),
+      foregroundColor: Colors.black87,
+      backgroundColor: bgApp,
+      leading: IconButton(
+        onPressed: () {
+          Navigator.pop(context);
+        },
+        icon: const Icon(
+          Icons.arrow_back_rounded,
+        ),
+      ),
+      actions: [
+        Builder(
+          builder: (context) {
+            return Backdrop.of(context).isBackLayerRevealed
+                ? Builder(
+                    builder: (context) => IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _searchText = _searchTextEditingController.text;
+                        });
+                        if (selectedDateDown != null) {
+                          context.read<ContestListBloc>().add(
+                                InitSearchContestFetched(
+                                  _searchTextEditingController.text,
+                                  selectedDateUp == null
+                                      ? DateTime.now()
+                                          .toIso8601String()
+                                          .split('T')
+                                          .first
+                                      : selectedDateUp!
+                                          .toIso8601String()
+                                          .split('T')
+                                          .first,
+                                  selectedDateDown!
+                                      .toIso8601String()
+                                      .split('T')
+                                      .first,
+                                ),
+                              );
+                        }
+
+                        Backdrop.of(context).concealBackLayer();
+                      },
+                      icon: const Icon(
+                        Icons.search_rounded,
+                      ),
+                    ),
+                  )
+                : Builder(
+                    builder: (context) => _searchText != '' || isDatePicked
+                        ? IconButton(
+                            onPressed: () {
+                              setState(
+                                () {
+                                  _searchText = '';
+                                  selectedDateDown = null;
+                                  selectedDateUp = null;
+                                  _searchTextEditingController.clear();
+                                  isDatePicked = false;
+                                },
+                              );
+                              context
+                                  .read<ContestListBloc>()
+                                  .add(InitContestFetched());
+                            },
+                            icon: const Icon(
+                              Icons.clear_rounded,
+                            ),
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              Backdrop.of(context).revealBackLayer();
+                            },
+                            icon: const Icon(
+                              Icons.search_rounded,
+                            ),
+                          ),
+                  );
+          },
+        ),
+      ],
+    );
+  }
+
+  SafeArea getBackLayer() {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+        child: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Contest name ...',
+                fillColor: bgGrey,
+                filled: true,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide:
+                        const BorderSide(width: 0.0, style: BorderStyle.none)),
+                focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide:
+                        const BorderSide(width: 0.0, style: BorderStyle.none)),
+                contentPadding:
+                    const EdgeInsets.fromLTRB(20.0, 10.0, 10.0, 0.0),
+              ),
+              controller: _searchTextEditingController,
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                getDate(true, selectedDateDown, 'Start date'),
+                getDate(false, selectedDateUp, 'End date'),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SizedBox getDate(bool isStart, DateTime? date, String hint) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 2.2,
+      child: GestureDetector(
+        onTap: () => _selectDate(context, isStart),
+        child: AbsorbPointer(
+          absorbing: true,
+          child: TextField(
+            textAlign: TextAlign.center,
+            decoration: InputDecoration(
+              hintText:
+                  date == null ? hint : date.toIso8601String().split('T').first,
+              fillColor: bgGrey,
+              filled: true,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide:
+                      const BorderSide(width: 0.0, style: BorderStyle.none)),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30),
+                  borderSide:
+                      const BorderSide(width: 0.0, style: BorderStyle.none)),
+              contentPadding: const EdgeInsets.only(top: 0),
+            ),
           ),
         ),
       ),

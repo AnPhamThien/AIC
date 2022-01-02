@@ -24,25 +24,30 @@ class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
       _onContestFetched,
       transformer: throttleDroppable(throttleDuration),
     );
-    //on<FetchMoreContest>(_fetchMorePost);
+    on<FetchMoreContest>(
+      _fetchMorePost,
+      transformer: throttleDroppable(throttleDuration),
+    );
+    on<InitSearchContestFetched>(
+      _onSearchContestFetched,
+    );
   }
 
   final ContestRepository _contestRepository = ContestRepository();
   void _onContestFetched(
       InitContestFetched event, Emitter<ContestListState> emit) async {
     try {
-      if (state.status == ContestListStatus.initial) {
-        final List<Contest>? _activeContestList =
-            await _contestRepository.getActiveContestList(_limitContest);
-        final List<Contest>? _inactiveContestList =
-            await _contestRepository.getInactiveContestList(_limitContest);
-        return emit(state.copyWith(
-          status: ContestListStatus.success,
-          activeContestList: _activeContestList,
-          inactiveContestList: _inactiveContestList,
-          hasReachedMax: false,
-        ));
-      }
+      final List<Contest>? _activeContestList = await _contestRepository
+          .getActiveContestList('', _limitContest, '', '');
+      final List<Contest>? _inactiveContestList = await _contestRepository
+          .getInactiveContestList('', _limitContest, '', '');
+      return emit(state.copyWith(
+        status: ContestListStatus.success,
+        activeContestList: _activeContestList,
+        inactiveContestList: _inactiveContestList,
+        hasReachMaxActive: false,
+        hasReachMaxInactive: false,
+      ));
     } catch (_) {
       emit(state.copyWith(status: ContestListStatus.failure));
     }
@@ -50,31 +55,70 @@ class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
 
   void _fetchMorePost(
       FetchMoreContest event, Emitter<ContestListState> emit) async {
-    // if (state.hasReachedMax) {
-    //   emit(state.copyWith(status: ContestListStatus.maxcontest));
-    //   return;
-    // }
     try {
       if (event.indexTab == 0) {
-        //TODO fetch more contest active
+        if (state.hasReachMaxActive == true) {
+          return;
+        }
+        final _dateBoundary =
+            state.activeContestList.last.dateCreate.toString();
+        final List<Contest>? _moreActiveContestList = await _contestRepository
+            .getMoreActiveContestList(_limitContest, _dateBoundary);
+        if (_moreActiveContestList == null) {
+          emit(state.copyWith(hasReachMaxActive: true));
+        } else {
+          emit(state.copyWith(
+              status: ContestListStatus.success,
+              activeContestList: [
+                ...state.activeContestList,
+                ..._moreActiveContestList
+              ],
+              hasReachMaxActive: false));
+        }
       } else {
-        //TODO fetch more contest inactive
+        if (state.hasReachMaxInactive == true) {
+          return;
+        }
+        final _dateBoundary =
+            state.inactiveContestList.last.dateCreate.toString();
+        final List<Contest>? _moreInactiveContestList = await _contestRepository
+            .getMoreInactiveContestList(_limitContest, _dateBoundary);
+        if (_moreInactiveContestList == null) {
+          emit(state.copyWith(hasReachMaxInactive: true));
+        } else {
+          emit(state.copyWith(
+              status: ContestListStatus.success,
+              activeContestList: [
+                ...state.inactiveContestList,
+                ..._moreInactiveContestList
+              ],
+              hasReachMaxInactive: false));
+        }
       }
-      // final Data? data = await _postRepository.getMorePost(PostListRequest(
-      //     postPerPerson: _postPerPerson,
-      //     limitDay: _postDate,
-      //     listFollowees: _listFollowee));
-      // final List<Post>? posts = data?.posts ?? [];
-      // if (posts!.isEmpty) {
-      //   emit(state.copyWith(hasReachedMax: true));
-      // } else {
-      //   _listFollowee = data?.followees ?? [];
-      //   emit(state.copyWith(
-      //     status: ContestListStatus.success,
-      //     contestsList: List.of(state.contestList)..addAll(posts),
-      //     hasReachedMax: false,
-      //   ));
-      // }
+    } catch (_) {
+      emit(state.copyWith(status: ContestListStatus.failure));
+    }
+  }
+
+  void _onSearchContestFetched(
+      InitSearchContestFetched event, Emitter<ContestListState> emit) async {
+    try {
+      final _searchName = event.searchName;
+      final _dateUp = event.dateUp;
+      final _dateDown = event.dateDown;
+      final List<Contest>? _activeContestList = await _contestRepository
+          .getActiveContestList(_searchName, _limitContest, _dateUp, _dateDown);
+      final List<Contest>? _inactiveContestList =
+          await _contestRepository.getInactiveContestList(
+              _searchName, _limitContest, _dateUp, _dateDown);
+
+      return emit(state.copyWith(
+        status: ContestListStatus.success,
+        activeContestList: _activeContestList ?? [],
+        inactiveContestList: _inactiveContestList ?? [],
+        hasReachMaxActive: false,
+        hasReachMaxInactive: false,
+      ));
     } catch (_) {
       emit(state.copyWith(status: ContestListStatus.failure));
     }

@@ -6,8 +6,10 @@ import '../../model/contest/contest_list_respone.dart';
 import '../data_repository.dart';
 
 abstract class ContestBehavior {
-  Future<List<Contest>?> getActiveContestList(int limitContest);
-  Future<List<Contest>?> getInactiveContestList(int limitContest);
+  Future<List<Contest>?> getActiveContestList(
+      String? searchName, int limitContest, String? dateUp, String? dateDown);
+  Future<List<Contest>?> getInactiveContestList(
+      String? searchName, int limitContest, String? dateUp, String? dateDown);
   Future<List<Contest>?> getMoreActiveContestList(
       int limitContest, String dateBoundary);
   Future<List<Contest>?> getMoreInactiveContestList(
@@ -17,10 +19,11 @@ abstract class ContestBehavior {
 class ContestRepository extends ContestBehavior {
   final DataRepository _dataRepository = DataRepository();
   @override
-  Future<List<Contest>?> getActiveContestList(int limitContest) async {
+  Future<List<Contest>?> getActiveContestList(String? searchName,
+      int limitContest, String? dateUp, String? dateDown) async {
     try {
-      final ContestListRespone respone =
-          await _dataRepository.getActiveContestList("", limitContest, "", "");
+      final ContestListRespone respone = await _dataRepository
+          .getActiveContestList(searchName, limitContest, dateUp, dateDown);
 
       final List<Contest>? contestList = respone.data;
       return contestList;
@@ -30,10 +33,11 @@ class ContestRepository extends ContestBehavior {
   }
 
   @override
-  Future<List<Contest>?> getInactiveContestList(int limitContest) async {
+  Future<List<Contest>?> getInactiveContestList(String? searchName,
+      int limitContest, String? dateUp, String? dateDown) async {
     try {
       final ContestListRespone respone = await _dataRepository
-          .getInactiveContestList("", limitContest, "", "");
+          .getInactiveContestList(searchName, limitContest, dateUp, dateDown);
 
       final List<Contest>? inactiveContestList = respone.data;
       return inactiveContestList;

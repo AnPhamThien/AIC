@@ -9,7 +9,8 @@ import 'contest.dart';
 ContestListRespone contestResponeFromJson(String str) =>
     ContestListRespone.fromJson(json.decode(str));
 
-String contestResponeToJson(ContestListRespone data) => json.encode(data.toJson());
+String contestResponeToJson(ContestListRespone data) =>
+    json.encode(data.toJson());
 
 class ContestListRespone {
   ContestListRespone({
@@ -26,10 +27,13 @@ class ContestListRespone {
   int? total;
   int? sunOfPages;
 
-  factory ContestListRespone.fromJson(Map<String, dynamic> json) => ContestListRespone(
+  factory ContestListRespone.fromJson(Map<String, dynamic> json) =>
+      ContestListRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: List<Contest>.from(json["data"].map((x) => Contest.fromJson(x))),
+        data: json["data"] != null
+            ? List<Contest>.from(json["data"].map((x) => Contest.fromJson(x)))
+            : null,
         total: json["total"],
         sunOfPages: json["sunOfPages"],
       );

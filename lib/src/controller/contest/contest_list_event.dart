@@ -14,3 +14,11 @@ class FetchMoreContest extends ContestListEvent {
 
   const FetchMoreContest(this.indexTab);
 }
+
+class InitSearchContestFetched extends ContestListEvent {
+  final String searchName;
+  final String dateUp;
+  final String dateDown;
+
+  const InitSearchContestFetched(this.searchName, this.dateUp, this.dateDown);
+}

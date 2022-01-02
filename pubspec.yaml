@@ -16,17 +16,16 @@ dependencies:
   flutter_screenutil: ^5.0.0+2
 
   flutter_svg: ^0.23.0+1
-
+  backdrop: ^0.7.1
   flutter_localizations:
     sdk: flutter
   dio: ^4.0.4
   shared_preferences: ^2.0.9
-  flutter_bloc: ^8.0.0
+  flutter_bloc: ^8.0.1
   retrofit: ^2.0.1
   get_it: ^7.2.0
   injectable: ^1.4.1
   signalr_core: ^1.1.1
-
   equatable: ^2.0.3
   bloc_concurrency: ^0.2.0
   image_picker: ^0.8.4+4

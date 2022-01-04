@@ -1,4 +1,3 @@
-
 import 'package:bloc/bloc.dart';
 import '../../constanct/status_code.dart';
 import '../auth/form_submission_status.dart';
@@ -25,6 +24,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     try {
+      emit(state.copyWith(formStatus: FormSubmitting()));
+      // await Future.delayed(const Duration(seconds: 3));
       String username = event.username;
       String password = event.password;
 

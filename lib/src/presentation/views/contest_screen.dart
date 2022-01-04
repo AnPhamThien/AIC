@@ -7,19 +7,15 @@ import '../widgets/global_widgets.dart';
 import '../../utils/func.dart';
 
 class ContestScreen extends StatefulWidget {
-  const ContestScreen({Key? key, required this.contest}) : super(key: key);
-
-  final Contest contest;
+  const ContestScreen({Key? key}) : super(key: key);
 
   @override
   _ContestScreenState createState() => _ContestScreenState();
 }
 
 class _ContestScreenState extends State<ContestScreen> {
-  //List<Post> postList = Post.getPostList();
   @override
   Widget build(BuildContext context) {
-    Contest contest = widget.contest;
     return Scaffold(
       backgroundColor: bgApp,
       floatingActionButton: getUploadButton(),
@@ -27,11 +23,11 @@ class _ContestScreenState extends State<ContestScreen> {
         foregroundColor: Colors.black87,
         elevation: 0,
         titleSpacing: 0,
-        title: AppBarTitle(title: contest.contestName),
+        title: AppBarTitle(title: 'a'),
         actions: [
           IconButton(
             onPressed: () {
-              getSheet(context, contest);
+              //getSheet(contest);
             },
             icon: const Icon(
               Icons.info_outlined,
@@ -58,7 +54,7 @@ class _ContestScreenState extends State<ContestScreen> {
     );
   }
 
-  Future<dynamic> getSheet(BuildContext context, Contest contest) {
+  Future<dynamic> getSheet(Contest contest) {
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
@@ -78,7 +74,7 @@ class _ContestScreenState extends State<ContestScreen> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Text(
-                contest.contestName, //TODO nhét contest name vào đây
+                contest.contestName,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 25,
@@ -102,11 +98,11 @@ class _ContestScreenState extends State<ContestScreen> {
                   children: [
                     TextSpan(
                       text: ("From: " +
-                          startDate), //TODO nhét contest startdate vào đây
+                          startDate),
                     ),
                     TextSpan(
                       text: ("\nTo: " +
-                          endDate), //TODO nhét contest enddate vào đây
+                          endDate), 
                     ),
                   ],
                 ),

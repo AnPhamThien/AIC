@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest/contest_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest_list/contest_list_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/contest_screen.dart';
 import '../controller/conversation/conversation_bloc.dart';
-import '../controller/contest/contest_list_bloc.dart';
 import '../controller/forgot_password/forgot_password_bloc.dart';
 import '../controller/home/home_bloc.dart';
 import '../controller/login/login_bloc.dart';
@@ -42,6 +44,7 @@ class AppRouter {
   static const String messageScreen = '/message';
   static const String contestListScreen = '/contestlistscreen';
   static const String postDetailScreen = '/postdetailscreen';
+  static const String contestScreen = '/contestscreen';
   // final ProfileBloc currentUSerProfileBloc = ProfileBloc(true)
   //   ..add(ProfileInitializing(''));
 
@@ -162,14 +165,22 @@ class AppRouter {
           ),
         );
       case postDetailScreen:
-        final post = routeSettings.arguments as Map<String, dynamic>;
+        final arg = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                PostDetailBloc()..add(PostDetailInitEvent(post['post'])),
+                PostDetailBloc()..add(PostDetailInitEvent(arg['post'])),
             child: const PostDetailScreen(),
           ),
         );
+      case contestScreen:
+        final arg = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      ContestBloc()..add(InitContestEvent(arg['contest'])),
+                  child: const ContestScreen(),
+                ));
       default:
         return null;
     }

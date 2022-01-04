@@ -1,11 +1,10 @@
-import 'dart:developer';
-
 import 'package:backdrop/backdrop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import '../../controller/contest/contest_list_bloc.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest_list/contest_list_bloc.dart';
 import '../../model/contest/contest.dart';
 import '../theme/style.dart';
 import '../widgets/global_widgets.dart';
@@ -18,18 +17,19 @@ class ContestListScreen extends StatefulWidget {
   _ContestListScreenState createState() => _ContestListScreenState();
 }
 
-class _ContestListScreenState extends State<ContestListScreen> {
+class _ContestListScreenState extends State<ContestListScreen>
+    with SingleTickerProviderStateMixin {
   String _searchText = '';
   final _scrollInitController = ScrollController();
-  final _scrollSearchController = ScrollController();
   DateTime? selectedDateDown;
   DateTime? selectedDateUp;
-  bool isDatePicked = false;
+  bool _isSearch = false;
   final _searchTextEditingController = TextEditingController();
+  late TabController _tabController;
   @override
   void initState() {
     _scrollInitController.addListener(_onScroll);
-    _scrollSearchController.addListener(_onSearchScroll);
+    _tabController = TabController(vsync: this, length: 2);
     super.initState();
   }
 
@@ -38,24 +38,24 @@ class _ContestListScreenState extends State<ContestListScreen> {
     _scrollInitController
       ..removeListener(_onScroll)
       ..dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   void _onScroll() {
     if (isScrollEnd(_scrollInitController)) {
-      log(DefaultTabController.of(context)!.index.toString());
-      context
-          .read<ContestListBloc>()
-          .add(FetchMoreContest(DefaultTabController.of(context)!.index));
-    }
-  }
-
-  void _onSearchScroll() {
-    if (isScrollEnd(_scrollInitController)) {
-      log(DefaultTabController.of(context)!.index.toString());
-      context
-          .read<ContestListBloc>()
-          .add(FetchMoreContest(DefaultTabController.of(context)!.index));
+      if (_isSearch) {
+        context.read<ContestListBloc>().add(FetchMoreContest(
+              _tabController.index,
+              _searchTextEditingController.text,
+              selectedDateUp?.toIso8601String().split('T').first ?? '',
+              selectedDateDown?.toIso8601String().split('T').first ?? '',
+            ));
+      } else {
+        context
+            .read<ContestListBloc>()
+            .add(FetchMoreContest(_tabController.index, '', '', ''));
+      }
     }
   }
 
@@ -70,7 +70,8 @@ class _ContestListScreenState extends State<ContestListScreen> {
         setState(
           () {
             selectedDateDown = picked;
-            isDatePicked = true;
+            selectedDateUp ??= DateTime.now();
+            _isSearch = true;
           },
         );
       } else {
@@ -78,7 +79,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
           () {
             selectedDateUp = picked;
             selectedDateDown ??= selectedDateUp;
-            isDatePicked = true;
+            _isSearch = true;
           },
         );
       }
@@ -100,101 +101,97 @@ class _ContestListScreenState extends State<ContestListScreen> {
         frontLayer: getFrontLayer());
   }
 
-  DefaultTabController getFrontLayer() {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: TabBar(
-          labelStyle: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700),
-          indicatorColor: Colors.black54,
-          labelColor: Colors.black,
-          unselectedLabelColor: Colors.black45,
-          tabs: const [
-            Tab(
-              text: 'On-going',
+  Scaffold getFrontLayer() {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: TabBar(
+        controller: _tabController,
+        labelStyle: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w700),
+        indicatorColor: Colors.black54,
+        labelColor: Colors.black,
+        unselectedLabelColor: Colors.black45,
+        tabs: const [
+          Tab(
+            text: 'On-going',
+          ),
+          Tab(
+            text: 'Closed',
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: TabBarView(
+          controller: _tabController,
+          children: [
+            BlocBuilder<ContestListBloc, ContestListState>(
+              builder: (context, state) {
+                switch (state.status) {
+                  case ContestListStatus.failure:
+                    return const Center(child: Text('failed to fetch contest'));
+
+                  case ContestListStatus.success:
+                    if (state.activeContestList.isEmpty) {
+                      return const Center(child: Text('no contest'));
+                    }
+                    return ListView.builder(
+                      itemBuilder: (BuildContext context, int index) {
+                        final Contest contest = state.activeContestList[index];
+                        return Column(
+                          children: [
+                            getContestItem(contest),
+                            const Divider(
+                              height: 0,
+                              thickness: 1.5,
+                              indent: 70,
+                              endIndent: 40,
+                              color: bgGrey,
+                            ),
+                          ],
+                        );
+                      },
+                      itemCount: state.activeContestList.length,
+                      controller: _scrollInitController,
+                    );
+                  default:
+                    return const Center(child: CircularProgressIndicator());
+                }
+              },
             ),
-            Tab(
-              text: 'Closed',
+            BlocBuilder<ContestListBloc, ContestListState>(
+              builder: (context, state) {
+                switch (state.status) {
+                  case ContestListStatus.failure:
+                    return const Center(child: Text('failed to fetch contest'));
+                  case ContestListStatus.success:
+                    if (state.inactiveContestList.isEmpty) {
+                      return const Center(child: Text('no contest'));
+                    }
+                    return ListView.builder(
+                      itemBuilder: (BuildContext context, int index) {
+                        final Contest contest =
+                            state.inactiveContestList[index];
+                        return Column(
+                          children: [
+                            getContestItem(contest),
+                            const Divider(
+                              height: 0,
+                              thickness: 1.5,
+                              indent: 70,
+                              endIndent: 40,
+                              color: bgGrey,
+                            ),
+                          ],
+                        );
+                      },
+                      itemCount: state.inactiveContestList.length,
+                      controller: _scrollInitController,
+                    );
+                  default:
+                    return const Center(child: CircularProgressIndicator());
+                }
+              },
             ),
           ],
-        ),
-        body: SafeArea(
-          child: TabBarView(
-            children: [
-              BlocBuilder<ContestListBloc, ContestListState>(
-                builder: (context, state) {
-                  switch (state.status) {
-                    case ContestListStatus.failure:
-                      return const Center(
-                          child: Text('failed to fetch contest'));
-
-                    case ContestListStatus.success:
-                      if (state.activeContestList.isEmpty) {
-                        return const Center(child: Text('no contest'));
-                      }
-                      return ListView.builder(
-                        itemBuilder: (BuildContext context, int index) {
-                          final Contest contest =
-                              state.activeContestList[index];
-                          return Column(
-                            children: [
-                              getContestItem(contest),
-                              const Divider(
-                                height: 0,
-                                thickness: 1.5,
-                                indent: 70,
-                                endIndent: 40,
-                                color: bgGrey,
-                              ),
-                            ],
-                          );
-                        },
-                        itemCount: state.activeContestList.length,
-                        controller: _scrollInitController,
-                      );
-                    default:
-                      return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
-              BlocBuilder<ContestListBloc, ContestListState>(
-                builder: (context, state) {
-                  switch (state.status) {
-                    case ContestListStatus.failure:
-                      return const Center(
-                          child: Text('failed to fetch contest'));
-                    case ContestListStatus.success:
-                      if (state.inactiveContestList.isEmpty) {
-                        return const Center(child: Text('no contest'));
-                      }
-                      return ListView.builder(
-                        itemBuilder: (BuildContext context, int index) {
-                          final Contest contest =
-                              state.inactiveContestList[index];
-                          return Column(
-                            children: [
-                              getContestItem(contest),
-                              const Divider(
-                                height: 0,
-                                thickness: 1.5,
-                                indent: 70,
-                                endIndent: 40,
-                                color: bgGrey,
-                              ),
-                            ],
-                          );
-                        },
-                        itemCount: state.activeContestList.length,
-                        controller: _scrollInitController,
-                      );
-                    default:
-                      return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
-            ],
-          ),
         ),
       ),
     );
@@ -222,27 +219,24 @@ class _ContestListScreenState extends State<ContestListScreen> {
                       onPressed: () {
                         setState(() {
                           _searchText = _searchTextEditingController.text;
+                          _isSearch = true;
                         });
-                        if (selectedDateDown != null) {
-                          context.read<ContestListBloc>().add(
-                                InitSearchContestFetched(
-                                  _searchTextEditingController.text,
-                                  selectedDateUp == null
-                                      ? DateTime.now()
-                                          .toIso8601String()
-                                          .split('T')
-                                          .first
-                                      : selectedDateUp!
-                                          .toIso8601String()
-                                          .split('T')
-                                          .first,
-                                  selectedDateDown!
-                                      .toIso8601String()
-                                      .split('T')
-                                      .first,
-                                ),
-                              );
-                        }
+
+                        context.read<ContestListBloc>().add(
+                              InitSearchContestFetched(
+                                _searchTextEditingController.text,
+                                selectedDateUp
+                                        ?.toIso8601String()
+                                        .split('T')
+                                        .first ??
+                                    '',
+                                selectedDateDown
+                                        ?.toIso8601String()
+                                        .split('T')
+                                        .first ??
+                                    '',
+                              ),
+                            );
 
                         Backdrop.of(context).concealBackLayer();
                       },
@@ -252,7 +246,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
                     ),
                   )
                 : Builder(
-                    builder: (context) => _searchText != '' || isDatePicked
+                    builder: (context) => _searchText != '' || _isSearch
                         ? IconButton(
                             onPressed: () {
                               setState(
@@ -261,7 +255,7 @@ class _ContestListScreenState extends State<ContestListScreen> {
                                   selectedDateDown = null;
                                   selectedDateUp = null;
                                   _searchTextEditingController.clear();
-                                  isDatePicked = false;
+                                  _isSearch = false;
                                 },
                               );
                               context
@@ -357,48 +351,62 @@ class _ContestListScreenState extends State<ContestListScreen> {
     );
   }
 
-  ListTile getContestItem(Contest contest) {
+  AbsorbPointer getContestItem(Contest contest) {
     String startDate =
         contest.dateCreate!.toLocal().toIso8601String().split('T').first;
     String endDate =
         contest.dateEnd!.toLocal().toIso8601String().split('T').first;
-    return ListTile(
-      onTap: () {},
-
-      minVerticalPadding: 15,
-      leading: contest.timeLeft == 'Present'
-          //nếu còn thời hạn
-          ? const RadiantGradientMask(
-              child: Icon(
+    return AbsorbPointer(
+      absorbing: contest.contestActive == 0 && contest.timeLeft != 'Present'
+          ? true
+          : false,
+      child: ListTile(
+        onTap: () {
+          Map<String, dynamic> args = {'contest': contest};
+          context.read<AuthBloc>().add(NavigateToPageEvent(
+                route: AppRouter.contestScreen,
+                args: args,
+              ));
+        },
+        minVerticalPadding: 15,
+        leading: contest.contestActive == 1 || contest.timeLeft != 'Present'
+            //nếu còn thời hạn
+            ? const Icon(
                 Icons.emoji_events_outlined,
-                color: Colors.white,
+                color: Colors.grey,
                 size: 37,
+              )
+            //nếu hết thời hạn
+            : const RadiantGradientMask(
+                child: Icon(
+                  Icons.emoji_events_outlined,
+                  color: Colors.white,
+                  size: 37,
+                ),
               ),
-            )
-          //nếu hết thời hạn
-          : const Icon(
-              Icons.emoji_events_outlined,
-              color: Colors.grey,
-              size: 37,
-            ),
-      //contest title
-      title: Padding(
-        padding: const EdgeInsets.only(bottom: 5.0),
-        child: Text(
-          contest.contestName!,
-          style: const TextStyle(
-              color: Colors.black87, fontSize: 20, fontWeight: FontWeight.w600),
-        ),
-      ),
-      //from end
-      subtitle: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            "From: " + startDate,
+        //contest title
+        title: Padding(
+          padding: const EdgeInsets.only(bottom: 5.0),
+          child: Text(
+            contest.contestName!,
+            style: const TextStyle(
+                color: Colors.black87,
+                fontSize: 20,
+                fontWeight: FontWeight.w600),
           ),
-          Text("To: " + endDate),
-        ],
+        ),
+        //from end
+        subtitle: contest.contestActive == 0 && contest.timeLeft != 'Present'
+            ? Text("Start in: " + contest.timeLeft!.split('.').first + " mins")
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "From: " + startDate,
+                  ),
+                  Text("To: " + endDate),
+                ],
+              ),
       ),
     );
   }

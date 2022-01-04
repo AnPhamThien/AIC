@@ -10,10 +10,10 @@ abstract class ContestBehavior {
       String? searchName, int limitContest, String? dateUp, String? dateDown);
   Future<List<Contest>?> getInactiveContestList(
       String? searchName, int limitContest, String? dateUp, String? dateDown);
-  Future<List<Contest>?> getMoreActiveContestList(
-      int limitContest, String dateBoundary);
-  Future<List<Contest>?> getMoreInactiveContestList(
-      int limitContest, String dateBoundary);
+  Future<List<Contest>?> getMoreActiveContestList(String? searchName,
+      int limitContest, String dateBoundary, String? dateUp, String? dateDown);
+  Future<List<Contest>?> getMoreInactiveContestList(String? searchName,
+      int limitContest, String dateBoundary, String? dateUp, String? dateDown);
 }
 
 class ContestRepository extends ContestBehavior {
@@ -48,10 +48,15 @@ class ContestRepository extends ContestBehavior {
 
   @override
   Future<List<Contest>?> getMoreActiveContestList(
-      int limitContest, String dateBoundary) async {
+      String? searchName,
+      int limitContest,
+      String dateBoundary,
+      String? dateUp,
+      String? dateDown) async {
     try {
-      final ContestListRespone respone = await _dataRepository
-          .getMoreActiveContestList("", limitContest, dateBoundary, "", "");
+      final ContestListRespone respone =
+          await _dataRepository.getMoreActiveContestList(
+              searchName, limitContest, dateBoundary, dateUp, dateDown);
 
       final List<Contest>? inactiveContestList = respone.data;
       return inactiveContestList;
@@ -62,10 +67,15 @@ class ContestRepository extends ContestBehavior {
 
   @override
   Future<List<Contest>?> getMoreInactiveContestList(
-      int limitContest, String dateBoundary) async {
+      String? searchName,
+      int limitContest,
+      String dateBoundary,
+      String? dateUp,
+      String? dateDown) async {
     try {
-      final ContestListRespone respone = await _dataRepository
-          .getMoreInactiveContestList("", limitContest, dateBoundary, "", "");
+      final ContestListRespone respone =
+          await _dataRepository.getMoreInactiveContestList(
+              searchName, limitContest, dateBoundary, dateUp, dateDown);
 
       final List<Contest>? inactiveContestList = respone.data;
       return inactiveContestList;

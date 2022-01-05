@@ -223,7 +223,7 @@ class _ContestListScreenState extends State<ContestListScreen>
                         });
 
                         context.read<ContestListBloc>().add(
-                              InitSearchContestFetched(
+                              InitSearchContestListFetched(
                                 _searchTextEditingController.text,
                                 selectedDateUp
                                         ?.toIso8601String()
@@ -260,7 +260,7 @@ class _ContestListScreenState extends State<ContestListScreen>
                               );
                               context
                                   .read<ContestListBloc>()
-                                  .add(InitContestFetched());
+                                  .add(InitContestListFetched());
                             },
                             icon: const Icon(
                               Icons.clear_rounded,

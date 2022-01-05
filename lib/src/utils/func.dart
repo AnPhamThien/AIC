@@ -118,5 +118,5 @@ String timeCalculate(DateTime time) {
 }
 
 bool containsChar(String value) {
-  return RegExp('[a-zA-Z]').hasMatch(value);
+  return RegExp('[a-zA-Z0-9]').hasMatch(value);
 }

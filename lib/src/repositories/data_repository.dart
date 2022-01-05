@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
 import '../constanct/env.dart';
 import '../constanct/error_message.dart';
 import '../controller/get_it/get_it.dart';
@@ -212,5 +213,10 @@ class DataRepository implements RestClient {
       int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
     return _client.getMoreInactiveContestList(
         searchName, limitContest, dateBoundary, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestRespone> getInitContest(String contestId, int limitPost) {
+    return _client.getInitContest(contestId, limitPost);
   }
 }

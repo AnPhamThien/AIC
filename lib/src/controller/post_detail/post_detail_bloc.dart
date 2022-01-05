@@ -50,11 +50,13 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
           .getInitLikeComment(_commentPerPage, event.post.postId!);
       state.post?.likecount = data?.totalLike;
       emit(state.copyWith(
-          status: PostDetailStatus.success,
-          post: event.post,
-          commentList: data?.comments,
-          commentCount: data?.totalComment,
-          hasReachMax: false));
+        status: PostDetailStatus.success,
+        post: event.post,
+        commentList: data?.comments,
+        commentCount: data?.totalComment,
+        hasReachMax: false,
+        isReload: false,
+      ));
     } on Exception catch (_) {
       emit(state.copyWith(status: PostDetailStatus.failure));
       if (_.toString() == "postID Empty") {
@@ -95,7 +97,6 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
   void _addComment(
       PostDetailAddComment event, Emitter<PostDetailState> emit) async {
     try {
-      
       String _comment = event.comment;
       String _postId = state.post!.postId!;
       PostAddCommentRespone? _respone = await _postRepository.addComment(
@@ -111,6 +112,7 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
       if (_statusCode == StatusCode.successStatus) {
         emit(state.copyWith(
           status: PostDetailStatus.success,
+          isReload: true,
         ));
       } else {
         emit(state.copyWith(status: PostDetailStatus.addcommentfailed));

@@ -7,8 +7,8 @@ abstract class ContestEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class InitContestEvent extends ContestEvent {
+class InitContestFetched extends ContestEvent {
   final Contest contest;
 
-  const InitContestEvent(this.contest);
+  const InitContestFetched(this.contest);
 }

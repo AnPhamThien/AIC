@@ -15,6 +15,7 @@ class PostDetailState extends Equatable {
     this.commentList = const <Comment>[],
     this.commentCount,
     this.hasReachMax = false,
+    this.isReload = false,
   });
 
   final PostDetailStatus status;
@@ -22,6 +23,7 @@ class PostDetailState extends Equatable {
   final List<Comment> commentList;
   final int? commentCount;
   final bool hasReachMax;
+  final bool isReload;
 
   PostDetailState copyWith({
     PostDetailStatus? status,
@@ -29,6 +31,7 @@ class PostDetailState extends Equatable {
     List<Comment>? commentList,
     int? commentCount,
     bool? hasReachMax,
+    bool? isReload,
   }) {
     return PostDetailState(
       status: status ?? this.status,
@@ -36,9 +39,10 @@ class PostDetailState extends Equatable {
       commentList: commentList ?? this.commentList,
       commentCount: commentCount ?? this.commentCount,
       hasReachMax: hasReachMax ?? this.hasReachMax,
+      isReload: isReload ?? this.isReload,
     );
   }
 
   @override
-  List<Object> get props => [status, commentList, hasReachMax];
+  List<Object> get props => [status, commentList, hasReachMax, isReload];
 }

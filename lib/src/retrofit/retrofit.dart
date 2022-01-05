@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart' hide Headers;
+import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
 import '../constanct/env.dart';
 import '../model/conversation/conversation.dart';
 import '../model/generic/generic.dart';
@@ -156,5 +157,11 @@ abstract class RestClient {
     @Query('date_boundary') String dateBoundary,
     @Query('date_up') String? dateUp,
     @Query('date_dow') String? dateDown,
+  );
+
+  @GET('/contests/getcontestpostver2')
+  Future<ContestRespone> getInitContest(
+    @Query('contest_id') String contestId,
+    @Query('limitPost') int limitPost,
   );
 }

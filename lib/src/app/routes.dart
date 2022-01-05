@@ -160,7 +160,8 @@ class AppRouter {
       case contestListScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => ContestListBloc()..add(InitContestFetched()),
+            create: (context) =>
+                ContestListBloc()..add(InitContestListFetched()),
             child: const ContestListScreen(),
           ),
         );
@@ -178,8 +179,10 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) =>
-                      ContestBloc()..add(InitContestEvent(arg['contest'])),
-                  child: const ContestScreen(),
+                      ContestBloc()..add(InitContestFetched(arg['contest'])),
+                  child: ContestScreen(
+                    contest: arg['contest'],
+                  ),
                 ));
       default:
         return null;

@@ -7,7 +7,7 @@ abstract class ContestListEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class InitContestFetched extends ContestListEvent {}
+class InitContestListFetched extends ContestListEvent {}
 
 class FetchMoreContest extends ContestListEvent {
   final int indexTab;
@@ -19,10 +19,10 @@ class FetchMoreContest extends ContestListEvent {
       this.dateUp, this.dateDown);
 }
 
-class InitSearchContestFetched extends ContestListEvent {
+class InitSearchContestListFetched extends ContestListEvent {
   final String searchName;
   final String dateUp;
   final String dateDown;
 
-  const InitSearchContestFetched(this.searchName, this.dateUp, this.dateDown);
+  const InitSearchContestListFetched(this.searchName, this.dateUp, this.dateDown);
 }

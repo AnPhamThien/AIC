@@ -21,7 +21,7 @@ const _limitContest = 9;
 
 class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
   ContestListBloc() : super(const ContestListState()) {
-    on<InitContestFetched>(
+    on<InitContestListFetched>(
       _onContestFetched,
       transformer: throttleDroppable(throttleDuration),
     );
@@ -29,7 +29,7 @@ class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
       _fetchMorePost,
       transformer: throttleDroppable(throttleDuration),
     );
-    on<InitSearchContestFetched>(
+    on<InitSearchContestListFetched>(
       _onSearchContestFetched,
       transformer: throttleDroppable(throttleDuration),
     );
@@ -37,7 +37,7 @@ class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
 
   final ContestRepository _contestRepository = ContestRepository();
   void _onContestFetched(
-      InitContestFetched event, Emitter<ContestListState> emit) async {
+      InitContestListFetched event, Emitter<ContestListState> emit) async {
     try {
       final List<Contest>? _activeContestList = await _contestRepository
           .getActiveContestList('', _limitContest, '', '');
@@ -109,7 +109,7 @@ class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
   }
 
   void _onSearchContestFetched(
-      InitSearchContestFetched event, Emitter<ContestListState> emit) async {
+      InitSearchContestListFetched event, Emitter<ContestListState> emit) async {
     try {
       final _searchName = event.searchName;
       final _dateUp = event.dateUp;

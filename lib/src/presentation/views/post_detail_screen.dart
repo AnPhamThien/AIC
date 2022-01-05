@@ -53,17 +53,21 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     return Scaffold(
       body: Scaffold(
         backgroundColor: bgApp,
-        body: BlocListener<PostDetailBloc, PostDetailState>(
-          listener: (context, state) {
-            if (state.status == PostDetailStatus.success) {
-              context.read<PostDetailBloc>().add(PostDetailInitEvent(post));
-            }
-          },
-          child: SafeArea(
-            child: RefreshIndicator(
-              onRefresh: _refresh,
-              child: SingleChildScrollView(
-                controller: _scrollController,
+        body: SafeArea(
+          child: RefreshIndicator(
+            onRefresh: _refresh,
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: BlocListener<PostDetailBloc, PostDetailState>(
+                listener: (context, state) {
+                  if (state.isReload) {
+                    setState(() {
+                      context
+                          .read<PostDetailBloc>()
+                          .add(PostDetailInitEvent(post));
+                    });
+                  }
+                },
                 child: BlocBuilder<PostDetailBloc, PostDetailState>(
                   builder: (context, state) {
                     switch (state.status) {
@@ -156,7 +160,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       .read<PostDetailBloc>()
                       .add(PostDetailAddComment(_commentController.text));
                   _commentController.clear();
-                  FocusScope.of(context).unfocus();                  
+                  FocusScope.of(context).unfocus();
                 }
               },
               icon: const Icon(
@@ -196,7 +200,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   userId: post.userId!,
                   username: post.userName!,
                   time: post.dateCreate!,
-                  postAvatar: post.avataUrl!,
+                  postAvatar: post.avataUrl,
                 ),
               ),
             ],

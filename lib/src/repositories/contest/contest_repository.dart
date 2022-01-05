@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:imagecaptioning/src/model/contest/contest_data.dart';
+import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
+
 import '../../model/contest/contest.dart';
 import '../../model/contest/contest_list_respone.dart';
 
@@ -14,6 +17,7 @@ abstract class ContestBehavior {
       int limitContest, String dateBoundary, String? dateUp, String? dateDown);
   Future<List<Contest>?> getMoreInactiveContestList(String? searchName,
       int limitContest, String dateBoundary, String? dateUp, String? dateDown);
+  Future<ContestRespone> getInitContest(String contestId, int limitPost);
 }
 
 class ContestRepository extends ContestBehavior {
@@ -82,5 +86,17 @@ class ContestRepository extends ContestBehavior {
     } catch (e) {
       log(e.toString());
     }
+  }
+
+  @override
+  Future<ContestRespone> getInitContest(String contestId, int limitPost) async {
+    ContestRespone respone = ContestRespone();
+    try {
+      respone = await _dataRepository.getInitContest(contestId, limitPost);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
   }
 }

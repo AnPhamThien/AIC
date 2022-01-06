@@ -1,9 +1,11 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import '../../constanct/error_message.dart';
-import '../../constanct/status_code.dart';
-import '../../model/conversation/conversation.dart';
-import '../../repositories/conversation/conversation_repostitory.dart';
+import 'package:imagecaptioning/src/constanct/error_message.dart';
+import 'package:imagecaptioning/src/constanct/status_code.dart';
+import 'package:imagecaptioning/src/model/conversation/conversation.dart';
+import 'package:imagecaptioning/src/repositories/conversation/conversation_repostitory.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'conversation_event.dart';
@@ -24,6 +26,8 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
     on<FetchConversation>(_onInitial,
         transformer: throttleDroppable(throttleDuration));
     on<FetchMoreConversation>(_onFetchMore,
+        transformer: throttleDroppable(throttleDuration));
+    on<ReceiveNewConversation>(_onReceiveNewConversation,
         transformer: throttleDroppable(throttleDuration));
   }
   final ConversationRepository _conversationRepository;
@@ -55,8 +59,8 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
       } else {
         throw Exception(message);
       }
-    } on Exception catch (_) {
-      emit(state.copyWith(status: ErrorStatus(_)));
+    } catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_.toString())));
     }
   }
 
@@ -97,8 +101,31 @@ class ConversationBloc extends Bloc<ConversationEvent, ConversationState> {
       } else {
         throw Exception(message);
       }
-    } on Exception catch (_) {
-      emit(state.copyWith(status: ErrorStatus(_)));
+    } catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_.toString())));
+    }
+  }
+
+  void _onReceiveNewConversation(
+    ReceiveNewConversation event,
+    Emitter<ConversationState> emit,
+  ) async {
+    try {
+      final newConversation = event.newConversation;
+
+      if (newConversation != null) {
+        final currentList = state.conversationList ?? [];
+        currentList.removeWhere(((element) =>
+            element.conversationId == newConversation.conversationId));
+        currentList.insert(0, newConversation);
+
+        emit(state.copyWith(
+            status: FinishInitializing(), conversationList: currentList));
+      } else {
+        throw Exception('');
+      }
+    } catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_.toString())));
     }
   }
 }

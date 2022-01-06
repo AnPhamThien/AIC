@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../constanct/env.dart';
-import '../widgets/get_user_input_field.dart';
-import '../widgets/global_widgets.dart';
-import '../../controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -23,6 +23,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _descController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -34,11 +35,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   SafeArea getBody() {
-    List<String> genderList = [
-      'Male',
-      'Female',
-      'Other',
-    ];
+    // List<String> genderList = [
+    //   'Male',
+    //   'Female',
+    //   'Other',
+    // ];
     return SafeArea(
       child: SingleChildScrollView(
         child: Center(
@@ -46,89 +47,99 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             padding: const EdgeInsets.symmetric(
               horizontal: 20,
             ),
-            child: BlocBuilder<ProfileBloc, ProfileState>(
-              builder: (context, state) {
-                return Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: 100.h,
-                        width: 100.h,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: state.user?.avataUrl != null
-                                ? NetworkImage(
-                                    avatarUrl + state.user!.avataUrl.toString())
-                                : const AssetImage("assets/images/Kroni.jpg")
-                                    as ImageProvider,
-                            fit: BoxFit.cover,
+            child: BlocListener<EditProfileBloc, EditProfileState>(
+              listener: (context, state) {
+                // TODO: implement listener
+              },
+              child: BlocBuilder<EditProfileBloc, EditProfileState>(
+                builder: (context, state) {
+                  _usernameController.text = state.user?.userName ?? '';
+                  _nameController.text = state.user?.userRealName ?? '';
+                  _descController.text = state.user?.description ?? '';
+                  _emailController.text = state.user?.userEmail ?? '';
+                  _phoneController.text = state.user?.phone ?? '';
+                  return Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          height: 100.h,
+                          width: 100.h,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: state.user?.avataUrl != null
+                                  ? NetworkImage(avatarUrl +
+                                      state.user!.avataUrl.toString())
+                                  : const AssetImage("assets/images/Kroni.jpg")
+                                      as ImageProvider,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
-                      ),
-                      TextButton(
-                        style: TextButton.styleFrom(
-                            primary: Colors.blue,
-                            textStyle: TextStyle(fontSize: 19.sp)),
-                        child: const Text("Change profile picture"),
-                        onPressed: () {},
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      //username
-                      GetUserInput(
-                        controller: _usernameController,
-                        label: "Username",
-                        initValue: state.user?.userName ?? '',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      //name
-                      GetUserInput(
-                        controller: _nameController,
-                        label: "Name",
-                        initValue: state.user?.userRealName ?? '',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      //bio
-                      GetUserInput(
-                        controller: _descController,
-                        label: "Bio",
-                        initValue: state.user?.description ?? '',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      //Email
-                      GetUserInput(
-                        controller: _emailController,
-                        label: "Email",
-                        initValue: state.user?.userEmail ?? '',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      //Phone
-                      GetUserInput(
-                        controller: _phoneController,
-                        label: "Phone",
-                        initValue: state.user?.phone ?? '',
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                );
-              },
+                        TextButton(
+                          style: TextButton.styleFrom(
+                              primary: Colors.blue,
+                              textStyle: TextStyle(fontSize: 19.sp)),
+                          child: const Text("Change profile picture"),
+                          onPressed: () {},
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        //username
+                        GetUserInput(
+                          controller: _usernameController,
+                          label: "Username",
+                          //initValue: state.user?.userName ?? '',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        //name
+                        GetUserInput(
+                          controller: _nameController,
+                          label: "Name",
+                          //initValue: state.user?.userRealName ?? '',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        //bio
+                        GetUserInput(
+                          controller: _descController,
+                          label: "Bio",
+                          //initValue: state.user?.description ?? '',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        //Email
+                        GetUserInput(
+                          controller: _emailController,
+                          label: "Email",
+                          //initValue: state.user?.userEmail ?? '',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        //Phone
+                        GetUserInput(
+                          controller: _phoneController,
+                          label: "Phone",
+                          //initValue: state.user?.phone ?? '',
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           ),
         ),
@@ -165,7 +176,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return AppBar(
       titleSpacing: 0,
       elevation: 0,
-      leading: BlocBuilder<ProfileBloc, ProfileState>(
+      leading: BlocBuilder<EditProfileBloc, EditProfileState>(
         builder: (context, state) {
           return IconButton(
             icon: const Icon(
@@ -180,11 +191,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
       title: const AppBarTitle(title: "Edit Profile"),
       actions: [
-        BlocBuilder<ProfileBloc, ProfileState>(
+        BlocBuilder<EditProfileBloc, EditProfileState>(
           builder: (context, state) {
             return IconButton(
               onPressed: () {
-                //context.read<ProfileBloc>().add(SaveProfileChanges(username: ,email: , phone: , desc: , userRealName: , avatar: ));
+                context.read<EditProfileBloc>().add(SaveProfileChanges(
+                    username: _usernameController.value.text,
+                    email: _emailController.value.text,
+                    phone: _phoneController.value.text,
+                    desc: _descController.value.text,
+                    userRealName: _nameController.value.text,
+                    avatar: state.avatarPath ?? ''));
                 Navigator.pop(context);
               },
               icon: const Icon(
@@ -201,7 +218,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   void _showImageSourceActionSheet(BuildContext context) {
     selectImageSource(ImageSource imageSource) =>
-        {context.read<ProfileBloc>().add(OpenImagePicker(imageSource))};
+        {context.read<EditProfileBloc>().add(OpenImagePicker(imageSource))};
 
     if (Platform.isIOS) {
       showCupertinoModalPopup(

@@ -1,13 +1,14 @@
 part of 'conversation_bloc.dart';
 
-abstract class ConversationEvent {}
-
-class FetchConversation extends ConversationEvent {
-  FetchConversation();
+abstract class ConversationEvent {
+  const ConversationEvent();
 }
 
-class FetchMoreConversation extends ConversationEvent {
-  FetchMoreConversation();
-}
+class FetchConversation extends ConversationEvent {}
 
-class ReceiveNewConversation extends ConversationEvent {}
+class FetchMoreConversation extends ConversationEvent {}
+
+class ReceiveNewConversation extends ConversationEvent {
+  Conversation? newConversation;
+  ReceiveNewConversation(this.newConversation);
+}

@@ -5,17 +5,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../controller/auth/auth_bloc.dart';
-import '../../controller/auth/authentication_status.dart';
-import '../../signalr/signalr_helper.dart';
-import '../../utils/bottom_nav_bar_json.dart';
-import '../../utils/func.dart';
-import '../theme/style.dart';
-import 'home_page.dart';
-import 'notification_page.dart';
-import 'profile_page.dart';
-import 'search_screen.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/auth/authentication_status.dart';
+import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/presentation/views/home_page.dart';
+import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
+import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
+import 'package:imagecaptioning/src/presentation/views/search_screen.dart';
+import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -29,18 +27,7 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   void initState() {
-    registerOnClose();
     super.initState();
-  }
-
-  void registerOnClose() {
-    if (SignalRHelper.hubConnection != null) {
-      SignalRHelper.hubConnection!.onclose(_handleOnClose);
-    }
-  }
-
-  void _handleOnClose(Exception? e) {
-    context.read<AuthBloc>().add(ReconnectSignalREvent());
   }
 
   @override
@@ -48,12 +35,7 @@ class _RootScreenState extends State<RootScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.authStatus is AuthenticationForceLogout) {
-          context.read<AuthBloc>().add(LogoutEvent());
-        }
-        if (state.reconnected) {
-          log("Register on close");
-          registerOnClose();
-          context.read<AuthBloc>().add(FinishReconnectEvent());
+          context.read<AuthBloc>().add(ForceLogoutEvent());
         }
       },
       child: Scaffold(

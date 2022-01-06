@@ -35,14 +35,15 @@ class DataRepository implements RestClient {
         onRequest: (options, handler) => handler.next(options),
         onResponse: (response, handler) => handler.next(response),
         onError: (error, handler) async {
-          if (error.response != null) {
-            log(error.response!.data['messageCode'].toString());
-            if (error.response!.statusCode == 401 &&
-                error.response!.data['messageCode'] ==
-                    MessageCode.tokenExpired) {
-              String token = getIt<AppPref>().getToken;
-              String refreshToken = getIt<AppPref>().getRefreshToken;
-              try {
+          try {
+            if (error.response != null) {
+              log(error.response!.data['messageCode'].toString());
+              if (error.response!.statusCode == 401 &&
+                  error.response!.data['messageCode'] ==
+                      MessageCode.tokenExpired) {
+                String token = getIt<AppPref>().getToken;
+                String refreshToken = getIt<AppPref>().getRefreshToken;
+
                 final response = await refreshJwtToken(token, refreshToken);
                 Map<String, dynamic> value = response.data!;
                 String? data = value['data'];
@@ -53,17 +54,19 @@ class DataRepository implements RestClient {
                 } else {
                   handler.reject(error);
                 }
-              } catch (_) {
-                log(_.toString());
+              } else if (error.response!.statusCode == 401 &&
+                  error.response!.data['messageCode'] ==
+                      MessageCode.refreshTokenExpired) {
+                handler.next(error);
+              } else {
                 handler.next(error);
               }
-            } else if (error.response!.statusCode == 401 &&
-                error.response!.data['messageCode'] ==
-                    MessageCode.refreshTokenExpired) {
-              handler.reject(error);
             } else {
               handler.next(error);
             }
+          } catch (_) {
+            log(_.toString());
+            handler.next(error);
           }
         }));
     setJwtInHeader();
@@ -167,8 +170,18 @@ class DataRepository implements RestClient {
   }
 
   @override
+  Future<GetResponseMessage> updateIsSeenMessage(String messageId) {
+    return _client.updateIsSeenMessage(messageId);
+  }
+
+  @override
   Future<GetMessageResponseMessage> getMessages(String conversationId) {
     return _client.getMessages(conversationId);
+  }
+
+  @override
+  Future<GetMessageResponseMessage> getConversationByUser(String userId) {
+    return _client.getConversationByUser(userId);
   }
 
   @override
@@ -195,28 +208,7 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<ContestListRespone> getInactiveContestList(
-      String? searchName, int limitContest, String? dateUp, String? dateDown) {
-    return _client.getInactiveContestList(
-        searchName, limitContest, dateUp, dateDown);
-  }
-
-  @override
-  Future<ContestListRespone> getMoreActiveContestList(String? searchName,
-      int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
-    return _client.getMoreActiveContestList(
-        searchName, limitContest, dateBoundary, dateUp, dateDown);
-  }
-
-  @override
-  Future<ContestListRespone> getMoreInactiveContestList(String? searchName,
-      int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
-    return _client.getMoreInactiveContestList(
-        searchName, limitContest, dateBoundary, dateUp, dateDown);
-  }
-
-  @override
-  Future<ContestRespone> getInitContest(String contestId, int limitPost) {
-    return _client.getInitContest(contestId, limitPost);
+  Future<GetResponseMessage> deleteRefreshJwtToken() {
+    return _client.deleteRefreshJwtToken();
   }
 }

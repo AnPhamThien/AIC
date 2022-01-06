@@ -78,7 +78,8 @@ class Message {
         realTime: json["real_Time"] != null
             ? DateTime.parse(json["real_Time"])
             : null,
-        totalHours: json["totalHours"].toDouble(),
+        totalHours:
+            json["totalHours"] != null ? (json["totalHours"].toDouble()) : null,
         userId: json["user_Id"],
         userName: json["user_Name"],
         avatar: json["avatar"],

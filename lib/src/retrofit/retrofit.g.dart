@@ -136,6 +136,22 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<GetResponseMessage> deleteRefreshJwtToken() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'DELETE', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/deleterefreshtoken',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<GetResponseMessage> updateUserProfile(
       username, email, phone, desc, userRealName, avatarImg) async {
     const _extra = <String, dynamic>{};
@@ -251,7 +267,7 @@ class _RestClient implements RestClient {
   Future<GetConversationResponseMessage> getMoreConversations(
       dateBoundary) async {
     const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'dateBoundary': dateBoundary};
+    final queryParameters = <String, dynamic>{r'date_boundary': dateBoundary};
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
@@ -261,6 +277,22 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetConversationResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> updateIsSeenMessage(messageId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'message_id': messageId};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/conversations/updateisseenmessage',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
     return value;
   }
 
@@ -283,12 +315,28 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<GetMessageResponseMessage> getConversationByUser(userId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'userId': userId};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetMessageResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/conversations/getconversationbyuser',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetMessageResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<GetMessageResponseMessage> getMoreMessages(
       conversationId, dateBoundary) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'conversationId': conversationId,
-      r'dateBoundary': dateBoundary
+      r'date_boundary': dateBoundary
     };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};

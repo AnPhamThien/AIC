@@ -4,7 +4,6 @@ class MessageState {
   final List<Message>? messageList;
   final MessageStatus status;
   final String? conversationId;
-  final String? otherUserId;
   final String? avatar;
   final String? userId;
   final String? username;
@@ -15,7 +14,6 @@ class MessageState {
       {this.messageList,
       this.status = const InitialStatus(),
       this.conversationId,
-      this.otherUserId,
       this.avatar,
       this.userId,
       this.username,
@@ -26,7 +24,6 @@ class MessageState {
       {List<Message>? messageList,
       MessageStatus? status,
       String? conversationId,
-      String? otherUserId,
       String? avatar,
       String? userId,
       String? username,
@@ -36,7 +33,6 @@ class MessageState {
         messageList: messageList ?? this.messageList,
         status: status ?? this.status,
         conversationId: conversationId ?? this.conversationId,
-        otherUserId: otherUserId ?? this.otherUserId,
         avatar: avatar ?? this.avatar,
         userId: userId ?? this.userId,
         username: username ?? this.username,
@@ -58,6 +54,6 @@ class FinishInitializing extends MessageStatus {}
 class ReachedMaxedStatus extends MessageStatus {}
 
 class ErrorStatus extends MessageStatus {
-  final Exception exception;
+  final String exception;
   ErrorStatus(this.exception);
 }

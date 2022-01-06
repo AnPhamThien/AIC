@@ -50,7 +50,11 @@ String _decodeBase64(String str) {
 
 String getErrorMessage(String errorCode) {
   String message = '';
-  final errorMessage = errorCode.substring(errorCode.indexOf(': ') + 1).trim();
+  String errorMessage = '';
+  if (errorCode.contains(": ")) {
+    errorMessage = errorCode.substring(errorCode.indexOf(': ') + 1).trim();
+  }
+
   message = MessageCode.errorMap[errorMessage] ?? MessageCode.genericError;
 
   return message;
@@ -113,6 +117,21 @@ String timeCalculate(DateTime time) {
     } else {
       _calculatedTime = _bellow2.toString() + ' months';
     }
+  }
+  return _calculatedTime;
+}
+
+String timeCalculateDouble(double time) {
+  String _calculatedTime = '';
+  if (time < 1) {
+    _calculatedTime = (time * 60).toInt().toString() +
+        ((time * 60).toInt() == 1 ? " min" : " mins");
+  } else if (time < 24) {
+    _calculatedTime =
+        (time).toInt().toString() + ((time).toInt() == 1 ? " hour" : " hours");
+  } else {
+    _calculatedTime =
+        (time ~/ 24).toString() + ((time ~/ 24) == 1 ? " day" : " days");
   }
   return _calculatedTime;
 }

@@ -1,32 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:imagecaptioning/src/controller/contest/contest_bloc.dart';
-import 'package:imagecaptioning/src/controller/contest_list/contest_list_bloc.dart';
-import 'package:imagecaptioning/src/presentation/views/contest_screen.dart';
-import '../controller/conversation/conversation_bloc.dart';
-import '../controller/forgot_password/forgot_password_bloc.dart';
-import '../controller/home/home_bloc.dart';
-import '../controller/login/login_bloc.dart';
-import '../controller/message/message_bloc.dart';
-import '../controller/notification/notification_bloc.dart';
-import '../controller/registration/registration_bloc.dart';
-import '../controller/verification/verification_bloc.dart';
-import '../controller/profile/profile_bloc.dart';
-import '../presentation/views/conversation_screen.dart';
-import '../controller/post_detail/post_detail_bloc.dart';
-import '../presentation/views/contest_list_screen.dart';
-import '../presentation/views/edit_profile_screen.dart';
-import '../presentation/views/email_confirmation_screen.dart';
-import '../presentation/views/forgot_password_screen.dart';
-import '../presentation/views/login_screen.dart';
-import '../presentation/views/message_screen.dart';
-import '../presentation/views/notification_page.dart';
-import '../presentation/views/post_detail_screen.dart';
-import '../presentation/views/profile_page.dart';
-import '../presentation/views/registration_screen.dart';
-import '../presentation/views/reset_password_screen.dart';
-import '../presentation/views/root_screen.dart';
-import '../presentation/views/verification_screen.dart';
+import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
+import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.dart';
+import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
+import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
+import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
+import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
+import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
+import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
+import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
+import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
+import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/root_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/verification_screen.dart';
 
 class AppRouter {
   static const String loginScreen = '/';
@@ -94,9 +92,10 @@ class AppRouter {
           builder: (context) => MultiBlocProvider(
             providers: [
               //BlocProvider(create: (context) => ProfileBloc()),
-              BlocProvider(
-                  create: (context) =>
-                      NotificationBloc()..add(FetchNotification())),
+              BlocProvider(create: (context) {
+                return NotificationBloc()..add(FetchNotification());
+              }),
+
               BlocProvider(
                   create: (context) =>
                       ProfileBloc(true)..add(ProfileInitializing(''))),
@@ -131,7 +130,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                ProfileBloc(false)..add(ProfileInitializing('')),
+                EditProfileBloc()..add(EditProfileInitializing()),
             child: const EditProfileScreen(),
           ),
         );
@@ -153,8 +152,12 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => MessageBloc()
-                    ..add(FetchMessage(args['conversationId'], args['avatar'],
-                        args['username'], args['userRealName'])),
+                    ..add(FetchMessage(
+                        args['conversationId'],
+                        args['avatar'],
+                        args['username'],
+                        args['userRealName'],
+                        args['otherUserId'])),
                   child: const MessageScreen(),
                 ));
       case contestListScreen:

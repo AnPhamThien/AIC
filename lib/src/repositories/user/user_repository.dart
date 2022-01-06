@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
-import '../../model/user/user.dart';
-import '../../model/user/user_details.dart';
-import '../data_repository.dart';
+import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/user/user.dart';
+import 'package:imagecaptioning/src/model/user/user_details.dart';
+import 'package:imagecaptioning/src/repositories/data_repository.dart';
 
 abstract class UserBehavior {
   Future<AuthenticationResponseMessage?> login(
@@ -78,8 +79,9 @@ class UserRepository extends UserBehavior {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
-          Map<String, dynamic> resMessage = e.response!.data;
-          final response = resMessage['messageCode'];
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
+          final response = resMessage.messageCode;
           return response;
         }
       }
@@ -98,8 +100,9 @@ class UserRepository extends UserBehavior {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
-          Map<String, dynamic> resMessage = e.response!.data;
-          final response = resMessage['messageCode'];
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
+          final response = resMessage.messageCode;
           return response;
         }
       }
@@ -135,8 +138,9 @@ class UserRepository extends UserBehavior {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
-          Map<String, dynamic> resMessage = e.response!.data;
-          final response = resMessage['messageCode'];
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
+          final response = resMessage.messageCode;
           return response;
         }
       }
@@ -161,8 +165,9 @@ class UserRepository extends UserBehavior {
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
-          Map<String, dynamic> resMessage = e.response!.data;
-          final response = resMessage['messageCode'];
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
+          final response = resMessage.messageCode;
           return response;
         }
       }

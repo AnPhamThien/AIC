@@ -20,12 +20,10 @@ class NotificationPage extends StatefulWidget {
 
 class _NotificationPageState extends State<NotificationPage> {
   final _scrollController = ScrollController();
-  final SignalRHelper _signalRHelper = SignalRHelper();
 
   @override
   void initState() {
     _scrollController.addListener(_onScroll);
-    registerSpecificNotification();
     super.initState();
   }
 
@@ -34,6 +32,7 @@ class _NotificationPageState extends State<NotificationPage> {
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
+    SignalRHelper.notificationContext = null;
     super.dispose();
   }
 
@@ -44,27 +43,10 @@ class _NotificationPageState extends State<NotificationPage> {
     }
   }
 
-  void registerSpecificNotification() {
-    if (SignalRHelper.hubConnection != null) {
-      SignalRHelper.hubConnection!
-          .on('specificnotification', _handleSpecificNotification);
-    }
-  }
-
-  void _handleSpecificNotification(List<dynamic>? parameters) {
-    context.read<NotificationBloc>().add(FetchNotification());
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
-      listener: (context, state) {
-        if (state.reconnected) {
-          log("registerSpecific");
-          registerSpecificNotification();
-          context.read<AuthBloc>().add(FinishReconnectEvent());
-        }
-      },
+      listener: (context, state) {},
       child: BlocListener<NotificationBloc, NotificationState>(
         listenWhen: (previous, current) => previous.status != current.status,
         listener: (context, state) {},
@@ -75,6 +57,7 @@ class _NotificationPageState extends State<NotificationPage> {
               height: MediaQuery.of(context).size.height,
               child: BlocBuilder<NotificationBloc, NotificationState>(
                 builder: (context, state) {
+                  SignalRHelper.notificationContext = context;
                   List<NotificationItem>? notiList = state.notificationList;
                   if (notiList != null) {
                     return ListView.builder(

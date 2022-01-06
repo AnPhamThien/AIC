@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../app/routes.dart';
-import '../../constanct/env.dart';
-import '../../controller/auth/auth_bloc.dart';
-import '../../model/post/post.dart';
-import '../theme/style.dart';
-import '../../utils/func.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
+import 'package:imagecaptioning/src/prefs/app_prefs.dart';
+import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 // ignore: implementation_imports
 import 'package:provider/src/provider.dart';
 
@@ -88,8 +90,10 @@ class PostHeadlineWidget extends StatelessWidget {
     Map<String, dynamic> args = {'userId': userId};
     return ListTile(
       contentPadding: const EdgeInsets.all(0),
-      onTap: () => context.read<AuthBloc>().add(NavigateToPageEvent(
-          route: AppRouter.otherUserProfileScreen, args: args)),
+      onTap: () => userId != getIt<AppPref>().getUserID
+          ? context.read<AuthBloc>().add(NavigateToPageEvent(
+              route: AppRouter.otherUserProfileScreen, args: args))
+          : null,
       leading: Container(
         width: 45,
         height: 45,

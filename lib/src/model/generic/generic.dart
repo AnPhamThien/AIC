@@ -2,7 +2,6 @@
 //
 //     final getMessageResponseMessage = getMessageResponseMessageFromJson(jsonString);
 
-
 class GetResponseMessage {
   GetResponseMessage({
     this.messageCode,

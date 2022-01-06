@@ -3,17 +3,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../app/routes.dart';
-import '../../constanct/env.dart';
-import '../../controller/auth/auth_bloc.dart';
-import '../../controller/conversation/conversation_bloc.dart';
-import '../../controller/get_it/get_it.dart';
-import '../../model/conversation/conversation.dart';
-import '../../prefs/app_prefs.dart';
-import 'message_screen.dart';
-import '../widgets/global_widgets.dart';
-import '../../signalr/signalr_helper.dart';
-import '../../utils/func.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/conversation/conversation.dart';
+import 'package:imagecaptioning/src/prefs/app_prefs.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({Key? key}) : super(key: key);
@@ -36,6 +35,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
+    SignalRHelper.conversationContext = null;
     super.dispose();
   }
 
@@ -55,44 +55,52 @@ class _ConversationScreenState extends State<ConversationScreen> {
         elevation: 0,
         titleSpacing: 0,
       ),
-      body: SafeArea(
-        child: BlocBuilder<ConversationBloc, ConversationState>(
-          builder: (context, state) {
-            List<Conversation>? conversationList = state.conversationList;
-            if (conversationList != null) {
-              return ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  final Conversation conversation = conversationList[index];
-                  return getConversationItem(
-                      conversation.isSeen == 1,
-                      conversation.avataUrl ?? '',
-                      conversation.userName,
-                      conversation.messageContent,
-                      conversation.totalTime!.toInt(),
-                      conversation.conversationId,
-                      conversation.userRealName);
-                },
-                itemCount: state.conversationList?.length,
-                controller: _scrollController,
-              );
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },
+      body: BlocListener<ConversationBloc, ConversationState>(
+        listener: (context, state) {},
+        child: SafeArea(
+          child: BlocBuilder<ConversationBloc, ConversationState>(
+            builder: (context, state) {
+              SignalRHelper.conversationContext = context;
+              List<Conversation>? conversationList = state.conversationList;
+              if (conversationList != null) {
+                return ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    final Conversation conversation = conversationList[index];
+                    return getConversationItem(
+                        conversation.sendUserId == getIt<AppPref>().getUserID
+                            ? false
+                            : conversation.isSeen == 0,
+                        conversation.avataUrl ?? '',
+                        conversation.userName,
+                        conversation.messageContent,
+                        timeCalculateDouble(conversation.totalTime ?? 0),
+                        conversation.conversationId,
+                        conversation.userRealName,
+                        conversation.userId);
+                  },
+                  itemCount: state.conversationList?.length,
+                  controller: _scrollController,
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
         ),
       ),
     );
   }
 
   ListTile getConversationItem(bool isNew, String img, username, message,
-      int time, conversationId, userRealName) {
+      String time, conversationId, userRealName, otherUserId) {
     return ListTile(
       onTap: () {
         Map<String, dynamic> args = {
           "username": username,
           "avatar": img,
           "conversationId": conversationId,
-          "userRealName": userRealName
+          "userRealName": userRealName,
+          "otherUserId": otherUserId
         };
         context.read<AuthBloc>().add(
             NavigateToPageEvent(route: AppRouter.messageScreen, args: args));
@@ -135,7 +143,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         softWrap: true,
       ),
       trailing: Text(
-        time.toString() + " min",
+        time,
         style: TextStyle(
           fontWeight: isNew ? FontWeight.bold : null,
           color: isNew ? Colors.black : null,

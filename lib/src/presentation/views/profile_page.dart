@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../app/routes.dart';
-import '../../constanct/env.dart';
-import '../../controller/auth/auth_bloc.dart';
-import '../theme/style.dart';
-import 'album_list_screen.dart';
-import 'message_screen.dart';
-import '../widgets/global_widgets.dart';
-import '../../controller/profile/profile_bloc.dart';
-import '../../signalr/signalr_helper.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
+import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 import 'gallery_page.dart';
 
@@ -47,7 +45,11 @@ class _ProfilePageState extends State<ProfilePage> {
                             state.user?.description ?? ''),
                         isMe == true
                             ? getEditProfileButton()
-                            : getFollowMessageButton()
+                            : getFollowMessageButton(
+                                state.user?.userName,
+                                state.user?.avataUrl,
+                                state.user?.userRealName,
+                                state.user?.id)
                       ],
                     ),
                   ),
@@ -210,16 +212,16 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         onPressed: () {
-          // context
-          //     .read<AuthBloc>()
-          //     .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
+          context
+              .read<AuthBloc>()
+              .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
         },
         child: const Text("Edit Profile"),
       ),
     );
   }
 
-  Row getFollowMessageButton() {
+  Row getFollowMessageButton(username, img, userRealName, userId) {
     Size size = MediaQuery.of(context).size;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -255,12 +257,14 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MessageScreen(),
-              ),
-            );
+            Map<String, dynamic> args = {
+              "username": username,
+              "avatar": img,
+              "userRealName": userRealName,
+              "otherUserId": userId
+            };
+            context.read<AuthBloc>().add(NavigateToPageEvent(
+                route: AppRouter.messageScreen, args: args));
           },
           child: const Text("Message"),
         ),

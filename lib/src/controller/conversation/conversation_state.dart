@@ -34,6 +34,6 @@ class FinishInitializing extends ConversationStatus {}
 class ReachedMaxedStatus extends ConversationStatus {}
 
 class ErrorStatus extends ConversationStatus {
-  final Exception exception;
-  ErrorStatus(this.exception);
+  final String error;
+  ErrorStatus(this.error);
 }

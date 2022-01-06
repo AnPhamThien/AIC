@@ -77,7 +77,8 @@ class Conversation {
       isSeen: json["isSeen"],
       dateSend:
           json["date_send"] != null ? DateTime.parse(json["date_send"]) : null,
-      totalTime: json["total_time"].toDouble(),
+      totalTime:
+          json["total_time"] != null ? (json["total_time"].toDouble()) : null,
       messageId: json["message_id"],
       conversationDate: json["conversation_date"] != null
           ? DateTime.parse(json["conversation_date"])

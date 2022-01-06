@@ -34,6 +34,6 @@ class FinishInitializing extends NotificationStatus {}
 class ReachedMaxedStatus extends NotificationStatus {}
 
 class ErrorStatus extends NotificationStatus {
-  final Exception exception;
+  final String exception;
   ErrorStatus(this.exception);
 }

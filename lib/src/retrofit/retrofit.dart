@@ -56,6 +56,9 @@ abstract class RestClient {
       @Field('JwtToken') String token,
       @Field('RefreshToken') String refreshToken);
 
+  @DELETE('/users/deleterefreshtoken')
+  Future<GetResponseMessage> deleteRefreshJwtToken();
+
   @POST('/users/updateuserprofile')
   Future<GetResponseMessage> updateUserProfile(
       @Field('user_name') String username,
@@ -89,16 +92,24 @@ abstract class RestClient {
 
   @GET('/conversations/getmoreconversations')
   Future<GetConversationResponseMessage> getMoreConversations(
-      @Query('dateBoundary') String dateBoundary);
+      @Query('date_boundary') String dateBoundary);
+
+  @POST('/conversations/updateisseenmessage')
+  Future<GetResponseMessage> updateIsSeenMessage(
+      @Field('message_id') String messageId);
 
   @GET('/conversations/getmessages')
   Future<GetMessageResponseMessage> getMessages(
       @Query('conversationId') String conversationId);
 
+  @GET('/conversations/getconversationbyuser')
+  Future<GetMessageResponseMessage> getConversationByUser(
+      @Query('userId') String userId);
+
   @GET('/conversations/getmoremessages')
   Future<GetMessageResponseMessage> getMoreMessages(
       @Query('conversationId') String conversationId,
-      @Query('dateBoundary') String dateBoundary);
+      @Query('date_boundary') String dateBoundary);
 
   @GET('/contests/getcontestforuser')
   Future<ContestListRespone> getContestList(

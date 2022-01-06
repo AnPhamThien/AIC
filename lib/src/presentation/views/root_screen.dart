@@ -12,7 +12,6 @@ import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/search_screen.dart';
-import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 
@@ -28,18 +27,7 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   void initState() {
-    registerOnClose();
     super.initState();
-  }
-
-  void registerOnClose() {
-    if (SignalRHelper.hubConnection != null) {
-      SignalRHelper.hubConnection!.onclose(_handleOnClose);
-    }
-  }
-
-  void _handleOnClose(Exception? e) {
-    context.read<AuthBloc>().add(ReconnectSignalREvent());
   }
 
   @override
@@ -47,12 +35,7 @@ class _RootScreenState extends State<RootScreen> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state.authStatus is AuthenticationForceLogout) {
-          context.read<AuthBloc>().add(LogoutEvent());
-        }
-        if (state.reconnected) {
-          log("Register on close");
-          registerOnClose();
-          context.read<AuthBloc>().add(FinishReconnectEvent());
+          context.read<AuthBloc>().add(ForceLogoutEvent());
         }
       },
       child: Scaffold(

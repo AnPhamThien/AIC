@@ -1,11 +1,9 @@
 part of "notification_bloc.dart";
 
-abstract class NotificationEvent {}
-
-class FetchNotification extends NotificationEvent {
-  FetchNotification();
+abstract class NotificationEvent {
+  const NotificationEvent();
 }
 
-class FetchMoreNotification extends NotificationEvent {
-  FetchMoreNotification();
-}
+class FetchNotification extends NotificationEvent {}
+
+class FetchMoreNotification extends NotificationEvent {}

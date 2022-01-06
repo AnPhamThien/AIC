@@ -25,7 +25,6 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     _scrollController.addListener(_onScroll);
-    registerGetMessages();
     super.initState();
   }
 
@@ -34,32 +33,35 @@ class _MessageScreenState extends State<MessageScreen> {
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
+    SignalRHelper.messageContext = null;
     super.dispose();
   }
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
       log("Fetchmore");
-      //context.read<MessageBloc>().add(FetchMessage());
+      context.read<MessageBloc>().add(FetchMoreMessage());
     }
   }
 
-  void registerGetMessages() {
-    if (SignalRHelper.hubConnection != null) {
-      SignalRHelper.hubConnection!
-          .on('specificnotification', _handleGetMessage);
+  void invokeSendMessage(List<dynamic>? args) async {
+    try {
+      if (SignalRHelper.hubConnection != null) {
+        final result = await SignalRHelper.hubConnection
+            ?.invoke("SendPrivate", args: args);
+        log("Result: '$result");
+      }
+    } catch (e) {
+      log(e.toString());
     }
-  }
-
-  void _handleGetMessage(List<dynamic>? parameters) {
-    context.read<MessageBloc>().add(FetchMoreMessage());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MessageBloc, MessageState>(
       builder: (context, state) {
-        List<Message>? notiList = state.messageList;
+        SignalRHelper.messageContext = context;
+        List<Message>? messageList = state.messageList;
         return Scaffold(
             body: Scaffold(
           appBar: getAppBar(
@@ -68,18 +70,17 @@ class _MessageScreenState extends State<MessageScreen> {
             state.username ?? '',
           ),
           body: SafeArea(
-            child: notiList != null
+            child: messageList != null
                 ? ListView.builder(
                     itemBuilder: (BuildContext context, int index) {
-                      final Message noti = notiList[index];
-                      log(noti.userId.toString());
-                      log(getIt<AppPref>().getUserID);
+                      final Message message = messageList[index];
                       return getMessageItem(
-                          noti.userId == getIt<AppPref>().getUserID,
-                          noti.content ?? '');
+                          message.userId == getIt<AppPref>().getUserID,
+                          message.content ?? '');
                     },
                     itemCount: state.messageList?.length,
                     controller: _scrollController,
+                    reverse: true,
                   )
                 : const Center(child: CircularProgressIndicator()),
           ),
@@ -132,7 +133,14 @@ class _MessageScreenState extends State<MessageScreen> {
           contentPadding: const EdgeInsets.symmetric(horizontal: -3),
           hintText: 'Message ..',
           suffixIcon: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              List<dynamic> args = [];
+              args.add(_messageController.value.text);
+              args.add(context.read<MessageBloc>().state.userId);
+              invokeSendMessage(args);
+              _messageController.clear();
+              FocusScope.of(context).unfocus();
+            },
             icon: const Icon(
               Icons.send,
               size: 25.0,

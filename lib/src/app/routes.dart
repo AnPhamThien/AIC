@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
 import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
+import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
@@ -91,9 +92,10 @@ class AppRouter {
           builder: (context) => MultiBlocProvider(
             providers: [
               //BlocProvider(create: (context) => ProfileBloc()),
-              BlocProvider(
-                  create: (context) =>
-                      NotificationBloc()..add(FetchNotification())),
+              BlocProvider(create: (context) {
+                return NotificationBloc()..add(FetchNotification());
+              }),
+
               BlocProvider(
                   create: (context) =>
                       ProfileBloc(true)..add(ProfileInitializing(''))),
@@ -128,7 +130,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                ProfileBloc(false)..add(ProfileInitializing('')),
+                EditProfileBloc()..add(EditProfileInitializing()),
             child: const EditProfileScreen(),
           ),
         );
@@ -150,8 +152,12 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => MessageBloc()
-                    ..add(FetchMessage(args['conversationId'], args['avatar'],
-                        args['username'], args['userRealName'])),
+                    ..add(FetchMessage(
+                        args['conversationId'],
+                        args['avatar'],
+                        args['username'],
+                        args['userRealName'],
+                        args['otherUserId'])),
                   child: const MessageScreen(),
                 ));
       case contestListScreen:

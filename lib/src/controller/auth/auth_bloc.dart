@@ -22,15 +22,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
 
   AuthBloc(this.navigatorKey)
-      : _signalRHelper = SignalRHelper(),
+      : _signalRHelper = SignalRHelper(navigatorKey),
         _authRepository = AuthRepository(),
         super(const AuthState()) {
     on<NavigateToPageEvent>(_onNavigate);
     on<AuthenticateEvent>(_onAuthenticate);
     on<LogoutEvent>(_onLogout);
-    on<ConnectSignalREvent>(_onConnectSignalR);
+    on<ForceLogoutEvent>(_onForceLogout);
     on<ReconnectSignalREvent>(_onReconnectSignalR);
-    on<FinishReconnectEvent>(_onFinishReconnectSignalR);
   }
 
   void _onNavigate(NavigateToPageEvent event, Emitter emit) {
@@ -50,63 +49,72 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     await _signalRHelper.initiateConnection();
     final user = event.user;
     emit(state.copyWith(
-        authStatus: AuthenticationAuthenticated(),
-        user: user,
-        reconnected: false));
+      authStatus: AuthenticationAuthenticated(),
+      user: user,
+    ));
     navigatorKey.currentState!.pushNamed(AppRouter.rootScreen);
   }
 
   void _onLogout(LogoutEvent event, Emitter emit) async {
-    emit(state.copyWith(
-        authStatus: AuthenticationUnauthenticated(), reconnected: false));
-    getIt<AppPref>().setToken("");
-    getIt<AppPref>().setRefreshToken("");
-    getIt<AppPref>().setUsername("");
-    getIt<AppPref>().setUserID("");
-    DataRepository.setJwtInHeader();
+    try {
+      emit(state.copyWith(authStatus: AuthenticationUnauthenticated()));
+      await _signalRHelper.closeConnection();
 
-    await _signalRHelper.closeConnection();
+      await _authRepository.deleteRefreshToken();
 
-    navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
+      getIt<AppPref>().setToken("");
+      getIt<AppPref>().setRefreshToken("");
+      getIt<AppPref>().setUsername("");
+      getIt<AppPref>().setUserID("");
+      DataRepository.setJwtInHeader();
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
+    }
   }
 
-  void _onConnectSignalR(ConnectSignalREvent event, Emitter emit) async {
+  void _onForceLogout(ForceLogoutEvent event, Emitter emit) async {
     try {
-      await _signalRHelper.initiateConnection();
-    } on Exception catch (_) {
-      log("Connect Failed: " + _.toString());
+      emit(state.copyWith(authStatus: AuthenticationUnauthenticated()));
+      await _signalRHelper.closeConnection();
+
+      getIt<AppPref>().setToken("");
+      getIt<AppPref>().setRefreshToken("");
+      getIt<AppPref>().setUsername("");
+      getIt<AppPref>().setUserID("");
+      DataRepository.setJwtInHeader();
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
     }
   }
 
   void _onReconnectSignalR(ReconnectSignalREvent event, Emitter emit) async {
     try {
       if (state.authStatus is AuthenticationAuthenticated) {
-        log("here");
         String token = getIt<AppPref>().getToken;
         String refreshToken = getIt<AppPref>().getRefreshToken;
-
         final response = await _authRepository.refreshJwtToken(
             token: token, refreshToken: refreshToken);
-        String? data = response?['data'];
-        int? status = response?['statusCode'];
+        if (response == null) {
+          throw Exception("");
+        }
+        String? data = response['data'];
+        int? status = response['statusCode'];
 
         if (status == StatusCode.successStatus && data != null) {
-          getIt<AppPref>().setToken(response!['data']);
+          getIt<AppPref>().setToken(data);
           DataRepository.setJwtInHeader();
           await _signalRHelper.initiateConnection();
-          emit(state.copyWith(reconnected: true));
         } else {
-          emit(state.copyWith(
-              authStatus: AuthenticationForceLogout(), reconnected: false));
+          throw Exception("");
         }
       }
-    } on Exception catch (_) {
+    } catch (_) {
       log("Reconnect Failed: " + _.toString());
+      emit(state.copyWith(authStatus: AuthenticationForceLogout()));
     }
-  }
-
-  void _onFinishReconnectSignalR(
-      FinishReconnectEvent event, Emitter emit) async {
-    emit(state.copyWith(reconnected: false));
   }
 }

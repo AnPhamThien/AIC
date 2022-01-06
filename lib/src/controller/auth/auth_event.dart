@@ -17,6 +17,8 @@ class AuthenticateEvent extends AuthEvent {
 
 class LogoutEvent extends AuthEvent {}
 
+class ForceLogoutEvent extends AuthEvent {}
+
 class ConnectSignalREvent extends AuthEvent {}
 
 class ReconnectSignalREvent extends AuthEvent {}

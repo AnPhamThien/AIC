@@ -38,7 +38,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           await _notificationRepository.getNotification(limit: limitNoti);
 
       if (resMessage == null) {
-        throw Exception("");
+        throw Exception(null);
       }
 
       final status = resMessage.statusCode ?? 0;
@@ -51,12 +51,15 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
             notificationList: data,
             hasReachedMax: false));
       } else if (message == MessageCode.noNotificationToDisplay) {
-        emit(state.copyWith(status: FinishInitializing(), hasReachedMax: true));
+        emit(state.copyWith(
+            status: FinishInitializing(),
+            notificationList: [],
+            hasReachedMax: true));
       } else {
         throw Exception(message);
       }
-    } on Exception catch (_) {
-      emit(state.copyWith(status: ErrorStatus(_)));
+    } catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_.toString())));
     }
   }
 }

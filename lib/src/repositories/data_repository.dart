@@ -211,4 +211,30 @@ class DataRepository implements RestClient {
   Future<GetResponseMessage> deleteRefreshJwtToken() {
     return _client.deleteRefreshJwtToken();
   }
+
+  @override
+  Future<ContestListRespone> getInactiveContestList(
+      String? searchName, int limitContest, String? dateUp, String? dateDown) {
+    return _client.getInactiveContestList(
+        searchName, limitContest, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestRespone> getInitContest(String contestId, int limitPost) {
+    return _client.getInitContest(contestId, limitPost);
+  }
+
+  @override
+  Future<ContestListRespone> getMoreActiveContestList(String? searchName,
+      int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
+    return _client.getMoreActiveContestList(
+        searchName, limitContest, dateBoundary, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestListRespone> getMoreInactiveContestList(String? searchName,
+      int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
+    return _client.getMoreInactiveContestList(
+        searchName, limitContest, dateBoundary, dateUp, dateDown);
+  }
 }

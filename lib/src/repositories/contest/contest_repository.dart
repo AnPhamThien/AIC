@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:imagecaptioning/src/model/contest/contest_data.dart';
 import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
 
 import '../../model/contest/contest.dart';

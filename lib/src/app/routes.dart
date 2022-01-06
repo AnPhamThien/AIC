@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest/contest_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest_list/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
 import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
@@ -10,6 +12,7 @@ import 'package:imagecaptioning/src/controller/notification/notification_bloc.da
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/contest_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';

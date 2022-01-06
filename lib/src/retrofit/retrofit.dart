@@ -1,18 +1,19 @@
 import 'package:dio/dio.dart' hide Headers;
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/model/conversation/conversation.dart';
-import 'package:imagecaptioning/src/model/generic/generic.dart';
-import 'package:imagecaptioning/src/model/conversation/message.dart';
-import 'package:imagecaptioning/src/model/notification/notification.dart';
-import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_add_comment_request.dart';
-import 'package:imagecaptioning/src/model/post/post_add_comment_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_like_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_list_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_list_request.dart';
-import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
-import 'package:imagecaptioning/src/model/user/user.dart';
-import 'package:imagecaptioning/src/model/user/user_details.dart';
+import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
+import '../constanct/env.dart';
+import '../model/conversation/conversation.dart';
+import '../model/generic/generic.dart';
+import '../model/conversation/message.dart';
+import '../model/notification/notification.dart';
+import '../model/contest/contest_list_respone.dart';
+import '../model/post/post_add_comment_request.dart';
+import '../model/post/post_add_comment_respone.dart';
+import '../model/post/post_comment_like_respone.dart';
+import '../model/post/post_comment_list_respone.dart';
+import '../model/post/post_list_request.dart';
+import '../model/post/post_list_respone.dart';
+import '../model/user/user.dart';
+import '../model/user/user_details.dart';
 import 'package:retrofit/retrofit.dart';
 
 part 'retrofit.g.dart';
@@ -112,7 +113,15 @@ abstract class RestClient {
       @Query('date_boundary') String dateBoundary);
 
   @GET('/contests/getcontestforuser')
-  Future<ContestListRespone> getContestList(
+  Future<ContestListRespone> getActiveContestList(
+    @Query('searchname') String? searchName,
+    @Query('limitcontest') int limitContest,
+    @Query('date_up') String? dateUp,
+    @Query('date_dow') String? dateDown,
+  );
+
+  @GET('/contests/getcontestinactiveforuser')
+  Future<ContestListRespone> getInactiveContestList(
     @Query('searchname') String? searchName,
     @Query('limitcontest') int limitContest,
     @Query('date_up') String? dateUp,
@@ -142,4 +151,28 @@ abstract class RestClient {
   @POST('/comments/addcomment')
   Future<PostAddCommentRespone> addComment(
       @Body() PostAddCommentRequest request);
+
+  @GET('/contests/getmorecontestforuser')
+  Future<ContestListRespone> getMoreActiveContestList(
+    @Query('searchname') String? searchName,
+    @Query('limitcontest') int limitContest,
+    @Query('date_boundary') String dateBoundary,
+    @Query('date_up') String? dateUp,
+    @Query('date_dow') String? dateDown,
+  );
+
+  @GET('/contests/getmorecontestinactiveforuser')
+  Future<ContestListRespone> getMoreInactiveContestList(
+    @Query('searchname') String? searchName,
+    @Query('limitcontest') int limitContest,
+    @Query('date_boundary') String dateBoundary,
+    @Query('date_up') String? dateUp,
+    @Query('date_dow') String? dateDown,
+  );
+
+  @GET('/contests/getcontestpostver2')
+  Future<ContestRespone> getInitContest(
+    @Query('contest_id') String contestId,
+    @Query('limitPost') int limitPost,
+  );
 }

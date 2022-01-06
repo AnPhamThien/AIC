@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:imagecaptioning/src/model/notification/notification.dart';
-import 'package:imagecaptioning/src/repositories/data_repository.dart';
+import '../../model/notification/notification.dart';
+import '../data_repository.dart';
 
 abstract class UserBehavior {
   Future<GetNotificationResponseMessage?> getNotification({required int limit});

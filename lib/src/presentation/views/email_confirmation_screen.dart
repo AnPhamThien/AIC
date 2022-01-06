@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import '../../app/routes.dart';
+import '../theme/style.dart';
 
 class EmailConfirmationScreen extends StatefulWidget {
   const EmailConfirmationScreen({Key? key}) : super(key: key);

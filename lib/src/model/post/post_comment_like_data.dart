@@ -1,4 +1,4 @@
-import 'package:imagecaptioning/src/model/post/comment.dart';
+import 'comment.dart';
 
 class PostCommentLikeData {
   PostCommentLikeData({

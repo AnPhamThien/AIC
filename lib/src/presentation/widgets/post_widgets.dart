@@ -82,7 +82,7 @@ class PostHeadlineWidget extends StatelessWidget {
   final String userId;
   final String username;
   final DateTime time;
-  final String postAvatar;
+  final String? postAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -104,9 +104,9 @@ class PostHeadlineWidget extends StatelessWidget {
         child: CircleAvatar(
           child: ClipOval(
             child: Image(
-              image: postAvatar != ""
-                  ? NetworkImage(avatarUrl + postAvatar)
-                  : const AssetImage("assets/images/Kroni.jpg")
+              image: postAvatar != null
+                  ? NetworkImage(avatarUrl + postAvatar!)
+                  : const AssetImage("assets/images/avatar_placeholder.png")
                       as ImageProvider,
               height: 45,
               width: 45,
@@ -175,7 +175,7 @@ class PostImgWidget extends StatelessWidget {
                   ? NetworkImage(postImageUrl + postImage)
                   : const AssetImage("assets/images/Kroni.jpg")
                       as ImageProvider,
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
         ),

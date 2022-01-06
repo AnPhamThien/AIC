@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
-import 'package:imagecaptioning/src/model/post/comment.dart';
-import 'package:imagecaptioning/src/model/post/post.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
+import '../../constanct/env.dart';
+import '../../controller/post_detail/post_detail_bloc.dart';
+import '../../model/post/comment.dart';
+import '../../model/post/post.dart';
+import '../theme/style.dart';
+import '../widgets/post_widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
+import '../../utils/func.dart';
 
 class PostDetailScreen extends StatefulWidget {
   const PostDetailScreen({Key? key}) : super(key: key);
@@ -56,45 +56,56 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             onRefresh: _refresh,
             child: SingleChildScrollView(
               controller: _scrollController,
-              child: BlocBuilder<PostDetailBloc, PostDetailState>(
-                builder: (context, state) {
-                  switch (state.status) {
-                    case PostDetailStatus.success:
-                      final Post _post = state.post!;
-                      post = state.post!;
-                      final int _commentCount = state.commentCount ?? 0;
-                      final List<Comment>? _commentList = state.commentList;
-                      return Column(
-                        children: [
-                          getPostSection(
-                            _post,
-                            _commentCount,
-                          ),
-                          const SizedBox(height: 10.0),
-                          getCommentSection(_commentList),
-                          const SizedBox(height: 10.0),
-                        ],
-                      );
-                    case PostDetailStatus.maxcomment:
-                      return Column(
-                        children: [
-                          getPostSection(
-                            state.post!,
-                            state.commentCount!,
-                          ),
-                          const SizedBox(height: 10.0),
-                          getCommentSection(state.commentList),
-                          const SizedBox(height: 10.0),
-                        ],
-                      );
-                    case PostDetailStatus.failure:
-                      return const Center(
-                        child: Text('Some thing went wrong'),
-                      );
-                    default:
-                      return const Center(child: CircularProgressIndicator());
+              child: BlocListener<PostDetailBloc, PostDetailState>(
+                listener: (context, state) {
+                  if (state.isReload) {
+                    setState(() {
+                      context
+                          .read<PostDetailBloc>()
+                          .add(PostDetailInitEvent(post));
+                    });
                   }
                 },
+                child: BlocBuilder<PostDetailBloc, PostDetailState>(
+                  builder: (context, state) {
+                    switch (state.status) {
+                      case PostDetailStatus.success:
+                        final Post _post = state.post!;
+                        post = state.post!;
+                        final int _commentCount = state.commentCount ?? 0;
+                        final List<Comment>? _commentList = state.commentList;
+                        return Column(
+                          children: [
+                            getPostSection(
+                              _post,
+                              _commentCount,
+                            ),
+                            const SizedBox(height: 10.0),
+                            getCommentSection(_commentList),
+                            const SizedBox(height: 10.0),
+                          ],
+                        );
+                      case PostDetailStatus.maxcomment:
+                        return Column(
+                          children: [
+                            getPostSection(
+                              state.post!,
+                              state.commentCount!,
+                            ),
+                            const SizedBox(height: 10.0),
+                            getCommentSection(state.commentList),
+                            const SizedBox(height: 10.0),
+                          ],
+                        );
+                      case PostDetailStatus.failure:
+                        return const Center(
+                          child: Text('Some thing went wrong'),
+                        );
+                      default:
+                        return const Center(child: CircularProgressIndicator());
+                    }
+                  },
+                ),
               ),
             ),
           ),
@@ -147,13 +158,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       .read<PostDetailBloc>()
                       .add(PostDetailAddComment(_commentController.text));
                   _commentController.clear();
-                  TextInputAction.done;
-                  if (context.read<PostDetailBloc>().state.status ==
-                      PostDetailStatus.success) {
-                    context
-                        .read<PostDetailBloc>()
-                        .add(PostDetailInitEvent(post));
-                  }
+                  FocusScope.of(context).unfocus();
                 }
               },
               icon: const Icon(
@@ -193,7 +198,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   userId: post.userId!,
                   username: post.userName!,
                   time: post.dateCreate!,
-                  postAvatar: post.avataUrl!,
+                  postAvatar: post.avataUrl,
                 ),
               ),
             ],

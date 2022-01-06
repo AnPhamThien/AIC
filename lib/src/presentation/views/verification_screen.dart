@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
-import 'package:imagecaptioning/src/utils/validations.dart';
+import '../../app/routes.dart';
+import '../../controller/auth/form_submission_status.dart';
+import '../../controller/auth/auth_bloc.dart';
+import '../../controller/verification/verification_bloc.dart';
+import '../theme/style.dart';
+import '../../utils/func.dart';
+import '../../utils/validations.dart';
 
 class VerificationScreen extends StatefulWidget {
   const VerificationScreen({Key? key}) : super(key: key);

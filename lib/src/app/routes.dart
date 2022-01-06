@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest/contest_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest_list/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
-import 'package:imagecaptioning/src/controller/contest/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:imagecaptioning/src/controller/notification/notification_bloc.da
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/contest_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
 import 'package:imagecaptioning/src/controller/post_detail/post_detail_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart';
@@ -43,6 +45,7 @@ class AppRouter {
   static const String messageScreen = '/message';
   static const String contestListScreen = '/contestlistscreen';
   static const String postDetailScreen = '/postdetailscreen';
+  static const String contestScreen = '/contestscreen';
   // final ProfileBloc currentUSerProfileBloc = ProfileBloc(true)
   //   ..add(ProfileInitializing(''));
 
@@ -163,19 +166,30 @@ class AppRouter {
       case contestListScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => ContestListBloc()..add(InitContestFetched()),
+            create: (context) =>
+                ContestListBloc()..add(InitContestListFetched()),
             child: const ContestListScreen(),
           ),
         );
       case postDetailScreen:
-        final post = routeSettings.arguments as Map<String, dynamic>;
+        final arg = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                PostDetailBloc()..add(PostDetailInitEvent(post['post'])),
+                PostDetailBloc()..add(PostDetailInitEvent(arg['post'])),
             child: const PostDetailScreen(),
           ),
         );
+      case contestScreen:
+        final arg = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      ContestBloc()..add(InitContestFetched(arg['contest'])),
+                  child: ContestScreen(
+                    contest: arg['contest'],
+                  ),
+                ));
       default:
         return null;
     }

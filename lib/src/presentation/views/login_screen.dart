@@ -1,14 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
-import 'package:imagecaptioning/src/utils/validations.dart';
+import '../../app/routes.dart';
+import '../../constanct/error_message.dart';
+import '../../controller/auth/form_submission_status.dart';
+import '../../controller/login/login_bloc.dart';
+import '../../controller/auth/auth_bloc.dart';
+import '../theme/style.dart';
+import '../widgets/get_user_input_field.dart';
+import '../../utils/func.dart';
+import '../../utils/validations.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,6 +23,7 @@ class LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLogin = false;
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -29,15 +32,24 @@ class LoginScreenState extends State<LoginScreen> {
           previous.formStatus != current.formStatus,
       listener: (context, state) {
         final status = state.formStatus;
+        if (status is FormSubmitting) {
+          _isLogin = true;
+        }
         if (status is FormSubmissionSuccess) {
           context.read<AuthBloc>().add(AuthenticateEvent(state.user));
         } else if (status is FormSubmissionFailed) {
+          _isLogin = false;
           String errorMessage = getErrorMessage(status.exception.toString());
           if (errorMessage ==
               MessageCode.errorMap[MessageCode.userAccountInActivated]) {
-            context
-                .read<AuthBloc>()
-                .add(NavigateToPageEvent(route: AppRouter.verificationScreen));
+            _getDialog(MessageCode.errorMap[MessageCode.userAccountInActivated],
+                () {
+              context.read<AuthBloc>().add(
+                  NavigateToPageEvent(route: AppRouter.verificationScreen));
+            });
+          } else {
+            _getDialog(MessageCode.errorMap[MessageCode.userPassWordInCorrect],
+                () => Navigator.pop(context));
           }
         }
       },
@@ -55,21 +67,25 @@ class LoginScreenState extends State<LoginScreen> {
               height: size.height,
               width: size.width,
               padding: EdgeInsets.symmetric(horizontal: size.width * .07),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  getLoginHeadline(),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  getLoginForm(),
-                  getForgotButton(),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  getSignupButton(),
-                ],
+              child: BlocBuilder<LoginBloc, LoginState>(
+                builder: (context, state) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      getLoginHeadline(),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      getLoginForm(_isLogin),
+                      getForgotButton(),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      getSignupButton(),
+                    ],
+                  );
+                },
               ),
             ),
           ),
@@ -78,14 +94,44 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Future<String?> _getDialog(String? content, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text('Error !',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Center getForgotButton() {
     return Center(
       child: TextButton(
-        onPressed: () {
-          context
-              .read<AuthBloc>()
-              .add(NavigateToPageEvent(route: AppRouter.forgotPasswordScreen));
-        },
+        onPressed: () => context
+            .read<AuthBloc>()
+            .add(NavigateToPageEvent(route: AppRouter.forgotPasswordScreen)),
         child: const Text(
           "Forgot password ?",
           style: TextStyle(
@@ -132,7 +178,7 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Container getLoginForm() {
+  Container getLoginForm(bool isLogin) {
     Size size = MediaQuery.of(context).size;
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 25),
@@ -168,24 +214,31 @@ class LoginScreenState extends State<LoginScreen> {
             const SizedBox(
               height: 30,
             ),
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  context.read<LoginBloc>().add(LoginSubmitted(
-                      _usernameController.text, _passwordController.text));
-                }
-              },
-              style: TextButton.styleFrom(
-                  fixedSize: Size(size.width * .94, 55),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: Colors.black87,
-                  alignment: Alignment.center,
-                  primary: Colors.white,
-                  textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 20)),
-              child: const Text(
-                "Login",
+            AbsorbPointer(
+              absorbing: isLogin,
+              child: TextButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    context.read<LoginBloc>().add(LoginSubmitted(
+                        _usernameController.text, _passwordController.text));
+                  }
+                },
+                style: TextButton.styleFrom(
+                    fixedSize: Size(size.width * .94, 55),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    backgroundColor: Colors.black87,
+                    alignment: Alignment.center,
+                    primary: Colors.white,
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20)),
+                child: isLogin
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                        ),
+                      )
+                    : const Text("Login"),
               ),
             ),
           ],

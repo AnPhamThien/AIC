@@ -1,24 +1,25 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/conversation/conversation.dart';
-import 'package:imagecaptioning/src/model/generic/generic.dart';
-import 'package:imagecaptioning/src/model/conversation/message.dart';
-import 'package:imagecaptioning/src/model/notification/notification.dart';
-import 'package:imagecaptioning/src/model/contest/contest_list_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_add_comment_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_add_comment_request.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_like_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_list_respone.dart';
-import 'package:imagecaptioning/src/model/post/post_list_request.dart';
-import 'package:imagecaptioning/src/model/post/post_list_respone.dart';
-import 'package:imagecaptioning/src/model/user/user.dart';
-import 'package:imagecaptioning/src/model/user/user_details.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/retrofit/retrofit.dart';
+import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
+import '../constanct/env.dart';
+import '../constanct/error_message.dart';
+import '../controller/get_it/get_it.dart';
+import '../model/conversation/conversation.dart';
+import '../model/generic/generic.dart';
+import '../model/conversation/message.dart';
+import '../model/notification/notification.dart';
+import '../model/contest/contest_list_respone.dart';
+import '../model/post/post_add_comment_respone.dart';
+import '../model/post/post_add_comment_request.dart';
+import '../model/post/post_comment_like_respone.dart';
+import '../model/post/post_comment_list_respone.dart';
+import '../model/post/post_list_request.dart';
+import '../model/post/post_list_respone.dart';
+import '../model/user/user.dart';
+import '../model/user/user_details.dart';
+import '../prefs/app_prefs.dart';
+import '../retrofit/retrofit.dart';
 
 class DataRepository implements RestClient {
   static final Dio _dio = Dio();
@@ -156,9 +157,10 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<ContestListRespone> getContestList(
+  Future<ContestListRespone> getActiveContestList(
       String? searchName, int limitContest, String? dateUp, String? dateDown) {
-    return _client.getContestList(searchName, limitContest, dateUp, dateDown);
+    return _client.getActiveContestList(
+        searchName, limitContest, dateUp, dateDown);
   }
 
   @override
@@ -208,5 +210,30 @@ class DataRepository implements RestClient {
   @override
   Future<GetResponseMessage> deleteRefreshJwtToken() {
     return _client.deleteRefreshJwtToken();
+  }
+
+  Future<ContestListRespone> getInactiveContestList(
+      String? searchName, int limitContest, String? dateUp, String? dateDown) {
+    return _client.getInactiveContestList(
+        searchName, limitContest, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestListRespone> getMoreActiveContestList(String? searchName,
+      int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
+    return _client.getMoreActiveContestList(
+        searchName, limitContest, dateBoundary, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestListRespone> getMoreInactiveContestList(String? searchName,
+      int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
+    return _client.getMoreInactiveContestList(
+        searchName, limitContest, dateBoundary, dateUp, dateDown);
+  }
+
+  @override
+  Future<ContestRespone> getInitContest(String contestId, int limitPost) {
+    return _client.getInitContest(contestId, limitPost);
   }
 }

@@ -4,16 +4,15 @@
 
 import 'dart:convert';
 
-import 'contest.dart';
+import 'contest_data.dart';
 
-ContestListRespone contestResponeFromJson(String str) =>
-    ContestListRespone.fromJson(json.decode(str));
+ContestRespone contestResponeFromJson(String str) =>
+    ContestRespone.fromJson(json.decode(str));
 
-String contestResponeToJson(ContestListRespone data) =>
-    json.encode(data.toJson());
+String contestResponeToJson(ContestRespone data) => json.encode(data.toJson());
 
-class ContestListRespone {
-  ContestListRespone({
+class ContestRespone {
+  ContestRespone({
     this.messageCode,
     this.statusCode,
     this.data,
@@ -23,17 +22,14 @@ class ContestListRespone {
 
   dynamic messageCode;
   int? statusCode;
-  List<Contest>? data;
-  int? total;
+  ContestData? data;
+  dynamic total;
   int? sunOfPages;
 
-  factory ContestListRespone.fromJson(Map<String, dynamic> json) =>
-      ContestListRespone(
+  factory ContestRespone.fromJson(Map<String, dynamic> json) => ContestRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: json["data"] != null
-            ? List<Contest>.from(json["data"].map((x) => Contest.fromJson(x)))
-            : null,
+        data: ContestData.fromJson(json["data"]),
         total: json["total"],
         sunOfPages: json["sunOfPages"],
       );
@@ -41,7 +37,7 @@ class ContestListRespone {
   Map<String, dynamic> toJson() => {
         "messageCode": messageCode,
         "statusCode": statusCode,
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data!.toJson(),
         "total": total,
         "sunOfPages": sunOfPages,
       };

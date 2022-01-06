@@ -1,6 +1,6 @@
 class Contest {
   Contest({
-    this.id,
+    required this.id,
     this.contestName,
     this.description,
     this.dateCreate,
@@ -11,7 +11,7 @@ class Contest {
     this.contestActive,
   });
 
-  String? id;
+  String id;
   String? contestName;
   String? description;
   DateTime? dateCreate;

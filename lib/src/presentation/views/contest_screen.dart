@@ -1,10 +1,20 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imagecaptioning/src/data_local/markup_model.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/controller/contest/contest_bloc.dart';
+import 'package:imagecaptioning/src/model/contest/contest.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
+import 'package:imagecaptioning/src/presentation/error/something_went_wrong.dart';
+import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
+import '../theme/style.dart';
+import '../widgets/global_widgets.dart';
+import '../../utils/func.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ContestScreen extends StatefulWidget {
   const ContestScreen({Key? key, required this.contest}) : super(key: key);
@@ -16,49 +26,169 @@ class ContestScreen extends StatefulWidget {
 }
 
 class _ContestScreenState extends State<ContestScreen> {
-  //List<Post> postList = Post.getPostList();
+  late Contest _contest;
+
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    context.read<ContestBloc>().add(InitContestFetched(_contest));
+    _refreshController.refreshCompleted();
+  }
+
+  @override
+  void initState() {
+    _contest = widget.contest;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    Contest contest = widget.contest;
-    return Scaffold(
-      backgroundColor: bgApp,
-      floatingActionButton: getUploadButton(),
-      appBar: AppBar(
-        foregroundColor: Colors.black87,
-        elevation: 0,
-        titleSpacing: 0,
-        title: AppBarTitle(title: contest.contestName),
-        actions: [
-          IconButton(
-            onPressed: () {
-              getSheet(context, contest);
-            },
-            icon: const Icon(
-              Icons.info_outlined,
-              size: 30,
-            ),
-          )
-        ],
-      ),
-      // body: SafeArea(
-      //   child: SingleChildScrollView(
-      //       child: SizedBox(
-      //     height: MediaQuery.of(context).size.height,
-      //     child: ListView.builder(
-      //       itemCount: postList.length,
-      //       itemBuilder: (_, index) {
-      //         final Post post = postList[index];
-      //         return PostWidget(
-      //           post: post,
-      //         );
-      //       },
-      //     ),
-      //   )),
-      // ),
+    return BlocBuilder<ContestBloc, ContestState>(
+      builder: (context, state) {
+        switch (state.status) {
+          case ContestStatus.success:
+            return Scaffold(
+              backgroundColor: bgApp,
+              floatingActionButton: getUploadButton(),
+              body: SmartRefresher(
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                child: CustomScrollView(
+                  slivers: [
+                    getAppBar(state),
+                    state.topThreePost.isNotEmpty
+                        ? getLeaderBoard(context, state)
+                        : const SliverToBoxAdapter(
+                            child: SizedBox.shrink(),
+                          ),
+                    getBody(state),
+                  ],
+                ),
+              ),
+            );
+          case ContestStatus.failure:
+            return SomethingWentWrongScreen(onPressed: () {
+              context.read<ContestBloc>().add(InitContestFetched(_contest));
+            });
+          default:
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.black87,
+              ),
+            );
+        }
+      },
     );
   }
 
-  Future<dynamic> getSheet(BuildContext context, Contest contest) {
+  SliverList getBody(ContestState state) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (BuildContext context, int index) {
+          final Post post = state.post[index];
+          return PostWidget(
+            post: post,
+          );
+        },
+        childCount: state.post.length,
+      ),
+    );
+  }
+
+  SliverToBoxAdapter getLeaderBoard(BuildContext context, ContestState state) {
+    return SliverToBoxAdapter(
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.symmetric(vertical: 1),
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(45))),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            const Divider(
+              height: 0,
+              thickness: .5,
+              endIndent: 20,
+              indent: 20,
+              color: Colors.black54,
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            const Text(
+              "Leader Board",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                state.topThreePost.length > 1
+                    ? Column(
+                        children: [
+                          getLBAva(state.topThreePost[1].avataUrl, 80,
+                              Colors.grey.shade400),
+                          getLBLikeCount(
+                              state.topThreePost[1].likecount.toString() +
+                                  ' likes')
+                        ],
+                      )
+                    : getLBPlacehodler(),
+                Column(
+                  children: [
+                    getLBAva(state.topThreePost[0].avataUrl, 100,
+                        Colors.amberAccent.shade700),
+                    getLBLikeCount(
+                        state.topThreePost[0].likecount.toString() + ' likes')
+                  ],
+                ),
+                state.topThreePost.length == 3
+                    ? Column(
+                        children: [
+                          getLBAva(state.topThreePost[2].avataUrl, 80,
+                              Colors.brown.shade400),
+                          getLBLikeCount(
+                              state.topThreePost[2].likecount.toString() +
+                                  ' likes')
+                        ],
+                      )
+                    : getLBPlacehodler(),
+              ],
+            ),
+            const SizedBox(
+              height: 15,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  SliverAppBar getAppBar(ContestState state) {
+    return SliverAppBar(
+      elevation: 0,
+      pinned: true,
+      expandedHeight: kToolbarHeight,
+      title: AppBarTitle(title: _contest.contestName ?? ''),
+      leadingWidth: 30,
+      actions: [
+        IconButton(
+          onPressed: () {
+            getSheet(_contest, state.totalParticipaters, state.contestPrizes);
+          },
+          icon: const Icon(Icons.info_outlined, size: 30),
+        )
+      ],
+    );
+  }
+
+  Future<dynamic> getSheet(
+      Contest contest, int totalParticipaters, List<dynamic> contestPrizes) {
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
@@ -66,9 +196,10 @@ class _ContestScreenState extends State<ContestScreen> {
       context: context,
       builder: (context) {
         String startDate =
-            contest.startDate.toLocal().toIso8601String().split('T').first;
+            contest.dateCreate?.toLocal().toIso8601String().split('T').first ??
+                '';
         String endDate =
-            contest.endDate.toLocal().toIso8601String().split('T').first;
+            contest.dateEnd?.toLocal().toIso8601String().split('T').first ?? '';
         return Wrap(
           direction: Axis.vertical,
           children: [
@@ -78,7 +209,7 @@ class _ContestScreenState extends State<ContestScreen> {
             SizedBox(
               width: MediaQuery.of(context).size.width,
               child: Text(
-                contest.contestName, //TODO nhét contest name vào đây
+                contest.contestName ?? '',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 25,
@@ -94,36 +225,53 @@ class _ContestScreenState extends State<ContestScreen> {
               ),
             ),
             //* end,start date
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "From: " + startDate,
+                    style: TextStyle(color: Colors.black87, fontSize: 18.sp),
+                  ),
+                  Text(
+                    "To: " + endDate,
+                    style: TextStyle(color: Colors.black87, fontSize: 18.sp),
+                  ),
+                ],
+              ),
+            ),
+            //* description
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 15,
+              ),
+              child: Text(
+                "Participant: $totalParticipaters",
+                style: TextStyle(color: Colors.black87, fontSize: 18.sp),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
               child: RichText(
+                softWrap: true,
                 text: TextSpan(
-                  style: const TextStyle(color: Colors.black54, fontSize: 16),
+                  style: TextStyle(color: Colors.black87, fontSize: 18.sp),
                   children: [
-                    TextSpan(
-                      text: ("From: " +
-                          startDate), //TODO nhét contest startdate vào đây
+                    const TextSpan(
+                      text: ("Description: "),
                     ),
                     TextSpan(
-                      text: ("\nTo: " +
-                          endDate), //TODO nhét contest enddate vào đây
+                      text: (contest.description ??
+                          "This contest does not have a description"),
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            //* description
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              child: Text(
-                contest.description,
-                softWrap: true,
-                style: const TextStyle(color: Colors.black87, fontSize: 19),
-              ),
-            ),
+
             const SizedBox(
               height: 10,
             ),
@@ -216,6 +364,71 @@ class _ContestScreenState extends State<ContestScreen> {
             size: 30,
           ),
         ],
+      ),
+    );
+  }
+
+  Column getLBPlacehodler() {
+    return Column(
+      children: [
+        Container(
+          width: 80,
+          height: 80,
+          decoration:
+              const BoxDecoration(shape: BoxShape.circle, color: Colors.white),
+        ),
+        const SizedBox(
+          height: 25,
+        ),
+      ],
+    );
+  }
+
+  SizedBox getLBAva(String? avaUrl, double size, Color? color) {
+    return SizedBox(
+      height: size + 20,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Center(
+            child: SvgPicture.asset(
+              'assets/icons/LeaderBoardCrown.svg',
+              height: size + 10,
+              width: size + 10,
+              color: color,
+            ),
+          ),
+          Positioned(
+            top: 0,
+            child: Center(
+              child: ClipOval(
+                child: Image(
+                  image: avaUrl != null
+                      ? NetworkImage(avatarUrl + avaUrl)
+                      : const AssetImage("assets/images/avatar_placeholder.png")
+                          as ImageProvider,
+                  height: size,
+                  width: size,
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Padding getLBLikeCount(String likeCount) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: SizedBox(
+        height: 25,
+        child: Text(
+          likeCount,
+          style: const TextStyle(
+              color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w500),
+        ),
       ),
     );
   }

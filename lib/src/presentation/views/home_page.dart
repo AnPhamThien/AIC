@@ -3,14 +3,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
-import 'package:imagecaptioning/src/model/post/post.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
+import '../../app/routes.dart';
+import '../../controller/auth/auth_bloc.dart';
+import '../../controller/home/home_bloc.dart';
+import '../../model/post/post.dart';
+import '../theme/style.dart';
+import '../widgets/global_widgets.dart';
+import '../widgets/post_widgets.dart';
+import '../../utils/func.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

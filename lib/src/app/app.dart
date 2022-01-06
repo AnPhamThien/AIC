@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'routes.dart';
+import '../controller/auth/auth_bloc.dart';
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);

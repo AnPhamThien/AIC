@@ -1,12 +1,11 @@
-
 import 'package:bloc/bloc.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
-import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/user/user.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/repositories/user/user_repository.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
+import '../../constanct/status_code.dart';
+import '../auth/form_submission_status.dart';
+import '../get_it/get_it.dart';
+import '../../model/user/user.dart';
+import '../../prefs/app_prefs.dart';
+import '../../repositories/user/user_repository.dart';
+import '../../utils/func.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
@@ -25,6 +24,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     Emitter<LoginState> emit,
   ) async {
     try {
+      emit(state.copyWith(formStatus: FormSubmitting()));
+      // await Future.delayed(const Duration(seconds: 3));
       String username = event.username;
       String password = event.password;
 

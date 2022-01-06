@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
-import 'package:imagecaptioning/src/controller/auth/form_submission_status.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/repositories/user/user_repository.dart';
+import '../../constanct/status_code.dart';
+import '../auth/form_submission_status.dart';
+import '../get_it/get_it.dart';
+import '../../prefs/app_prefs.dart';
+import '../../repositories/user/user_repository.dart';
 
 part 'verification_event.dart';
 part 'verification_state.dart';

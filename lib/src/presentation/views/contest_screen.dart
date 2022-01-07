@@ -1,16 +1,14 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/contest/contest_bloc.dart';
-import 'package:imagecaptioning/src/model/contest/contest.dart';
-import 'package:imagecaptioning/src/model/post/post.dart';
-import 'package:imagecaptioning/src/presentation/error/something_went_wrong.dart';
-import 'package:imagecaptioning/src/presentation/widgets/post_widgets.dart';
+import '../../constanct/env.dart';
+import '../../controller/contest/contest_bloc.dart';
+import '../../model/contest/contest.dart';
+import '../../model/post/post.dart';
+import '../error/something_went_wrong.dart';
+import '../widgets/post_widgets.dart';
 import '../theme/style.dart';
 import '../widgets/global_widgets.dart';
 import '../../utils/func.dart';
@@ -27,6 +25,9 @@ class ContestScreen extends StatefulWidget {
 
 class _ContestScreenState extends State<ContestScreen> {
   late Contest _contest;
+  bool _showBackToTopButton = false;
+  
+  final _scrollController = ScrollController();
 
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -39,7 +40,36 @@ class _ContestScreenState extends State<ContestScreen> {
   @override
   void initState() {
     _contest = widget.contest;
+    _scrollController.addListener(_onScroll);
+    _scrollController.addListener(() {
+      setState(() {
+        if (_scrollController.offset >= 400) {
+          _showBackToTopButton = true; // show the back-to-top button
+        } else {
+          _showBackToTopButton = false; // hide the back-to-top button
+        }
+      });
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (isScrollEnd(_scrollController)) {
+      context.read<ContestBloc>().add(MoreContestPostFetched());
+    }
+  }
+
+  void _scrollToTop() {
+    _scrollController.animateTo(0,
+        duration: const Duration(milliseconds: 200), curve: Curves.linear);
   }
 
   @override
@@ -50,11 +80,21 @@ class _ContestScreenState extends State<ContestScreen> {
           case ContestStatus.success:
             return Scaffold(
               backgroundColor: bgApp,
-              floatingActionButton: getUploadButton(),
+              floatingActionButton: _showBackToTopButton == false
+                  ? null
+                  : FloatingActionButton(
+                      backgroundColor: Colors.black87,
+                      onPressed: _scrollToTop,
+                      child: const Icon(
+                        Icons.arrow_upward_rounded,
+                        size: 30,
+                      ),
+                    ),
               body: SmartRefresher(
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 child: CustomScrollView(
+                  controller: _scrollController,
                   slivers: [
                     getAppBar(state),
                     state.topThreePost.isNotEmpty

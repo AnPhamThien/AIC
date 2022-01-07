@@ -2,15 +2,15 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
-import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
-import 'package:imagecaptioning/src/model/conversation/conversation.dart';
-import 'package:imagecaptioning/src/model/conversation/message.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
+import '../constanct/env.dart';
+import '../controller/auth/auth_bloc.dart';
+import '../controller/conversation/conversation_bloc.dart';
+import '../controller/get_it/get_it.dart';
+import '../controller/message/message_bloc.dart';
+import '../controller/notification/notification_bloc.dart';
+import '../model/conversation/conversation.dart';
+import '../model/conversation/message.dart';
+import '../prefs/app_prefs.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:signalr_core/signalr_core.dart';

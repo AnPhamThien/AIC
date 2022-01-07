@@ -1,13 +1,13 @@
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/conversation/message.dart';
-import 'package:imagecaptioning/src/repositories/conversation/conversation_repostitory.dart';
+import '../../constanct/error_message.dart';
+import '../../constanct/status_code.dart';
+import '../get_it/get_it.dart';
+import '../../model/conversation/message.dart';
+import '../../repositories/conversation/conversation_repostitory.dart';
 import 'package:stream_transform/stream_transform.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
+import '../../prefs/app_prefs.dart';
 
 part 'message_event.dart';
 part 'message_state.dart';

@@ -1,12 +1,16 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
-import 'package:imagecaptioning/src/model/contest/contest.dart';
-import 'package:imagecaptioning/src/model/contest/contest_data.dart';
-import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
-import 'package:imagecaptioning/src/model/post/post.dart';
-import 'package:imagecaptioning/src/repositories/contest/contest_repository.dart';
+import '../../constanct/error_message.dart';
+import '../../constanct/status_code.dart';
+import '../../model/contest/contest.dart';
+import '../../model/contest/contest_data.dart';
+import '../../model/contest/contest_post_respone.dart';
+import '../../model/contest/contest_respone.dart';
+import '../../model/post/post.dart';
+import '../../repositories/contest/contest_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'contest_event.dart';
@@ -14,7 +18,7 @@ part 'contest_state.dart';
 
 const _limitPost = 2;
 
-const throttleDuration = Duration(milliseconds: 10);
+const throttleDuration = Duration(milliseconds: 100);
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
   return (events, mapper) {
@@ -24,7 +28,10 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
 
 class ContestBloc extends Bloc<ContestEvent, ContestState> {
   ContestBloc() : super(const ContestState()) {
-    on<InitContestFetched>(_onContestInitial);
+    on<InitContestFetched>(_onContestInitial,
+        transformer: throttleDroppable(throttleDuration));
+    on<MoreContestPostFetched>(_fetchMorePost,
+        transformer: throttleDroppable(throttleDuration));
   }
 
   final ContestRepository _contestRepository = ContestRepository();
@@ -53,6 +60,36 @@ class ContestBloc extends Bloc<ContestEvent, ContestState> {
     } catch (_) {
       emit(state.copyWith(
           status: ContestStatus.failure, contest: event.contest));
+    }
+  }
+
+  void _fetchMorePost(
+      MoreContestPostFetched event, Emitter<ContestState> emit) async {
+    try {
+      if (state.hasReachMax == true) {
+        return;
+      }
+      final _dateBoundary = state.post.last.dateCreate;
+      final _contestId = state.contest!.id;
+      final ContestPostRespone _respone = await _contestRepository
+          .getMoreContestPost(_contestId, _limitPost, _dateBoundary.toString());
+      final List<Post>? _morePost = _respone.data;
+      if (_respone.messageCode == MessageCode.noPostToDisplay &&
+          _respone.statusCode == StatusCode.failStatus) {
+        emit(state.copyWith(hasReachMax: true));
+      } else if (_respone.statusCode == StatusCode.successStatus) {
+        emit(state.copyWith(
+          status: ContestStatus.success,
+          post: [...state.post, ..._morePost!],
+          hasReachMax: false,
+        ));
+        log(state.post.length.toString());
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (_) {
+      log(_.toString());
+      emit(state.copyWith(status: ContestStatus.failure));
     }
   }
 }

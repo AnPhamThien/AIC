@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart' hide Headers;
-import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
+import '../model/contest/contest_post_respone.dart';
+import '../model/contest/contest_respone.dart';
+import '../model/contest/user_in_contest_respone.dart';
 import '../constanct/env.dart';
 import '../model/conversation/conversation.dart';
 import '../model/generic/generic.dart';
@@ -174,5 +176,39 @@ abstract class RestClient {
   Future<ContestRespone> getInitContest(
     @Query('contest_id') String contestId,
     @Query('limitPost') int limitPost,
+  );
+
+  @GET('/contests/getmorecontestpost')
+  Future<ContestPostRespone> getMoreContestPost(
+      @Query('contest_id') String contestId,
+      @Query('limitPost') int limitPost,
+      @Query('dateboundary') String dateBoundary);
+
+  @GET('/contests/getuserincontest')
+  Future<UserInContestRespone> getUserInContest(
+    @Query('contest_id') String contestId,
+    @Query('limituser') int limitUser,
+  );
+
+  @GET('/contests/getuserincontest')
+  Future<UserInContestRespone> getMoreUserInContest(
+    @Query('contest_id') String contestId,
+    @Query('limituser') int limitUser,
+    @Query('date_boundary') String dateBoundary,
+  );
+
+  @GET('/contests/getsearchuserincontest')
+  Future<UserInContestRespone> getSearchUserInContest(
+    @Query('contest_id') String contestId,
+    @Query('limituser') int limitUser,
+    @Query('user_name') String username,
+  );
+
+  @GET('/contests/getmoresearchuserincontest')
+  Future<UserInContestRespone> getMoreSearchUserInContest(
+    @Query('contest_id') String contestId,
+    @Query('limituser') int limitUser,
+    @Query('user_name') String username,
+    @Query('date_boundary') String dateBoundary,
   );
 }

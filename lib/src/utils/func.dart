@@ -86,6 +86,7 @@ bool isScrollEnd(ScrollController scrollController) {
   return currentScroll >= (maxScroll * 0.9);
 }
 
+
 String timeCalculate(DateTime time) {
   final hourCount = DateTime.now().difference(time).inHours;
   String _calculatedTime;

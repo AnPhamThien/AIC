@@ -1,10 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/user/user_details.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/repositories/user/user_repository.dart';
+import '../../constanct/status_code.dart';
+import '../get_it/get_it.dart';
+import '../../model/user/user_details.dart';
+import '../../prefs/app_prefs.dart';
+import '../../repositories/user/user_repository.dart';
 
 part "profile_event.dart";
 part "profile_state.dart";

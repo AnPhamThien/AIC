@@ -9,8 +9,8 @@ import '../../model/user/user.dart';
 import '../../prefs/app_prefs.dart';
 import '../../repositories/auth/auth_repository.dart';
 
-import 'package:imagecaptioning/src/repositories/data_repository.dart';
-import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
+import '../../repositories/data_repository.dart';
+import '../../signalr/signalr_helper.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';

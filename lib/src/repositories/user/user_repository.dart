@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:imagecaptioning/src/model/generic/generic.dart';
-import 'package:imagecaptioning/src/model/user/user.dart';
-import 'package:imagecaptioning/src/model/user/user_details.dart';
-import 'package:imagecaptioning/src/repositories/data_repository.dart';
+import '../../model/generic/generic.dart';
+import '../../model/user/user.dart';
+import '../../model/user/user_details.dart';
+import '../data_repository.dart';
 
 abstract class UserBehavior {
   Future<AuthenticationResponseMessage?> login(

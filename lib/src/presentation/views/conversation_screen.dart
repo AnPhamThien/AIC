@@ -3,16 +3,16 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/conversation/conversation.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
+import '../../app/routes.dart';
+import '../../constanct/env.dart';
+import '../../controller/auth/auth_bloc.dart';
+import '../../controller/conversation/conversation_bloc.dart';
+import '../../controller/get_it/get_it.dart';
+import '../../model/conversation/conversation.dart';
+import '../../prefs/app_prefs.dart';
+import '../widgets/global_widgets.dart';
+import '../../signalr/signalr_helper.dart';
+import '../../utils/func.dart';
 
 class ConversationScreen extends StatefulWidget {
   const ConversationScreen({Key? key}) : super(key: key);

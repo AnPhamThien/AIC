@@ -12,3 +12,5 @@ class InitContestFetched extends ContestEvent {
 
   const InitContestFetched(this.contest);
 }
+
+class MoreContestPostFetched extends ContestEvent {}

@@ -544,6 +544,110 @@ class _RestClient implements RestClient {
     return value;
   }
 
+  @override
+  Future<ContestPostRespone> getMoreContestPost(
+      contestId, limitPost, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'contest_id': contestId,
+      r'limitPost': limitPost,
+      r'dateboundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ContestPostRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/contests/getmorecontestpost',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ContestPostRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UserInContestRespone> getUserInContest(contestId, limitUser) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'contest_id': contestId,
+      r'limituser': limitUser
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UserInContestRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/contests/getuserincontest',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = UserInContestRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UserInContestRespone> getMoreUserInContest(
+      contestId, limitUser, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'contest_id': contestId,
+      r'limituser': limitUser,
+      r'date_boundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UserInContestRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/contests/getuserincontest',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = UserInContestRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UserInContestRespone> getSearchUserInContest(
+      contestId, limitUser, username) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'contest_id': contestId,
+      r'limituser': limitUser,
+      r'user_name': username
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UserInContestRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/contests/getsearchuserincontest',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = UserInContestRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<UserInContestRespone> getMoreSearchUserInContest(
+      contestId, limitUser, username, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'contest_id': contestId,
+      r'limituser': limitUser,
+      r'user_name': username,
+      r'date_boundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<UserInContestRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/contests/getmoresearchuserincontest',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = UserInContestRespone.fromJson(_result.data!);
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

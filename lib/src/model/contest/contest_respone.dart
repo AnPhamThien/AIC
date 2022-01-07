@@ -29,7 +29,7 @@ class ContestRespone {
   factory ContestRespone.fromJson(Map<String, dynamic> json) => ContestRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: ContestData.fromJson(json["data"]),
+        data: json["data"] != null ? ContestData.fromJson(json["data"]) : null,
         total: json["total"],
         sunOfPages: json["sunOfPages"],
       );

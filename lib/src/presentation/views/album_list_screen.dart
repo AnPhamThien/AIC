@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
-import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import '../widgets/get_user_input_field.dart';
+import '../widgets/global_widgets.dart';
 
 class AlbumListScreen extends StatefulWidget {
   const AlbumListScreen({Key? key}) : super(key: key);

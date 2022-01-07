@@ -1,11 +1,10 @@
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
-import 'package:imagecaptioning/src/model/conversation/conversation.dart';
-import 'package:imagecaptioning/src/repositories/conversation/conversation_repostitory.dart';
+import '../../constanct/error_message.dart';
+import '../../constanct/status_code.dart';
+import '../../model/conversation/conversation.dart';
+import '../../repositories/conversation/conversation_repostitory.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 part 'conversation_event.dart';

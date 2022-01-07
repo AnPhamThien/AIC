@@ -47,5 +47,12 @@ class ContestState extends Equatable {
   }
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [
+        status,
+        post,
+        topThreePost,
+        contestPrizes,
+        totalParticipaters,
+        hasReachMax
+      ];
 }

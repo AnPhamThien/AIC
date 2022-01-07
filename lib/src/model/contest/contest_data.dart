@@ -1,4 +1,4 @@
-import 'package:imagecaptioning/src/model/post/post.dart';
+import '../post/post.dart';
 
 class ContestData {
   ContestData({

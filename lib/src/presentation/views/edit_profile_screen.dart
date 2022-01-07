@@ -5,10 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.dart';
-import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
-import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import '../../constanct/env.dart';
+import '../../controller/edit_profile/edit_profile_bloc.dart';
+import '../widgets/get_user_input_field.dart';
+import '../widgets/global_widgets.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);

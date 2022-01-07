@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
-import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
-import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import '../../app/routes.dart';
+import '../../constanct/env.dart';
+import '../../controller/auth/auth_bloc.dart';
+import '../theme/style.dart';
+import 'album_list_screen.dart';
+import '../widgets/global_widgets.dart';
+import '../../controller/profile/profile_bloc.dart';
 
 import 'gallery_page.dart';
 

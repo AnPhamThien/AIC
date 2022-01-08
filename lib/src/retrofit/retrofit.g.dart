@@ -156,15 +156,27 @@ class _RestClient implements RestClient {
       username, email, phone, desc, userRealName, avatarImg) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
     final _headers = <String, dynamic>{};
-    final _data = {
-      'user_name': username,
-      'user_email': email,
-      'phone': phone,
-      'description': desc,
-      'user_real_name': userRealName,
-      'avatar_img': avatarImg
-    };
+    final _data = FormData();
+    _data.fields.add(MapEntry('user_name', username));
+    _data.fields.add(MapEntry('user_email', email));
+    if (phone != null) {
+      _data.fields.add(MapEntry('phone', phone));
+    }
+    if (desc != null) {
+      _data.fields.add(MapEntry('description', desc));
+    }
+    if (userRealName != null) {
+      _data.fields.add(MapEntry('user_real_name', userRealName));
+    }
+    if (avatarImg != null) {
+      _data.files.add(MapEntry(
+          'avatar_img',
+          MultipartFile.fromFileSync(avatarImg.path,
+              filename: avatarImg.path.split(Platform.pathSeparator).last)));
+    }
+
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
@@ -541,6 +553,38 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = ContestRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> addFollow(followeeId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'followeeId': followeeId};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/follows/addfollow',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> deleteFollow(followeeId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'followeeId': followeeId};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/follows/deletefollow',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
     return value;
   }
 

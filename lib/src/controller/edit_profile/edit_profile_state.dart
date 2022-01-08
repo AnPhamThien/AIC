@@ -5,12 +5,12 @@ class EditProfileState {
   final String? avatarPath;
 
   final EditProfileStatus status;
-  bool imageSourceActionSheetIsVisible;
+  bool avatarChanged;
 
   EditProfileState({
     this.user,
     this.avatarPath,
-    this.imageSourceActionSheetIsVisible = false,
+    this.avatarChanged = false,
     this.status = const InitialStatus(),
   });
 
@@ -18,14 +18,13 @@ class EditProfileState {
     UserDetails? user,
     String? avatarPath,
     EditProfileStatus? status,
-    bool? imageSourceActionSheetIsVisible,
+    bool? avatarChanged,
   }) {
     return EditProfileState(
       user: user ?? this.user,
       avatarPath: avatarPath ?? this.avatarPath,
       status: status ?? this.status,
-      imageSourceActionSheetIsVisible: imageSourceActionSheetIsVisible ??
-          this.imageSourceActionSheetIsVisible,
+      avatarChanged: avatarChanged ?? this.avatarChanged,
     );
   }
 }
@@ -40,7 +39,7 @@ class InitialStatus extends EditProfileStatus {
 
 class FinishInitializing extends EditProfileStatus {}
 
-class ReachedMaxedStatus extends EditProfileStatus {}
+class EditProfileSuccess extends EditProfileStatus {}
 
 class ErrorStatus extends EditProfileStatus {
   final Exception exception;

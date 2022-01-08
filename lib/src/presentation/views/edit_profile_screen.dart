@@ -1,14 +1,17 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/constanct/env.dart';
 import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -53,6 +56,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               },
               child: BlocBuilder<EditProfileBloc, EditProfileState>(
                 builder: (context, state) {
+                  log(state.avatarPath.toString());
                   _usernameController.text = state.user?.userName ?? '';
                   _nameController.text = state.user?.userRealName ?? '';
                   _descController.text = state.user?.description ?? '';
@@ -71,11 +75,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             image: DecorationImage(
-                              image: state.user?.avataUrl != null
-                                  ? NetworkImage(avatarUrl +
-                                      state.user!.avataUrl.toString())
-                                  : const AssetImage("assets/images/Kroni.jpg")
-                                      as ImageProvider,
+                              image: state.avatarChanged
+                                  ? Image.file(
+                                          File((state.avatarPath.toString())))
+                                      .image
+                                  : state.avatarPath != null
+                                      ? NetworkImage(avatarUrl +
+                                          state.avatarPath.toString())
+                                      : const AssetImage(
+                                              "assets/images/Kroni.jpg")
+                                          as ImageProvider,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -85,7 +94,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               primary: Colors.blue,
                               textStyle: TextStyle(fontSize: 19.sp)),
                           child: const Text("Change profile picture"),
-                          onPressed: () {},
+                          onPressed: () => getUploadButton(),
                         ),
                         const SizedBox(
                           height: 20,
@@ -145,6 +154,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         ),
       ),
     );
+  }
+
+  void getUploadButton() {
+    final list = <PopupMenuEntry<int>>[];
+    list.add(
+      getUploadMenuItem(ImageSource.gallery, "Gallery", Icons.grid_on_rounded),
+    );
+    list.add(
+      const PopupMenuDivider(),
+    );
+    list.add(
+      getUploadMenuItem(
+          ImageSource.camera, "Camera", Icons.camera_enhance_outlined),
+    );
+    showMenu(
+        context: context,
+        position: const RelativeRect.fromLTRB(25, 25, 0, 0),
+        items: list);
   }
 
   Padding getUserDetail(
@@ -216,54 +243,79 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  void _showImageSourceActionSheet(BuildContext context) {
-    selectImageSource(ImageSource imageSource) =>
-        {context.read<EditProfileBloc>().add(OpenImagePicker(imageSource))};
-
-    if (Platform.isIOS) {
-      showCupertinoModalPopup(
-        context: context,
-        builder: (context) => CupertinoActionSheet(
-          actions: [
-            CupertinoActionSheetAction(
-              child: const Text('Camera'),
-              onPressed: () {
-                Navigator.pop(context);
-                selectImageSource(ImageSource.camera);
-              },
-            ),
-            CupertinoActionSheetAction(
-              child: const Text('Gallery'),
-              onPressed: () {
-                Navigator.pop(context);
-                selectImageSource(ImageSource.gallery);
-              },
-            )
-          ],
-        ),
-      );
-    } else {
-      showModalBottomSheet(
-        context: context,
-        builder: (context) => Wrap(children: [
-          ListTile(
-            leading: const Icon(Icons.camera_alt),
-            title: const Text('Camera'),
-            onTap: () {
-              Navigator.pop(context);
-              selectImageSource(ImageSource.camera);
-            },
+  PopupMenuItem<int> getUploadMenuItem(
+      ImageSource source, String label, IconData iconData) {
+    return PopupMenuItem(
+      onTap: () async {
+        final newAvatar = await pickAvatar(source, context);
+        if (newAvatar != null) {
+          context.read<EditProfileBloc>().add(ChangeAvatar(newAvatar.path));
+        }
+      },
+      textStyle: const TextStyle(
+          fontSize: 20, fontWeight: FontWeight.w400, color: Colors.black),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label),
+          Icon(
+            iconData,
+            color: Colors.black87,
+            size: 30,
           ),
-          ListTile(
-            leading: const Icon(Icons.photo_album),
-            title: const Text('Gallery'),
-            onTap: () {
-              Navigator.pop(context);
-              selectImageSource(ImageSource.gallery);
-            },
-          ),
-        ]),
-      );
-    }
+        ],
+      ),
+    );
   }
+
+  // void _showImageSourceActionSheet(BuildContext context) {
+  //   selectImageSource(ImageSource imageSource) =>
+  //       {context.read<EditProfileBloc>().add(OpenImagePicker(imageSource))};
+
+  //   if (Platform.isIOS) {
+  //     showCupertinoModalPopup(
+  //       context: context,
+  //       builder: (context) => CupertinoActionSheet(
+  //         actions: [
+  //           CupertinoActionSheetAction(
+  //             child: const Text('Camera'),
+  //             onPressed: () {
+  //               Navigator.pop(context);
+  //               selectImageSource(ImageSource.camera);
+  //             },
+  //           ),
+  //           CupertinoActionSheetAction(
+  //             child: const Text('Gallery'),
+  //             onPressed: () {
+  //               Navigator.pop(context);
+  //               selectImageSource(ImageSource.gallery);
+  //             },
+  //           )
+  //         ],
+  //       ),
+  //     );
+  //   } else {
+  //     showModalBottomSheet(
+  //       context: context,
+  //       builder: (context) => Wrap(children: [
+  //         ListTile(
+  //           leading: const Icon(Icons.camera_alt),
+  //           title: const Text('Camera'),
+  //           onTap: () {
+  //             Navigator.pop(context);
+  //             selectImageSource(ImageSource.camera);
+  //           },
+  //         ),
+  //         ListTile(
+  //           leading: const Icon(Icons.photo_album),
+  //           title: const Text('Gallery'),
+  //           onTap: () {
+  //             Navigator.pop(context);
+  //             selectImageSource(ImageSource.gallery);
+  //           },
+  //         ),
+  //       ]),
+  //     );
+  //   }
+  // }
 }

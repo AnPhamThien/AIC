@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/constanct/env.dart';
+
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
 
 class GalleryPage extends StatefulWidget {
   const GalleryPage({Key? key}) : super(key: key);
@@ -9,81 +14,60 @@ class GalleryPage extends StatefulWidget {
 
 class _GalleryPageState extends State<GalleryPage> {
   late OverlayEntry _popupDialog;
-  List<String> imageUrls = [
-    'assets/images/Gumba.jpg',
-    'assets/images/JOKERONI.jpg',
-    'assets/images/Kroni.jpg',
-    'assets/images/Veibae.jpeg',
-    'assets/images/Whut.jpg',
-    'assets/images/WTF.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-    'assets/images/Gumba.jpg',
-  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GridView.count(
-        mainAxisSpacing: 3,
-        crossAxisSpacing: 3,
-        crossAxisCount: 3,
-        childAspectRatio: 1.0,
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        List<Post> imageUrls = state.user?.posts ?? [];
+        return Scaffold(
+          body: GridView.count(
+            mainAxisSpacing: 3,
+            crossAxisSpacing: 3,
+            crossAxisCount: 3,
+            childAspectRatio: 1.0,
 
-        ///map ảnh vào listview
-        children: imageUrls.map(_createGridTileWidget).toList(),
-      ),
+            ///map ảnh vào listview
+            children: imageUrls.map(_createGridTileWidget).toList(),
+          ),
+        );
+      },
     );
   }
 
-  Widget _createGridTileWidget(String imgPath) => Builder(
+  Widget _createGridTileWidget(Post post) => Builder(
         builder: (context) => GestureDetector(
           onTap: () {},
           onLongPress: () {
-            _popupDialog = _createPopupDialog(imgPath);
+            _popupDialog = _createPopupDialog(post);
             Overlay.of(context)!.insert(_popupDialog);
           },
           onLongPressEnd: (details) => _popupDialog.remove(),
           child: Image(
-            image: AssetImage(imgPath),
+            image: post.imageUrl != null
+                ? NetworkImage(postImageUrl + post.imageUrl.toString())
+                : const AssetImage("assets/images/Kroni.jpg") as ImageProvider,
             fit: BoxFit.cover,
           ),
         ),
       );
 
-  OverlayEntry _createPopupDialog(String imgPath) {
+  OverlayEntry _createPopupDialog(Post post) {
     return OverlayEntry(
       builder: (context) => AnimatedDialog(
-        child: _createPopupContent(imgPath),
+        child: _createPopupContent(post),
       ),
     );
   }
 
-  Widget _createPhotoTitle(String username, imagePath) => Container(
+  Widget _createPhotoTitle(String username, String imagePath) => Container(
         width: double.infinity,
         color: Colors.white,
         child: ListTile(
           leading: CircleAvatar(
-            backgroundImage: AssetImage(imagePath),
+            backgroundImage: imagePath.isNotEmpty
+                ? NetworkImage(avatarUrl + imagePath.toString())
+                : const AssetImage("assets/images/Kroni.jpg") as ImageProvider,
           ),
           title: Text(
             username,
@@ -115,18 +99,21 @@ class _GalleryPageState extends State<GalleryPage> {
         ),
       );
 
-  Widget _createPopupContent(String imgPath) => Container(
+  Widget _createPopupContent(Post post) => Container(
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              _createPhotoTitle("thien__ann", "assets/images/Kroni.jpg"),
+              _createPhotoTitle(post.userName ?? '', post.avataUrl ?? ''),
               SizedBox(
                 width: double.infinity,
                 child: Image(
-                  image: AssetImage(imgPath),
+                  image: post.imageUrl != null
+                      ? NetworkImage(postImageUrl + post.imageUrl.toString())
+                      : const AssetImage("assets/images/Kroni.jpg")
+                          as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),

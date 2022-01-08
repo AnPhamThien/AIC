@@ -98,6 +98,7 @@ class SignalRHelper {
 
   Future<void> _handleGetMessage(List<dynamic>? parameters) async {
     try {
+      log(parameters.toString());
       if (parameters != null &&
           (conversationContext != null || messageContext != null)) {
         final data = parameters.first;
@@ -120,7 +121,9 @@ class SignalRHelper {
         }
 
         if (messageContext?.read<MessageBloc?>() != null) {
-          final message = Message.fromJson(data?['message']);
+          final message = (data?['message'] != null)
+              ? Message.fromJson(data?['message'])
+              : Message.fromJson(data);
           if (message.content != null) {
             message.content = utf8.decode(message.content!.runes.toList());
           }

@@ -6,18 +6,10 @@ class EditProfileInitializing extends EditProfileEvent {
   EditProfileInitializing();
 }
 
-class ChangeAvatarRequest extends EditProfileEvent {}
-
-class OpenImagePicker extends EditProfileEvent {
-  final ImageSource imageSource;
-
-  OpenImagePicker(this.imageSource);
-}
-
-class ProvideImagePath extends EditProfileEvent {
+class ChangeAvatar extends EditProfileEvent {
   final String avatarPath;
 
-  ProvideImagePath(this.avatarPath);
+  ChangeAvatar(this.avatarPath);
 }
 
 class SaveProfileChanges extends EditProfileEvent {

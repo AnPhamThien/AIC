@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,9 +23,10 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    bool isMe = context.read<ProfileBloc>().state.isCurrentUser;
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
+        bool isMe = state.isCurrentUser;
+        bool isFollow = (state.user?.isFollow == 1);
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: getProfileAppBar(state.user?.userName ?? '', isMe),
@@ -49,7 +52,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                 state.user?.userName,
                                 state.user?.avataUrl,
                                 state.user?.userRealName,
-                                state.user?.id)
+                                state.user?.id,
+                                isFollow)
                       ],
                     ),
                   ),
@@ -221,7 +225,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Row getFollowMessageButton(username, img, userRealName, userId) {
+  Row getFollowMessageButton(
+      username, img, userRealName, userId, bool isFollow) {
     Size size = MediaQuery.of(context).size;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -240,9 +245,9 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           onPressed: () {
-            //TODO function follow ở đây
+            context.read<ProfileBloc>().add(ProfileChangeFollowUser(userId));
           },
-          child: const Text("Follow"),
+          child: isFollow ? const Text("Unfollow") : const Text("Follow"),
         ),
         OutlinedButton(
           style: OutlinedButton.styleFrom(

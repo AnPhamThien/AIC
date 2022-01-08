@@ -8,33 +8,8 @@ class ProfileInitializing extends ProfileEvent {
   ProfileInitializing(this.userID);
 }
 
-class ChangeAvatarRequest extends ProfileEvent {}
+class ProfileChangeFollowUser extends ProfileEvent {
+  final String followeeID;
 
-class OpenImagePicker extends ProfileEvent {
-  final ImageSource imageSource;
-
-  OpenImagePicker(this.imageSource);
-}
-
-class ProvideImagePath extends ProfileEvent {
-  final String avatarPath;
-
-  ProvideImagePath(this.avatarPath);
-}
-
-class SaveProfileChanges extends ProfileEvent {
-  final String username;
-  final String desc;
-  final String email;
-  final String phone;
-  final String userRealName;
-  final String avatar;
-
-  SaveProfileChanges(
-      {required this.username,
-      required this.desc,
-      required this.email,
-      required this.phone,
-      required this.userRealName,
-      required this.avatar});
+  ProfileChangeFollowUser(this.followeeID);
 }

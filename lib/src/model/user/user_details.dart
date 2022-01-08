@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:imagecaptioning/src/model/post/post.dart';
+
 GetUserDetailsResponseMessage userMessageFromJson(String str) =>
     GetUserDetailsResponseMessage.fromJson(json.decode(str));
 
@@ -78,7 +80,7 @@ class UserDetails {
   dynamic description;
   String? userEmail;
   dynamic userRealName;
-  List<dynamic>? posts;
+  List<Post>? posts;
 
   factory UserDetails.fromJson(Map<String, dynamic> json) => UserDetails(
         id: json["id"],
@@ -92,7 +94,9 @@ class UserDetails {
         description: json["description"],
         userEmail: json["user_email"],
         userRealName: json["user_real_name"],
-        posts: List<dynamic>.from(json["posts"].map((x) => x)),
+        posts: json["posts"] != null
+            ? List<Post>.from(json["posts"].map((x) => Post.fromJson(x)))
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -120,7 +124,7 @@ class UserDetails {
     dynamic description,
     String? userEmail,
     dynamic userRealName,
-    List<dynamic>? posts,
+    List<Post>? posts,
   }) {
     return UserDetails(
         avataUrl: avataUrl ?? this.avataUrl,

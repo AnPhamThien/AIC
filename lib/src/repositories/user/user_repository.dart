@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
@@ -20,10 +22,10 @@ abstract class UserBehavior {
   Future<dynamic> updateUserProfile(
       {required String username,
       required String email,
-      required String phone,
-      required String desc,
-      required String userRealName,
-      required String avatarImg});
+      required String? phone,
+      required String? desc,
+      required String? userRealName,
+      required File? avatarImg});
 }
 
 class UserRepository extends UserBehavior {
@@ -152,10 +154,10 @@ class UserRepository extends UserBehavior {
   Future<dynamic> updateUserProfile(
       {required String username,
       required String email,
-      required String phone,
-      required String desc,
-      required String userRealName,
-      required String avatarImg}) async {
+      required String? phone,
+      required String? desc,
+      required String? userRealName,
+      required File? avatarImg}) async {
     try {
       final resMessage = await _dataRepository.updateUserProfile(
           username, email, phone, desc, userRealName, avatarImg);

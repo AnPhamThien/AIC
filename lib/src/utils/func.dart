@@ -78,6 +78,16 @@ Future pickImage(ImageSource source, BuildContext context) async {
   }
 }
 
+Future<XFile?> pickAvatar(ImageSource source, BuildContext context) async {
+  try {
+    final image = await ImagePicker().pickImage(source: source);
+    return image;
+  } on PlatformException catch (e) {
+    log('Failed to pick image: $e');
+  }
+  return null;
+}
+
 // scroll controller
 bool isScrollEnd(ScrollController scrollController) {
   if (!scrollController.hasClients) return false;

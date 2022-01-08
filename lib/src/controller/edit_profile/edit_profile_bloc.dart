@@ -1,11 +1,11 @@
+import 'dart:io';
+
 import 'package:bloc/bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/constanct/status_code.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/repositories/user/user_repository.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
 
 part 'edit_profile_event.dart';
 part 'edit_profile_state.dart';
@@ -15,11 +15,10 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       : _userRepository = UserRepository(),
         super(EditProfileState()) {
     on<EditProfileInitializing>(_onInitial);
-    //on<OpenImagePicker>(_onOpenImagePicker);
-    //on<SaveProfileChanges>(_onSaveProfileChanges);
+    on<ChangeAvatar>(_onChangeAvatar);
+    on<SaveProfileChanges>(_onSaveProfileChanges);
   }
   final UserRepository _userRepository;
-  final _picker = ImagePicker();
 
   void _onInitial(
     EditProfileInitializing event,
@@ -67,37 +66,52 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
   //   }
   // }
 
-  // void _onSaveProfileChanges(
-  //     SaveProfileChanges event, Emitter<ProfileState> emit) async {
-  //   try {
-  //     String username = event.username;
-  //     String email = event.email;
-  //     String phone = event.phone;
-  //     String desc = event.desc;
-  //     String userRealName = event.userRealName;
-  //     String avatarImg = event.avatar;
+  void _onChangeAvatar(
+      ChangeAvatar event, Emitter<EditProfileState> emit) async {
+    try {
+      String avatarImg = event.avatarPath;
 
-  //     final response = await _userRepository.updateUserProfile(
-  //         username: username,
-  //         email: email,
-  //         phone: phone,
-  //         desc: desc,
-  //         userRealName: userRealName,
-  //         avatarImg: avatarImg);
-  //     if (response == null) {
-  //       throw Exception("");
-  //     }
-  //     if (response is int) {
-  //       if (response == StatusCode.successStatus) {
-  //         emit(state.copyWith(status: ()));
-  //       } else {
-  //         throw Exception("");
-  //       }
-  //     } else {
-  //       throw Exception(response);
-  //     }
-  //   } on Exception catch (_) {
-  //     emit(state.copyWith(status: ErrorStatus(_)));
-  //   }
-  // }
+      if (avatarImg.isNotEmpty) {
+        emit(state.copyWith(avatarPath: avatarImg, avatarChanged: true));
+      } else {
+        throw Exception();
+      }
+    } on Exception catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_)));
+    }
+  }
+
+  void _onSaveProfileChanges(
+      SaveProfileChanges event, Emitter<EditProfileState> emit) async {
+    try {
+      String username = event.username.trim();
+      String email = event.email.trim();
+      String phone = event.phone.trim();
+      String desc = event.desc.trim();
+      String userRealName = event.userRealName.trim();
+      String avatarImg = event.avatar;
+
+      final response = await _userRepository.updateUserProfile(
+          username: username,
+          email: email,
+          phone: phone.isNotEmpty ? phone : null,
+          desc: desc.isNotEmpty ? desc : null,
+          userRealName: userRealName.isNotEmpty ? userRealName : null,
+          avatarImg: state.avatarChanged ? File(avatarImg) : null);
+      if (response == null) {
+        throw Exception("");
+      }
+      if (response is int) {
+        if (response == StatusCode.successStatus) {
+          emit(state.copyWith(status: EditProfileSuccess()));
+        } else {
+          throw Exception("");
+        }
+      } else {
+        throw Exception(response);
+      }
+    } on Exception catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_)));
+    }
+  }
 }

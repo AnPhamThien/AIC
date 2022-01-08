@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
 import '../constanct/env.dart';
@@ -61,13 +63,14 @@ abstract class RestClient {
   Future<GetResponseMessage> deleteRefreshJwtToken();
 
   @POST('/users/updateuserprofile')
+  @MultiPart()
   Future<GetResponseMessage> updateUserProfile(
-      @Field('user_name') String username,
-      @Field('user_email') String email,
-      @Field('phone') String phone,
-      @Field('description') String desc,
-      @Field('user_real_name') String userRealName,
-      @Field('avatar_img') String avatarImg);
+      @Part(value: 'user_name') String username,
+      @Part(value: 'user_email') String email,
+      @Part(value: 'phone') String? phone,
+      @Part(value: 'description') String? desc,
+      @Part(value: 'user_real_name') String? userRealName,
+      @Part(value: 'avatar_img') File? avatarImg);
 
   @GET('/notifications/getnotification')
   Future<GetNotificationResponseMessage> getNotification(
@@ -175,4 +178,11 @@ abstract class RestClient {
     @Query('contest_id') String contestId,
     @Query('limitPost') int limitPost,
   );
+
+  @POST('/follows/addfollow')
+  Future<GetResponseMessage> addFollow(@Field('followeeId') String followeeId);
+
+  @POST('/follows/deletefollow')
+  Future<GetResponseMessage> deleteFollow(
+      @Field('followeeId') String followeeId);
 }

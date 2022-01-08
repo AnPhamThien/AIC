@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
@@ -119,7 +120,7 @@ class DataRepository implements RestClient {
 
   @override
   Future<GetResponseMessage> updateUserProfile(String username, String email,
-      String phone, String desc, String userRealName, String avatarImg) {
+      String? phone, String? desc, String? userRealName, File? avatarImg) {
     return _client.updateUserProfile(
         username, email, phone, desc, userRealName, avatarImg);
   }
@@ -212,6 +213,7 @@ class DataRepository implements RestClient {
     return _client.deleteRefreshJwtToken();
   }
 
+  @override
   Future<ContestListRespone> getInactiveContestList(
       String? searchName, int limitContest, String? dateUp, String? dateDown) {
     return _client.getInactiveContestList(
@@ -235,5 +237,15 @@ class DataRepository implements RestClient {
   @override
   Future<ContestRespone> getInitContest(String contestId, int limitPost) {
     return _client.getInitContest(contestId, limitPost);
+  }
+
+  @override
+  Future<GetResponseMessage> addFollow(String followeeId) {
+    return _client.addFollow(followeeId);
+  }
+
+  @override
+  Future<GetResponseMessage> deleteFollow(String followeeId) {
+    return _client.deleteFollow(followeeId);
   }
 }

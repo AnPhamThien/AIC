@@ -1,11 +1,10 @@
 import 'package:bloc/bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
 import '../get_it/get_it.dart';
 import '../../model/user/user_details.dart';
 import '../../prefs/app_prefs.dart';
 import '../../repositories/user/user_repository.dart';
-import '../../utils/func.dart';
 
 part 'edit_profile_event.dart';
 part 'edit_profile_state.dart';

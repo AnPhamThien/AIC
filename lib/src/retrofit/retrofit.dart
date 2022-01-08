@@ -1,13 +1,18 @@
 import 'package:dio/dio.dart' hide Headers;
+import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
+import 'package:imagecaptioning/src/model/search/search_history_respone.dart';
+import 'package:imagecaptioning/src/model/search/search_respone.dart';
+import 'package:retrofit/retrofit.dart';
+
+import '../model/contest/contest_list_respone.dart';
 import '../model/contest/contest_post_respone.dart';
 import '../model/contest/contest_respone.dart';
 import '../model/contest/user_in_contest_respone.dart';
-import '../constanct/env.dart';
 import '../model/conversation/conversation.dart';
-import '../model/generic/generic.dart';
 import '../model/conversation/message.dart';
+import '../model/generic/generic.dart';
 import '../model/notification/notification.dart';
-import '../model/contest/contest_list_respone.dart';
 import '../model/post/post_add_comment_request.dart';
 import '../model/post/post_add_comment_respone.dart';
 import '../model/post/post_comment_like_respone.dart';
@@ -16,7 +21,6 @@ import '../model/post/post_list_request.dart';
 import '../model/post/post_list_respone.dart';
 import '../model/user/user.dart';
 import '../model/user/user_details.dart';
-import 'package:retrofit/retrofit.dart';
 
 part 'retrofit.g.dart';
 
@@ -130,13 +134,6 @@ abstract class RestClient {
     @Query('date_dow') String? dateDown,
   );
 
-  @GET('/posts/getpostdetailver2')
-  Future<ContestListRespone> getPostDetail(
-    @Query('post_id') String postId,
-    @Query('limitComment') int limitComment,
-    @Query('contest_id') String? contestId,
-  );
-
   @GET('/posts/getpostcommentandlikeInit')
   Future<PostCommentLikeRespone> getInitPostLikeComment(
     @Query('commentPerPage') int commentPerPage,
@@ -190,7 +187,7 @@ abstract class RestClient {
     @Query('limituser') int limitUser,
   );
 
-  @GET('/contests/getuserincontest')
+  @GET('/contests/getmoreuserincontest')
   Future<UserInContestRespone> getMoreUserInContest(
     @Query('contest_id') String contestId,
     @Query('limituser') int limitUser,
@@ -210,5 +207,30 @@ abstract class RestClient {
     @Query('limituser') int limitUser,
     @Query('user_name') String username,
     @Query('date_boundary') String dateBoundary,
+  );
+  @GET('/searchhistories/getsearchhistory')
+  Future<SearchHistoryRespone> getSearchHistory(
+    @Query('limit') int limit,
+  );
+  @GET('/searchhistories/getmoresearchhistory')
+  Future<SearchHistoryRespone> getMoreSearchHistory(
+      @Query('limit') int limit, @Query('date_boundary') String dateBoundary);
+
+  @GET('/posts/getpostdetailver2')
+  Future<PostDetailRespone> getPostDetail(
+    @Query('post_id') String postId,
+    @Query('contest_id') String contestId,
+  );
+
+  @GET('/users/searchuser')
+  Future<SearchRespone> searchUser(
+    @Query('limituser') int limitUser,
+    @Query('name') String name,
+  );
+  @GET('/users/searchuserpage')
+  Future<SearchRespone> moreSearchUser(
+    @Query('date_boundary') String dateBoundary,
+    @Query('limituser') int limitUser,
+    @Query('name') String name,
   );
 }

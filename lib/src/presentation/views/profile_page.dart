@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import '../../app/routes.dart';
-import '../../constanct/env.dart';
 import '../../controller/auth/auth_bloc.dart';
 import '../theme/style.dart';
 import 'album_list_screen.dart';

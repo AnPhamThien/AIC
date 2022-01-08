@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import '../../constanct/env.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import '../../controller/get_it/get_it.dart';
 import '../../controller/message/message_bloc.dart';
 import '../../model/conversation/message.dart';

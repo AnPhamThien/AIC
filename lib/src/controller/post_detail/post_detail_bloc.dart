@@ -3,7 +3,9 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
-import '../../constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
+import 'package:stream_transform/stream_transform.dart';
+
 import '../../model/post/comment.dart';
 import '../../model/post/post.dart';
 import '../../model/post/post_add_comment_request.dart';
@@ -11,7 +13,7 @@ import '../../model/post/post_add_comment_respone.dart';
 import '../../model/post/post_comment_like_data.dart';
 import '../../model/post/post_comment_list_respone.dart';
 import '../../repositories/post/post_repository.dart';
-import 'package:stream_transform/stream_transform.dart';
+
 part 'post_detail_event.dart';
 part 'post_detail_state.dart';
 

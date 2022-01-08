@@ -397,28 +397,6 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<ContestListRespone> getPostDetail(
-      postId, limitComment, contestId) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{
-      r'post_id': postId,
-      r'limitComment': limitComment,
-      r'contest_id': contestId
-    };
-    queryParameters.removeWhere((k, v) => v == null);
-    final _headers = <String, dynamic>{};
-    final _data = <String, dynamic>{};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<ContestListRespone>(
-            Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/posts/getpostdetailver2',
-                    queryParameters: queryParameters, data: _data)
-                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = ContestListRespone.fromJson(_result.data!);
-    return value;
-  }
-
-  @override
   Future<PostCommentLikeRespone> getInitPostLikeComment(
       commentPerPage, postId) async {
     const _extra = <String, dynamic>{};
@@ -598,7 +576,7 @@ class _RestClient implements RestClient {
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<UserInContestRespone>(
             Options(method: 'GET', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/contests/getuserincontest',
+                .compose(_dio.options, '/contests/getmoreuserincontest',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = UserInContestRespone.fromJson(_result.data!);
@@ -645,6 +623,100 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = UserInContestRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SearchHistoryRespone> getSearchHistory(limit) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'limit': limit};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SearchHistoryRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/searchhistories/getsearchhistory',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SearchHistoryRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SearchHistoryRespone> getMoreSearchHistory(limit, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limit': limit,
+      r'date_boundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SearchHistoryRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/searchhistories/getmoresearchhistory',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SearchHistoryRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<PostDetailRespone> getPostDetail(postId, contestId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'post_id': postId,
+      r'contest_id': contestId
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<PostDetailRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/getpostdetailver2',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = PostDetailRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SearchRespone> searchUser(limitUser, name) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limituser': limitUser,
+      r'name': name
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SearchRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/searchuser',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SearchRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<SearchRespone> moreSearchUser(
+      dateBoundary, limitUser, name) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'date_boundary': dateBoundary,
+      r'limituser': limitUser,
+      r'name': name
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<SearchRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/searchuserpage',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = SearchRespone.fromJson(_result.data!);
     return value;
   }
 

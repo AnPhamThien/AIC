@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import '../../app/routes.dart';
-import '../../constanct/env.dart';
 import '../../controller/auth/auth_bloc.dart';
 import '../../controller/get_it/get_it.dart';
 import '../../model/post/post.dart';

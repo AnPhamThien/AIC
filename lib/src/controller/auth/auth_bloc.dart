@@ -1,16 +1,17 @@
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
+
 import '../../app/routes.dart';
-import '../../constanct/status_code.dart';
-import 'authentication_status.dart';
-import '../get_it/get_it.dart';
 import '../../model/user/user.dart';
 import '../../prefs/app_prefs.dart';
 import '../../repositories/auth/auth_repository.dart';
-
 import '../../repositories/data_repository.dart';
 import '../../signalr/signalr_helper.dart';
+import '../get_it/get_it.dart';
+import 'authentication_status.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -39,7 +40,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       authen = true;
     }
     if (authen) {
-      navigatorKey.currentState!.pushNamed(event.route, arguments: event.args);
+      navigatorKey.currentState!.pushNamed(
+        event.route,
+        arguments: event.args,
+      );
     }
   }
 

@@ -3,15 +3,16 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
-import '../../constanct/error_message.dart';
-import '../../constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
+import 'package:stream_transform/stream_transform.dart';
+
 import '../../model/contest/contest.dart';
 import '../../model/contest/contest_data.dart';
 import '../../model/contest/contest_post_respone.dart';
 import '../../model/contest/contest_respone.dart';
 import '../../model/post/post.dart';
 import '../../repositories/contest/contest_repository.dart';
-import 'package:stream_transform/stream_transform.dart';
 
 part 'contest_event.dart';
 part 'contest_state.dart';

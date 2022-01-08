@@ -3,16 +3,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../constanct/env.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
+
 import '../../controller/contest/contest_bloc.dart';
 import '../../model/contest/contest.dart';
 import '../../model/post/post.dart';
+import '../../utils/func.dart';
 import '../error/something_went_wrong.dart';
-import '../widgets/post_widgets.dart';
 import '../theme/style.dart';
 import '../widgets/global_widgets.dart';
-import '../../utils/func.dart';
-import 'package:pull_to_refresh/pull_to_refresh.dart';
+import '../widgets/post_widgets.dart';
 
 class ContestScreen extends StatefulWidget {
   const ContestScreen({Key? key, required this.contest}) : super(key: key);
@@ -26,7 +29,7 @@ class ContestScreen extends StatefulWidget {
 class _ContestScreenState extends State<ContestScreen> {
   late Contest _contest;
   bool _showBackToTopButton = false;
-  
+
   final _scrollController = ScrollController();
 
   final RefreshController _refreshController =
@@ -282,16 +285,24 @@ class _ContestScreenState extends State<ContestScreen> {
                 ],
               ),
             ),
-            //* description
+
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 15,
               ),
-              child: Text(
-                "Participant: $totalParticipaters",
-                style: TextStyle(color: Colors.black87, fontSize: 18.sp),
+              child: GestureDetector(
+                onTap: () {
+                  Map<String, dynamic> args = {'contestId': contest.id};
+                  context.read<AuthBloc>().add(NavigateToPageEvent(
+                      route: AppRouter.contestUserScreen, args: args));
+                },
+                child: Text(
+                  "Participant: $totalParticipaters",
+                  style: TextStyle(color: Colors.black87, fontSize: 18.sp),
+                ),
               ),
             ),
+            //* description
             Container(
               width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),

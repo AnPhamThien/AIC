@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/contest_user/contest_user_bloc.dart';
+import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/contest_user_screen.dart';
 import '../controller/contest/contest_bloc.dart';
 import '../controller/contest_list/contest_list_bloc.dart';
 import '../controller/conversation/conversation_bloc.dart';
@@ -46,6 +49,7 @@ class AppRouter {
   static const String contestListScreen = '/contestlistscreen';
   static const String postDetailScreen = '/postdetailscreen';
   static const String contestScreen = '/contestscreen';
+  static const String contestUserScreen = '/contestuserscreen';
   // final ProfileBloc currentUSerProfileBloc = ProfileBloc(true)
   //   ..add(ProfileInitializing(''));
 
@@ -103,7 +107,10 @@ class AppRouter {
                   create: (context) =>
                       ProfileBloc(true)..add(ProfileInitializing(''))),
               BlocProvider(
-                  create: (context) => HomeBloc()..add(InitPostFetched()))
+                  create: (context) => HomeBloc()..add(InitPostFetched())),
+              BlocProvider(
+                  create: (context) =>
+                      SearchBloc()..add(InitSearchHistoryFetched())),
             ],
             child: const RootScreen(),
           ),
@@ -188,6 +195,16 @@ class AppRouter {
                       ContestBloc()..add(InitContestFetched(arg['contest'])),
                   child: ContestScreen(
                     contest: arg['contest'],
+                  ),
+                ));
+      case contestUserScreen:
+        final arg = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => ContestUserBloc()
+                    ..add(InitContestUserFetched(arg['contestId'])),
+                  child: ContestUserScreen(
+                    contestId: arg['contestId'],
                   ),
                 ));
       default:

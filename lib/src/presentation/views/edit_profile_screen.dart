@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../constanct/env.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import '../../controller/edit_profile/edit_profile_bloc.dart';
 import '../widgets/get_user_input_field.dart';
 import '../widgets/global_widgets.dart';

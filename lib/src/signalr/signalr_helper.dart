@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
-import '../constanct/env.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import '../controller/auth/auth_bloc.dart';
 import '../controller/conversation/conversation_bloc.dart';
 import '../controller/get_it/get_it.dart';

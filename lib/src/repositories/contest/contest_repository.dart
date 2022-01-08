@@ -1,5 +1,7 @@
 import 'dart:developer';
 
+import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
+
 import '../../model/contest/contest_post_respone.dart';
 import '../../model/contest/contest_respone.dart';
 import '../../model/contest/user_in_contest_respone.dart';
@@ -29,6 +31,7 @@ abstract class ContestBehavior {
       String contestId, int limitUser, String username);
   Future<UserInContestRespone> getUserInContest(
       String contestId, int limitUser);
+  Future<PostDetailRespone> getPostDetail(String postId, String contestId);
 }
 
 class ContestRepository extends ContestBehavior {
@@ -170,6 +173,18 @@ class ContestRepository extends ContestBehavior {
     UserInContestRespone respone = UserInContestRespone();
     try {
       respone = await _dataRepository.getUserInContest(contestId, limitUser);
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<PostDetailRespone> getPostDetail(
+      String postId, String contestId) async {
+    PostDetailRespone respone = PostDetailRespone();
+    try {
+      respone = await _dataRepository.getPostDetail(postId, contestId);
     } catch (e) {
       log(e.toString());
     }

@@ -244,11 +244,6 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<ContestRespone> getInitContest(String contestId, int limitPost) {
-    return _client.getInitContest(contestId, limitPost);
-  }
-
-  @override
   Future<GetResponseMessage> addFollow(String followeeId) {
     return _client.addFollow(followeeId);
   }

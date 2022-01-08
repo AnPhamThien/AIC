@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
-import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/model/search/search_data.dart';
 import 'package:imagecaptioning/src/model/search/search_history_data.dart';

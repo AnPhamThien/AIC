@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';

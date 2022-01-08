@@ -3,33 +3,28 @@ part of "profile_bloc.dart";
 class ProfileState {
   final UserDetails? user;
   final bool isCurrentUser;
-  //final String? avatarPath;
 
   final ProfileStatus status;
-  bool imageSourceActionSheetIsVisible;
+  bool isFollow;
 
   ProfileState({
     this.user,
     required this.isCurrentUser,
-    //String? avatarPath,
-    this.imageSourceActionSheetIsVisible = false,
+    this.isFollow = false,
     this.status = const InitialStatus(),
   });
 
   ProfileState copyWith({
     UserDetails? user,
     bool? isCurrentUser,
-    //String? avatarPath,
     ProfileStatus? status,
-    bool? imageSourceActionSheetIsVisible,
+    bool? isFollow,
   }) {
     return ProfileState(
       user: user ?? this.user,
       isCurrentUser: this.isCurrentUser,
-      //avatarPath: avatarPath ?? this.avatarPath,
       status: status ?? this.status,
-      imageSourceActionSheetIsVisible: imageSourceActionSheetIsVisible ??
-          this.imageSourceActionSheetIsVisible,
+      isFollow: isFollow ?? this.isFollow,
     );
   }
 }

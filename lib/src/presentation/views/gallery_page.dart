@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';

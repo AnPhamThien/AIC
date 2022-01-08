@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,7 +12,7 @@ import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
-import 'package:imagecaptioning/src/presentation/views/search_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/search_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 
@@ -38,28 +39,48 @@ class _RootScreenState extends State<RootScreen> {
           context.read<AuthBloc>().add(ForceLogoutEvent());
         }
       },
-      child: Scaffold(
-        body: Theme(
-          child: getBody(),
-          data: Theme.of(context).copyWith(
-            dividerTheme:
-                const DividerThemeData(color: Colors.grey, thickness: 0.65),
+      child: CupertinoTabScaffold(
+          tabBar: CupertinoTabBar(
+            onTap: (index) {
+              if (index != 2) {
+                setState(() {
+                  indexPage = index;
+                });
+              }
+            },
+            items: List.generate(
+              icons.length,
+              (index) {
+                if (index != 2) {
+                  return BottomNavigationBarItem(
+                    icon: SvgPicture.asset(
+                      indexPage == index
+                          ? icons[index]['active']!
+                          : icons[index]['inactive']!,
+                      width: 27,
+                      height: 27,
+                      color: Colors.black87,
+                    ),
+                  );
+                }
+                return BottomNavigationBarItem(
+                    icon: Material(child: getUploadButton()));
+              },
+            ),
           ),
-        ),
-        bottomNavigationBar: getBottomNavigationBar(),
-      ),
+          tabBuilder: (context, index) => getBody()),
     );
   }
 
   Widget getBody() {
     return IndexedStack(
       index: indexPage,
-      children: const [
-        HomePage(),
-        SearchScreen(),
-        SizedBox(),
-        NotificationPage(),
-        ProfilePage(),
+      children: [
+        CupertinoTabView(builder: (context) => const HomePage()),
+        CupertinoTabView(builder: (context) => const SearchPage()),
+        const SizedBox(),
+        CupertinoTabView(builder: (context) => const NotificationPage()),
+        const ProfilePage(),
       ],
     );
   }

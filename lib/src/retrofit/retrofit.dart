@@ -1,10 +1,10 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
-import 'package:imagecaptioning/src/constant/env.dart';
-import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
-import 'package:imagecaptioning/src/model/search/search_history_respone.dart';
-import 'package:imagecaptioning/src/model/search/search_respone.dart';
+import '../constant/env.dart';
+import '../model/post/post_detail_respone.dart';
+import '../model/search/search_history_respone.dart';
+import '../model/search/search_respone.dart';
 import 'package:retrofit/retrofit.dart';
 
 import '../model/contest/contest_list_respone.dart';

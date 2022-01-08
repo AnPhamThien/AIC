@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
@@ -26,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         bool isMe = state.isCurrentUser;
-        bool isFollow = (state.user?.isFollow == 1);
+        bool isFollow = state.isFollow;
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: getProfileAppBar(state.user?.userName ?? '', isMe),

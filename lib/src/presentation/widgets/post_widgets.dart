@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';

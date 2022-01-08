@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/controller/auth/authentication_status.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';

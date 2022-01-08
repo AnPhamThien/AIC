@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/conversation/message.dart';
 import 'package:imagecaptioning/src/repositories/conversation/conversation_repostitory.dart';
@@ -177,7 +177,6 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
 
       if (message != null) {
         final currentList = state.messageList ?? [];
-
         currentList.insert(0, message);
 
         emit(state.copyWith(

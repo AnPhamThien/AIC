@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
@@ -42,7 +42,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
       if (userRes.statusCode == StatusCode.successStatus &&
           userRes.data != null) {
-        emit(state.copyWith(user: userRes.data, status: FinishInitializing()));
+        emit(state.copyWith(
+            user: userRes.data,
+            isFollow: (userRes.data?.isFollow == 1),
+            status: FinishInitializing()));
       } else {
         throw Exception(userRes.messageCode);
       }
@@ -59,15 +62,22 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       String followeeId = event.followeeID;
 
       if (!state.isCurrentUser) {
-        final resMessage =
-            await _followRepository.addFollow(followeeId: followeeId);
+        final resMessage;
+        if (!state.isFollow) {
+          resMessage =
+              await _followRepository.addFollow(followeeId: followeeId);
+        } else {
+          resMessage =
+              await _followRepository.deleteFollow(followeeId: followeeId);
+        }
 
         if (resMessage == null) {
           throw Exception("");
         }
         if (resMessage is int) {
           if (resMessage == StatusCode.successStatus) {
-            emit(state.copyWith(status: FinishInitializing()));
+            emit(state.copyWith(
+                isFollow: !state.isFollow, status: FinishInitializing()));
           } else {
             throw Exception("");
           }

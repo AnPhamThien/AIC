@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:imagecaptioning/src/constanct/env.dart';
-import 'package:imagecaptioning/src/constanct/error_message.dart';
-import 'package:imagecaptioning/src/constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/model/notification/notification.dart';
 import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
 import 'package:stream_transform/stream_transform.dart';

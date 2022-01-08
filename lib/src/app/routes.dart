@@ -46,6 +46,7 @@ class AppRouter {
   static const String contestListScreen = '/contestlistscreen';
   static const String postDetailScreen = '/postdetailscreen';
   static const String contestScreen = '/contestscreen';
+  static const String contestUserScreen = '/contestuserscreen';
   // final ProfileBloc currentUSerProfileBloc = ProfileBloc(true)
   //   ..add(ProfileInitializing(''));
 
@@ -103,7 +104,10 @@ class AppRouter {
                   create: (context) =>
                       ProfileBloc(true)..add(ProfileInitializing(''))),
               BlocProvider(
-                  create: (context) => HomeBloc()..add(InitPostFetched()))
+                  create: (context) => HomeBloc()..add(InitPostFetched())),
+              BlocProvider(
+                  create: (context) =>
+                      SearchBloc()..add(InitSearchHistoryFetched())),
             ],
             child: const RootScreen(),
           ),
@@ -188,6 +192,16 @@ class AppRouter {
                       ContestBloc()..add(InitContestFetched(arg['contest'])),
                   child: ContestScreen(
                     contest: arg['contest'],
+                  ),
+                ));
+      case contestUserScreen:
+        final arg = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) => ContestUserBloc()
+                    ..add(InitContestUserFetched(arg['contestId'])),
+                  child: ContestUserScreen(
+                    contestId: arg['contestId'],
                   ),
                 ));
       default:

@@ -8,7 +8,6 @@ import '../../model/post/post_comment_like_respone.dart';
 import '../../model/post/post_comment_list_respone.dart';
 import '../../model/post/post_list_request.dart';
 import '../../model/post/post_list_respone.dart';
-
 import '../data_repository.dart';
 
 abstract class PostBehavior {

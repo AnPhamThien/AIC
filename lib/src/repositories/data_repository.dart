@@ -2,9 +2,14 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
-import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
-import '../constanct/env.dart';
-import '../constanct/error_message.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
+import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
+import 'package:imagecaptioning/src/model/search/search_history_respone.dart';
+import 'package:imagecaptioning/src/model/search/search_respone.dart';
+import '../model/contest/contest_post_respone.dart';
+import '../model/contest/contest_respone.dart';
+import '../model/contest/user_in_contest_respone.dart';
 import '../controller/get_it/get_it.dart';
 import '../model/conversation/conversation.dart';
 import '../model/generic/generic.dart';
@@ -165,9 +170,8 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<ContestListRespone> getPostDetail(
-      String postId, int limitComment, String? contestId) {
-    return _client.getPostDetail(postId, limitComment, contestId);
+  Future<PostDetailRespone> getPostDetail(String postId, String contestId) {
+    return _client.getPostDetail(postId, contestId);
   }
 
   @override
@@ -221,6 +225,11 @@ class DataRepository implements RestClient {
   }
 
   @override
+  Future<ContestRespone> getInitContest(String contestId, int limitPost) {
+    return _client.getInitContest(contestId, limitPost);
+  }
+
+  @override
   Future<ContestListRespone> getMoreActiveContestList(String? searchName,
       int limitContest, String dateBoundary, String? dateUp, String? dateDown) {
     return _client.getMoreActiveContestList(
@@ -247,5 +256,57 @@ class DataRepository implements RestClient {
   @override
   Future<GetResponseMessage> deleteFollow(String followeeId) {
     return _client.deleteFollow(followeeId);
+  }
+
+  Future<ContestPostRespone> getMoreContestPost(
+      String contestId, int limitPost, String dateBoundary) {
+    return _client.getMoreContestPost(contestId, limitPost, dateBoundary);
+  }
+
+  @override
+  Future<UserInContestRespone> getMoreSearchUserInContest(
+      String contestId, int limitUser, String username, String dateBoundary) {
+    return _client.getMoreSearchUserInContest(
+        contestId, limitUser, username, dateBoundary);
+  }
+
+  @override
+  Future<UserInContestRespone> getMoreUserInContest(
+      String contestId, int limitUser, String dateBoundary) {
+    return _client.getMoreUserInContest(contestId, limitUser, dateBoundary);
+  }
+
+  @override
+  Future<UserInContestRespone> getSearchUserInContest(
+      String contestId, int limitUser, String username) {
+    return _client.getSearchUserInContest(contestId, limitUser, username);
+  }
+
+  @override
+  Future<UserInContestRespone> getUserInContest(
+      String contestId, int limitUser) {
+    return _client.getUserInContest(contestId, limitUser);
+  }
+
+  @override
+  Future<SearchHistoryRespone> getSearchHistory(int limit) {
+    return _client.getSearchHistory(limit);
+  }
+
+  @override
+  Future<SearchHistoryRespone> getMoreSearchHistory(
+      int limit, String dateBoundary) {
+    return _client.getMoreSearchHistory(limit, dateBoundary);
+  }
+
+  @override
+  Future<SearchRespone> moreSearchUser(
+      String dateBoundary, int limitUser, String name) {
+    return _client.moreSearchUser(dateBoundary, limitUser, name);
+  }
+
+  @override
+  Future<SearchRespone> searchUser(int limitUser, String name) {
+    return _client.searchUser(limitUser, name);
   }
 }

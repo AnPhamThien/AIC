@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../constanct/env.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
+
 import '../../controller/post_detail/post_detail_bloc.dart';
 import '../../model/post/comment.dart';
 import '../../model/post/post.dart';
+import '../../utils/func.dart';
 import '../theme/style.dart';
 import '../widgets/post_widgets.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../utils/func.dart';
 
 class PostDetailScreen extends StatefulWidget {
   const PostDetailScreen({Key? key}) : super(key: key);

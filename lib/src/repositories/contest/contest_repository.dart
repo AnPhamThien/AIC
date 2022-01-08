@@ -1,7 +1,10 @@
 import 'dart:developer';
 
-import 'package:imagecaptioning/src/model/contest/contest_data.dart';
-import 'package:imagecaptioning/src/model/contest/contest_respone.dart';
+import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
+
+import '../../model/contest/contest_post_respone.dart';
+import '../../model/contest/contest_respone.dart';
+import '../../model/contest/user_in_contest_respone.dart';
 
 import '../../model/contest/contest.dart';
 import '../../model/contest/contest_list_respone.dart';
@@ -18,6 +21,17 @@ abstract class ContestBehavior {
   Future<List<Contest>?> getMoreInactiveContestList(String? searchName,
       int limitContest, String dateBoundary, String? dateUp, String? dateDown);
   Future<ContestRespone> getInitContest(String contestId, int limitPost);
+  Future<ContestPostRespone> getMoreContestPost(
+      String contestId, int limitPost, String dateBoundary);
+  Future<UserInContestRespone> getMoreSearchUserInContest(
+      String contestId, int limitUser, String username, String dateBoundary);
+  Future<UserInContestRespone> getMoreUserInContest(
+      String contestId, int limitUser, String dateBoundary);
+  Future<UserInContestRespone> getSearchUserInContest(
+      String contestId, int limitUser, String username);
+  Future<UserInContestRespone> getUserInContest(
+      String contestId, int limitUser);
+  Future<PostDetailRespone> getPostDetail(String postId, String contestId);
 }
 
 class ContestRepository extends ContestBehavior {
@@ -94,6 +108,83 @@ class ContestRepository extends ContestBehavior {
     try {
       respone = await _dataRepository.getInitContest(contestId, limitPost);
       return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<ContestPostRespone> getMoreContestPost(
+      String contestId, int limitPost, String dateBoundary) async {
+    ContestPostRespone respone = ContestPostRespone();
+    try {
+      respone = await _dataRepository.getMoreContestPost(
+          contestId, limitPost, dateBoundary);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<UserInContestRespone> getMoreSearchUserInContest(String contestId,
+      int limitUser, String username, String dateBoundary) async {
+    UserInContestRespone respone = UserInContestRespone();
+    try {
+      respone = await _dataRepository.getMoreSearchUserInContest(
+          contestId, limitUser, username, dateBoundary);
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<UserInContestRespone> getMoreUserInContest(
+      String contestId, int limitUser, String dateBoundary) async {
+    UserInContestRespone respone = UserInContestRespone();
+    try {
+      respone = await _dataRepository.getMoreUserInContest(
+          contestId, limitUser, dateBoundary);
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<UserInContestRespone> getSearchUserInContest(
+      String contestId, int limitUser, String username) async {
+    UserInContestRespone respone = UserInContestRespone();
+    try {
+      respone = await _dataRepository.getSearchUserInContest(
+          contestId, limitUser, username);
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<UserInContestRespone> getUserInContest(
+      String contestId, int limitUser) async {
+    UserInContestRespone respone = UserInContestRespone();
+    try {
+      respone = await _dataRepository.getUserInContest(contestId, limitUser);
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<PostDetailRespone> getPostDetail(
+      String postId, String contestId) async {
+    PostDetailRespone respone = PostDetailRespone();
+    try {
+      respone = await _dataRepository.getPostDetail(postId, contestId);
     } catch (e) {
       log(e.toString());
     }

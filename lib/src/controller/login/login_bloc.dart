@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import '../../constanct/status_code.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
 import '../auth/form_submission_status.dart';
 import '../get_it/get_it.dart';
 import '../../model/user/user.dart';

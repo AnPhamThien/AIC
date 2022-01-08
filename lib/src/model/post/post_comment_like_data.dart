@@ -13,8 +13,10 @@ class PostCommentLikeData {
 
   factory PostCommentLikeData.fromJson(Map<String, dynamic> json) =>
       PostCommentLikeData(
-        comments: List<Comment>.from(
-            json["comments"].map((x) => Comment.fromJson(x))),
+        comments: json["comments"] != null
+            ? List<Comment>.from(
+                json["comments"].map((x) => Comment.fromJson(x)))
+            : null,
         totalLike: json["totalLike"],
         totalComment: json["totalComment"],
       );

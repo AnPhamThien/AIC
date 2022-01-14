@@ -37,6 +37,7 @@ abstract class RestClient {
     @Field('Username') String userName,
     @Field('Password') String passWord,
   );
+
   @POST('/users/registrationdefault')
   Future<RegisterDefaultResponseMessage> registerDefault(
       @Field('user_name') String username,
@@ -46,13 +47,22 @@ abstract class RestClient {
   @POST('/users/activationaccount')
   Future<GetResponseMessage> activateAccount(
       @Field('code') String code, @Field('user_id') String userID);
+
   @POST('/users/regeneratecodeforregisaccount')
   Future<GetResponseMessage> regenerateCodeForRegister(
       @Field('userID') String userID);
 
   @POST('/users/generateresetpasswordcode')
-  Future<GetResponseMessage> regenerateResetPasswordCode(
+  Future<GetResponseMessage> generateResetPasswordCode(
       @Field('user_email') String email);
+
+  @POST('/users/validresetpasswordcode')
+  Future<GetResponseMessage> validateResetPasswordCode(
+      @Field('code') String code, @Field('user_id') String userId);
+
+  @POST('/users/resetpassword')
+  Future<GetResponseMessage> resetPassword(
+      @Field('Id') String userId, @Field('user_password') String password);
 
   @GET('/users/getuserdetail')
   Future<GetUserDetailsResponseMessage> getUserDetail(
@@ -184,6 +194,7 @@ abstract class RestClient {
   @POST('/follows/deletefollow')
   Future<GetResponseMessage> deleteFollow(
       @Field('followeeId') String followeeId);
+
   @GET('/contests/getmorecontestpost')
   Future<ContestPostRespone> getMoreContestPost(
       @Query('contest_id') String contestId,
@@ -217,10 +228,12 @@ abstract class RestClient {
     @Query('user_name') String username,
     @Query('date_boundary') String dateBoundary,
   );
+
   @GET('/searchhistories/getsearchhistory')
   Future<SearchHistoryRespone> getSearchHistory(
     @Query('limit') int limit,
   );
+
   @GET('/searchhistories/getmoresearchhistory')
   Future<SearchHistoryRespone> getMoreSearchHistory(
       @Query('limit') int limit, @Query('date_boundary') String dateBoundary);
@@ -236,6 +249,7 @@ abstract class RestClient {
     @Query('limituser') int limitUser,
     @Query('name') String name,
   );
+
   @GET('/users/searchuserpage')
   Future<SearchRespone> moreSearchUser(
     @Query('date_boundary') String dateBoundary,

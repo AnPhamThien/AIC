@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
@@ -71,10 +69,10 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
                   (message == MessageCode.noMessageToDisplay) ? true : false));
 
           if (data.isNotEmpty) {
-            if (data.last.userId != getIt<AppPref>().getUserID &&
-                data.last.messageId != null) {
+            if (data.first.userId != getIt<AppPref>().getUserID &&
+                data.first.messageId != null) {
               await _conversationRepository.updateIsSeenMessage(
-                  messageId: data.last.messageId!);
+                  messageId: data.first.messageId!);
             }
           }
         } else {

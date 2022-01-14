@@ -16,9 +16,14 @@ abstract class UserBehavior {
   Future<dynamic> activateAccount(
       {required String userID, required String code});
   Future<dynamic> regenerateCodeForRegister({required String userID});
+  Future<GetResponseMessage?> generateResetPasswordCode(
+      {required String email});
+  Future<dynamic> validateResetPasswordCode(
+      {required String code, required String userId});
+  Future<dynamic> resetPassword(
+      {required String userId, required String password});
   Future<GetUserDetailsResponseMessage?> getUserDetail(
       {required String userID, required int limitPost});
-  Future<dynamic> regenerateResetPasswordCode({required String email});
   Future<dynamic> updateUserProfile(
       {required String username,
       required String email,
@@ -113,6 +118,49 @@ class UserRepository extends UserBehavior {
   }
 
   @override
+  Future<dynamic> validateResetPasswordCode(
+      {required String code, required String userId}) async {
+    try {
+      final resMessage =
+          await _dataRepository.validateResetPasswordCode(code, userId);
+      final response = resMessage.messageCode ?? resMessage.statusCode;
+
+      return response;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
+          final response = resMessage.messageCode;
+          return response;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<dynamic> resetPassword(
+      {required String userId, required String password}) async {
+    try {
+      final resMessage = await _dataRepository.resetPassword(userId, password);
+      final response = resMessage.messageCode ?? resMessage.statusCode;
+
+      return response;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
+          final response = resMessage.messageCode;
+          return response;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
   Future<GetUserDetailsResponseMessage?> getUserDetail(
       {required String userID, required int limitPost}) async {
     try {
@@ -131,19 +179,17 @@ class UserRepository extends UserBehavior {
   }
 
   @override
-  Future<dynamic> regenerateResetPasswordCode({required String email}) async {
+  Future<GetResponseMessage?> generateResetPasswordCode(
+      {required String email}) async {
     try {
-      final resMessage =
-          await _dataRepository.regenerateResetPasswordCode(email);
-      final response = resMessage.messageCode ?? resMessage.statusCode;
-      return response;
+      final resMessage = await _dataRepository.generateResetPasswordCode(email);
+      return resMessage;
     } catch (e) {
       if (e is DioError) {
         if (e.response != null) {
           GetResponseMessage resMessage =
               GetResponseMessage.fromJson(e.response!.data);
-          final response = resMessage.messageCode;
-          return response;
+          return resMessage;
         }
       }
       return null;

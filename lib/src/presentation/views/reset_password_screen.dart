@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import '../../app/routes.dart';
 import '../theme/style.dart';
 import '../widgets/get_user_input_field.dart';
@@ -55,7 +57,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       ),
       child: TextButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(AppRouter.loginScreen);
+          context
+              .read<AuthBloc>()
+              .add(NavigateToPageEvent(route: AppRouter.loginScreen));
         },
         child: RichText(
           text: const TextSpan(
@@ -132,7 +136,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 actions: <Widget>[
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamed(AppRouter.loginScreen);
+                      context.read<AuthBloc>().add(
+                          NavigateToPageEvent(route: AppRouter.loginScreen));
                     },
                     child: const Text(
                       'OK',

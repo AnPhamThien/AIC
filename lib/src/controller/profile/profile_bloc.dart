@@ -62,7 +62,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       String followeeId = event.followeeID;
 
       if (!state.isCurrentUser) {
-        final resMessage;
+        dynamic resMessage;
         if (!state.isFollow) {
           resMessage =
               await _followRepository.addFollow(followeeId: followeeId);

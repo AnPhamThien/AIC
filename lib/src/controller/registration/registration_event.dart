@@ -11,9 +11,3 @@ class RegistrationSubmitted extends RegistrationEvent {
   final String password;
   final String email;
 }
-
-class VerificationSubmitted extends RegistrationEvent {
-  const VerificationSubmitted(this.code);
-
-  final String code;
-}

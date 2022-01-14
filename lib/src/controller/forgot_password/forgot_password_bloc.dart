@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
-import '../auth/form_submission_status.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
 import '../../repositories/user/user_repository.dart';
 
 part 'forgot_password_event.dart';
@@ -24,14 +24,22 @@ class ForgotPasswordBloc
       String email = event.email;
 
       final response =
-          await _userRepository.regenerateResetPasswordCode(email: email);
-      if (response is String) {
-        String error = MessageCode.errorMap[response] ?? "Something went wrong";
-        throw Exception(error);
+          await _userRepository.generateResetPasswordCode(email: email);
+      if (response == null) {
+        throw Exception('');
       }
-      emit(state.copyWith(formStatus: FormSubmissionSuccess()));
+
+      int status = response.statusCode ?? 0;
+      String data = response.data ?? '';
+
+      if (status == StatusCode.successStatus && data.isNotEmpty) {
+        emit(state.copyWith(formStatus: FormSubmissionSuccess(), userId: data));
+      } else {
+        String message = response.messageCode ?? "";
+        throw Exception(message);
+      }
     } on Exception catch (_) {
-      emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
+      emit(state.copyWith(formStatus: ErrorStatus(_)));
     }
   }
 }

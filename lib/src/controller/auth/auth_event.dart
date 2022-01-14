@@ -7,7 +7,8 @@ abstract class AuthEvent {
 class NavigateToPageEvent extends AuthEvent {
   String route;
   Map<String, dynamic>? args;
-  NavigateToPageEvent({required this.route, this.args});
+  void Function()? function;
+  NavigateToPageEvent({required this.route, this.args, this.function});
 }
 
 class AuthenticateEvent extends AuthEvent {

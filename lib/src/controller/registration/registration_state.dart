@@ -2,14 +2,29 @@ part of 'registration_bloc.dart';
 
 class RegistrationState {
   RegistrationState({
-    this.formStatus = const InitialFormStatus(),
+    this.formStatus = const InitialStatus(),
   });
 
-  final FormSubmissionStatus formStatus;
+  final RegistrationStatus formStatus;
 
   RegistrationState copyWith({
-    FormSubmissionStatus? formStatus,
+    RegistrationStatus? formStatus,
   }) {
     return RegistrationState(formStatus: formStatus ?? this.formStatus);
   }
+}
+
+abstract class RegistrationStatus {
+  const RegistrationStatus();
+}
+
+class InitialStatus extends RegistrationStatus {
+  const InitialStatus();
+}
+
+class FormSubmissionSuccess extends RegistrationStatus {}
+
+class ErrorStatus extends RegistrationStatus {
+  final Exception exception;
+  ErrorStatus(this.exception);
 }

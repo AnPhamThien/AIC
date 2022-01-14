@@ -29,7 +29,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
           previous.formStatus != current.formStatus,
       listener: (context, state) {
         final status = state.formStatus;
-        if (status is FormSubmissionFailed) {
+        if (status is ErrorStatus) {
           //TODO: show error using status.exception.toString();
           String errorMessage = getErrorMessage(status.exception.toString());
         } else if (state.formStatus is FormSubmissionSuccess) {
@@ -57,7 +57,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     context
                         .read<AuthBloc>()
                         .add(NavigateToPageEvent(route: AppRouter.loginScreen));
-                    //Navigator.of(context).pushNamed(AppRouter.loginScreen);
                   },
                   child: const Text(
                     'OK',
@@ -113,7 +112,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
           context
               .read<AuthBloc>()
               .add(NavigateToPageEvent(route: AppRouter.loginScreen));
-          //Navigator.of(context).pushNamed(AppRouter.loginScreen);
         },
         child: RichText(
           text: const TextSpan(

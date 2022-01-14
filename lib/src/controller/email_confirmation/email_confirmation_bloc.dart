@@ -6,16 +6,17 @@ import '../get_it/get_it.dart';
 import '../../prefs/app_prefs.dart';
 import '../../repositories/user/user_repository.dart';
 
-part 'verification_event.dart';
-part 'verification_state.dart';
+part 'email_confirmation_event.dart';
+part 'email_confirmation_state.dart';
 
-class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
-  VerificationBloc()
+class EmailConfirmationBloc
+    extends Bloc<EmailConfirmationEvent, EmailConfirmationState> {
+  EmailConfirmationBloc(String userId)
       : _userRepository = UserRepository(),
         //_ticker = Ticker(_onTick);
-        super(VerificationState()) {
-    on<VerificationSubmitted>(_onSubmitted);
-    on<VerificationResendButtonPushed>(_onResendButtonPushed);
+        super(EmailConfirmationState(userId: userId)) {
+    on<EmailConfirmationSubmitted>(_onSubmitted);
+    on<EmailConfirmationResendButtonPushed>(_onResendButtonPushed);
   }
 
   final UserRepository _userRepository;
@@ -25,8 +26,8 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
   StreamSubscription<int>? _tickerSubscription;
 
   void _onSubmitted(
-    VerificationSubmitted event,
-    Emitter<VerificationState> emit,
+    EmailConfirmationSubmitted event,
+    Emitter<EmailConfirmationState> emit,
   ) async {
     try {
       String code = event.code;
@@ -47,8 +48,8 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
   }
 
   void _onResendButtonPushed(
-    VerificationResendButtonPushed event,
-    Emitter<VerificationState> emit,
+    EmailConfirmationResendButtonPushed event,
+    Emitter<EmailConfirmationState> emit,
   ) async {
     try {
       String userID = getIt<AppPref>().getUserID;
@@ -71,7 +72,7 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
     }
   }
 
-  void _onStarted(TimerStarted event, Emitter<VerificationState> emit) {
+  void _onStarted(TimerStarted event, Emitter<EmailConfirmationState> emit) {
     _tickerSubscription?.cancel();
     //_ticker.start();
 
@@ -79,7 +80,7 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
     //   .listen((duration) => add(TimerTicked(duration: duration)));
   }
 
-  void _onTicked(TimerTicked event, Emitter<VerificationState> emit) {}
+  void _onTicked(TimerTicked event, Emitter<EmailConfirmationState> emit) {}
 
   void _onTick(Duration duration) {}
 }

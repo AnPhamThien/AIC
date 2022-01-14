@@ -60,7 +60,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         throw Exception(messageCode);
       }
     } on Exception catch (_) {
-      emit(state.copyWith(formStatus: FormSubmissionFailed(_)));
+      emit(state.copyWith(formStatus: ErrorStatus(_)));
     }
   }
 }

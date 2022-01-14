@@ -5,12 +5,14 @@ import 'package:imagecaptioning/src/controller/contest_list/contest_list_bloc.da
 import 'package:imagecaptioning/src/controller/contest_user/contest_user_bloc.dart';
 import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
 import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.dart';
+import 'package:imagecaptioning/src/controller/email_confirmation/email_confirmation_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
 import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
 import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
+import 'package:imagecaptioning/src/controller/reset_password/reset_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
@@ -50,8 +52,6 @@ class AppRouter {
   static const String postDetailScreen = '/postdetailscreen';
   static const String contestScreen = '/contestscreen';
   static const String contestUserScreen = '/contestuserscreen';
-  // final ProfileBloc currentUSerProfileBloc = ProfileBloc(true)
-  //   ..add(ProfileInitializing(''));
 
   static const List<String> noAuthNeededScreens = [
     loginScreen,
@@ -91,8 +91,12 @@ class AppRouter {
           ),
         );
       case emailConfirmScreen:
+        final args = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (context) => const EmailConfirmationScreen(),
+          builder: (context) => BlocProvider(
+            create: (context) => EmailConfirmationBloc(args['userId']),
+            child: const EmailConfirmationScreen(),
+          ),
         );
       case rootScreen:
         return MaterialPageRoute(
@@ -117,8 +121,10 @@ class AppRouter {
         );
       case resetPasswordScreen:
         return MaterialPageRoute(
-          builder: (context) => const ResetPasswordScreen(),
-        );
+            builder: (context) => BlocProvider(
+                  create: (context) => ResetPasswordBloc(),
+                  child: const ResetPasswordScreen(),
+                ));
       case currentUserProfileScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
@@ -128,11 +134,11 @@ class AppRouter {
           ),
         );
       case otherUserProfileScreen:
-        final userId = routeSettings.arguments as Map<String, dynamic>;
+        final args = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                ProfileBloc(false)..add(ProfileInitializing(userId['userId'])),
+                ProfileBloc(false)..add(ProfileInitializing(args['userId'])),
             child: const ProfilePage(),
           ),
         );
@@ -162,12 +168,14 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) => MessageBloc()
-                    ..add(FetchMessage(
-                        args['conversationId'],
-                        args['avatar'],
-                        args['username'],
-                        args['userRealName'],
-                        args['otherUserId'])),
+                    ..add(
+                      FetchMessage(
+                          args['conversationId'],
+                          args['avatar'],
+                          args['username'],
+                          args['userRealName'],
+                          args['otherUserId']),
+                    ),
                   child: const MessageScreen(),
                 ));
       case contestListScreen:

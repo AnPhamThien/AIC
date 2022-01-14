@@ -113,8 +113,19 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<GetResponseMessage> regenerateResetPasswordCode(String email) {
-    return _client.regenerateResetPasswordCode(email);
+  Future<GetResponseMessage> generateResetPasswordCode(String email) {
+    return _client.generateResetPasswordCode(email);
+  }
+
+  @override
+  Future<GetResponseMessage> validateResetPasswordCode(
+      String code, String userId) {
+    return _client.validateResetPasswordCode(code, userId);
+  }
+
+  @override
+  Future<GetResponseMessage> resetPassword(String userId, String password) {
+    return _client.resetPassword(userId, password);
   }
 
   @override

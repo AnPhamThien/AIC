@@ -56,7 +56,9 @@ class _ConversationScreenState extends State<ConversationScreen> {
         titleSpacing: 0,
       ),
       body: BlocListener<ConversationBloc, ConversationState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          // TODO: implement listener
+        },
         child: SafeArea(
           child: BlocBuilder<ConversationBloc, ConversationState>(
             builder: (context, state) {
@@ -100,7 +102,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
           "avatar": img,
           "conversationId": conversationId,
           "userRealName": userRealName,
-          "otherUserId": otherUserId
+          "otherUserId": otherUserId,
         };
         context.read<AuthBloc>().add(
             NavigateToPageEvent(route: AppRouter.messageScreen, args: args));

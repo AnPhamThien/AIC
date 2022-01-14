@@ -79,7 +79,9 @@ Future pickImage(ImageSource source, BuildContext context) async {
 
 Future<XFile?> pickAvatar(ImageSource source, BuildContext context) async {
   try {
-    final image = await ImagePicker().pickImage(source: source);
+    final image = await ImagePicker()
+        .pickImage(source: source, maxHeight: 100, maxWidth: 100);
+
     return image;
   } on PlatformException catch (e) {
     log('Failed to pick image: $e');
@@ -94,7 +96,6 @@ bool isScrollEnd(ScrollController scrollController) {
   final currentScroll = scrollController.offset;
   return currentScroll >= (maxScroll * 0.9);
 }
-
 
 String timeCalculate(DateTime time) {
   final hourCount = DateTime.now().difference(time).inHours;

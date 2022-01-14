@@ -4,7 +4,6 @@ import 'package:imagecaptioning/src/constant/error_message.dart';
 
 import '../../app/routes.dart';
 import '../../controller/auth/auth_bloc.dart';
-import '../../controller/auth/form_submission_status.dart';
 import '../../controller/login/login_bloc.dart';
 import '../../utils/func.dart';
 import '../../utils/validations.dart';
@@ -36,7 +35,7 @@ class LoginScreenState extends State<LoginScreen> {
         }
         if (status is FormSubmissionSuccess) {
           context.read<AuthBloc>().add(AuthenticateEvent(state.user));
-        } else if (status is FormSubmissionFailed) {
+        } else if (status is ErrorStatus) {
           _isLogin = false;
           String errorMessage = getErrorMessage(status.exception.toString());
           if (errorMessage ==

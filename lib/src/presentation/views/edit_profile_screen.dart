@@ -10,6 +10,7 @@ import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.da
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -50,101 +51,110 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             child: BlocListener<EditProfileBloc, EditProfileState>(
               listener: (context, state) {
-                // TODO: implement listener
+                if (state.status is EditProfileSuccess) {
+                  Navigator.pop(context, () {
+                    setState(() {});
+                  });
+                }
               },
               child: BlocBuilder<EditProfileBloc, EditProfileState>(
                 builder: (context, state) {
-                  log(state.avatarPath.toString());
-                  _usernameController.text = state.user?.userName ?? '';
-                  _nameController.text = state.user?.userRealName ?? '';
-                  _descController.text = state.user?.description ?? '';
-                  _emailController.text = state.user?.userEmail ?? '';
-                  _phoneController.text = state.user?.phone ?? '';
-                  return Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        Container(
-                          height: 100.h,
-                          width: 100.h,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: state.avatarChanged
-                                  ? Image.file(
-                                          File((state.avatarPath.toString())))
-                                      .image
-                                  : state.avatarPath != null
-                                      ? NetworkImage(avatarUrl +
-                                          state.avatarPath.toString())
-                                      : const AssetImage(
-                                              "assets/images/Kroni.jpg")
-                                          as ImageProvider,
-                              fit: BoxFit.cover,
+                  if (state.status is FinishInitializing) {
+                    _usernameController.text = state.user?.userName ?? '';
+                    _nameController.text = state.user?.userRealName ?? '';
+                    _descController.text = state.user?.description ?? '';
+                    _emailController.text = state.user?.userEmail ?? '';
+                    _phoneController.text = state.user?.phone ?? '';
+                    if (state.user?.avataUrl != null) {
+                      NetworkImage provider = NetworkImage(
+                          avatarUrl + state.user!.avataUrl.toString());
+                      provider.evict();
+                    }
+
+                    return Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Container(
+                            height: 100.h,
+                            width: 100.h,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                image: state.avatarChanged
+                                    ? Image.file(
+                                            File((state.avatarPath.toString())))
+                                        .image
+                                    : state.avatarPath != null
+                                        ? NetworkImage(avatarUrl +
+                                            state.avatarPath.toString())
+                                        : const AssetImage(
+                                                "assets/images/Kroni.jpg")
+                                            as ImageProvider,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                           ),
-                        ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              primary: Colors.blue,
-                              textStyle: TextStyle(fontSize: 19.sp)),
-                          child: const Text("Change profile picture"),
-                          onPressed: () => getUploadButton(),
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        //username
-                        GetUserInput(
-                          controller: _usernameController,
-                          label: "Username",
-                          //initValue: state.user?.userName ?? '',
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        //name
-                        GetUserInput(
-                          controller: _nameController,
-                          label: "Name",
-                          //initValue: state.user?.userRealName ?? '',
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        //bio
-                        GetUserInput(
-                          controller: _descController,
-                          label: "Bio",
-                          //initValue: state.user?.description ?? '',
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        //Email
-                        GetUserInput(
-                          controller: _emailController,
-                          label: "Email",
-                          //initValue: state.user?.userEmail ?? '',
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        //Phone
-                        GetUserInput(
-                          controller: _phoneController,
-                          label: "Phone",
-                          //initValue: state.user?.phone ?? '',
-                        ),
-                        const SizedBox(
-                          height: 20,
-                        ),
-                      ],
-                    ),
-                  );
+                          TextButton(
+                            style: TextButton.styleFrom(
+                                primary: Colors.blue,
+                                textStyle: TextStyle(fontSize: 19.sp)),
+                            child: const Text("Change profile picture"),
+                            onPressed: () => getUploadButton(),
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          //username
+                          GetUserInput(
+                            controller: _usernameController,
+                            label: "Username",
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          //name
+                          GetUserInput(
+                            controller: _nameController,
+                            label: "Name",
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          //bio
+                          GetUserInput(
+                            controller: _descController,
+                            label: "Bio",
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          //Email
+                          GetUserInput(
+                            controller: _emailController,
+                            label: "Email",
+                            validator: Validation.emailValidation,
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                          //Phone
+                          GetUserInput(
+                            controller: _phoneController,
+                            label: "Phone",
+                          ),
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        ],
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
                 },
               ),
             ),
@@ -209,7 +219,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               size: 35,
             ),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, () {
+                setState(() {});
+              });
             },
           );
         },
@@ -227,7 +239,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     desc: _descController.value.text,
                     userRealName: _nameController.value.text,
                     avatar: state.avatarPath ?? ''));
-                Navigator.pop(context);
               },
               icon: const Icon(
                 Icons.done_rounded,

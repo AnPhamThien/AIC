@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/email_confirmation/email_confirmation_bloc.dart';
 
 import '../../app/routes.dart';
 import '../theme/style.dart';
@@ -25,19 +28,24 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.black12,
-        body: SingleChildScrollView(
-          child: Container(
-            height: size.height,
-            width: size.width,
-            padding: EdgeInsets.symmetric(horizontal: size.width * .07),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                getEmailConfirmationHeadline(),
-                getEmailConfirmationForm(),
-                getLoginButton(),
-              ],
+        body: BlocListener<EmailConfirmationBloc, EmailConfirmationState>(
+          listener: (context, state) {
+            // TODO: implement listener
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              height: size.height,
+              width: size.width,
+              padding: EdgeInsets.symmetric(horizontal: size.width * .07),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  getEmailConfirmationHeadline(),
+                  getEmailConfirmationForm(),
+                  getLoginButton(),
+                ],
+              ),
             ),
           ),
         ),
@@ -56,7 +64,9 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
       ),
       child: TextButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(AppRouter.loginScreen);
+          context
+              .read<AuthBloc>()
+              .add(NavigateToPageEvent(route: AppRouter.loginScreen));
         },
         child: RichText(
           text: const TextSpan(
@@ -143,7 +153,7 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
           ),
           //Resend button
           AbsorbPointer(
-            absorbing: true,
+            absorbing: false,
             child: TextButton(
               onPressed: () {
                 // Navigator.push(

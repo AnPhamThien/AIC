@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
@@ -37,7 +39,14 @@ class _GalleryPageState extends State<GalleryPage> {
 
   Widget _createGridTileWidget(Post post) => Builder(
         builder: (context) => GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Map<String, dynamic> args = {'post': post};
+
+            context.read<AuthBloc>().add(NavigateToPageEvent(
+                  route: AppRouter.postDetailScreen,
+                  args: args,
+                ));
+          },
           onLongPress: () {
             _popupDialog = _createPopupDialog(post);
             Overlay.of(context)!.insert(_popupDialog);

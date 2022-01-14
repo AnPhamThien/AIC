@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 import '../../app/routes.dart';
 import '../theme/style.dart';
 import '../widgets/get_user_input_field.dart';
@@ -11,6 +15,9 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final _emailController = TextEditingController();
+  final _formKey = GlobalKey<FormFieldState>();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -23,19 +30,30 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.black12,
-        body: SingleChildScrollView(
-          child: Container(
-            height: size.height,
-            width: size.width,
-            padding: EdgeInsets.symmetric(horizontal: size.width * .07),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                getForgotPasswordHeadline(),
-                getForgotPasswordForm(),
-                getLoginButton(),
-              ],
+        body: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
+          listener: (context, state) {
+            if (state.formStatus is FormSubmissionSuccess) {
+              Map<String, dynamic> args = {
+                "userId": state.userId,
+              };
+              context.read<AuthBloc>().add(NavigateToPageEvent(
+                  route: AppRouter.emailConfirmScreen, args: args));
+            }
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              height: size.height,
+              width: size.width,
+              padding: EdgeInsets.symmetric(horizontal: size.width * .07),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  getForgotPasswordHeadline(),
+                  getForgotPasswordForm(),
+                  getLoginButton(),
+                ],
+              ),
             ),
           ),
         ),
@@ -54,7 +72,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       ),
       child: TextButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(AppRouter.loginScreen);
+          context
+              .read<AuthBloc>()
+              .add(NavigateToPageEvent(route: AppRouter.loginScreen));
         },
         child: RichText(
           text: const TextSpan(
@@ -89,17 +109,21 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           const SizedBox(
             height: 10,
           ),
-          const GetUserInput(
+          GetUserInput(
             label: 'Email',
             hint: 'Your account email',
             isPassword: false,
+            controller: _emailController,
+            validator: Validation.emailValidation,
           ),
           const SizedBox(
             height: 30,
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(AppRouter.emailConfirmScreen);
+              context
+                  .read<ForgotPasswordBloc>()
+                  .add(ForgotPasswordSubmitted(_emailController.value.text));
             },
             style: TextButton.styleFrom(
                 fixedSize: Size(size.width * .94, 55),

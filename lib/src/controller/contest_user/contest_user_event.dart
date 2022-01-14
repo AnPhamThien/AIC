@@ -21,11 +21,7 @@ class SearchContestUserFetched extends ContestUserEvent {
 
 class FetchMoreContestUser extends ContestUserEvent {}
 
-class FetchMoreSearchContestUser extends ContestUserEvent {
-  final String searchName;
-
-  const FetchMoreSearchContestUser(this.searchName);
-}
+class FetchMoreSearchContestUser extends ContestUserEvent {}
 
 class PostFromUserFetched extends ContestUserEvent {
   final String postId;

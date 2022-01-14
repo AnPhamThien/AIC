@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
+import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
 import '../constant/env.dart';
 import '../model/post/post_detail_respone.dart';
 import '../model/search/search_history_respone.dart';
@@ -255,5 +256,14 @@ abstract class RestClient {
     @Query('date_boundary') String dateBoundary,
     @Query('limituser') int limitUser,
     @Query('name') String name,
+  );
+
+  @POST('/searchhistories/addsearchhistory')
+  Future<GetResponseMessage> addSearchHistory(
+    @Field('user_id') String userId,
+  );
+  @POST('/searchhistories/deletehistory')
+  Future<GetResponseMessage> deleteSearchHistory(
+    @Field('user_id') String userId,
   );
 }

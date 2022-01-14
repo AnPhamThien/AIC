@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import '../presentation/views/upload_page.dart';
 
@@ -26,6 +27,13 @@ Map<String, dynamic> parseJwt(String token) {
   }
 
   return payloadMap;
+}
+
+ImageProvider<Object> getImg(String? imgUrl) {
+  if (imgUrl != null) {
+    return NetworkImage(avatarUrl + imgUrl);
+  }
+  return const AssetImage("assets/images/avatar_placeholder.png");
 }
 
 String _decodeBase64(String str) {

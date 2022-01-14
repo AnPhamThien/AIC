@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
+import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/search/search_data.dart';
 import 'package:imagecaptioning/src/model/search/search_history_data.dart';
 import 'package:imagecaptioning/src/model/search/search_history_respone.dart';
@@ -20,7 +24,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-const _paging = 10;
+const _paging = 2;
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc() : super(const SearchState()) {
@@ -40,9 +44,53 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       _fetchMoreSearch,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<AddSearchHistory>(
+      _addSearchHistory,
+      transformer: throttleDroppable(throttleDuration),
+    );
+    on<DeleteSearchHistory>(
+      _deleteSearchHistory,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
   final SearchRepository _searchRepository = SearchRepository();
+
+  void _addSearchHistory(
+    AddSearchHistory event,
+    Emitter<SearchState> emit,
+  ) async {
+    try {
+      String _userId = event.userId;
+      final GetResponseMessage _respone =
+          await _searchRepository.addSearchHistory(_userId);
+      if (_respone.statusCode == StatusCode.successStatus) {
+        add(InitSearchHistoryFetched());
+      } else {
+        throw Exception(_respone.statusCode);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  void _deleteSearchHistory(
+    DeleteSearchHistory event,
+    Emitter<SearchState> emit,
+  ) async {
+    try {
+      String _userId = event.user.userId!;
+      final GetResponseMessage _respone =
+          await _searchRepository.deleteSearchHistory(_userId);
+      if (_respone.statusCode == StatusCode.successStatus) {
+        add(InitSearchHistoryFetched());
+      } else {
+        throw Exception(_respone.statusCode);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 
   void _initSearchHistoryFetched(
       InitSearchHistoryFetched event, Emitter<SearchState> emit) async {
@@ -69,7 +117,30 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   void _fetchMoreSearchHistory(
       FetchMoreSearchHistory event, Emitter<SearchState> emit) async {
-    try {} catch (_) {
+    try {
+      if (state.hasReachMaxHistoryList == true) {
+        return;
+      }
+      final _dateBoundary = state.searchHistoryList.last.dateSearch.toString();
+      final SearchHistoryRespone _respone =
+          await _searchRepository.getMoreSearchHistory(_paging, _dateBoundary);
+      final List<SearchHistoryData>? _moreSearchHistory = _respone.data;
+      if (_respone.statusCode == StatusCode.failStatus &&
+          _respone.messageCode == MessageCode.noSearchHistoryToDisplay) {
+        emit(state.copyWith(hasReachMaxHistoryList: true));
+      } else if (_respone.statusCode == StatusCode.successStatus &&
+          _moreSearchHistory != null) {
+        emit(state.copyWith(
+            status: SearchStatus.success,
+            searchHistoryList: [
+              ...state.searchHistoryList,
+              ..._moreSearchHistory
+            ],
+            hasReachMaxHistoryList: false));
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (_) {
       emit(state.copyWith(status: SearchStatus.failure));
     }
   }
@@ -91,7 +162,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
               searchList: _searchedUser,
               searchName: _searchName,
               hasReachMaxSearchList: false));
-        } else if (_respone.messageCode == 'HS114') {
+        } else if (_respone.messageCode ==
+            MessageCode.noSearchHistoryToDisplay) {
           emit(state.copyWith(status: SearchStatus.success, searchList: []));
         } else {
           throw Exception(_respone.messageCode);
@@ -104,7 +176,28 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
   void _fetchMoreSearch(
       FetchMoreSearch event, Emitter<SearchState> emit) async {
-    try {} catch (_) {
+    try {
+      if (state.hasReachMaxSearchList == true) {
+        return;
+      }
+      final _dateBoundary = state.searchList.last.dateCreate.toString();
+      final _searchName = state.searchName;
+      final SearchRespone _respone = await _searchRepository.moreSearchUser(
+          _dateBoundary, _paging, _searchName);
+      final List<SearchData>? _moreSearch = _respone.data;
+      if (_respone.statusCode == StatusCode.failStatus &&
+          _respone.messageCode == MessageCode.userNotFound) {
+        emit(state.copyWith(hasReachMaxSearchList: true));
+      } else if (_respone.statusCode == StatusCode.successStatus &&
+          _moreSearch != null) {
+        emit(state.copyWith(
+            status: SearchStatus.success,
+            searchList: [...state.searchList, ..._moreSearch],
+            hasReachMaxSearchList: false));
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (_) {
       emit(state.copyWith(status: SearchStatus.failure));
     }
   }

@@ -315,4 +315,14 @@ class DataRepository implements RestClient {
   Future<SearchRespone> searchUser(int limitUser, String name) {
     return _client.searchUser(limitUser, name);
   }
+
+  @override
+  Future<GetResponseMessage> addSearchHistory(String userId) {
+    return _client.addSearchHistory(userId);
+  }
+
+  @override
+  Future<GetResponseMessage> deleteSearchHistory(String userId) {
+    return _client.deleteSearchHistory(userId);
+  }
 }

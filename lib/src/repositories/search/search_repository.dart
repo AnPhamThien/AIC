@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/search/search_history_respone.dart';
 import 'package:imagecaptioning/src/model/search/search_respone.dart';
 
@@ -12,6 +13,8 @@ abstract class SearchBehavior {
   Future<SearchRespone> searchUser(int limitUser, String name);
   Future<SearchRespone> moreSearchUser(
       String dateBoundary, int limitUser, String name);
+  Future<GetResponseMessage> addSearchHistory(String userId);
+  Future<GetResponseMessage> deleteSearchHistory(String userId);
 }
 
 class SearchRepository extends SearchBehavior {
@@ -63,6 +66,28 @@ class SearchRepository extends SearchBehavior {
     try {
       respone = await _dataRepository.searchUser(limitUser, name);
       return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> addSearchHistory(String userId) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone = await _dataRepository.addSearchHistory(userId);
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> deleteSearchHistory(String userId) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone = await _dataRepository.deleteSearchHistory(userId);
     } catch (e) {
       log(e.toString());
     }

@@ -1,0 +1,4 @@
+#Sat Jan 15 00:07:45 ICT 2022
+base.0=C\:\\Users\\Pham Thien An\\OneDrive\\Desktop\\WORK\\AIC\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex

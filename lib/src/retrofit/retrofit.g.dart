@@ -340,10 +340,12 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<GetMessageResponseMessage> getMessages(conversationId) async {
+  Future<GetMessageResponseMessage> getMessages(
+      conversationId, limitMessage) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
-      r'conversationId': conversationId
+      r'conversationId': conversationId,
+      r'limitMessage': limitMessage
     };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
@@ -375,11 +377,12 @@ class _RestClient implements RestClient {
 
   @override
   Future<GetMessageResponseMessage> getMoreMessages(
-      conversationId, dateBoundary) async {
+      conversationId, dateBoundary, limitMessage) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'conversationId': conversationId,
-      r'date_boundary': dateBoundary
+      r'date_boundary': dateBoundary,
+      r'limitMessage': limitMessage
     };
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};

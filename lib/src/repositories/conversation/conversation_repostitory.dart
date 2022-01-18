@@ -9,11 +9,13 @@ abstract class UserBehavior {
   Future<GetConversationResponseMessage?> getMoreConversations(
       {required String dateBoundary});
   Future<GetMessageResponseMessage?> getMessages(
-      {required String conversationId});
+      {required String conversationId, required int limitMessage});
   Future<GetMessageResponseMessage?> getConversationByUser(
       {required String userId});
   Future<GetMessageResponseMessage?> getMoreMessages(
-      {required String conversationId, required String dateBoundary});
+      {required String conversationId,
+      required String dateBoundary,
+      required int limitMessage});
   Future<dynamic> updateIsSeenMessage({required String messageId});
 }
 
@@ -77,10 +79,10 @@ class ConversationRepository extends UserBehavior {
 
   @override
   Future<GetMessageResponseMessage?> getMessages(
-      {required String conversationId}) async {
+      {required String conversationId, required int limitMessage}) async {
     try {
       GetMessageResponseMessage resMessage =
-          await _dataRepository.getMessages(conversationId);
+          await _dataRepository.getMessages(conversationId, limitMessage);
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -115,10 +117,12 @@ class ConversationRepository extends UserBehavior {
 
   @override
   Future<GetMessageResponseMessage?> getMoreMessages(
-      {required String conversationId, required String dateBoundary}) async {
+      {required String conversationId,
+      required String dateBoundary,
+      required int limitMessage}) async {
     try {
-      GetMessageResponseMessage resMessage =
-          await _dataRepository.getMoreMessages(conversationId, dateBoundary);
+      GetMessageResponseMessage resMessage = await _dataRepository
+          .getMoreMessages(conversationId, dateBoundary, limitMessage);
       return resMessage;
     } catch (e) {
       if (e is DioError) {

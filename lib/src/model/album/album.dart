@@ -47,25 +47,31 @@ class GetAlbumResponseMessage {
 
 class Album {
   Album(
-      {this.id, this.albumName, this.status, this.dateCreate, this.dateUpdate});
+      {this.id,
+      this.albumName,
+      this.status,
+      this.dateCreate,
+      this.dateUpdate,
+      this.imgUrl});
 
   String? id;
   String? albumName;
   int? status;
   DateTime? dateCreate;
   DateTime? dateUpdate;
+  String? imgUrl;
 
   factory Album.fromJson(Map<String, dynamic> json) => Album(
-        id: json["id"],
-        albumName: json["album_name"],
-        status: json["status"],
-        dateCreate: json["date_create"] != null
-            ? DateTime.parse(json["date_create"])
-            : null,
-        dateUpdate: json["date_update"] != null
-            ? DateTime.parse(json["date_update"])
-            : null,
-      );
+      id: json["id"],
+      albumName: json["album_name"],
+      status: json["status"],
+      dateCreate: json["date_create"] != null
+          ? DateTime.parse(json["date_create"])
+          : null,
+      dateUpdate: json["date_update"] != null
+          ? DateTime.parse(json["date_update"])
+          : null,
+      imgUrl: json["img_url"]);
 
   Map<String, dynamic> toJson() => {
         "id": id,
@@ -73,5 +79,6 @@ class Album {
         "status": status,
         "date_create": dateCreate!.toIso8601String(),
         "date_update": dateUpdate!.toIso8601String(),
+        "img_url": imgUrl
       };
 }

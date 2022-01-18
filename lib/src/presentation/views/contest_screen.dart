@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 

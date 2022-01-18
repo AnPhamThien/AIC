@@ -200,8 +200,9 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<GetMessageResponseMessage> getMessages(String conversationId) {
-    return _client.getMessages(conversationId);
+  Future<GetMessageResponseMessage> getMessages(
+      String conversationId, int limitMessage) {
+    return _client.getMessages(conversationId, limitMessage);
   }
 
   @override
@@ -211,8 +212,8 @@ class DataRepository implements RestClient {
 
   @override
   Future<GetMessageResponseMessage> getMoreMessages(
-      String conversationId, String dateBoundary) {
-    return _client.getMoreMessages(conversationId, dateBoundary);
+      String conversationId, String dateBoundary, int limitMessage) {
+    return _client.getMoreMessages(conversationId, dateBoundary, limitMessage);
   }
 
   @override

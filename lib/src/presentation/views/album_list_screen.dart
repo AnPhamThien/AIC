@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/album_list/album_list_bloc.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
@@ -115,12 +116,12 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                     AspectRatio(
                       aspectRatio: 1,
                       child: Container(
-                        decoration: album.albumName!.isNotEmpty
+                        decoration: album.imgUrl != null
                             ? BoxDecoration(
                                 borderRadius: BorderRadius.circular(12),
                                 image: DecorationImage(
-                                    image: AssetImage(
-                                        'assets/images/avatar_placeholder.png'),
+                                    image: NetworkImage(
+                                        postImageUrl + album.imgUrl!),
                                     fit: BoxFit.cover),
                               )
                             : BoxDecoration(

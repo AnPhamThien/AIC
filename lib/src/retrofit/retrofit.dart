@@ -120,7 +120,8 @@ abstract class RestClient {
 
   @GET('/conversations/getmessages')
   Future<GetMessageResponseMessage> getMessages(
-      @Query('conversationId') String conversationId);
+      @Query('conversationId') String conversationId,
+      @Query('limitMessage') int limitMessage);
 
   @GET('/conversations/getconversationbyuser')
   Future<GetMessageResponseMessage> getConversationByUser(
@@ -129,7 +130,8 @@ abstract class RestClient {
   @GET('/conversations/getmoremessages')
   Future<GetMessageResponseMessage> getMoreMessages(
       @Query('conversationId') String conversationId,
-      @Query('date_boundary') String dateBoundary);
+      @Query('date_boundary') String dateBoundary,
+      @Query('limitMessage') int limitMessage);
 
   @GET('/contests/getcontestforuser')
   Future<ContestListRespone> getActiveContestList(

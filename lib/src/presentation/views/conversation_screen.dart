@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/conversation/conversation_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/conversation/conversation.dart';
@@ -56,8 +55,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
         titleSpacing: 0,
       ),
       body: BlocListener<ConversationBloc, ConversationState>(
-        listener: (context, state) {
-        },
+        listener: (context, state) {},
         child: SafeArea(
           child: BlocBuilder<ConversationBloc, ConversationState>(
             builder: (context, state) {

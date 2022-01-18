@@ -45,7 +45,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
       final conversationId = event.conversationId;
       if (conversationId != null) {
         GetMessageResponseMessage? resMessage = await _conversationRepository
-            .getMessages(conversationId: conversationId);
+            .getMessages(conversationId: conversationId, limitMessage: 10);
 
         if (resMessage == null) {
           throw Exception("");
@@ -136,7 +136,8 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
         GetMessageResponseMessage? resMessage =
             await _conversationRepository.getMoreMessages(
                 conversationId: conversationId,
-                dateBoundary: state.messageList!.last.realTime.toString());
+                dateBoundary: state.messageList!.last.realTime.toString(),
+                limitMessage: 10);
 
         if (resMessage == null) {
           throw Exception("");
@@ -182,6 +183,9 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
             messageList: currentList,
             conversationId: message.conversationId ?? state.conversationId,
             hasReachedMax: false));
+
+        await _conversationRepository.updateIsSeenMessage(
+            messageId: message.messageId!);
       } else {
         throw Exception("");
       }

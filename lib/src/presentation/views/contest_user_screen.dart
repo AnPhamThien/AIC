@@ -79,7 +79,9 @@ class _ContestUserScreenState extends State<ContestUserScreen> {
               listener: (context, state) {
                 if (state.status == ContestUserStatus.postfetched) {
                   context.read<ContestUserBloc>().add(NavigatedToPost());
+                  log("like" + state.post!.isLike.toString());
                   Map<String, dynamic> args = {'post': state.post};
+                  log(state.post!.postId!);
                   context.read<AuthBloc>().add(NavigateToPageEvent(
                         route: AppRouter.postDetailScreen,
                         args: args,

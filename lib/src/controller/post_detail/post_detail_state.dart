@@ -5,7 +5,7 @@ enum PostDetailStatus {
   success,
   failure,
   maxcomment,
-  addcommentfailed
+  deleted,
 }
 
 class PostDetailState extends Equatable {
@@ -15,7 +15,7 @@ class PostDetailState extends Equatable {
     this.commentList = const <Comment>[],
     this.commentCount,
     this.hasReachMax = false,
-    this.isReload = false,
+    this.deleted,
   });
 
   final PostDetailStatus status;
@@ -23,7 +23,7 @@ class PostDetailState extends Equatable {
   final List<Comment> commentList;
   final int? commentCount;
   final bool hasReachMax;
-  final bool isReload;
+  final int? deleted;
 
   PostDetailState copyWith({
     PostDetailStatus? status,
@@ -31,18 +31,18 @@ class PostDetailState extends Equatable {
     List<Comment>? commentList,
     int? commentCount,
     bool? hasReachMax,
-    bool? isReload,
+    int? deleted,
   }) {
     return PostDetailState(
-      status: status ?? this.status,
-      post: post ?? this.post,
-      commentList: commentList ?? this.commentList,
-      commentCount: commentCount ?? this.commentCount,
-      hasReachMax: hasReachMax ?? this.hasReachMax,
-      isReload: isReload ?? this.isReload,
-    );
+        status: status ?? this.status,
+        post: post ?? this.post,
+        commentList: commentList ?? this.commentList,
+        commentCount: commentCount ?? this.commentCount,
+        hasReachMax: hasReachMax ?? this.hasReachMax,
+        deleted: deleted ?? this.deleted);
   }
 
   @override
-  List<Object> get props => [status, commentList, hasReachMax, isReload];
+  List<Object?> get props =>
+      [status, post, commentCount, commentList, hasReachMax, deleted];
 }

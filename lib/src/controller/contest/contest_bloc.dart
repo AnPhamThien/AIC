@@ -56,7 +56,7 @@ class ContestBloc extends Bloc<ContestEvent, ContestState> {
           hasReachMax: false,
         ));
       } else {
-        throw Exception();
+        throw Exception(_respone.messageCode);
       }
     } catch (_) {
       emit(state.copyWith(
@@ -70,24 +70,25 @@ class ContestBloc extends Bloc<ContestEvent, ContestState> {
       if (state.hasReachMax == true) {
         return;
       }
-      final _dateBoundary = state.post.last.dateCreate.toString();
-      final _contestId = state.contest!.id;
-      final ContestPostRespone _respone = await _contestRepository
-          .getMoreContestPost(_contestId, _limitPost, _dateBoundary);
-      final List<Post>? _morePost = _respone.data;
-      if (_respone.messageCode == MessageCode.noPostToDisplay &&
-          _respone.statusCode == StatusCode.failStatus) {
-        emit(state.copyWith(hasReachMax: true));
-      } else if (_respone.statusCode == StatusCode.successStatus &&
-          _morePost != null) {
-        emit(state.copyWith(
-          status: ContestStatus.success,
-          post: [...state.post, ..._morePost],
-          hasReachMax: false,
-        ));
-        log(state.post.length.toString());
-      } else {
-        throw Exception(_respone.messageCode);
+      if (state.post.isNotEmpty) {
+        final _dateBoundary = state.post.last.dateCreate.toString();
+        final _contestId = state.contest!.id;
+        final ContestPostRespone _respone = await _contestRepository
+            .getMoreContestPost(_contestId, _limitPost, _dateBoundary);
+        final List<Post>? _morePost = _respone.data;
+        if (_respone.messageCode == MessageCode.noPostToDisplay &&
+            _respone.statusCode == StatusCode.failStatus) {
+          emit(state.copyWith(hasReachMax: true));
+        } else if (_respone.statusCode == StatusCode.successStatus &&
+            _morePost != null) {
+          emit(state.copyWith(
+            status: ContestStatus.success,
+            post: [...state.post, ..._morePost],
+            hasReachMax: false,
+          ));
+        } else {
+          throw Exception(_respone.messageCode);
+        }
       }
     } catch (_) {
       log(_.toString());

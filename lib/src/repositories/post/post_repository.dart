@@ -1,9 +1,9 @@
 import 'dart:developer';
 
+import 'package:imagecaptioning/src/model/generic/generic.dart';
+
 import '../../model/post/list_post_data.dart';
 import '../../model/post/post_add_comment_request.dart';
-import '../../model/post/post_add_comment_respone.dart';
-import '../../model/post/post_comment_like_data.dart';
 import '../../model/post/post_comment_like_respone.dart';
 import '../../model/post/post_comment_list_respone.dart';
 import '../../model/post/post_list_request.dart';
@@ -13,11 +13,14 @@ import '../data_repository.dart';
 abstract class PostBehavior {
   Future<ListPostData?> getPost(int postPerPerson, int limitDay);
   Future<ListPostData?> getMorePost(PostListRequest request);
-  Future<PostCommentLikeData?> getInitLikeComment(
+  Future<PostCommentLikeRespone> getInitLikeComment(
       int commentPerPage, String postId);
-  Future<PostCommentListRespone?> getMoreComment(
+  Future<PostCommentListRespone> getMoreComment(
       String dateBoundary, int commentPerPage, String postId);
-  Future<PostAddCommentRespone?> addComment(PostAddCommentRequest request);
+  Future<GetResponseMessage> addComment(PostAddCommentRequest request);
+  Future<GetResponseMessage> deleteComment(String id);
+  Future<GetResponseMessage> addAndDeleteLike(String postId);
+  Future<GetResponseMessage> checkSavePost(String postId);
 }
 
 class PostRepository extends PostBehavior {
@@ -50,39 +53,78 @@ class PostRepository extends PostBehavior {
   }
 
   @override
-  Future<PostCommentLikeData?> getInitLikeComment(
+  Future<PostCommentLikeRespone> getInitLikeComment(
       int commentPerPage, String postId) async {
+    PostCommentLikeRespone respone = PostCommentLikeRespone();
     try {
-      final PostCommentLikeRespone respone =
+      respone =
           await _dataRepository.getInitPostLikeComment(commentPerPage, postId);
-      final PostCommentLikeData? data = respone.data;
-      return data;
+      return respone;
     } catch (e) {
       log(e.toString());
     }
+    return respone;
   }
 
   @override
-  Future<PostCommentListRespone?> getMoreComment(
+  Future<PostCommentListRespone> getMoreComment(
       String dateBoundary, int commentPerPage, String postId) async {
+    PostCommentListRespone respone = PostCommentListRespone();
     try {
-      final PostCommentListRespone respone = await _dataRepository
-          .getMoreComment(dateBoundary, commentPerPage, postId);
+      respone = await _dataRepository.getMoreComment(
+          dateBoundary, commentPerPage, postId);
       return respone;
     } catch (e) {
       log(e.toString());
     }
+    return respone;
   }
 
   @override
-  Future<PostAddCommentRespone?> addComment(
-      PostAddCommentRequest request) async {
+  Future<GetResponseMessage> addComment(PostAddCommentRequest request) async {
+    GetResponseMessage respone = GetResponseMessage();
     try {
-      final PostAddCommentRespone respone =
-          await _dataRepository.addComment(request);
+      respone = await _dataRepository.addComment(request);
       return respone;
     } catch (e) {
       log(e.toString());
     }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> deleteComment(String id) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone = await _dataRepository.deleteComment(id);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> addAndDeleteLike(String postId) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone = await _dataRepository.addAndDeleteLike(postId);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> checkSavePost(String postId) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone = await _dataRepository.checkSavePost(postId);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
   }
 }

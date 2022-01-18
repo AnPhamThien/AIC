@@ -7,6 +7,8 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import '../presentation/views/upload_page.dart';
 
 /// viet hoa va cac chuoi
@@ -157,4 +159,12 @@ String timeCalculateDouble(double time) {
 
 bool containsChar(String value) {
   return RegExp('[a-zA-Z0-9]').hasMatch(value);
+}
+
+bool isUser(String id) {
+  if (id == getIt<AppPref>().getUserID) {
+    return true;
+  } else {
+    return false;
+  }
 }

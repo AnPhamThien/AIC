@@ -16,7 +16,6 @@ import '../model/generic/generic.dart';
 import '../model/conversation/message.dart';
 import '../model/notification/notification.dart';
 import '../model/contest/contest_list_respone.dart';
-import '../model/post/post_add_comment_respone.dart';
 import '../model/post/post_add_comment_request.dart';
 import '../model/post/post_comment_like_respone.dart';
 import '../model/post/post_comment_list_respone.dart';
@@ -219,7 +218,7 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<PostAddCommentRespone> addComment(PostAddCommentRequest request) {
+  Future<GetResponseMessage> addComment(PostAddCommentRequest request) {
     return _client.addComment(request);
   }
 
@@ -324,5 +323,20 @@ class DataRepository implements RestClient {
   @override
   Future<GetResponseMessage> deleteSearchHistory(String userId) {
     return _client.deleteSearchHistory(userId);
+  }
+
+  @override
+  Future<GetResponseMessage> deleteComment(String id) {
+    return _client.deleteComment(id);
+  }
+
+  @override
+  Future<GetResponseMessage> addAndDeleteLike(String postId) {
+    return _client.addAndDeleteLike(postId);
+  }
+
+  @override
+  Future<GetResponseMessage> checkSavePost(String postId) {
+    return _client.checkSavePost(postId);
   }
 }

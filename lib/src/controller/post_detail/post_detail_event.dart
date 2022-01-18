@@ -20,3 +20,11 @@ class PostDetailAddComment extends PostDetailEvent {
 
   const PostDetailAddComment(this.comment);
 }
+
+class PostDetailDeleteComment extends PostDetailEvent {
+  final String commentId;
+  final int index;
+  const PostDetailDeleteComment(this.commentId, this.index);
+}
+
+class CommentDeleted extends PostDetailEvent {}

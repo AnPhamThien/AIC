@@ -1,7 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
+import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../controller/post_detail/post_detail_bloc.dart';
 import '../../model/post/comment.dart';
@@ -11,7 +16,8 @@ import '../theme/style.dart';
 import '../widgets/post_widgets.dart';
 
 class PostDetailScreen extends StatefulWidget {
-  const PostDetailScreen({Key? key}) : super(key: key);
+  const PostDetailScreen({Key? key, required this.post}) : super(key: key);
+  final Post post;
   @override
   _PostDetailScreenState createState() => _PostDetailScreenState();
 }
@@ -20,8 +26,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   Post post = Post();
   final _scrollController = ScrollController();
   final _commentController = TextEditingController();
+
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
   @override
   void initState() {
+    post = widget.post;
     _scrollController.addListener(_onScroll);
     super.initState();
   }
@@ -40,11 +50,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     }
   }
 
-  Future<void> _refresh() {
-    setState(() {
-      context.read<PostDetailBloc>().add(PostDetailInitEvent(post));
-    });
-    return Future.delayed(const Duration(seconds: 1));
+  void _onRefresh() async {
+    context.read<PostDetailBloc>().add(PostDetailInitEvent(post));
+    _refreshController.refreshCompleted();
   }
 
   @override
@@ -53,58 +61,69 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       body: Scaffold(
         backgroundColor: bgApp,
         body: SafeArea(
-          child: RefreshIndicator(
-            onRefresh: _refresh,
+          child: SmartRefresher(
+            scrollController: _scrollController,
+            controller: _refreshController,
+            onRefresh: _onRefresh,
             child: SingleChildScrollView(
-              controller: _scrollController,
-              child: BlocListener<PostDetailBloc, PostDetailState>(
-                listener: (context, state) {
-                  if (state.isReload) {
-                    setState(() {
-                      context
-                          .read<PostDetailBloc>()
-                          .add(PostDetailInitEvent(post));
-                    });
-                  }
-                },
-                child: BlocBuilder<PostDetailBloc, PostDetailState>(
+              child: MultiBlocListener(
+                listeners: [
+                  BlocListener<PostDetailBloc, PostDetailState>(
+                    listenWhen: (previous, current) =>
+                        previous.status != current.status,
+                    listener: (context, state) {
+                      if (state.status == PostDetailStatus.deleted) {
+                        state.commentList.removeAt(state.deleted!);
+                        state.commentCount! - 1;
+                        context.read<PostDetailBloc>().add(CommentDeleted());
+                      }
+                    },
+                  ),
+                  BlocListener<PostBloc, PostState>(
+                    listener: (context, state) {
+                      if (state.status == PostStatus.like &&
+                          state.needUpdate == true) {
+                        post.isLike = 1;
+                        context.read<PostBloc>().add(Reset());
+                      } else if (state.status == PostStatus.unlike &&
+                          state.needUpdate == true) {
+                        post.isLike = 0;
+                        context.read<PostBloc>().add(Reset());
+                      }
+                    },
+                  ),
+                ],
+                child: BlocBuilder<PostBloc, PostState>(
                   builder: (context, state) {
-                    switch (state.status) {
-                      case PostDetailStatus.success:
-                        final Post _post = state.post!;
-                        post = state.post!;
-                        final int _commentCount = state.commentCount ?? 0;
-                        final List<Comment>? _commentList = state.commentList;
-                        return Column(
-                          children: [
-                            getPostSection(
-                              _post,
-                              _commentCount,
-                            ),
-                            const SizedBox(height: 10.0),
-                            getCommentSection(_commentList),
-                            const SizedBox(height: 10.0),
-                          ],
-                        );
-                      case PostDetailStatus.maxcomment:
-                        return Column(
-                          children: [
-                            getPostSection(
-                              state.post!,
-                              state.commentCount!,
-                            ),
-                            const SizedBox(height: 10.0),
-                            getCommentSection(state.commentList),
-                            const SizedBox(height: 10.0),
-                          ],
-                        );
-                      case PostDetailStatus.failure:
-                        return const Center(
-                          child: Text('Some thing went wrong'),
-                        );
-                      default:
-                        return const Center(child: CircularProgressIndicator());
-                    }
+                    return BlocBuilder<PostDetailBloc, PostDetailState>(
+                      builder: (context, state) {
+                        switch (state.status) {
+                          case PostDetailStatus.success:
+                            final Post _post = state.post!;
+                            final int _commentCount = state.commentCount ?? 0;
+                            final List<Comment> _commentList =
+                                state.commentList;
+                            return Column(
+                              children: [
+                                getPostSection(
+                                  _post,
+                                  _commentCount,
+                                ),
+                                const SizedBox(height: 10.0),
+                                getCommentSection(_commentList),
+                                const SizedBox(height: 10.0),
+                              ],
+                            );
+                          case PostDetailStatus.failure:
+                            return const Center(
+                              child: Text('Some thing went wrong'),
+                            );
+                          default:
+                            return const Center(
+                                child: CircularProgressIndicator());
+                        }
+                      },
+                    );
                   },
                 ),
               ),
@@ -188,7 +207,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             children: [
               IconButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(context, post);
                 },
                 icon: const Icon(
                   Icons.arrow_back_rounded,
@@ -200,6 +219,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   username: post.userName!,
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
+                  postId: post.postId!,
                 ),
               ),
             ],
@@ -216,7 +236,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
           ),
           PostIconWidget(
-            isLike: post.isLike,
+            postId: post.postId!,
+            isLike: post.isLike!,
             likeCount: post.likecount,
             commentCount: commentCount,
           ),
@@ -238,7 +259,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               physics: const NeverScrollableScrollPhysics(),
               itemBuilder: (BuildContext _, int index) {
                 final Comment _comment = commentList[index];
-                return getComment(_comment);
+                return getComment(_comment, index);
               },
               itemCount: commentList.length,
             ),
@@ -246,7 +267,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         : const SizedBox.shrink();
   }
 
-  ListTile getComment(Comment comment) {
+  ListTile getComment(Comment comment, int index) {
     final _calculatedTime = timeCalculate(comment.dateCreate ?? DateTime.now());
     return ListTile(
       contentPadding: const EdgeInsets.fromLTRB(15, 10, 5, 10),
@@ -289,15 +310,21 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       //like button
       trailing: Material(
         color: Colors.white,
-        child: IconButton(
-          splashRadius: 20,
-          icon: const Icon(
-            Icons.favorite_border,
-          ),
-          color: Colors.grey,
-          iconSize: 27,
-          onPressed: () {},
-        ),
+        child: isUser(comment.userId!)
+            ? IconButton(
+                splashRadius: 20,
+                icon: const Icon(
+                  Icons.clear_rounded,
+                ),
+                color: Colors.grey,
+                iconSize: 27,
+                onPressed: () {
+                  context.read<PostDetailBloc>().add(
+                        PostDetailDeleteComment(comment.id!, index),
+                      );
+                },
+              )
+            : null,
       ),
     );
   }

@@ -184,8 +184,10 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
             conversationId: message.conversationId ?? state.conversationId,
             hasReachedMax: false));
 
-        await _conversationRepository.updateIsSeenMessage(
-            messageId: message.messageId!);
+        if (message.userId != getIt<AppPref>().getUserID) {
+          await _conversationRepository.updateIsSeenMessage(
+              messageId: message.messageId!);
+        }
       } else {
         throw Exception("");
       }

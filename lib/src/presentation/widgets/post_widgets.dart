@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
@@ -144,34 +145,84 @@ class PostHeadlineWidget extends StatelessWidget {
       subtitle: Text(_calculatedTime),
 
       ///options
-      trailing: PopupMenuButton(
-          icon: const Icon(
-            Icons.more_vert_rounded,
-            color: Colors.black87,
-            size: 27,
-          ),
-          color: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          offset: const Offset(-10, 45),
-          elevation: 10,
-          itemBuilder: (context) {
-            return <PopupMenuEntry>[
-              PopupMenuItem(
-                onTap: () {}, //TODO hàm Report ở đây
-                child: Row(
-                  children: const [
-                    Text("Report"),
-                    Icon(
-                      Icons.error_outline_rounded,
-                      color: Colors.black87,
-                      size: 30,
+      trailing: BlocBuilder<PostBloc, PostState>(
+        builder: (context, state) {
+          context.read<PostBloc>().add(CheckSavePost(postId));
+          return PopupMenuButton(
+              icon: const Icon(
+                Icons.more_vert_rounded,
+                color: Colors.black87,
+                size: 27,
+              ),
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15)),
+              offset: const Offset(-10, 45),
+              elevation: 10,
+              itemBuilder: (context) {
+                if (isUser(userId)) {
+                  return <PopupMenuEntry>[
+                    PopupMenuItem(
+                      onTap: () {}, //TODO hàm Delete ở đây
+                      child: Row(
+                        children: const [
+                          Text("Delete"),
+                          Icon(
+                            Icons.delete_outline_rounded,
+                            color: Colors.black87,
+                            size: 30,
+                          ),
+                        ],
+                      ),
+                    )
+                  ];
+                }
+
+                return <PopupMenuEntry>[
+                  PopupMenuItem(
+                    onTap: () {}, //TODO hàm Report ở đây
+                    child: Row(
+                      children: const [
+                        Text("Report"),
+                        Icon(
+                          Icons.error_outline_rounded,
+                          color: Colors.black87,
+                          size: 30,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )
-            ];
-          }),
+                  ),
+                  state.isSaved
+                      ? PopupMenuItem(
+                          onTap: () {}, //TODO hàm Unsave ở đây
+                          child: Row(
+                            children: const [
+                              Text("Unsave post"),
+                              Icon(
+                                Icons.bookmark_rounded,
+                                color: Colors.black87,
+                                size: 30,
+                              ),
+                            ],
+                          ),
+                        )
+                      : PopupMenuItem(
+                          onTap: () {}, //TODO hàm Save ở đây
+                          child: Row(
+                            children: const [
+                              Text("Save post"),
+                              Icon(
+                                Icons.bookmark_border_rounded,
+                                color: Colors.black87,
+                                size: 30,
+                              ),
+                            ],
+                          ),
+                        ),
+                ];
+              });
+        },
+      ),
     );
   }
 }

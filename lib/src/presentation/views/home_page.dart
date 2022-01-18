@@ -132,9 +132,7 @@ class _HomePageState extends State<HomePage> {
         ),
         IconButton(
           onPressed: () {
-            context
-                .read<AuthBloc>()
-                .add(NavigateToPageEvent(route: AppRouter.conversationScreen));
+            Navigator.of(context).pushNamed(AppRouter.conversationScreen);
           },
           icon: SvgPicture.asset(
             "assets/icons/message_icon.svg",

@@ -18,21 +18,18 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
   final PostRepository _postRepository = PostRepository();
 
-  Future<bool> _onCheckSavePost(
+  void _onCheckSavePost(
     CheckSavePost event,
     Emitter<PostState> emit,
   ) async {
-    bool isSave = false;
     try {
       GetResponseMessage _respone =
           await _postRepository.checkSavePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
         if (_respone.data == 0) {
           emit(state.copyWith(isSaved: false));
-          return isSave;
         } else {
           emit(state.copyWith(isSaved: true));
-          return isSave = true;
         }
       } else {
         throw Exception(_respone.messageCode);
@@ -40,7 +37,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     } catch (e) {
       log(e.toString());
     }
-    return isSave;
   }
 
   void _onLikePress(

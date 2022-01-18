@@ -1,17 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
-import '../get_it/get_it.dart';
-import '../../model/user/user.dart';
-import '../../prefs/app_prefs.dart';
 import '../../repositories/user/user_repository.dart';
 
 part 'reset_password_event.dart';
 part 'reset_password_state.dart';
 
 class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
-  ResetPasswordBloc()
+  ResetPasswordBloc(String userId)
       : _userRepository = UserRepository(),
-        super(ResetPasswordState()) {
+        super(ResetPasswordState(userId: userId)) {
     on<ResetPasswordSubmitted>(_onSubmitted);
   }
 
@@ -22,19 +19,22 @@ class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
     Emitter<ResetPasswordState> emit,
   ) async {
     try {
-      String userId = getIt<AppPref>().getUserID;
+      String userId = state.userId;
       String password = event.password;
-      RegisterDefaultResponseMessage? response = await _userRepository
-          .resetPassword(userId: userId, password: password);
+      final response = await _userRepository.resetPassword(
+          userId: userId, password: password);
       if (response == null) {
         throw Exception("");
       }
-      int status = response.statusCode ?? 0;
-      if (status == StatusCode.successStatus) {
-        emit(state.copyWith(formStatus: FormSubmissionSuccess()));
+
+      if (response is int) {
+        if (response == StatusCode.successStatus) {
+          emit(state.copyWith(formStatus: FormSubmissionSuccess()));
+        } else {
+          throw Exception("");
+        }
       } else {
-        String message = response.messageCode ?? "";
-        throw Exception(message);
+        throw Exception(response);
       }
     } on Exception catch (_) {
       emit(state.copyWith(formStatus: ErrorStatus(_)));

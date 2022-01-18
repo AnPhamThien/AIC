@@ -1,16 +1,17 @@
 part of 'reset_password_bloc.dart';
 
 class ResetPasswordState {
-  ResetPasswordState({
-    this.formStatus = const InitialStatus(),
-  });
+  ResetPasswordState(
+      {this.formStatus = const InitialStatus(), required this.userId});
 
   final ResetPasswordStatus formStatus;
+  String userId;
 
-  ResetPasswordState copyWith({
-    ResetPasswordStatus? formStatus,
-  }) {
-    return ResetPasswordState(formStatus: formStatus ?? this.formStatus);
+  ResetPasswordState copyWith(
+      {ResetPasswordStatus? formStatus, String? userId}) {
+    return ResetPasswordState(
+        formStatus: formStatus ?? this.formStatus,
+        userId: userId ?? this.userId);
   }
 }
 

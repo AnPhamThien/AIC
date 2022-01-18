@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/reset_password/reset_password_bloc.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 import '../../app/routes.dart';
 import '../theme/style.dart';
 import '../widgets/get_user_input_field.dart';
@@ -14,6 +16,9 @@ class ResetPasswordScreen extends StatefulWidget {
 }
 
 class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
+  final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -26,19 +31,57 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.black12,
-        body: SingleChildScrollView(
-          child: Container(
-            height: size.height,
-            width: size.width,
-            padding: EdgeInsets.symmetric(horizontal: size.width * .07),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                getResetPasswordHeadline(),
-                getResetPasswordForm(),
-                getLoginButton(),
-              ],
+        body: BlocListener<ResetPasswordBloc, ResetPasswordState>(
+          listener: (context, state) {
+            if (state.formStatus is FormSubmissionSuccess) {
+              showDialog<String>(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
+                  actionsAlignment: MainAxisAlignment.center,
+                  title: const Text('Congratulation !',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.black87,
+                          letterSpacing: 1.25,
+                          fontWeight: FontWeight.bold)),
+                  content: const Text('Your password has been changed',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.w600)),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        context.read<AuthBloc>().add(
+                            NavigateToPageEvent(route: AppRouter.loginScreen));
+                      },
+                      child: const Text(
+                        'OK',
+                        style: TextStyle(color: Colors.black87, fontSize: 20),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+          child: SingleChildScrollView(
+            child: Container(
+              height: size.height,
+              width: size.width,
+              padding: EdgeInsets.symmetric(horizontal: size.width * .07),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  getResetPasswordHeadline(),
+                  getResetPasswordForm(),
+                  getLoginButton(),
+                ],
+              ),
             ),
           ),
         ),
@@ -88,79 +131,65 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         color: bgWhite,
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
-      child: Column(
-        children: [
-          Center(
-            child: Text(
-              'Input your new password',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.grey.shade900,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Center(
+              child: Text(
+                'Input your new password',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.grey.shade900,
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 30.h,
-          ),
-          const GetUserInput(
-              label: 'Password', hint: "You new password", isPassword: true),
-          SizedBox(
-            height: 15.h,
-          ),
-          const GetUserInput(
-              label: 'Confirm Password', hint: "", isPassword: true),
-          SizedBox(
-            height: 20.h,
-          ),
-          //verify button
-          TextButton(
-            onPressed: () => showDialog<String>(
-              context: context,
-              builder: (BuildContext context) => AlertDialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15)),
-                actionsAlignment: MainAxisAlignment.center,
-                title: const Text('Congratulation !',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontSize: 25,
-                        color: Colors.black87,
-                        letterSpacing: 1.25,
-                        fontWeight: FontWeight.bold)),
-                content: const Text('Your password has been changed',
-                    style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w600)),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(
-                          NavigateToPageEvent(route: AppRouter.loginScreen));
-                    },
-                    child: const Text(
-                      'OK',
-                      style: TextStyle(color: Colors.black87, fontSize: 20),
-                    ),
-                  ),
-                ],
+            SizedBox(
+              height: 30.h,
+            ),
+            GetUserInput(
+                label: 'Password',
+                hint: "You new password",
+                isPassword: true,
+                controller: _passwordController,
+                validator: Validation.passwordValidation),
+            SizedBox(
+              height: 15.h,
+            ),
+            GetUserInput(
+                label: 'Confirm Password',
+                hint: "",
+                isPassword: true,
+                validator: (value) => value == _passwordController.text
+                    ? null
+                    : "Passwords do not match"),
+            SizedBox(
+              height: 20.h,
+            ),
+            //verify button
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  context.read<ResetPasswordBloc>().add(
+                      ResetPasswordSubmitted(_passwordController.value.text));
+                }
+              },
+              style: TextButton.styleFrom(
+                  fixedSize: Size(size.width * .94, 55),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  backgroundColor: Colors.black87,
+                  alignment: Alignment.center,
+                  primary: Colors.white,
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20)),
+              child: const Text(
+                "Update password",
               ),
             ),
-            style: TextButton.styleFrom(
-                fixedSize: Size(size.width * .94, 55),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                backgroundColor: Colors.black87,
-                alignment: Alignment.center,
-                primary: Colors.white,
-                textStyle:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            child: const Text(
-              "Update password",
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

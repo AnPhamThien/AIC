@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
+import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
 import '../constant/env.dart';
 import '../model/post/post_detail_respone.dart';
 import '../model/search/search_history_respone.dart';
@@ -71,8 +73,7 @@ abstract class RestClient {
   );
 
   @POST('/users/refreshtoken')
-  Future<Response<Map<String, dynamic>>> refreshJwtToken(
-      @Field('JwtToken') String token,
+  Future<GetResponseMessage> refreshJwtToken(@Field('JwtToken') String token,
       @Field('RefreshToken') String refreshToken);
 
   @DELETE('/users/deleterefreshtoken')
@@ -255,5 +256,58 @@ abstract class RestClient {
     @Query('date_boundary') String dateBoundary,
     @Query('limituser') int limitUser,
     @Query('name') String name,
+  );
+
+  @GET('/albums/getalbuminit')
+  Future<GetAlbumResponseMessage> getAlbumInit(
+    @Query('productPerPage') int productPerPage,
+  );
+
+  @GET('/albums/getpagealbum')
+  Future<GetAlbumResponseMessage> getPageAlbum(
+    @Query('currentPage') int currentPage,
+    @Query('productPerPage') int productPerPage,
+  );
+
+  @GET('/albums/getsearchalbum')
+  Future<GetAlbumResponseMessage> getSearchAlbum(
+    @Query('productPerPage') int productPerPage,
+    @Query('name') String name,
+  );
+
+  @GET('/albums/getpagealbumsearch')
+  Future<GetAlbumResponseMessage> getPageAlbumSearch(
+    @Query('currentPage') int currentPage,
+    @Query('productPerPage') int productPerPage,
+    @Query('name') String name,
+  );
+
+  @POST('/albums/addalbum')
+  Future<GetResponseMessage> addAlbum(
+    @Field('albumName') String albumName,
+  );
+
+  @POST('/albums/adddefaultsavestorage')
+  Future<GetResponseMessage> addDefaultSaveStorage();
+
+  @POST('/albums/updatealbum')
+  Future<GetResponseMessage> updateAlbum(
+      @Field('Id') String id, @Field('album_name') String albumName);
+
+  @POST('/albums/deletealbum')
+  Future<GetResponseMessage> deleteAlbum(
+      @Field('Id') String id, @Field('status') int status);
+
+  @GET('/posts/getalbumpost')
+  Future<GetAlbumPostListResponseMessage> getAlbumPost(
+    @Query('limitPost') int limitPost,
+    @Query('albumId') String albumId,
+  );
+
+  @GET('/posts/getmorealbumpost')
+  Future<GetAlbumPostListResponseMessage> getMoreAlbumPost(
+    @Query('limitPost') int limitPost,
+    @Query('currentPage') int currentPage,
+    @Query('albumId') String albumId,
   );
 }

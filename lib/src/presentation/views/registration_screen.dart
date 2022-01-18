@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../app/routes.dart';
 import '../../controller/auth/auth_bloc.dart';
-import '../../controller/auth/form_submission_status.dart';
 import '../../controller/registration/registration_bloc.dart';
 import '../../utils/func.dart';
 import '../../utils/validations.dart';

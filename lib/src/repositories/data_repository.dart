@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
+import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
 import 'package:imagecaptioning/src/model/search/search_history_respone.dart';
 import 'package:imagecaptioning/src/model/search/search_respone.dart';
@@ -50,11 +52,19 @@ class DataRepository implements RestClient {
                 String token = getIt<AppPref>().getToken;
                 String refreshToken = getIt<AppPref>().getRefreshToken;
 
-                final response = await refreshJwtToken(token, refreshToken);
-                Map<String, dynamic> value = response.data!;
-                String? data = value['data'];
+                // const _extra = <String, dynamic>{};
+                // final queryParameters = <String, dynamic>{};
+                // final _headers = <String, dynamic>{};
+                final _data = {'JwtToken': token, 'RefreshToken': refreshToken};
+
+                final response = await _dio
+                    .post(appBaseUrl + '/users/refreshtoken', data: _data);
+                final value = GetResponseMessage.fromJson(response.data!);
+
+                //Map<String, dynamic> value = response.data!;
+                String? data = value.data;
                 if (data != null) {
-                  getIt<AppPref>().setToken(value['data']);
+                  getIt<AppPref>().setToken(value.data);
                   setJwtInHeader();
                   handler.resolve(response);
                 } else {
@@ -129,7 +139,7 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<Response<Map<String, dynamic>>> refreshJwtToken(
+  Future<GetResponseMessage> refreshJwtToken(
       String token, String refreshToken) {
     return _client.refreshJwtToken(token, refreshToken);
   }
@@ -264,6 +274,7 @@ class DataRepository implements RestClient {
     return _client.deleteFollow(followeeId);
   }
 
+  @override
   Future<ContestPostRespone> getMoreContestPost(
       String contestId, int limitPost, String dateBoundary) {
     return _client.getMoreContestPost(contestId, limitPost, dateBoundary);
@@ -314,5 +325,60 @@ class DataRepository implements RestClient {
   @override
   Future<SearchRespone> searchUser(int limitUser, String name) {
     return _client.searchUser(limitUser, name);
+  }
+
+  @override
+  Future<GetResponseMessage> addAlbum(String albumName) {
+    return _client.addAlbum(albumName);
+  }
+
+  @override
+  Future<GetResponseMessage> addDefaultSaveStorage() {
+    return _client.addDefaultSaveStorage();
+  }
+
+  @override
+  Future<GetResponseMessage> deleteAlbum(String id, int status) {
+    return _client.deleteAlbum(id, status);
+  }
+
+  @override
+  Future<GetAlbumResponseMessage> getAlbumInit(int productPerPage) {
+    return _client.getAlbumInit(productPerPage);
+  }
+
+  @override
+  Future<GetAlbumResponseMessage> getPageAlbum(
+      int currentPage, int productPerPage) {
+    return _client.getPageAlbum(currentPage, productPerPage);
+  }
+
+  @override
+  Future<GetAlbumResponseMessage> getPageAlbumSearch(
+      int currentPage, int productPerPage, String name) {
+    return _client.getPageAlbumSearch(currentPage, productPerPage, name);
+  }
+
+  @override
+  Future<GetAlbumResponseMessage> getSearchAlbum(
+      int productPerPage, String name) {
+    return _client.getSearchAlbum(productPerPage, name);
+  }
+
+  @override
+  Future<GetResponseMessage> updateAlbum(String id, String albumName) {
+    return _client.updateAlbum(id, albumName);
+  }
+
+  @override
+  Future<GetAlbumPostListResponseMessage> getAlbumPost(
+      int limitPost, String albumId) {
+    return _client.getAlbumPost(limitPost, albumId);
+  }
+
+  @override
+  Future<GetAlbumPostListResponseMessage> getMoreAlbumPost(
+      int limitPost, int currentPage, String albumId) {
+    return _client.getMoreAlbumPost(limitPost, currentPage, albumId);
   }
 }

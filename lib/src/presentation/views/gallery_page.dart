@@ -55,7 +55,8 @@ class _GalleryPageState extends State<GalleryPage> {
           child: Image(
             image: post.imageUrl != null
                 ? NetworkImage(postImageUrl + post.imageUrl.toString())
-                : const AssetImage("assets/images/Kroni.jpg") as ImageProvider,
+                : const AssetImage("assets/images/avatar_placeholder.png")
+                    as ImageProvider,
             fit: BoxFit.cover,
           ),
         ),
@@ -76,7 +77,8 @@ class _GalleryPageState extends State<GalleryPage> {
           leading: CircleAvatar(
             backgroundImage: imagePath.isNotEmpty
                 ? NetworkImage(avatarUrl + imagePath.toString())
-                : const AssetImage("assets/images/Kroni.jpg") as ImageProvider,
+                : const AssetImage("assets/images/avatar_placeholder.png")
+                    as ImageProvider,
           ),
           title: Text(
             username,
@@ -121,7 +123,7 @@ class _GalleryPageState extends State<GalleryPage> {
                 child: Image(
                   image: post.imageUrl != null
                       ? NetworkImage(postImageUrl + post.imageUrl.toString())
-                      : const AssetImage("assets/images/Kroni.jpg")
+                      : const AssetImage("assets/images/avatar_placeholder.png")
                           as ImageProvider,
                   fit: BoxFit.cover,
                 ),

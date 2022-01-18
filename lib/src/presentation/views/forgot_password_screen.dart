@@ -16,7 +16,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
-  final _formKey = GlobalKey<FormFieldState>();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -103,42 +103,46 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          const SizedBox(
-            height: 10,
-          ),
-          GetUserInput(
-            label: 'Email',
-            hint: 'Your account email',
-            isPassword: false,
-            controller: _emailController,
-            validator: Validation.emailValidation,
-          ),
-          const SizedBox(
-            height: 30,
-          ),
-          TextButton(
-            onPressed: () {
-              context
-                  .read<ForgotPasswordBloc>()
-                  .add(ForgotPasswordSubmitted(_emailController.value.text));
-            },
-            style: TextButton.styleFrom(
-                fixedSize: Size(size.width * .94, 55),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                backgroundColor: Colors.black87,
-                alignment: Alignment.center,
-                primary: Colors.white,
-                textStyle:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            child: const Text(
-              "Confirm",
+      child: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const SizedBox(
+              height: 10,
             ),
-          ),
-        ],
+            GetUserInput(
+              label: 'Email',
+              hint: 'Your account email',
+              isPassword: false,
+              controller: _emailController,
+              validator: Validation.emailValidation,
+            ),
+            const SizedBox(
+              height: 30,
+            ),
+            TextButton(
+              onPressed: () {
+                if (_formKey.currentState!.validate()) {
+                  context.read<ForgotPasswordBloc>().add(
+                      ForgotPasswordSubmitted(_emailController.value.text));
+                }
+              },
+              style: TextButton.styleFrom(
+                  fixedSize: Size(size.width * .94, 55),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
+                  backgroundColor: Colors.black87,
+                  alignment: Alignment.center,
+                  primary: Colors.white,
+                  textStyle: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 20)),
+              child: const Text(
+                "Confirm",
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -167,7 +167,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 width: 60.0,
                 image: (img.isNotEmpty)
                     ? NetworkImage(avatarUrl + img)
-                    : const AssetImage('assets/images/Kroni.jpg')
+                    : const AssetImage('assets/images/avatar_placeholder.png')
                         as ImageProvider,
                 fit: BoxFit.cover,
               ),

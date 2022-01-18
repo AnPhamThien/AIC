@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/email_confirmation/email_confirmation_bloc.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 
 import '../../app/routes.dart';
 import '../theme/style.dart';
@@ -16,6 +17,9 @@ class EmailConfirmationScreen extends StatefulWidget {
 }
 
 class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
+  final _codeController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -30,7 +34,13 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
         backgroundColor: Colors.black12,
         body: BlocListener<EmailConfirmationBloc, EmailConfirmationState>(
           listener: (context, state) {
-            // TODO: implement listener
+            if (state.formStatus is FormSubmissionSuccess) {
+              Map<String, dynamic> args = {
+                "userId": state.userId,
+              };
+              context.read<AuthBloc>().add(NavigateToPageEvent(
+                  route: AppRouter.resetPasswordScreen, args: args));
+            }
           },
           child: SingleChildScrollView(
             child: Container(
@@ -95,89 +105,97 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
         color: bgWhite,
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
-      child: Column(
-        children: [
-          Center(
-            child: Text(
-              'An activation code will be sent',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-                color: Colors.grey.shade900,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 30.h,
-          ),
-          TextFormField(
-            textAlign: TextAlign.center,
-            decoration: const InputDecoration(
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15),
-                ),
-              ),
-              hintText: 'XXXXXX',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(
-                  Radius.circular(15),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            Center(
+              child: Text(
+                'An activation code will be sent',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Colors.grey.shade900,
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 20.h,
-          ),
-          //verify button
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(AppRouter.resetPasswordScreen);
-            },
-            style: TextButton.styleFrom(
-                fixedSize: Size(size.width * .94, 55),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
-                backgroundColor: Colors.black87,
-                alignment: Alignment.center,
-                primary: Colors.white,
-                textStyle:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-            child: const Text(
-              "Verify",
+            SizedBox(
+              height: 30.h,
             ),
-          ),
-          SizedBox(
-            height: 15.h,
-          ),
-          //Resend button
-          AbsorbPointer(
-            absorbing: false,
-            child: TextButton(
+            TextFormField(
+              controller: _codeController,
+              validator: Validation.blankValidation,
+              textAlign: TextAlign.center,
+              decoration: const InputDecoration(
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                ),
+                hintText: 'XXXXXX',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(15),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 20.h,
+            ),
+            //verify button
+            TextButton(
               onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => {},
-                //   ),
-                // );
+                if (_formKey.currentState!.validate()) {
+                  context.read<EmailConfirmationBloc>().add(
+                      EmailConfirmationSubmitted(_codeController.value.text));
+                }
               },
               style: TextButton.styleFrom(
                   fixedSize: Size(size.width * .94, 55),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: Colors.grey.shade200,
+                  backgroundColor: Colors.black87,
                   alignment: Alignment.center,
-                  primary: Colors.black87,
+                  primary: Colors.white,
                   textStyle: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20)),
               child: const Text(
-                "Resend code",
+                "Verify",
               ),
             ),
-          ),
-        ],
+            SizedBox(
+              height: 15.h,
+            ),
+            //Resend button
+            AbsorbPointer(
+              absorbing: false,
+              child: TextButton(
+                onPressed: () {
+                  // Navigator.push(
+                  //   context,
+                  //   MaterialPageRoute(
+                  //     builder: (context) => {},
+                  //   ),
+                  // );
+                },
+                style: TextButton.styleFrom(
+                    fixedSize: Size(size.width * .94, 55),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    backgroundColor: Colors.grey.shade200,
+                    alignment: Alignment.center,
+                    primary: Colors.black87,
+                    textStyle: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 20)),
+                child: const Text(
+                  "Resend code",
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

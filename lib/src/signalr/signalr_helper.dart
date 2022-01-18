@@ -102,6 +102,7 @@ class SignalRHelper {
       if (parameters != null &&
           (conversationContext != null || messageContext != null)) {
         final data = parameters.first;
+        String conversationId = '';
 
         if (conversationContext?.read<ConversationBloc?>() != null) {
           final conversation = Conversation.fromJson(data?['conversation']);
@@ -115,20 +116,22 @@ class SignalRHelper {
                 utf8.decode(conversation.messageContent!.runes.toList());
           }
 
+          conversationId = conversation.conversationId ?? '';
+
           conversationContext!
               .read<ConversationBloc>()
               .add(ReceiveNewConversation(conversation));
         }
 
         if (messageContext?.read<MessageBloc?>() != null) {
-          final message = (data?['message'] != null)
-              ? Message.fromJson(data?['message'])
-              : Message.fromJson(data);
-          if (message.content != null) {
-            message.content = utf8.decode(message.content!.runes.toList());
-          }
+          final message = Message.fromJson(data?['message']);
 
-          messageContext!.read<MessageBloc>().add(ReceiveNewMessage(message));
+          if (message.conversationId == conversationId) {
+            if (message.content != null) {
+              message.content = utf8.decode(message.content!.runes.toList());
+            }
+            messageContext!.read<MessageBloc>().add(ReceiveNewMessage(message));
+          }
         }
       }
     } catch (e) {

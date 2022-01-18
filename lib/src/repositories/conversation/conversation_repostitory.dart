@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/model/conversation/conversation.dart';
 import 'package:imagecaptioning/src/model/conversation/message.dart';

@@ -98,11 +98,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         String refreshToken = getIt<AppPref>().getRefreshToken;
         final response = await _authRepository.refreshJwtToken(
             token: token, refreshToken: refreshToken);
+
         if (response == null) {
           throw Exception("");
         }
-        String? data = response['data'];
-        int? status = response['statusCode'];
+        String? data = response.data;
+        int? status = response.statusCode;
 
         if (status == StatusCode.successStatus && data != null) {
           getIt<AppPref>().setToken(data);

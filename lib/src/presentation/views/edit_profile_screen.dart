@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -52,8 +51,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: BlocListener<EditProfileBloc, EditProfileState>(
               listener: (context, state) {
                 if (state.status is EditProfileSuccess) {
+                  if (state.user?.avataUrl != null) {
+                    NetworkImage provider = NetworkImage(
+                        avatarUrl + state.user!.avataUrl.toString());
+                    provider.evict();
+                  }
                   Navigator.pop(context, () {
-                    setState(() {});
+                    return true;
                   });
                 }
               },
@@ -92,7 +96,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                         ? NetworkImage(avatarUrl +
                                             state.avatarPath.toString())
                                         : const AssetImage(
-                                                "assets/images/Kroni.jpg")
+                                                "assets/images/avatar_placeholder.png")
                                             as ImageProvider,
                                 fit: BoxFit.cover,
                               ),
@@ -211,19 +215,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return AppBar(
       titleSpacing: 0,
       elevation: 0,
-      leading: BlocBuilder<EditProfileBloc, EditProfileState>(
-        builder: (context, state) {
-          return IconButton(
-            icon: const Icon(
-              Icons.clear_rounded,
-              size: 35,
-            ),
-            onPressed: () {
-              Navigator.pop(context, () {
-                setState(() {});
-              });
-            },
-          );
+      leading: IconButton(
+        icon: const Icon(
+          Icons.clear_rounded,
+          size: 35,
+        ),
+        onPressed: () {
+          Navigator.of(context).pop(true);
         },
       ),
       title: const AppBarTitle(title: "Edit Profile"),
@@ -276,55 +274,4 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       ),
     );
   }
-
-  // void _showImageSourceActionSheet(BuildContext context) {
-  //   selectImageSource(ImageSource imageSource) =>
-  //       {context.read<EditProfileBloc>().add(OpenImagePicker(imageSource))};
-
-  //   if (Platform.isIOS) {
-  //     showCupertinoModalPopup(
-  //       context: context,
-  //       builder: (context) => CupertinoActionSheet(
-  //         actions: [
-  //           CupertinoActionSheetAction(
-  //             child: const Text('Camera'),
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //               selectImageSource(ImageSource.camera);
-  //             },
-  //           ),
-  //           CupertinoActionSheetAction(
-  //             child: const Text('Gallery'),
-  //             onPressed: () {
-  //               Navigator.pop(context);
-  //               selectImageSource(ImageSource.gallery);
-  //             },
-  //           )
-  //         ],
-  //       ),
-  //     );
-  //   } else {
-  //     showModalBottomSheet(
-  //       context: context,
-  //       builder: (context) => Wrap(children: [
-  //         ListTile(
-  //           leading: const Icon(Icons.camera_alt),
-  //           title: const Text('Camera'),
-  //           onTap: () {
-  //             Navigator.pop(context);
-  //             selectImageSource(ImageSource.camera);
-  //           },
-  //         ),
-  //         ListTile(
-  //           leading: const Icon(Icons.photo_album),
-  //           title: const Text('Gallery'),
-  //           onTap: () {
-  //             Navigator.pop(context);
-  //             selectImageSource(ImageSource.gallery);
-  //           },
-  //         ),
-  //       ]),
-  //     );
-  //   }
-  // }
 }

@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import '../../repositories/user/user_repository.dart';
 

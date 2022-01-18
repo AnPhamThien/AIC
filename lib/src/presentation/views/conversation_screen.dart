@@ -96,7 +96,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
   ListTile getConversationItem(bool isNew, String img, username, message,
       String time, conversationId, userRealName, otherUserId) {
     return ListTile(
-      onTap: () {
+      onTap: () async {
         Map<String, dynamic> args = {
           "username": username,
           "avatar": img,
@@ -104,8 +104,10 @@ class _ConversationScreenState extends State<ConversationScreen> {
           "userRealName": userRealName,
           "otherUserId": otherUserId,
         };
-        context.read<AuthBloc>().add(
-            NavigateToPageEvent(route: AppRouter.messageScreen, args: args));
+
+        await Navigator.of(context)
+            .pushNamed(AppRouter.messageScreen, arguments: args);
+        context.read<ConversationBloc>().add(FetchConversation());
       },
       onLongPress: () {},
       contentPadding: const EdgeInsets.fromLTRB(15, 10, 20, 10),
@@ -119,7 +121,7 @@ class _ConversationScreenState extends State<ConversationScreen> {
               width: 60.0,
               image: (img.isNotEmpty)
                   ? NetworkImage(avatarUrl + img)
-                  : const AssetImage('assets/images/Kroni.jpg')
+                  : const AssetImage('assets/images/avatar_placeholder.png')
                       as ImageProvider,
               fit: BoxFit.cover,
             ),

@@ -197,7 +197,7 @@ class LoginScreenState extends State<LoginScreen> {
               label: 'Username',
               hint: 'Email, Username or Phone number',
               isPassword: false,
-              validator: Validation.loginValidation,
+              validator: Validation.blankValidation,
             ),
             const SizedBox(
               height: 20,
@@ -207,7 +207,7 @@ class LoginScreenState extends State<LoginScreen> {
               label: 'Password',
               hint: 'Your account password',
               isPassword: true,
-              validator: Validation.loginValidation,
+              validator: Validation.blankValidation,
             ),
             const SizedBox(
               height: 30,

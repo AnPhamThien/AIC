@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/controller/album/album_bloc.dart';
+import 'package:imagecaptioning/src/controller/album_list/album_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/contest/contest_bloc.dart';
 import 'package:imagecaptioning/src/controller/contest_list/contest_list_bloc.dart';
 import 'package:imagecaptioning/src/controller/contest_user/contest_user_bloc.dart';
@@ -16,6 +18,8 @@ import 'package:imagecaptioning/src/controller/reset_password/reset_password_blo
 import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/album_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/contest_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/contest_user_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/conversation_screen.dart';
@@ -36,6 +40,8 @@ import 'package:imagecaptioning/src/presentation/views/verification_screen.dart'
 
 class AppRouter {
   static const String loginScreen = '/';
+  static const String albumListScreen = '/albumlist';
+  static const String albumScreen = '/album';
   static const String registrationScreen = '/registration';
   static const String verificationScreen = '/verification';
   static const String forgotPasswordScreen = '/forgotpassword';
@@ -64,6 +70,22 @@ class AppRouter {
 
   Route? onGenerateRoute(RouteSettings routeSettings) {
     switch (routeSettings.name) {
+      case albumListScreen:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => AlbumListBloc()..add(FetchAlbum()),
+            child: const AlbumListScreen(),
+          ),
+        );
+      case albumScreen:
+        final args = routeSettings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) =>
+                AlbumBloc()..add(FetchAlbumPosts(args['album'])),
+            child: const AlbumScreen(),
+          ),
+        );
       case loginScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
@@ -120,9 +142,10 @@ class AppRouter {
           ),
         );
       case resetPasswordScreen:
+        final args = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => ResetPasswordBloc(),
+                  create: (context) => ResetPasswordBloc(args['userId']),
                   child: const ResetPasswordScreen(),
                 ));
       case currentUserProfileScreen:

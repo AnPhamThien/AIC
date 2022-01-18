@@ -143,7 +143,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 child: Image(
                   height: 50.0,
                   width: 50.0,
-                  image: AssetImage("assets/images/Kroni.jpg"),
+                  image: AssetImage("assets/images/avatar_placeholder.png"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -261,7 +261,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               width: 60.0,
               image: comment.avataUrl != ""
                   ? NetworkImage(avatarUrl + comment.avataUrl!)
-                  : const AssetImage("assets/images/Kroni.jpg")
+                  : const AssetImage("assets/images/avatar_placeholder.png")
                       as ImageProvider,
               fit: BoxFit.cover,
             ),

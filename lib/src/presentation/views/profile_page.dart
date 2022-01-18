@@ -7,7 +7,6 @@ import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
-import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
@@ -157,7 +156,8 @@ class _ProfilePageState extends State<ProfilePage> {
           image: DecorationImage(
             image: imagePath.isNotEmpty
                 ? NetworkImage(avatarUrl + imagePath)
-                : const AssetImage("assets/images/Kroni.jpg") as ImageProvider,
+                : const AssetImage("assets/images/avatar_placeholder.png")
+                    as ImageProvider,
             fit: BoxFit.cover,
           ),
         ),
@@ -215,10 +215,9 @@ class _ProfilePageState extends State<ProfilePage> {
             borderRadius: BorderRadius.circular(7),
           ),
         ),
-        onPressed: () {
-          context
-              .read<AuthBloc>()
-              .add(NavigateToPageEvent(route: AppRouter.editProfileScreen));
+        onPressed: () async {
+          await Navigator.of(context).pushNamed(AppRouter.editProfileScreen);
+          context.read<ProfileBloc>().add(ProfileInitializing(''));
         },
         child: const Text("Edit Profile"),
       ),
@@ -261,15 +260,15 @@ class _ProfilePageState extends State<ProfilePage> {
               borderRadius: BorderRadius.circular(7),
             ),
           ),
-          onPressed: () {
+          onPressed: () async {
             Map<String, dynamic> args = {
               "username": username,
               "avatar": img,
               "userRealName": userRealName,
               "otherUserId": userId
             };
-            context.read<AuthBloc>().add(NavigateToPageEvent(
-                route: AppRouter.messageScreen, args: args));
+            await Navigator.of(context)
+                .pushNamed(AppRouter.messageScreen, arguments: args);
           },
           child: const Text("Message"),
         ),
@@ -302,12 +301,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   style: TextStyle(fontSize: 19),
                 ),
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const AlbumListScreen(),
-                    ),
-                  );
+                  Navigator.pushNamed(context, AppRouter.albumListScreen);
                 },
               ),
             ),

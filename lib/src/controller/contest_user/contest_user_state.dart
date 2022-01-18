@@ -7,7 +7,8 @@ class ContestUserState extends Equatable {
     this.status = ContestUserStatus.initial,
     this.userInContest = const <UserInContestData>[],
     this.searchUserInContest = const <UserInContestData>[],
-    this.hasReachMax = false,
+    this.hasReachMaxUser = false,
+    this.hasReachMaxSearch = false,
     this.post,
     this.searchName = '',
   });
@@ -15,7 +16,8 @@ class ContestUserState extends Equatable {
   final ContestUserStatus status;
   final List<UserInContestData> userInContest;
   final List<UserInContestData> searchUserInContest;
-  final bool hasReachMax;
+  final bool hasReachMaxUser;
+  final bool hasReachMaxSearch;
   final Post? post;
   final String searchName;
 
@@ -23,14 +25,16 @@ class ContestUserState extends Equatable {
       {ContestUserStatus? status,
       List<UserInContestData>? userInContest,
       List<UserInContestData>? searchUserInContest,
-      bool? hasReachMax,
+      bool? hasReachMaxUser,
+      bool? hasReachMaxSearch,
       Post? post,
       String? searchName}) {
     return ContestUserState(
         status: status ?? this.status,
         userInContest: userInContest ?? this.userInContest,
         searchUserInContest: searchUserInContest ?? this.searchUserInContest,
-        hasReachMax: hasReachMax ?? this.hasReachMax,
+        hasReachMaxUser: hasReachMaxUser ?? this.hasReachMaxUser,
+        hasReachMaxSearch: hasReachMaxSearch ?? this.hasReachMaxSearch,
         post: post ?? this.post,
         searchName: searchName ?? this.searchName);
   }
@@ -40,7 +44,8 @@ class ContestUserState extends Equatable {
         status,
         userInContest,
         searchUserInContest,
-        hasReachMax,
+        hasReachMaxUser,
+        hasReachMaxSearch,
         post,
         searchName
       ];

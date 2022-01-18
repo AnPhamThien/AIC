@@ -18,7 +18,6 @@ import '../model/conversation/message.dart';
 import '../model/generic/generic.dart';
 import '../model/notification/notification.dart';
 import '../model/post/post_add_comment_request.dart';
-import '../model/post/post_add_comment_respone.dart';
 import '../model/post/post_comment_like_respone.dart';
 import '../model/post/post_comment_list_respone.dart';
 import '../model/post/post_list_request.dart';
@@ -162,8 +161,7 @@ abstract class RestClient {
   );
 
   @POST('/comments/addcomment')
-  Future<PostAddCommentRespone> addComment(
-      @Body() PostAddCommentRequest request);
+  Future<GetResponseMessage> addComment(@Body() PostAddCommentRequest request);
 
   @GET('/contests/getmorecontestforuser')
   Future<ContestListRespone> getMoreActiveContestList(
@@ -250,6 +248,10 @@ abstract class RestClient {
     @Query('limituser') int limitUser,
     @Query('name') String name,
   );
+  @GET('/posts/checksavepost')
+  Future<GetResponseMessage> checkSavePost(
+    @Query('post_id') String postId,
+  );
 
   @GET('/users/searchuserpage')
   Future<SearchRespone> moreSearchUser(
@@ -309,5 +311,20 @@ abstract class RestClient {
     @Query('limitPost') int limitPost,
     @Query('currentPage') int currentPage,
     @Query('albumId') String albumId,
+  @POST('/searchhistories/addsearchhistory')
+  Future<GetResponseMessage> addSearchHistory(
+    @Field('user_id') String userId,
+  );
+  @POST('/searchhistories/deletehistory')
+  Future<GetResponseMessage> deleteSearchHistory(
+    @Field('user_id') String userId,
+  );
+  @POST('/comments/deletecomment')
+  Future<GetResponseMessage> deleteComment(
+    @Field('Id') String id,
+  );
+  @POST('/likes/addanddeletelike')
+  Future<GetResponseMessage> addAndDeleteLike(
+    @Field('postId') String postId,
   );
 }

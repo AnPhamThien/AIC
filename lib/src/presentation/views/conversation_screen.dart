@@ -57,7 +57,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
       ),
       body: BlocListener<ConversationBloc, ConversationState>(
         listener: (context, state) {
-          // TODO: implement listener
         },
         child: SafeArea(
           child: BlocBuilder<ConversationBloc, ConversationState>(

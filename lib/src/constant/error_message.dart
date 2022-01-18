@@ -214,6 +214,11 @@ class MessageCode {
   static const String postNotBelong = "P118";
 
   /// <summary>
+  /// P119 : post not belong to current contest
+  /// </summary>
+  static const String postNotBelongInCurrentContest = "P119";
+
+  /// <summary>
   /// CT111 : contest not found
   /// </summary>
   static const String contestNotFound = "CT111";
@@ -269,6 +274,11 @@ class MessageCode {
   static const String getUserInContestFail = "CT121";
 
   /// <summary>
+  /// CT122 : contest must have prize
+  /// </summary>
+  static const String contestMustHavePrize = "CT122";
+
+  /// <summary>
   /// JO111 : job id is required to delete it
   /// </summary>
   static const String jobIdRequired = "JO111";
@@ -297,6 +307,11 @@ class MessageCode {
   /// CM115 : no comment to didplay
   /// </summary>
   static const String noCommentToDisplay = "CM115";
+
+  /// <summary>
+  /// CM116 : comment not belong to current user
+  /// </summary>
+  static const String commentNotBelong = "CM116";
 
   /// <summary>
   /// LK111 : user has liked this post
@@ -424,6 +439,21 @@ class MessageCode {
   static const String addNotificationFail = "NT113";
 
   /// <summary>
+  /// B112 : book is deleted
+  /// </summary>
+  static const String bookDelete = "B112";
+
+  /// <summary>
+  /// B113 : get book fail
+  /// </summary>
+  static const String getBookFail = "B113";
+
+  /// <summary>
+  /// B114 : book's author or publisher duplicated
+  /// </summary>
+  static const String bookInforDuplicated = "B114";
+
+  /// <summary>
   /// S111 : search is failed
   /// </summary>
   static const String searchFail = "S111";
@@ -499,6 +529,21 @@ class MessageCode {
   static const String noMessageToDisplay = "MS112";
 
   /// <summary>
+  /// MS113 : Send message fail
+  /// </summary>
+  static const String sendMessageFail = "MS113";
+
+  /// <summary>
+  /// MS114 : Message not found
+  /// </summary>
+  static const String messageNotFound = "MS114";
+
+  /// <summary>
+  /// MS115 : update message fail
+  /// </summary>
+  static const String updateMessageFail = "MS115";
+
+  /// <summary>
   /// R111 : Role not found or deleted
   /// </summary>
   static const String roleNotFoundOrDeleted = "R111";
@@ -514,14 +559,19 @@ class MessageCode {
   static const String duplicate = "DU112";
 
   /// <summary>
-  /// AR111 : Add role fail
+  /// R111 : Add role fail
   /// </summary>
-  static const String addRoleFail = "AR111";
+  static const String addRoleFail = "R111";
 
   /// <summary>
-  /// UR111 : Update role fail
+  /// R112 : Update role fail
   /// </summary>
-  static const String updateRoleFail = "UR111";
+  static const String updateRoleFail = "R112";
+
+  /// <summary>
+  /// R113 : role not valid
+  /// </summary>
+  static const String roleNotValid = "R113";
 
   /// <summary>
   /// S113 : string contain name value is null or white space
@@ -602,4 +652,94 @@ class MessageCode {
   /// TK121 : token invalid
   /// </summary>
   static const String tokenInvalid = "TK121";
+
+  /// <summary>
+  /// LG111 : login fail
+  /// </summary>
+  static const String loginFail = "LG111";
+
+  /// <summary>
+  /// FO111 : force logout fail
+  /// </summary>
+  static const String forceLogoutFail = "FO111";
+
+  /// <summary>
+  /// HS111 : add search user to history fail
+  /// </summary>
+  static const String addUserToHistoryFail = "HS111";
+
+  /// <summary>
+  /// HS112 : user not found in history
+  /// </summary>
+  static const String historyNotFound = "HS112";
+
+  /// <summary>
+  /// HS113 : Delete search history fail
+  /// </summary>
+  static const String deleteSearchHistoryFail = "HS113";
+
+  /// <summary>
+  /// HS114 : No search history to display
+  /// </summary>
+  static const String noSearchHistoryToDisplay = "HS114";
+
+  /// <summary>
+  /// HS115 : Get search history fail
+  /// </summary>
+  static const String getSearchHistoryFail = "HS115";
+
+  /// <summary>
+  /// HS116 : Get more search history fail
+  /// </summary>
+  static const String getMoreSearchHistoryFail = "HS116";
+
+  /// <summary>
+  /// W111 : Calculate weight fail
+  /// </summary>
+  static const String calculateWeightFail = "W111";
+
+  /// <summary>
+  /// P120 : In single contest user can not post more than 1 post
+  /// </summary>
+  static const String duplicatePostInContest = "P120";
+
+  /// <summary>
+  /// U130 : user has been block by admin
+  /// </summary>
+  static const String userIsBlock = "U130";
+
+  /// <summary>
+  /// PZ111 : add prize fail
+  /// </summary>
+  static const String addPrizeFail = "PZ111";
+
+  /// <summary>
+  /// PZ112 : prize name is duplicated
+  /// </summary>
+  static const String prizeNameIsDuplicated = "PZ112";
+
+  /// <summary>
+  /// PZ113 : prize not found
+  /// </summary>
+  static const String prizeNotFound = "PZ113";
+
+  /// <summary>
+  /// PZ114 : prize is used in existed contest
+  /// </summary>
+  static const String prizeIsUsedInExistedContest = "PZ114";
+
+  /// <summary>
+  /// PZ115 : update prize fail
+  /// </summary>
+  static const String updatePrizeFail = "PZ115";
+
+  /// <summary>
+  /// PZ116 : no prize to display
+  /// </summary>
+  static const String noPrizeToDisplay = "PZ116";
+
+  /// <summary>
+  /// PZ117 : get prize fail
+  /// </summary>
+  static const String getPrizeFail = "PZ117";
 }

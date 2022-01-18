@@ -13,6 +13,7 @@ import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
 import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
 import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
+import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/reset_password/reset_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
@@ -69,6 +70,7 @@ class AppRouter {
   ];
 
   Route? onGenerateRoute(RouteSettings routeSettings) {
+    PostBloc _postBloc = PostBloc();
     switch (routeSettings.name) {
       case albumListScreen:
         return MaterialPageRoute(
@@ -124,11 +126,9 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => MultiBlocProvider(
             providers: [
-              //BlocProvider(create: (context) => ProfileBloc()),
               BlocProvider(create: (context) {
                 return NotificationBloc()..add(FetchNotification());
               }),
-
               BlocProvider(
                   create: (context) =>
                       ProfileBloc(true)..add(ProfileInitializing(''))),
@@ -137,6 +137,7 @@ class AppRouter {
               BlocProvider(
                   create: (context) =>
                       SearchBloc()..add(InitSearchHistoryFetched())),
+              BlocProvider.value(value: _postBloc),
             ],
             child: const RootScreen(),
           ),
@@ -212,18 +213,30 @@ class AppRouter {
       case postDetailScreen:
         final arg = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-          builder: (context) => BlocProvider(
-            create: (context) =>
-                PostDetailBloc()..add(PostDetailInitEvent(arg['post'])),
-            child: const PostDetailScreen(),
+          builder: (context) => MultiBlocProvider(
+            providers: [
+              BlocProvider(
+                create: (context) =>
+                    PostDetailBloc()..add(PostDetailInitEvent(arg['post'])),
+              ),
+              BlocProvider.value(value: _postBloc),
+            ],
+            child: PostDetailScreen(
+              post: arg['post'],
+            ),
           ),
         );
       case contestScreen:
         final arg = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
-            builder: (context) => BlocProvider(
-                  create: (context) =>
-                      ContestBloc()..add(InitContestFetched(arg['contest'])),
+            builder: (context) => MultiBlocProvider(
+                  providers: [
+                    BlocProvider(
+                      create: (context) => ContestBloc()
+                        ..add(InitContestFetched(arg['contest'])),
+                    ),
+                    BlocProvider.value(value: _postBloc),
+                  ],
                   child: ContestScreen(
                     contest: arg['contest'],
                   ),

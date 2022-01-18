@@ -15,5 +15,18 @@ class InitSearchFetched extends SearchEvent {
   const InitSearchFetched(this.name);
 }
 
-class FetchMoreSearchHistory extends SearchEvent{}
-class FetchMoreSearch extends SearchEvent{}
+class FetchMoreSearchHistory extends SearchEvent {}
+
+class FetchMoreSearch extends SearchEvent {}
+
+class DeleteSearchHistory extends SearchEvent {
+  final SearchHistoryData user;
+
+  const DeleteSearchHistory(this.user);
+}
+
+class AddSearchHistory extends SearchEvent {
+  final String userId;
+
+  const AddSearchHistory(this.userId);
+}

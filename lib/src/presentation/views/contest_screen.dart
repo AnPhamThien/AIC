@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../controller/contest/contest_bloc.dart';
@@ -77,64 +80,83 @@ class _ContestScreenState extends State<ContestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ContestBloc, ContestState>(
-      builder: (context, state) {
-        switch (state.status) {
-          case ContestStatus.success:
-            return Scaffold(
-              backgroundColor: bgApp,
-              floatingActionButton: _showBackToTopButton == false
-                  ? null
-                  : FloatingActionButton(
-                      backgroundColor: Colors.black87,
-                      onPressed: _scrollToTop,
-                      child: const Icon(
-                        Icons.arrow_upward_rounded,
-                        size: 30,
-                      ),
-                    ),
-              body: SmartRefresher(
-                controller: _refreshController,
-                onRefresh: _onRefresh,
-                child: CustomScrollView(
-                  controller: _scrollController,
-                  slivers: [
-                    getAppBar(state),
-                    state.topThreePost.isNotEmpty
-                        ? getLeaderBoard(context, state)
-                        : const SliverToBoxAdapter(
-                            child: SizedBox.shrink(),
-                          ),
-                    getBody(state),
-                  ],
-                ),
-              ),
-            );
-          case ContestStatus.failure:
-            return SomethingWentWrongScreen(onPressed: () {
-              context.read<ContestBloc>().add(InitContestFetched(_contest));
-            });
-          default:
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.black87,
-              ),
-            );
+    List<Post> _postList = <Post>[];
+    return BlocListener<PostBloc, PostState>(
+      listener: (context, state) {
+        if (state.needUpdate == true) {
+          int _index =
+              _postList.indexWhere((element) => element.postId == state.postId);
+          if (_postList[_index].isLike == 0) {
+            _postList[_index].isLike = 1;
+          } else {
+            _postList[_index].isLike = 0;
+          }
+
+          context.read<PostBloc>().add(Reset());
         }
       },
-    );
-  }
-
-  SliverList getBody(ContestState state) {
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          final Post post = state.post[index];
-          return PostWidget(
-            post: post,
+      child: BlocBuilder<PostBloc, PostState>(
+        builder: (context, state) {
+          return BlocBuilder<ContestBloc, ContestState>(
+            builder: (context, state) {
+              switch (state.status) {
+                case ContestStatus.success:
+                  return Scaffold(
+                    backgroundColor: bgApp,
+                    floatingActionButton: _showBackToTopButton == false
+                        ? null
+                        : FloatingActionButton(
+                            backgroundColor: Colors.black87,
+                            onPressed: _scrollToTop,
+                            child: const Icon(
+                              Icons.arrow_upward_rounded,
+                              size: 30,
+                            ),
+                          ),
+                    body: SmartRefresher(
+                      controller: _refreshController,
+                      onRefresh: _onRefresh,
+                      child: CustomScrollView(
+                        controller: _scrollController,
+                        slivers: [
+                          getAppBar(state),
+                          state.topThreePost.isNotEmpty
+                              ? getLeaderBoard(context, state)
+                              : const SliverToBoxAdapter(
+                                  child: SizedBox.shrink(),
+                                ),
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index) {
+                                _postList = state.post;
+                                final Post post = _postList[index];
+                                return PostWidget(
+                                  post: post,
+                                );
+                              },
+                              childCount: state.post.length,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  );
+                case ContestStatus.failure:
+                  return SomethingWentWrongScreen(onPressed: () {
+                    context
+                        .read<ContestBloc>()
+                        .add(InitContestFetched(_contest));
+                  });
+                default:
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Colors.black87,
+                    ),
+                  );
+              }
+            },
           );
         },
-        childCount: state.post.length,
       ),
     );
   }
@@ -222,7 +244,8 @@ class _ContestScreenState extends State<ContestScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            getSheet(_contest, state.totalParticipaters, state.contestPrizes);
+            getSheet(_contest, state.totalParticipaters, state.contestPrizes,
+                context.read<ContestBloc>());
           },
           icon: const Icon(Icons.info_outlined, size: 30),
         )
@@ -231,7 +254,11 @@ class _ContestScreenState extends State<ContestScreen> {
   }
 
   Future<dynamic> getSheet(
-      Contest contest, int totalParticipaters, List<dynamic> contestPrizes) {
+    Contest contest,
+    int totalParticipaters,
+    List<dynamic> contestPrizes,
+    ContestBloc bloc,
+  ) {
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
@@ -291,10 +318,12 @@ class _ContestScreenState extends State<ContestScreen> {
                 horizontal: 15,
               ),
               child: GestureDetector(
-                onTap: () {
+                onTap: () async {
                   Map<String, dynamic> args = {'contestId': contest.id};
-                  context.read<AuthBloc>().add(NavigateToPageEvent(
-                      route: AppRouter.contestUserScreen, args: args));
+                  await Navigator.pushNamed(
+                      context, AppRouter.contestUserScreen,
+                      arguments: args);
+                  bloc.add(InitContestFetched(contest));
                 },
                 child: Text(
                   "Participant: $totalParticipaters",

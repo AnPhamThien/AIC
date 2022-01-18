@@ -5,7 +5,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import '../presentation/views/upload_page.dart';
 
 /// viet hoa va cac chuoi
@@ -26,6 +29,13 @@ Map<String, dynamic> parseJwt(String token) {
   }
 
   return payloadMap;
+}
+
+ImageProvider<Object> getImg(String? imgUrl) {
+  if (imgUrl != null) {
+    return NetworkImage(avatarUrl + imgUrl);
+  }
+  return const AssetImage("assets/images/avatar_placeholder.png");
 }
 
 String _decodeBase64(String str) {
@@ -149,4 +159,12 @@ String timeCalculateDouble(double time) {
 
 bool containsChar(String value) {
   return RegExp('[a-zA-Z0-9]').hasMatch(value);
+}
+
+bool isUser(String id) {
+  if (id == getIt<AppPref>().getUserID) {
+    return true;
+  } else {
+    return false;
+  }
 }

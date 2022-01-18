@@ -8,6 +8,7 @@ import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/contest_user/contest_user_bloc.dart';
 import 'package:imagecaptioning/src/model/contest/user_in_contest_data.dart';
 import 'package:imagecaptioning/src/presentation/error/something_went_wrong.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class ContestUserScreen extends StatefulWidget {
@@ -21,6 +22,41 @@ class ContestUserScreen extends StatefulWidget {
 }
 
 class _ContestUserScreenState extends State<ContestUserScreen> {
+  final _userScrollController = ScrollController();
+  final _searchScrollController = ScrollController();
+
+  void _onScrollUser() {
+    if (isScrollEnd(_userScrollController)) {
+      context.read<ContestUserBloc>().add(FetchMoreContestUser());
+    }
+  }
+
+  void _onScrollSearch() {
+    if (isScrollEnd(_searchScrollController)) {
+      context.read<ContestUserBloc>().add(FetchMoreSearchContestUser());
+    }
+  }
+
+  @override
+  void initState() {
+    _userScrollController.addListener(_onScrollUser);
+    _searchScrollController.addListener(_onScrollSearch);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _userScrollController
+      ..removeListener(_onScrollUser)
+      ..dispose();
+    _searchScrollController
+      ..removeListener(_onScrollSearch)
+      ..dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final String _contestId = widget.contestId;
@@ -43,7 +79,9 @@ class _ContestUserScreenState extends State<ContestUserScreen> {
               listener: (context, state) {
                 if (state.status == ContestUserStatus.postfetched) {
                   context.read<ContestUserBloc>().add(NavigatedToPost());
+                  log("like" + state.post!.isLike.toString());
                   Map<String, dynamic> args = {'post': state.post};
+                  log(state.post!.postId!);
                   context.read<AuthBloc>().add(NavigateToPageEvent(
                         route: AppRouter.postDetailScreen,
                         args: args,
@@ -95,10 +133,10 @@ class _ContestUserScreenState extends State<ContestUserScreen> {
                               color: Colors.white,
                             ),
                             child: ListView.builder(
+                              controller: _searchScrollController,
                               scrollDirection: Axis.vertical,
                               shrinkWrap: true,
-                              itemCount: state.searchUserInContest
-                                  .length, //TODO: độ dài list user đã từng search ở đây
+                              itemCount: state.searchUserInContest.length,
                               itemBuilder: (_, index) {
                                 if (state.searchUserInContest.isEmpty) {
                                   return const Center(
@@ -115,6 +153,7 @@ class _ContestUserScreenState extends State<ContestUserScreen> {
                         body: Padding(
                           padding: const EdgeInsets.only(top: 70),
                           child: ListView.builder(
+                            controller: _userScrollController,
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemCount: state.userInContest.length,
@@ -179,9 +218,8 @@ class _ContestUserScreenState extends State<ContestUserScreen> {
         user.userName ?? '',
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
       ),
-      subtitle: user.userRealname != null
-          ? Text(user.userRealname ?? '')
-          : const SizedBox.shrink(),
+      subtitle:
+          user.userRealname != null ? Text(user.userRealname ?? '') : null,
     );
   }
 }

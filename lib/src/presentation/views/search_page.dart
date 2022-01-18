@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
-import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
@@ -9,7 +8,7 @@ import 'package:imagecaptioning/src/model/search/search_data.dart';
 import 'package:imagecaptioning/src/model/search/search_history_data.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/presentation/error/something_went_wrong.dart';
-import '../../data_local/markup_model.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:material_floating_search_bar/material_floating_search_bar.dart';
 
 class SearchPage extends StatefulWidget {
@@ -20,10 +19,43 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final _searchHistoryScrollController = ScrollController();
+  final _searchScrollController = ScrollController();
+
+  void _onScrollSearchHistory() {
+    if (isScrollEnd(_searchHistoryScrollController)) {
+      context.read<SearchBloc>().add(FetchMoreSearchHistory());
+    }
+  }
+
+  void _onScrollSearch() {
+    if (isScrollEnd(_searchScrollController)) {
+      context.read<SearchBloc>().add(FetchMoreSearch());
+    }
+  }
+
+  @override
+  void initState() {
+    _searchHistoryScrollController.addListener(_onScrollSearchHistory);
+    _searchScrollController.addListener(_onScrollSearch);
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _searchHistoryScrollController
+      ..removeListener(_onScrollSearchHistory)
+      ..dispose();
+    _searchScrollController
+      ..removeListener(_onScrollSearch)
+      ..dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<User> searchedUser =
-        User.getSearchedUser(); //TODO mốt chuyển vào controller nè
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -41,7 +73,7 @@ class _SearchPageState extends State<SearchPage> {
                       backgroundColor: Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(25),
                       elevation: 0,
-                      hint: 'Search...', //TODO nhét từ vừa search vào đây
+                      hint: 'Search...',
                       physics: const BouncingScrollPhysics(),
                       openAxisAlignment: 0.0,
                       debounceDelay: const Duration(milliseconds: 500),
@@ -72,6 +104,7 @@ class _SearchPageState extends State<SearchPage> {
                             color: Colors.white,
                           ),
                           child: ListView.builder(
+                            controller: _searchScrollController,
                             scrollDirection: Axis.vertical,
                             shrinkWrap: true,
                             itemCount: state.searchList.length,
@@ -83,10 +116,10 @@ class _SearchPageState extends State<SearchPage> {
                           ),
                         );
                       },
-                      //lịch sử search
                       body: Padding(
                         padding: const EdgeInsets.only(top: 70),
                         child: ListView.builder(
+                          controller: _searchHistoryScrollController,
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
                           itemCount: state.searchHistoryList.length,
@@ -140,10 +173,7 @@ class _SearchPageState extends State<SearchPage> {
         child: CircleAvatar(
           child: ClipOval(
             child: Image(
-              image: searchedUser.avatarUrl != null
-                  ? NetworkImage(avatarUrl + searchedUser.avatarUrl!)
-                  : const AssetImage("assets/images/avatar_placeholder.png")
-                      as ImageProvider,
+              image: getImg(searchedUser.avatarUrl),
               height: 55,
               width: 55,
               fit: BoxFit.cover,
@@ -157,11 +187,11 @@ class _SearchPageState extends State<SearchPage> {
       ),
       subtitle: searchedUser.userRealName != null
           ? Text(searchedUser.userRealName ?? '')
-          : const SizedBox.shrink(),
+          : null,
       trailing: IconButton(
         splashRadius: 30,
         onPressed: () {
-          //TODO xóa user khi nhấn vào button này
+          context.read<SearchBloc>().add(DeleteSearchHistory(searchedUser));
         },
         icon: const Icon(
           Icons.clear_rounded,
@@ -177,6 +207,7 @@ class _SearchPageState extends State<SearchPage> {
       onTap: () {
         final userId = searchedUser.id;
         Map<String, dynamic> args = {'userId': userId};
+        context.read<SearchBloc>().add(AddSearchHistory(userId!));
         userId != getIt<AppPref>().getUserID
             ? context.read<AuthBloc>().add(NavigateToPageEvent(
                 route: AppRouter.otherUserProfileScreen, args: args))
@@ -194,10 +225,7 @@ class _SearchPageState extends State<SearchPage> {
         child: CircleAvatar(
           child: ClipOval(
             child: Image(
-              image: searchedUser.avataUrl != null
-                  ? NetworkImage(avatarUrl + searchedUser.avataUrl!)
-                  : const AssetImage("assets/images/avatar_placeholder.png")
-                      as ImageProvider,
+              image: getImg(searchedUser.avataUrl),
               height: 55,
               width: 55,
               fit: BoxFit.cover,
@@ -211,7 +239,7 @@ class _SearchPageState extends State<SearchPage> {
       ),
       subtitle: searchedUser.userRealName != null
           ? Text(searchedUser.userRealName ?? '')
-          : const SizedBox.shrink(),
+          : null,
     );
   }
 }

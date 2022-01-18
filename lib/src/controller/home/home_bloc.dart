@@ -42,17 +42,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _onInitPostFetched(
       InitPostFetched event, Emitter<HomeState> emit) async {
     try {
-      if (state.status == HomeStatus.initial) {
-        final ListPostData? data =
-            await _postRepository.getPost(_postPerPerson, _postDate);
-        _listFollowee = data?.followees ?? [];
+      final ListPostData? data =
+          await _postRepository.getPost(_postPerPerson, _postDate);
+      _listFollowee = data?.followees ?? [];
 
-        emit(state.copyWith(
-          status: HomeStatus.success,
-          postsList: data?.posts ?? [],
-          hasReachedMax: false,
-        ));
-      }
+      emit(state.copyWith(
+        status: HomeStatus.success,
+        postsList: data?.posts ?? [],
+        hasReachedMax: false,
+      ));
     } catch (_) {
       emit(state.copyWith(status: HomeStatus.failure));
     }
@@ -60,7 +58,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   void _fetchMorePost(FetchMorePost event, Emitter<HomeState> emit) async {
     if (state.hasReachedMax) {
-      emit(state.copyWith(status: HomeStatus.maxpost));
       return;
     }
     try {

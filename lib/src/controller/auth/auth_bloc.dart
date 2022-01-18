@@ -58,7 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onLogout(LogoutEvent event, Emitter emit) async {
     try {
       emit(state.copyWith(authStatus: AuthenticationUnauthenticated()));
-      //await _signalRHelper.closeConnection();
+      await _signalRHelper.closeConnection();
 
       await _authRepository.deleteRefreshToken();
 

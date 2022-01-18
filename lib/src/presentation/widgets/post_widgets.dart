@@ -5,7 +5,6 @@ import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';

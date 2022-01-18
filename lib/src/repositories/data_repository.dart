@@ -381,6 +381,7 @@ class DataRepository implements RestClient {
     return _client.getMoreAlbumPost(limitPost, currentPage, albumId);
   }
 
+  @override
   Future<GetResponseMessage> addSearchHistory(String userId) {
     return _client.addSearchHistory(userId);
   }

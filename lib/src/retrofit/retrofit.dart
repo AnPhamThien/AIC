@@ -311,14 +311,18 @@ abstract class RestClient {
     @Query('limitPost') int limitPost,
     @Query('currentPage') int currentPage,
     @Query('albumId') String albumId,
+  );
+
   @POST('/searchhistories/addsearchhistory')
   Future<GetResponseMessage> addSearchHistory(
     @Field('user_id') String userId,
   );
+
   @POST('/searchhistories/deletehistory')
   Future<GetResponseMessage> deleteSearchHistory(
     @Field('user_id') String userId,
   );
+
   @POST('/comments/deletecomment')
   Future<GetResponseMessage> deleteComment(
     @Field('Id') String id,

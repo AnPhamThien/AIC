@@ -202,10 +202,12 @@ class _RestClient implements RestClient {
     if (userRealName != null) {
       _data.fields.add(MapEntry('user_real_name', userRealName));
     }
-    _data.files.add(MapEntry(
-        'avatar_img',
-        MultipartFile.fromFileSync(avatarImg!.path,
-            filename: avatarImg.path.split(Platform.pathSeparator).last)));
+    if (avatarImg != null) {
+      _data.files.add(MapEntry(
+          'avatar_img',
+          MultipartFile.fromFileSync(avatarImg.path,
+              filename: avatarImg.path.split(Platform.pathSeparator).last)));
+    }
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
@@ -896,15 +898,6 @@ class _RestClient implements RestClient {
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/albums/addalbum',
-  Future<GetResponseMessage> addSearchHistory(userId) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = {'user_id': userId};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetResponseMessage>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/searchhistories/addsearchhistory',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetResponseMessage.fromJson(_result.data!);
@@ -921,15 +914,6 @@ class _RestClient implements RestClient {
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/albums/adddefaultsavestorage',
-  Future<GetResponseMessage> deleteSearchHistory(userId) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = {'user_id': userId};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetResponseMessage>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/searchhistories/deletehistory',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetResponseMessage.fromJson(_result.data!);
@@ -946,15 +930,6 @@ class _RestClient implements RestClient {
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/albums/updatealbum',
-  Future<GetResponseMessage> deleteComment(id) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = {'Id': id};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetResponseMessage>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/comments/deletecomment',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetResponseMessage.fromJson(_result.data!);
@@ -971,15 +946,6 @@ class _RestClient implements RestClient {
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/albums/deletealbum',
-  Future<GetResponseMessage> addAndDeleteLike(postId) async {
-    const _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{};
-    final _headers = <String, dynamic>{};
-    final _data = {'postId': postId};
-    final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetResponseMessage>(
-            Options(method: 'POST', headers: _headers, extra: _extra)
-                .compose(_dio.options, '/likes/addanddeletelike',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetResponseMessage.fromJson(_result.data!);
@@ -1024,6 +990,70 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetAlbumPostListResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> addSearchHistory(userId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'user_id': userId};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/searchhistories/addsearchhistory',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> deleteSearchHistory(userId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'user_id': userId};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/searchhistories/deletehistory',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> deleteComment(id) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'Id': id};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/comments/deletecomment',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> addAndDeleteLike(postId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'postId': postId};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/likes/addanddeletelike',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
     return value;
   }
 

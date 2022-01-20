@@ -1,22 +1,95 @@
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
+import 'package:imagecaptioning/src/model/category/category.dart';
+import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
-
+import 'package:stream_transform/stream_transform.dart';
 part 'post_event.dart';
 part 'post_state.dart';
+
+const throttleDuration = Duration(milliseconds: 100);
+
+EventTransformer<E> throttleDroppable<E>(Duration duration) {
+  return (events, mapper) {
+    return droppable<E>().call(events.throttle(duration), mapper);
+  };
+}
 
 class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc() : super(const PostState()) {
     on<LikePress>(_onLikePress);
     on<Reset>(_onReset);
-    on<CheckSavePost>(_onCheckSavePost);
+    on<CheckSavePost>(_onCheckSavePost,
+        transformer: throttleDroppable(throttleDuration));
+    on<SavePost>(_onSavePost, transformer: throttleDroppable(throttleDuration));
+    on<UnsavePost>(_onUnsavePost,
+        transformer: throttleDroppable(throttleDuration));
+    on<GetCategory>(_onGetCategory,
+        transformer: throttleDroppable(throttleDuration));
+    on<ReportPost>(_onReportPost,
+        transformer: throttleDroppable(throttleDuration));
+    on<DeletePost>(_onDeletePost,
+        transformer: throttleDroppable(throttleDuration));
   }
 
   final PostRepository _postRepository = PostRepository();
+
+  void _onDeletePost(
+    DeletePost event,
+    Emitter<PostState> emit,
+  ) async {
+    try {
+      GetResponseMessage _respone =
+          await _postRepository.deletePost(event.postId);
+      if (_respone.statusCode == StatusCode.successStatus) {
+        emit(state.copyWith(status: PostStatus.deleted));
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  void _onReportPost(
+    ReportPost event,
+    Emitter<PostState> emit,
+  ) async {
+    try {
+      GetResponseMessage _respone = await _postRepository.addReport(
+          event.postId, event.categoryId, event.description);
+      if (_respone.statusCode == StatusCode.successStatus) {
+        emit(state.copyWith(status: PostStatus.reported));
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  void _onGetCategory(
+    GetCategory event,
+    Emitter<PostState> emit,
+  ) async {
+    try {
+      CategoryRespone _respone = await _postRepository.getCategory();
+      List<Category>? _categoryList = _respone.data;
+      if (_respone.statusCode == StatusCode.successStatus &&
+          _categoryList != null) {
+        emit(state.copyWith(categoryList: _categoryList));
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 
   void _onCheckSavePost(
     CheckSavePost event,
@@ -31,6 +104,40 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         } else {
           emit(state.copyWith(isSaved: true));
         }
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  void _onSavePost(
+    SavePost event,
+    Emitter<PostState> emit,
+  ) async {
+    try {
+      GetResponseMessage _respone =
+          await _postRepository.savePost(event.postId);
+      if (_respone.statusCode == StatusCode.successStatus) {
+        emit(state.copyWith(status: PostStatus.success, isSaved: true));
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  void _onUnsavePost(
+    UnsavePost event,
+    Emitter<PostState> emit,
+  ) async {
+    try {
+      GetResponseMessage _respone =
+          await _postRepository.unsavePost(event.postId);
+      if (_respone.statusCode == StatusCode.successStatus) {
+        emit(state.copyWith(status: PostStatus.success, isSaved: false));
       } else {
         throw Exception(_respone.messageCode);
       }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,12 +9,13 @@ import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
+import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
-// ignore: implementation_imports
-import 'package:provider/src/provider.dart';
+
+import 'get_user_input_field.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.post}) : super(key: key);
@@ -51,6 +54,7 @@ class _PostWidgetState extends State<PostWidget> {
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
+                  context1: context,
                 ),
                 PostImgWidget(postImage: widget.post.imageUrl ?? ""),
                 PostIconWidget(
@@ -91,7 +95,7 @@ class _PostWidgetState extends State<PostWidget> {
 }
 
 //* HEADLINE CỦA POST
-class PostHeadlineWidget extends StatelessWidget {
+class PostHeadlineWidget extends StatefulWidget {
   const PostHeadlineWidget({
     Key? key,
     required this.userId,
@@ -99,6 +103,7 @@ class PostHeadlineWidget extends StatelessWidget {
     required this.time,
     required this.postAvatar,
     required this.postId,
+    this.context1,
   }) : super(key: key);
 
   final String userId;
@@ -106,13 +111,27 @@ class PostHeadlineWidget extends StatelessWidget {
   final DateTime time;
   final String? postAvatar;
   final String postId;
+  final BuildContext? context1;
+
+  @override
+  State<PostHeadlineWidget> createState() => _PostHeadlineWidgetState();
+}
+
+class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
+  @override
+  void initState() {
+    context.read<PostBloc>().add(CheckSavePost(widget.postId));
+    context.read<PostBloc>().add(GetCategory());
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _calculatedTime = timeCalculate(time);
-    Map<String, dynamic> args = {'userId': userId};
+    final _calculatedTime = timeCalculate(widget.time);
+    Map<String, dynamic> args = {'userId': widget.userId};
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 15),
-      onTap: () => userId != getIt<AppPref>().getUserID
+      onTap: () => widget.userId != getIt<AppPref>().getUserID
           ? context.read<AuthBloc>().add(NavigateToPageEvent(
               route: AppRouter.otherUserProfileScreen, args: args))
           : context.read<AuthBloc>().add(NavigateToPageEvent(
@@ -127,8 +146,8 @@ class PostHeadlineWidget extends StatelessWidget {
         child: CircleAvatar(
           child: ClipOval(
             child: Image(
-              image: postAvatar != null
-                  ? NetworkImage(avatarUrl + postAvatar!)
+              image: widget.postAvatar != null
+                  ? NetworkImage(avatarUrl + widget.postAvatar!)
                   : const AssetImage("assets/images/avatar_placeholder.png")
                       as ImageProvider,
               height: 45,
@@ -139,16 +158,44 @@ class PostHeadlineWidget extends StatelessWidget {
         ),
       ),
       title: Text(
-        username,
+        widget.username,
         style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
       ),
       subtitle: Text(_calculatedTime),
 
       ///options
-      trailing: BlocBuilder<PostBloc, PostState>(
-        builder: (context, state) {
-          context.read<PostBloc>().add(CheckSavePost(postId));
-          return PopupMenuButton(
+      trailing: BlocListener<PostBloc, PostState>(
+        listenWhen: (previous, current) => previous != current,
+        listener: (context, state) {
+          if (state.status == PostStatus.success && state.isSaved == true) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Save !'),
+              duration: Duration(seconds: 1),
+            ));
+          } else if (state.status == PostStatus.success &&
+              state.isSaved == false) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Unsave !'),
+              duration: Duration(seconds: 1),
+            ));
+          } else if (state.status == PostStatus.reported) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text('Reported !'),
+              duration: Duration(seconds: 1),
+            ));
+          }
+        },
+        child: BlocBuilder<PostBloc, PostState>(
+          builder: (context, state) {
+            return PopupMenuButton(
+              onSelected: (value) async {
+                switch (value) {
+                  case 'report':
+                    return showReportDialog(state.categoryList, widget.postId);
+                  default:
+                    throw UnimplementedError();
+                }
+              },
               icon: const Icon(
                 Icons.more_vert_rounded,
                 color: Colors.black87,
@@ -160,68 +207,140 @@ class PostHeadlineWidget extends StatelessWidget {
               offset: const Offset(-10, 45),
               elevation: 10,
               itemBuilder: (context) {
-                if (isUser(userId)) {
+                if (isUser(widget.userId)) {
                   return <PopupMenuEntry>[
                     PopupMenuItem(
-                      onTap: () {}, //TODO hàm Delete ở đây
-                      child: Row(
-                        children: const [
-                          Text("Delete"),
-                          Icon(
-                            Icons.delete_outline_rounded,
-                            color: Colors.black87,
-                            size: 30,
-                          ),
-                        ],
-                      ),
-                    )
+                        onTap: () {
+                          context
+                              .read<PostBloc>()
+                              .add(DeletePost(widget.postId));
+                        },
+                        child: getPopupMenuItem(
+                            "Delete", Icons.delete_outline_rounded))
                   ];
                 }
 
                 return <PopupMenuEntry>[
                   PopupMenuItem(
-                    onTap: () {}, //TODO hàm Report ở đây
-                    child: Row(
-                      children: const [
-                        Text("Report"),
-                        Icon(
-                          Icons.error_outline_rounded,
-                          color: Colors.black87,
-                          size: 30,
-                        ),
-                      ],
-                    ),
-                  ),
+                      value: 'report',
+                      child: getPopupMenuItem(
+                          "Report", Icons.error_outline_rounded)),
                   state.isSaved
                       ? PopupMenuItem(
-                          onTap: () {}, //TODO hàm Unsave ở đây
-                          child: Row(
-                            children: const [
-                              Text("Unsave post"),
-                              Icon(
-                                Icons.bookmark_rounded,
-                                color: Colors.black87,
-                                size: 30,
-                              ),
-                            ],
-                          ),
-                        )
+                          onTap: () {
+                            context
+                                .read<PostBloc>()
+                                .add(UnsavePost(widget.postId));
+                          },
+                          child: getPopupMenuItem(
+                              "Unsave post", Icons.bookmark_rounded))
                       : PopupMenuItem(
-                          onTap: () {}, //TODO hàm Save ở đây
-                          child: Row(
-                            children: const [
-                              Text("Save post"),
-                              Icon(
-                                Icons.bookmark_border_rounded,
-                                color: Colors.black87,
-                                size: 30,
-                              ),
-                            ],
-                          ),
-                        ),
+                          onTap: () {
+                            context
+                                .read<PostBloc>()
+                                .add(SavePost(widget.postId));
+                          },
+                          child: getPopupMenuItem(
+                              "Save post", Icons.bookmark_border_rounded)),
                 ];
-              });
-        },
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Future<void> showReportDialog(List<Category> categoryList, String postId) {
+    final _reportDesciption = TextEditingController();
+    Category? value = categoryList.first;
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text('Report Post',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 23,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.w500)),
+        content: SizedBox(
+          width: MediaQuery.of(dialogContext).size.width * .9,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              DropdownButtonFormField<Category>(
+                  decoration: const InputDecoration.collapsed(hintText: ''),
+                  value: value,
+                  isExpanded: true,
+                  onSaved: (Category? newValue) {
+                    setState(() {
+                      value = newValue!;
+                    });
+                  },
+                  onChanged: (Category? newValue) {
+                    setState(() {
+                      value = newValue!;
+                    });
+                  },
+                  items: categoryList
+                      .map<DropdownMenuItem<Category>>((Category value) {
+                    return DropdownMenuItem(
+                        value: value,
+                        child: Text(
+                          value.categoryName!,
+                        ));
+                  }).toList()),
+              const SizedBox(
+                height: 20,
+              ),
+              GetUserInput(
+                label: "",
+                hint: "Report description",
+                isPassword: false,
+                controller: _reportDesciption,
+              ),
+            ],
+          ),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              context
+                  .read<PostBloc>()
+                  .add(ReportPost(postId, value!.id!, _reportDesciption.text));
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Report',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ListTile getPopupMenuItem(String title, IconData icon) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      title: Text(title),
+      leading: Icon(
+        icon,
+        color: Colors.black87,
+        size: 30,
       ),
     );
   }

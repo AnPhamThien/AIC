@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
 import '../constant/env.dart';
 import '../model/post/post_detail_respone.dart';
@@ -332,5 +333,29 @@ abstract class RestClient {
   @POST('/likes/addanddeletelike')
   Future<GetResponseMessage> addAndDeleteLike(
     @Field('postId') String postId,
+  );
+
+  @POST('/posts/addreferencepost')
+  Future<GetResponseMessage> addReferencePost(
+    @Field('post_reference_id') String postId,
+  );
+
+  @GET('/posts/unsavepost')
+  Future<GetResponseMessage> unsavePost(
+    @Query('post_id') String postId,
+  );
+  @GET('/categories/getcategory')
+  Future<CategoryRespone> getCategory();
+
+  @POST('/reports/addreport')
+  Future<GetResponseMessage> addReport(
+    @Field('post_id') String postId,
+    @Field('category_id') String categoryId,
+    @Field('description') String description,
+  );
+  @POST('/posts/deletepost')
+  Future<GetResponseMessage> deletePost(
+    @Field('Id') String postId,
+    @Field('status') int status,
   );
 }

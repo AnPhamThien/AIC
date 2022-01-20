@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import '../../app/routes.dart';
-import '../../controller/auth/auth_bloc.dart';
 import '../../controller/home/home_bloc.dart';
 import '../../model/post/post.dart';
 import '../theme/style.dart';
@@ -61,6 +60,11 @@ class _HomePageState extends State<HomePage> {
                   _postList[_index].isLike = 0;
                 }
 
+                context.read<PostBloc>().add(Reset());
+              }
+              if (state.status == PostStatus.deleted) {
+                _postList
+                    .removeWhere((element) => element.postId == state.postId);
                 context.read<PostBloc>().add(Reset());
               }
             },

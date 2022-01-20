@@ -19,3 +19,28 @@ class CheckSavePost extends PostEvent {
   final String postId;
   const CheckSavePost(this.postId);
 }
+
+class SavePost extends PostEvent {
+  final String postId;
+  const SavePost(this.postId);
+}
+
+class UnsavePost extends PostEvent {
+  final String postId;
+  const UnsavePost(this.postId);
+}
+
+class GetCategory extends PostEvent {}
+
+class ReportPost extends PostEvent {
+  final String postId;
+  final String categoryId;
+  final String description;
+
+  const ReportPost(this.postId, this.categoryId, this.description);
+}
+
+class DeletePost extends PostEvent {
+  final String postId;
+  const DeletePost(this.postId);
+}

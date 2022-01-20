@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
 import 'package:imagecaptioning/src/model/search/search_history_respone.dart';
@@ -405,5 +406,31 @@ class DataRepository implements RestClient {
   @override
   Future<GetResponseMessage> checkSavePost(String postId) {
     return _client.checkSavePost(postId);
+  }
+
+  @override
+  Future<GetResponseMessage> addReferencePost(String postId) {
+    return _client.addReferencePost(postId);
+  }
+
+  @override
+  Future<GetResponseMessage> unsavePost(String postId) {
+    return _client.unsavePost(postId);
+  }
+
+  @override
+  Future<CategoryRespone> getCategory() {
+    return _client.getCategory();
+  }
+
+  @override
+  Future<GetResponseMessage> addReport(
+      String postId, String categoryId, String description) {
+    return _client.addReport(postId, categoryId, description);
+  }
+
+  @override
+  Future<GetResponseMessage> deletePost(String postId, int status) {
+    return _client.deletePost(postId, status);
   }
 }

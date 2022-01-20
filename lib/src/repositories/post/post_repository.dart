@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 
 import '../../model/post/list_post_data.dart';
@@ -21,6 +22,12 @@ abstract class PostBehavior {
   Future<GetResponseMessage> deleteComment(String id);
   Future<GetResponseMessage> addAndDeleteLike(String postId);
   Future<GetResponseMessage> checkSavePost(String postId);
+  Future<GetResponseMessage> savePost(String postId);
+  Future<GetResponseMessage> unsavePost(String postId);
+  Future<GetResponseMessage> deletePost(String postId);
+  Future<GetResponseMessage> addReport(
+      String postId, String categoryId, String description);
+  Future<CategoryRespone> getCategory();
 }
 
 class PostRepository extends PostBehavior {
@@ -121,6 +128,68 @@ class PostRepository extends PostBehavior {
     GetResponseMessage respone = GetResponseMessage();
     try {
       respone = await _dataRepository.checkSavePost(postId);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> savePost(String postId) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone = await _dataRepository.addReferencePost(postId);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> unsavePost(String postId) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone = await _dataRepository.unsavePost(postId);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<CategoryRespone> getCategory() async {
+    CategoryRespone respone = CategoryRespone();
+    try {
+      respone = await _dataRepository.getCategory();
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> addReport(
+      String postId, String categoryId, String description) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone =
+          await _dataRepository.addReport(postId, categoryId, description);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+    }
+    return respone;
+  }
+
+  @override
+  Future<GetResponseMessage> deletePost(String postId) async {
+    GetResponseMessage respone = GetResponseMessage();
+    try {
+      respone = await _dataRepository.deletePost(postId, 4);
       return respone;
     } catch (e) {
       log(e.toString());

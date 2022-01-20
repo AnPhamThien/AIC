@@ -62,6 +62,11 @@ class _HomePageState extends State<HomePage> {
 
                 context.read<PostBloc>().add(Reset());
               }
+              if (state.status == PostStatus.deleted) {
+                _postList
+                    .removeWhere((element) => element.postId == state.postId);
+                context.read<PostBloc>().add(Reset());
+              }
             },
             child: BlocBuilder<PostBloc, PostState>(
               builder: (context, state) {

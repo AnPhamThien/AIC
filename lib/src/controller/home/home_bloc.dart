@@ -12,7 +12,7 @@ import 'package:stream_transform/stream_transform.dart';
 part 'home_event.dart';
 part 'home_state.dart';
 
-const throttleDuration = Duration(milliseconds: 10);
+const throttleDuration = Duration(milliseconds: 100);
 
 EventTransformer<E> throttleDroppable<E>(Duration duration) {
   return (events, mapper) {

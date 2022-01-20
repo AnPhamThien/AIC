@@ -1,6 +1,0 @@
-io/flutter/plugins/GeneratedPluginRegistrant.java
- io.flutter.plugins.GeneratedPluginRegistrant
-com/example/imagecaptioning/BuildConfig.java
- com.example.imagecaptioning.BuildConfig
-com/example/imagecaptioning/MainActivity.java
- com.example.imagecaptioning.MainActivity

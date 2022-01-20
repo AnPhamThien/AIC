@@ -88,6 +88,7 @@ class _HomePageState extends State<HomePage> {
                             context.read<HomeBloc>().add(FetchMorePost());
                             return PostWidget(
                               post: post,
+                              isInContest: false,
                             );
                           },
                           itemCount: state.postsList.length,

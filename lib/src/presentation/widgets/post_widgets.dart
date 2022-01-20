@@ -18,12 +18,13 @@ import 'package:imagecaptioning/src/utils/func.dart';
 import 'get_user_input_field.dart';
 
 class PostWidget extends StatefulWidget {
-  const PostWidget({Key? key, required this.post}) : super(key: key);
+  const PostWidget({Key? key, required this.post, required this.isInContest}) : super(key: key);
 
   @override
   _PostWidgetState createState() => _PostWidgetState();
 
   final Post post;
+  final bool isInContest;
 }
 
 class _PostWidgetState extends State<PostWidget> {
@@ -193,7 +194,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                   case 'report':
                     return showReportDialog(state.categoryList, widget.postId);
                   default:
-                    throw UnimplementedError();
+                    return;
                 }
               },
               icon: const Icon(

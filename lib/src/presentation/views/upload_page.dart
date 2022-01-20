@@ -1,7 +1,15 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
+import '../../controller/get_it/get_it.dart';
+import '../../controller/upload/upload_bloc.dart';
+import '../../model/album/album.dart';
+import '../../model/contest/contest.dart';
+import '../../prefs/app_prefs.dart';
 
 import '../theme/style.dart';
 import '../widgets/global_widgets.dart';
@@ -9,40 +17,48 @@ import '../widgets/global_widgets.dart';
 class UploadScreen extends StatefulWidget {
   const UploadScreen({
     Key? key,
-    this.image,
   }) : super(key: key);
-  final File? image;
 
   @override
   _UploadScreenState createState() => _UploadScreenState();
 }
 
 class _UploadScreenState extends State<UploadScreen> {
+  String? selectedAlbumId;
+  String? selectedContestId;
+  bool joinContest = false;
+  final _captionController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgApp,
-      appBar: getAppBar(),
-      body: SafeArea(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                getImg(),
-                SizedBox(
-                  height: 15.h,
-                ),
-                getPostCaption(
-                  "assets/images/Kroni.jpg",
-                ),
-                SizedBox(
-                  height: 15.h,
-                ),
-                getAlbumContestSection(),
-              ],
+    return BlocListener<UploadBloc, UploadState>(
+      listener: (context, state) {
+        if (state.status is UploadSuccess) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: bgApp,
+        appBar: getAppBar(),
+        body: SafeArea(
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  getImg(),
+                  SizedBox(
+                    height: 15.h,
+                  ),
+                  getPostCaption(),
+                  SizedBox(
+                    height: 15.h,
+                  ),
+                  getAlbumContestSection(),
+                ],
+              ),
             ),
           ),
         ),
@@ -51,18 +67,6 @@ class _UploadScreenState extends State<UploadScreen> {
   }
 
   Container getAlbumContestSection() {
-    List<String> albumList = [
-      'Default album',
-      'Dog album',
-      'Cat album',
-    ];
-    List<String> contestList = [
-      'None',
-      'September holidays',
-      'Food around the world',
-      'Mood pictures'
-    ];
-
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
       width: double.infinity,
@@ -73,23 +77,62 @@ class _UploadScreenState extends State<UploadScreen> {
         ),
       ),
       child: Center(
-        child: Column(
-          children: [
-            getItemPicker("Choose an album for your picture",
-                albumList), //TODO: nhét list albumn vào đây
-            const SizedBox(
-              height: 20,
-            ),
-            getItemPicker("Do you wanna join a contest ?",
-                contestList), //TODO: nhét list contest vào đây
-          ],
+        child: BlocBuilder<UploadBloc, UploadState>(
+          builder: (context, state) {
+            return Column(
+              children: [
+                getItemPicker(
+                    "Choose an album for your picture", state.albumList, 1),
+                const SizedBox(
+                  height: 20,
+                ),
+                ListTile(
+                    title: const Text("Do you wanna join a contest ?"),
+                    trailing: IconButton(
+                        icon: joinContest
+                            ? const Icon(Icons.clear_rounded)
+                            : const Icon(Icons.check_box),
+                        onPressed: () {
+                          setState(() {
+                            joinContest = !joinContest;
+                            if (!joinContest) {
+                              selectedContestId = null;
+                            }
+                          });
+                        })),
+                joinContest
+                    ? getItemPicker("Choose a contest for your picture",
+                        state.contestList, 2)
+                    : const SizedBox(
+                        height: 20,
+                      ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Column getItemPicker(String label, List<String> itemList) {
-    String dropdownValue = itemList.first;
+  Column getItemPicker(String label, List<dynamic> itemList, int type) {
+    String? dropdownValue;
+    if (type == 1 && selectedAlbumId != null) {
+      dropdownValue = selectedAlbumId;
+    } else if (type == 2 && selectedContestId != null) {
+      dropdownValue = selectedContestId;
+    } else if (itemList.isNotEmpty) {
+      dynamic first = itemList.first;
+      String? firstItem;
+      if (first is Album) {
+        firstItem = first.id ?? 'Album';
+        selectedAlbumId = firstItem;
+      } else if (first is Contest) {
+        firstItem = first.id;
+        selectedContestId = firstItem;
+      }
+      dropdownValue = firstItem;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -110,13 +153,31 @@ class _UploadScreenState extends State<UploadScreen> {
           onChanged: (String? newValue) {
             setState(() {
               dropdownValue = newValue!;
+              if (type == 1) {
+                selectedAlbumId = dropdownValue;
+              }
+
+              if (type == 2) {
+                selectedContestId = dropdownValue;
+              }
             });
           },
-          items: itemList.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
+          items: itemList.map<DropdownMenuItem<String>>((dynamic value) {
+            if (value is Album) {
+              return DropdownMenuItem<String>(
+                value: value.id,
+                child: Text(value.albumName ?? ''),
+              );
+            } else if (value is Contest) {
+              return DropdownMenuItem<String>(
+                value: value.id,
+                child: Text(value.contestName ?? ''),
+              );
+            } else {
+              return const DropdownMenuItem<String>(
+                child: Text('Empty'),
+              );
+            }
           }).toList(),
         ),
       ],
@@ -143,7 +204,17 @@ class _UploadScreenState extends State<UploadScreen> {
         Padding(
           padding: const EdgeInsets.only(right: 5),
           child: IconButton(
-            onPressed: () => {},
+            onPressed: () {
+              if (selectedAlbumId != null &&
+                  context.read<UploadBloc>().state.imgPath != null) {
+                context.read<UploadBloc>().add(SaveUploadPost(
+                    albumId: selectedAlbumId!,
+                    aiCaption: "a",
+                    contestId: selectedContestId,
+                    userCaption: _captionController.value.text,
+                    postImg: context.read<UploadBloc>().state.imgPath!));
+              }
+            },
             icon: const Icon(
               Icons.arrow_forward_rounded,
               size: 30,
@@ -167,23 +238,30 @@ class _UploadScreenState extends State<UploadScreen> {
             bottom: Radius.circular(25),
           ),
         ),
-        child: Container(
-          margin: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25),
-            image: DecorationImage(
-              image: FileImage(
-                  widget.image!), //TODO: nhét ảnh vừa chụp hoặc chọn vào đây
-              fit: BoxFit.fill,
-            ),
-          ),
+        child: BlocBuilder<UploadBloc, UploadState>(
+          builder: (context, state) {
+            return Container(
+              margin: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                image: DecorationImage(
+                  image: state.imgPath != null
+                      ? Image.file(File((state.imgPath.toString()))).image
+                      : const AssetImage(
+                          "assets/images/avatar_placeholder.png"),
+                  fit: BoxFit.fill,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Container getPostCaption(String userAvatar) {
+  Container getPostCaption() {
     Size size = MediaQuery.of(context).size;
+    String avatarPath = getIt<AppPref>().getAvatarPath;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7),
       height: 120,
@@ -193,12 +271,13 @@ class _UploadScreenState extends State<UploadScreen> {
         borderRadius: BorderRadius.circular(25),
       ),
       child: TextFormField(
+        controller: _captionController,
         style: const TextStyle(
           fontSize: 18,
         ),
         textAlignVertical: TextAlignVertical.center,
-        initialValue:
-            "1 con ngựa xòe ra 2 cái cánh", //TODO: caption cho thằng AI nhét vào đây
+        // initialValue:
+        //     "1 con ngựa xòe ra 2 cái cánh",
         minLines: null,
         maxLines: null,
         expands: true,
@@ -211,7 +290,10 @@ class _UploadScreenState extends State<UploadScreen> {
                 child: Image(
                   width: size.width * .13,
                   height: size.width * .13,
-                  image: AssetImage(userAvatar),
+                  image: avatarPath.isNotEmpty
+                      ? NetworkImage(avatarUrl + avatarPath)
+                      : const AssetImage("assets/images/avatar_placeholder.png")
+                          as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),

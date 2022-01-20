@@ -97,9 +97,9 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 15,
                 mainAxisSpacing: 10),
-            itemCount: state.albumList?.length ?? 0,
+            itemCount: state.albumList.length,
             itemBuilder: (_, index) {
-              final Album album = state.albumList![index];
+              final Album album = state.albumList[index];
               return GestureDetector(
                 onTap: () async {
                   Map<String, dynamic> args = {"album": album};

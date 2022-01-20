@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
 import '../constant/env.dart';
 import '../model/post/post_detail_respone.dart';
@@ -106,6 +107,16 @@ abstract class RestClient {
 
   @POST('/posts/getmorepostver2')
   Future<PostListRespone> getMorePost(@Body() PostListRequest request);
+
+  @POST('/posts/addpost')
+  @MultiPart()
+  Future<AddPostResponseMessage> addPost(
+    @Part(value: 'album_id') String albumId,
+    @Part(value: 'contest_id') String? contestId,
+    @Part(value: 'PostImg') File postImg,
+    @Part(value: 'ai_caption') String aiCaption,
+    @Part(value: 'user_caption') String? userCaption,
+  );
 
   @GET('/conversations/getconversations')
   Future<GetConversationResponseMessage> getConversations();

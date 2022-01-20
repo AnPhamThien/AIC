@@ -17,6 +17,7 @@ import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/reset_password/reset_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
+import 'package:imagecaptioning/src/controller/upload/upload_bloc.dart';
 import 'package:imagecaptioning/src/controller/verification/verification_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/presentation/views/album_list_screen.dart';
@@ -37,6 +38,7 @@ import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/root_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/upload_page.dart';
 import 'package:imagecaptioning/src/presentation/views/verification_screen.dart';
 
 class AppRouter {
@@ -59,6 +61,7 @@ class AppRouter {
   static const String postDetailScreen = '/postdetailscreen';
   static const String contestScreen = '/contestscreen';
   static const String contestUserScreen = '/contestuserscreen';
+  static const String uploadScreen = '/uploadscreen';
 
   static const List<String> noAuthNeededScreens = [
     loginScreen,
@@ -250,6 +253,14 @@ class AppRouter {
                   child: ContestUserScreen(
                     contestId: arg['contestId'],
                   ),
+                ));
+      case uploadScreen:
+        final arg = routeSettings.arguments as String;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      UploadBloc()..add(UploadInitializing(arg)),
+                  child: const UploadScreen(),
                 ));
       default:
         return null;

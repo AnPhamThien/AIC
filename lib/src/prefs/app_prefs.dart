@@ -38,6 +38,14 @@ class AppPref extends BasePrefs {
   Future<void> setRefreshToken(String userID) {
     return setValueForKey(PrefKey.refreshToken, userID);
   }
+
+  String get getAvatarPath {
+    return getValueForKey(PrefKey.avatarPath) ?? '';
+  }
+
+  Future<void> setAvatarPath(String avatarPath) {
+    return setValueForKey(PrefKey.avatarPath, avatarPath);
+  }
 }
 
 class PrefKey {
@@ -45,4 +53,5 @@ class PrefKey {
   static const String userID = 'ID';
   static const String username = 'USERNAME';
   static const String refreshToken = 'REFRESHTOKEN';
+  static const String avatarPath = 'AVATARPATH';
 }

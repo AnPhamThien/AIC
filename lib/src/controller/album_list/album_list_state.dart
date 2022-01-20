@@ -1,12 +1,12 @@
 part of 'album_list_bloc.dart';
 
 class AlbumListState {
-  final List<Album>? albumList;
+  final List<Album> albumList;
   final AlbumListStatus status;
   final bool hasReachedMax;
 
   AlbumListState(
-      {this.albumList,
+      {this.albumList = const <Album>[],
       this.status = const InitialStatus(),
       this.hasReachedMax = false});
 

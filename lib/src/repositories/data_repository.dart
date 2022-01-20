@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
@@ -45,44 +46,49 @@ class DataRepository implements RestClient {
         onError: (error, handler) async {
           try {
             if (error.response != null) {
-              log(error.response!.data['messageCode'].toString());
-              if (error.response!.statusCode == 401 &&
-                  error.response!.data['messageCode'] ==
-                      MessageCode.tokenExpired) {
-                String token = getIt<AppPref>().getToken;
-                String refreshToken = getIt<AppPref>().getRefreshToken;
+              if (error.response!.data is Map<String, dynamic>) {
+                log(error.response!.data['messageCode'].toString());
+                if (error.response!.statusCode == 401 &&
+                    error.response!.data['messageCode'] ==
+                        MessageCode.tokenExpired) {
+                  String token = getIt<AppPref>().getToken;
+                  String refreshToken = getIt<AppPref>().getRefreshToken;
 
-                // const _extra = <String, dynamic>{};
-                // final queryParameters = <String, dynamic>{};
-                // final _headers = <String, dynamic>{};
-                final _data = {'JwtToken': token, 'RefreshToken': refreshToken};
+                  // const _extra = <String, dynamic>{};
+                  // final queryParameters = <String, dynamic>{};
+                  // final _headers = <String, dynamic>{};
+                  final _data = {
+                    'JwtToken': token,
+                    'RefreshToken': refreshToken
+                  };
 
-                final response = await _dio
-                    .post(appBaseUrl + '/users/refreshtoken', data: _data);
-                final value = GetResponseMessage.fromJson(response.data!);
+                  final response = await _dio
+                      .post(appBaseUrl + '/users/refreshtoken', data: _data);
+                  final value = GetResponseMessage.fromJson(response.data!);
 
-                //Map<String, dynamic> value = response.data!;
-                String? data = value.data;
-                if (data != null) {
-                  getIt<AppPref>().setToken(value.data);
-                  setJwtInHeader();
-                  handler.resolve(response);
+                  //Map<String, dynamic> value = response.data!;
+                  String? data = value.data;
+                  if (data != null) {
+                    getIt<AppPref>().setToken(value.data);
+                    setJwtInHeader();
+                    handler.resolve(response);
+                  } else {
+                    handler.reject(error);
+                  }
+                } else if (error.response!.statusCode == 401 &&
+                    error.response!.data['messageCode'] ==
+                        MessageCode.refreshTokenExpired) {
+                  handler.next(error);
                 } else {
-                  handler.reject(error);
+                  handler.next(error);
                 }
-              } else if (error.response!.statusCode == 401 &&
-                  error.response!.data['messageCode'] ==
-                      MessageCode.refreshTokenExpired) {
-                handler.next(error);
-              } else {
-                handler.next(error);
               }
             } else {
               handler.next(error);
             }
           } catch (_) {
             log(_.toString());
-            handler.next(error);
+            handler.reject(error);
           }
         }));
     setJwtInHeader();
@@ -170,6 +176,12 @@ class DataRepository implements RestClient {
   @override
   Future<PostListRespone> getMorePost(PostListRequest request) {
     return _client.getMorePost(request);
+  }
+
+  @override
+  Future<AddPostResponseMessage> addPost(String albumId, String? contestId,
+      File postImg, String aiCaption, String? userCaption) {
+    return _client.addPost(albumId, contestId, postImg, aiCaption, userCaption);
   }
 
   @override

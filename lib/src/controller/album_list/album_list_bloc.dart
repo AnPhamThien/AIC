@@ -80,7 +80,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
 
         if (status == StatusCode.successStatus && data != null) {
           List<Album> albumList = data;
-          final currentList = state.albumList ?? [];
+          final currentList = state.albumList;
 
           emit(state.copyWith(
               status: FinishInitializing(),

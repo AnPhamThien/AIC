@@ -49,6 +49,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"]);
         getIt<AppPref>().setUserID(parseJwt(data)[
             "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);
+        getIt<AppPref>().setAvatarPath(user.avatar ?? '');
 
         emit(state.copyWith(formStatus: FormSubmissionSuccess(), user: user));
       } else {

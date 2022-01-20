@@ -202,10 +202,19 @@ class _RestClient implements RestClient {
     if (userRealName != null) {
       _data.fields.add(MapEntry('user_real_name', userRealName));
     }
+<<<<<<< HEAD
     _data.files.add(MapEntry(
         'avatar_img',
         MultipartFile.fromFileSync(avatarImg.path,
             filename: avatarImg.path.split(Platform.pathSeparator).last)));
+=======
+    if (avatarImg != null) {
+      _data.files.add(MapEntry(
+          'avatar_img',
+          MultipartFile.fromFileSync(avatarImg.path,
+              filename: avatarImg.path.split(Platform.pathSeparator).last)));
+    }
+>>>>>>> origin/NhanNt
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
@@ -285,6 +294,36 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = PostListRespone.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<AddPostResponseMessage> addPost(
+      albumId, contestId, postImg, aiCaption, userCaption) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.fields.add(MapEntry('album_id', albumId));
+    if (contestId != null) {
+      _data.fields.add(MapEntry('contest_id', contestId));
+    }
+    _data.files.add(MapEntry(
+        'PostImg',
+        MultipartFile.fromFileSync(postImg.path,
+            filename: postImg.path.split(Platform.pathSeparator).last)));
+    _data.fields.add(MapEntry('ai_caption', aiCaption));
+    if (userCaption != null) {
+      _data.fields.add(MapEntry('user_caption', userCaption));
+    }
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<AddPostResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/addpost',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = AddPostResponseMessage.fromJson(_result.data!);
     return value;
   }
 

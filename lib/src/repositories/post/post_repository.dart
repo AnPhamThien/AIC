@@ -1,7 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 
 import '../../model/post/list_post_data.dart';
 import '../../model/post/post_add_comment_request.dart';
@@ -14,6 +17,12 @@ import '../data_repository.dart';
 abstract class PostBehavior {
   Future<ListPostData?> getPost(int postPerPerson, int limitDay);
   Future<ListPostData?> getMorePost(PostListRequest request);
+  Future<AddPostResponseMessage?> addPost(
+      {required String albumId,
+      required String? contestId,
+      required File postImg,
+      required String aiCaption,
+      required String? userCaption});
   Future<PostCommentLikeRespone> getInitLikeComment(
       int commentPerPage, String postId);
   Future<PostCommentListRespone> getMoreComment(
@@ -56,6 +65,30 @@ class PostRepository extends PostBehavior {
     } catch (e) {
       //return null;
       log(e.toString());
+    }
+  }
+
+  @override
+  Future<AddPostResponseMessage?> addPost(
+      {required String albumId,
+      required String? contestId,
+      required File postImg,
+      required String aiCaption,
+      required String? userCaption}) async {
+    try {
+      final resMessage = await _dataRepository.addPost(
+          albumId, contestId, postImg, aiCaption, userCaption);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          AddPostResponseMessage resMessage =
+              AddPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
     }
   }
 

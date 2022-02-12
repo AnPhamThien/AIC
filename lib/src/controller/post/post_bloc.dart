@@ -4,6 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
@@ -38,6 +39,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   final PostRepository _postRepository = PostRepository();
+  final HomeBloc homeBloc = HomeBloc();
 
   void _onDeletePost(
     DeletePost event,
@@ -47,7 +49,9 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       GetResponseMessage _respone =
           await _postRepository.deletePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
-        emit(state.copyWith(status: PostStatus.deleted));
+        log(event.postId);
+        emit(state.copyWith(status: PostStatus.deleted, postId: event.postId));
+        HomeBloc().add(PostDeleted(event.postId));
       } else {
         throw Exception(_respone.messageCode);
       }
@@ -120,7 +124,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       GetResponseMessage _respone =
           await _postRepository.savePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
-        emit(state.copyWith(status: PostStatus.success, isSaved: true));
+        emit(state.copyWith(
+            status: PostStatus.save, isSaved: true, postId: event.postId));
       } else {
         throw Exception(_respone.messageCode);
       }
@@ -137,7 +142,8 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       GetResponseMessage _respone =
           await _postRepository.unsavePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
-        emit(state.copyWith(status: PostStatus.success, isSaved: false));
+        emit(state.copyWith(
+            status: PostStatus.save, isSaved: false, postId: event.postId));
       } else {
         throw Exception(_respone.messageCode);
       }
@@ -177,7 +183,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     Reset event,
     Emitter<PostState> emit,
   ) async {
-    emit(
-        state.copyWith(status: PostStatus.init, postId: '', needUpdate: false));
+    emit(state.copyWith(
+        status: PostStatus.init, postId: '', needUpdate: false, isSaved: null));
   }
 }

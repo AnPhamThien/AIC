@@ -224,9 +224,13 @@ class AppRouter {
                     PostDetailBloc()..add(PostDetailInitEvent(arg['post'])),
               ),
               BlocProvider.value(value: _postBloc),
+              BlocProvider(
+                create: (context) => HomeBloc(),
+              ),
             ],
             child: PostDetailScreen(
               post: arg['post'],
+              isInContest: arg['isInContest'],
             ),
           ),
         );

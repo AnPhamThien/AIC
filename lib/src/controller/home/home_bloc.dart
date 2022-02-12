@@ -33,11 +33,27 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       _fetchMorePost,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<PostDeleted>(
+      _postDeleted,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
   List<Followee> _listFollowee = [];
-
   final PostRepository _postRepository = PostRepository();
+
+  void _postDeleted(PostDeleted event, Emitter<HomeState> emit) async {
+    try {
+      state.postsList.removeWhere((element) => element.postId == event.postId);
+      emit(state.copyWith(
+        status: HomeStatus.success,
+        postsList: state.postsList,
+        hasReachedMax: false,
+      ));
+    } catch (_) {
+      emit(state.copyWith(status: HomeStatus.failure));
+    }
+  }
 
   void _onInitPostFetched(
       InitPostFetched event, Emitter<HomeState> emit) async {

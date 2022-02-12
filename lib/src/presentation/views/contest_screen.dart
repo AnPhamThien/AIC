@@ -133,6 +133,7 @@ class _ContestScreenState extends State<ContestScreen> {
                                 final Post post = _postList[index];
                                 return PostWidget(
                                   post: post,
+                                  isInContest: true,
                                 );
                               },
                               childCount: state.post.length,

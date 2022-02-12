@@ -1,19 +1,19 @@
 part of 'post_bloc.dart';
 
-enum PostStatus { init, like, success, unlike, fail, reported, deleted }
+enum PostStatus { init, like, success, unlike, fail, reported, deleted, save }
 
 class PostState extends Equatable {
   const PostState(
       {this.status = PostStatus.init,
       this.postId = '',
       this.needUpdate = false,
-      this.isSaved = false,
+      this.isSaved = null,
       this.categoryList = const <Category>[]});
 
   final PostStatus status;
   final String postId;
   final bool needUpdate;
-  final bool isSaved;
+  final bool? isSaved;
   final List<Category> categoryList;
 
   PostState copyWith({
@@ -33,7 +33,7 @@ class PostState extends Equatable {
   }
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         status,
         postId,
         needUpdate,

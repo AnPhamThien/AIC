@@ -8,6 +8,7 @@ import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
@@ -18,7 +19,8 @@ import 'package:imagecaptioning/src/utils/func.dart';
 import 'get_user_input_field.dart';
 
 class PostWidget extends StatefulWidget {
-  const PostWidget({Key? key, required this.post, required this.isInContest}) : super(key: key);
+  const PostWidget({Key? key, required this.post, required this.isInContest})
+      : super(key: key);
 
   @override
   _PostWidgetState createState() => _PostWidgetState();
@@ -55,7 +57,6 @@ class _PostWidgetState extends State<PostWidget> {
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
-                  context1: context,
                 ),
                 PostImgWidget(postImage: widget.post.imageUrl ?? ""),
                 PostIconWidget(
@@ -76,16 +77,26 @@ class _PostWidgetState extends State<PostWidget> {
         onTap: () async {
           // ignore: unnecessary_null_comparison
           if (post != null) {
-            Map<String, dynamic> args = {'post': post};
+            Map<String, dynamic> args = {
+              'post': post,
+              'isInContest': widget.isInContest
+            };
             final Post? _post = await Navigator.pushNamed(
               context,
               AppRouter.postDetailScreen,
               arguments: args,
             ) as Post?;
+            context.read<PostBloc>().add(CheckSavePost(post.postId!));
             if (_post == null) {
+              log('ahihihihi');
+              setState(() {
+                context.read<HomeBloc>().add(PostDeleted(post.postId!));
+              });
+
               return;
             }
             setState(() {
+              log('ahihihi1');
               post = _post;
             });
           }
@@ -104,7 +115,7 @@ class PostHeadlineWidget extends StatefulWidget {
     required this.time,
     required this.postAvatar,
     required this.postId,
-    this.context1,
+    this.route,
   }) : super(key: key);
 
   final String userId;
@@ -112,7 +123,7 @@ class PostHeadlineWidget extends StatefulWidget {
   final DateTime time;
   final String? postAvatar;
   final String postId;
-  final BuildContext? context1;
+  final String? route;
 
   @override
   State<PostHeadlineWidget> createState() => _PostHeadlineWidgetState();
@@ -121,8 +132,8 @@ class PostHeadlineWidget extends StatefulWidget {
 class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
   @override
   void initState() {
-    context.read<PostBloc>().add(CheckSavePost(widget.postId));
     context.read<PostBloc>().add(GetCategory());
+    context.read<PostBloc>().add(CheckSavePost(widget.postId));
     super.initState();
   }
 
@@ -136,7 +147,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
           ? context.read<AuthBloc>().add(NavigateToPageEvent(
               route: AppRouter.otherUserProfileScreen, args: args))
           : context.read<AuthBloc>().add(NavigateToPageEvent(
-              route: AppRouter.currentUserProfileScreen, args: args)),
+              route: AppRouter.otherUserProfileScreen, args: args)),
       leading: Container(
         width: 45,
         height: 45,
@@ -168,22 +179,16 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
       trailing: BlocListener<PostBloc, PostState>(
         listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
-          if (state.status == PostStatus.success && state.isSaved == true) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Save !'),
-              duration: Duration(seconds: 1),
-            ));
-          } else if (state.status == PostStatus.success &&
-              state.isSaved == false) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Unsave !'),
-              duration: Duration(seconds: 1),
-            ));
-          } else if (state.status == PostStatus.reported) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Reported !'),
-              duration: Duration(seconds: 1),
-            ));
+          if (state.status == PostStatus.reported) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(
+                  content: Text('Reported !'),
+                  duration: Duration(seconds: 1),
+                ))
+                .closed
+                .then(
+                    (value) => ScaffoldMessenger.of(context).clearSnackBars());
+            context.read<PostBloc>().add(Reset());
           }
         },
         child: BlocBuilder<PostBloc, PostState>(
@@ -193,6 +198,22 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 switch (value) {
                   case 'report':
                     return showReportDialog(state.categoryList, widget.postId);
+                  case 'unsave':
+                    log('unsave');
+                    log(state.isSaved.toString());
+                    context.read<PostBloc>().add(UnsavePost(widget.postId));
+                    context.read<PostBloc>().add(Reset());
+                    context.read<PostBloc>().add(CheckSavePost(widget.postId));
+                    log(state.isSaved.toString());
+                    break;
+                  case 'save':
+                    log('save');
+                    log(state.isSaved.toString());
+                    context.read<PostBloc>().add(SavePost(widget.postId));
+                    context.read<PostBloc>().add(Reset());
+                    context.read<PostBloc>().add(CheckSavePost(widget.postId));
+                    log(state.isSaved.toString());
+                    break;
                   default:
                     return;
                 }
@@ -215,6 +236,18 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                           context
                               .read<PostBloc>()
                               .add(DeletePost(widget.postId));
+
+                          if (widget.route != null) {
+                            setState(() {
+                              context
+                                  .read<HomeBloc>()
+                                  .add(PostDeleted(widget.postId));
+                            });
+                            Navigator.pop(context, null);
+                            Navigator.of(context).popAndPushNamed(
+                              widget.route!,
+                            );
+                          }
                         },
                         child: getPopupMenuItem(
                             "Delete", Icons.delete_outline_rounded))
@@ -226,21 +259,13 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                       value: 'report',
                       child: getPopupMenuItem(
                           "Report", Icons.error_outline_rounded)),
-                  state.isSaved
+                  state.isSaved == true
                       ? PopupMenuItem(
-                          onTap: () {
-                            context
-                                .read<PostBloc>()
-                                .add(UnsavePost(widget.postId));
-                          },
+                          value: 'unsave',
                           child: getPopupMenuItem(
                               "Unsave post", Icons.bookmark_rounded))
                       : PopupMenuItem(
-                          onTap: () {
-                            context
-                                .read<PostBloc>()
-                                .add(SavePost(widget.postId));
-                          },
+                          value: 'save',
                           child: getPopupMenuItem(
                               "Save post", Icons.bookmark_border_rounded)),
                 ];
@@ -248,6 +273,42 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Future<void> showReportedDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text('Reported',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 23,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.w500)),
+        content: const Text('This post is reported',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.black87,
+              letterSpacing: 1.25,
+            )),
+        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -13,10 +14,13 @@ import '../theme/style.dart';
 import '../widgets/post_widgets.dart';
 
 class PostDetailScreen extends StatefulWidget {
-  const PostDetailScreen({Key? key, required this.post}) : super(key: key);
+  const PostDetailScreen(
+      {Key? key, required this.post, required this.isInContest})
+      : super(key: key);
   final Post post;
   @override
   _PostDetailScreenState createState() => _PostDetailScreenState();
+  final bool isInContest;
 }
 
 class _PostDetailScreenState extends State<PostDetailScreen> {
@@ -217,6 +221,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
+                  route: widget.isInContest
+                      ? AppRouter.contestScreen
+                      : AppRouter.rootScreen,
                 ),
               ),
             ],

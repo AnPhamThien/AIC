@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -55,17 +57,25 @@ class _HomePageState extends State<HomePage> {
                 int _index = _postList
                     .indexWhere((element) => element.postId == state.postId);
                 if (_postList[_index].isLike == 0) {
-                  _postList[_index].isLike = 1;
+                  setState(() {
+                    _postList[_index].isLike = 1;
+                    _postList[_index].likecount! + 1;
+                  });
                 } else {
-                  _postList[_index].isLike = 0;
+                  setState(() {
+                    _postList[_index].isLike = 0;
+                    _postList[_index].likecount! - 1;
+                  });
                 }
 
                 context.read<PostBloc>().add(Reset());
               }
               if (state.status == PostStatus.deleted) {
-                _postList
-                    .removeWhere((element) => element.postId == state.postId);
-                context.read<PostBloc>().add(Reset());
+                log(state.postId);
+                log('run this');
+                setState(() {
+                  context.read<HomeBloc>().add(PostDeleted(state.postId));
+                });
               }
             },
             child: BlocBuilder<PostBloc, PostState>(
@@ -76,7 +86,6 @@ class _HomePageState extends State<HomePage> {
                       case HomeStatus.failure:
                         return const Center(
                             child: Text('failed to fetch posts'));
-
                       case HomeStatus.success:
                         if (state.postsList.isEmpty) {
                           return const Center(child: Text('no posts'));

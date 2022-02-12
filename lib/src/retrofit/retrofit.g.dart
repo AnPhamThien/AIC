@@ -202,19 +202,12 @@ class _RestClient implements RestClient {
     if (userRealName != null) {
       _data.fields.add(MapEntry('user_real_name', userRealName));
     }
-<<<<<<< HEAD
-    _data.files.add(MapEntry(
-        'avatar_img',
-        MultipartFile.fromFileSync(avatarImg.path,
-            filename: avatarImg.path.split(Platform.pathSeparator).last)));
-=======
     if (avatarImg != null) {
       _data.files.add(MapEntry(
           'avatar_img',
           MultipartFile.fromFileSync(avatarImg.path,
               filename: avatarImg.path.split(Platform.pathSeparator).last)));
     }
->>>>>>> origin/NhanNt
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)

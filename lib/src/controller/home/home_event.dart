@@ -10,3 +10,9 @@ abstract class HomeEvent extends Equatable {
 class InitPostFetched extends HomeEvent {}
 
 class FetchMorePost extends HomeEvent {}
+
+class PostDeleted extends HomeEvent {
+  final String postId;
+
+  const PostDeleted(this.postId);
+}

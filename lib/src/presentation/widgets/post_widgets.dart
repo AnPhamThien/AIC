@@ -39,6 +39,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   @override
   Widget build(BuildContext context) {
+    log(post.postId.toString());
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       height: 650.h,

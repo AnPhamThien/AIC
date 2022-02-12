@@ -1,21 +1,20 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
+import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:image/image.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 /// viet hoa va cac chuoi
@@ -115,10 +114,12 @@ Future pickImage(ImageSource source, BuildContext context) async {
         ));
     if (croppedFile == null) return;
 
-    await Navigator.of(context)
-        .pushNamed(AppRouter.uploadScreen, arguments: croppedFile.path);
-    context.read<HomeBloc>().add(InitPostFetched());
-    context.read<ProfileBloc>().add(ProfileInitializing(''));
+    Post? post = await Navigator.of(context).pushNamed(AppRouter.uploadScreen,
+        arguments: croppedFile.path) as Post?;
+    if (post != null) {
+      context.read<PostBloc>().add(AddPost(post));
+      context.read<ProfileBloc>().add(ProfileInitializing(''));
+    }
   } on PlatformException catch (e) {
     log('Failed to pick image due to wrong platform: $e');
   }
@@ -172,7 +173,7 @@ String timeCalculate(DateTime time) {
   if (hourCount < 1) {
     int _bellow2 = DateTime.now().difference(time).inMinutes;
     if (_bellow2 < 2) {
-      _calculatedTime = _bellow2.toString() + ' min';
+      _calculatedTime = 'Just now';
     } else {
       _calculatedTime = _bellow2.toString() + ' mins';
     }

@@ -1,6 +1,6 @@
 part of 'home_bloc.dart';
 
-enum HomeStatus { initial, success, failure}
+enum HomeStatus { initial, success, failure }
 
 class HomeState extends Equatable {
   const HomeState({
@@ -13,16 +13,12 @@ class HomeState extends Equatable {
   final List<Post> postsList;
   final bool hasReachedMax;
 
-  HomeState copyWith({
-    HomeStatus? status,
-    List<Post>? postsList,
-    bool? hasReachedMax,
-  }) {
+  HomeState copyWith(
+      {HomeStatus? status, List<Post>? postsList, bool? hasReachedMax}) {
     return HomeState(
-      status: status ?? this.status,
-      postsList: postsList ?? this.postsList,
-      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
-    );
+        status: status ?? this.status,
+        postsList: postsList ?? this.postsList,
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax);
   }
 
   @override

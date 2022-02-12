@@ -33,8 +33,9 @@ class _UploadScreenState extends State<UploadScreen> {
   Widget build(BuildContext context) {
     return BlocListener<UploadBloc, UploadState>(
       listener: (context, state) {
-        if (state.status is UploadSuccess) {
-          Navigator.of(context).pop();
+        final status = state.status;
+        if (status is UploadSuccess) {
+          Navigator.of(context).pop(status.post);
         }
       },
       child: Scaffold(

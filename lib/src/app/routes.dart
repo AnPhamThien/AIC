@@ -230,7 +230,7 @@ class AppRouter {
             ],
             child: PostDetailScreen(
               post: arg['post'],
-              isInContest: arg['isInContest'],
+              isInContest: arg['isInContest'] ?? false,
             ),
           ),
         );

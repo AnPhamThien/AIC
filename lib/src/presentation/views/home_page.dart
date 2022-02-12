@@ -75,6 +75,13 @@ class _HomePageState extends State<HomePage> {
                 log('run this');
                 setState(() {
                   context.read<HomeBloc>().add(PostDeleted(state.postId));
+                  context.read<PostBloc>().add(Reset());
+                });
+              }
+              if (state.status == PostStatus.added) {
+                setState(() {
+                  context.read<HomeBloc>().add(InitPostFetched());
+                  context.read<PostBloc>().add(Reset());
                 });
               }
             },
@@ -94,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                           itemBuilder: (BuildContext context, int index) {
                             _postList = state.postsList;
                             final Post post = _postList[index];
-                            context.read<HomeBloc>().add(FetchMorePost());
+                            //context.read<HomeBloc>().add(FetchMorePost());
                             return PostWidget(
                               post: post,
                               isInContest: false,

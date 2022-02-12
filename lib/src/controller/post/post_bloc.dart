@@ -8,6 +8,7 @@ import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
 part 'post_event.dart';
@@ -36,6 +37,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         transformer: throttleDroppable(throttleDuration));
     on<DeletePost>(_onDeletePost,
         transformer: throttleDroppable(throttleDuration));
+    on<AddPost>(_onAddPost, transformer: throttleDroppable(throttleDuration));
   }
 
   final PostRepository _postRepository = PostRepository();
@@ -185,5 +187,16 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   ) async {
     emit(state.copyWith(
         status: PostStatus.init, postId: '', needUpdate: false, isSaved: null));
+  }
+
+  void _onAddPost(
+    AddPost event,
+    Emitter<PostState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(status: PostStatus.added, post: event.post));
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }

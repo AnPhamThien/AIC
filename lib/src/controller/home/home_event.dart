@@ -16,3 +16,9 @@ class PostDeleted extends HomeEvent {
 
   const PostDeleted(this.postId);
 }
+
+class PostAdded extends HomeEvent {
+  final Post post;
+
+  const PostAdded(this.post);
+}

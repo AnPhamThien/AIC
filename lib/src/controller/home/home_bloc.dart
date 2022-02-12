@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
@@ -37,6 +39,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       _postDeleted,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<PostAdded>(
+      _postAdded,
+      transformer: throttleDroppable(throttleDuration),
+    );
   }
 
   List<Followee> _listFollowee = [];
@@ -46,10 +52,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       state.postsList.removeWhere((element) => element.postId == event.postId);
       emit(state.copyWith(
-        status: HomeStatus.success,
-        postsList: state.postsList,
-        hasReachedMax: false,
-      ));
+          status: HomeStatus.success,
+          postsList: state.postsList,
+          hasReachedMax: false));
     } catch (_) {
       emit(state.copyWith(status: HomeStatus.failure));
     }
@@ -58,15 +63,17 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _onInitPostFetched(
       InitPostFetched event, Emitter<HomeState> emit) async {
     try {
+      if (state.postsList.isNotEmpty) {
+        state.postsList.clear();
+      }
       final ListPostData? data =
           await _postRepository.getPost(_postPerPerson, _postDate);
       _listFollowee = data?.followees ?? [];
 
       emit(state.copyWith(
-        status: HomeStatus.success,
-        postsList: data?.posts ?? [],
-        hasReachedMax: false,
-      ));
+          status: HomeStatus.success,
+          postsList: data?.posts ?? [],
+          hasReachedMax: false));
     } catch (_) {
       emit(state.copyWith(status: HomeStatus.failure));
     }
@@ -88,11 +95,24 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       } else {
         _listFollowee = data?.followees ?? [];
         emit(state.copyWith(
-          status: HomeStatus.success,
-          postsList: [...state.postsList, ..._newPosts],
-          hasReachedMax: false,
-        ));
+            status: HomeStatus.success,
+            postsList: [...state.postsList, ..._newPosts],
+            hasReachedMax: false));
       }
+    } catch (_) {
+      emit(state.copyWith(status: HomeStatus.failure));
+    }
+  }
+
+  void _postAdded(PostAdded event, Emitter<HomeState> emit) async {
+    try {
+      List<Post> list = state.postsList;
+      list.insert(0, event.post);
+
+      log("ere");
+
+      emit(state.copyWith(
+          status: HomeStatus.success, postsList: list, hasReachedMax: false));
     } catch (_) {
       emit(state.copyWith(status: HomeStatus.failure));
     }

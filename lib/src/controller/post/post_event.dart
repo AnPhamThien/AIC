@@ -44,3 +44,8 @@ class DeletePost extends PostEvent {
   final String postId;
   const DeletePost(this.postId);
 }
+
+class AddPost extends PostEvent {
+  final Post post;
+  const AddPost(this.post);
+}

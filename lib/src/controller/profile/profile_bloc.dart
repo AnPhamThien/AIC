@@ -60,8 +60,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         GetListOfPostResponseMessage? savedPostResponse =
             await _userRepository.getPostStorage(limitPost: 9);
 
-        log((savedPostResponse?.data != null).toString());
-
         emit(state.copyWith(
             user: userRes.data,
             savedPostList: savedPostResponse?.data,

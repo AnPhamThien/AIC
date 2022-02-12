@@ -228,6 +228,7 @@ class _ProfilePageState extends State<ProfilePage> {
           //Navigator.pop(c);
           await Navigator.of(context).pushNamed(AppRouter.editProfileScreen);
           context.read<ProfileBloc>().add(ProfileInitializing(''));
+          setState(() {});
         },
         child: const Text("Edit Profile"),
       ),

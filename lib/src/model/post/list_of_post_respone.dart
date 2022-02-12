@@ -2,14 +2,14 @@ import 'package:imagecaptioning/src/model/post/post.dart';
 
 import 'dart:convert';
 
-GetAlbumPostListResponseMessage getAlbumResponseMessageFromJson(String str) =>
-    GetAlbumPostListResponseMessage.fromJson(json.decode(str));
+GetListOfPostResponseMessage getAlbumResponseMessageFromJson(String str) =>
+    GetListOfPostResponseMessage.fromJson(json.decode(str));
 
-String getAlbumResponseMessageToJson(GetAlbumPostListResponseMessage data) =>
+String getAlbumResponseMessageToJson(GetListOfPostResponseMessage data) =>
     json.encode(data.toJson());
 
-class GetAlbumPostListResponseMessage {
-  GetAlbumPostListResponseMessage({
+class GetListOfPostResponseMessage {
+  GetListOfPostResponseMessage({
     this.messageCode,
     this.statusCode,
     this.data,
@@ -23,8 +23,8 @@ class GetAlbumPostListResponseMessage {
   int? total;
   int? sunOfPages;
 
-  factory GetAlbumPostListResponseMessage.fromJson(Map<String, dynamic> json) =>
-      GetAlbumPostListResponseMessage(
+  factory GetListOfPostResponseMessage.fromJson(Map<String, dynamic> json) =>
+      GetListOfPostResponseMessage(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
         data: json["data"] != null

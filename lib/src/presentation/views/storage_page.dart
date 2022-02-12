@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
@@ -8,14 +10,14 @@ import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 
-class GalleryPage extends StatefulWidget {
-  const GalleryPage({Key? key}) : super(key: key);
+class StoragePage extends StatefulWidget {
+  const StoragePage({Key? key}) : super(key: key);
 
   @override
-  _GalleryPageState createState() => _GalleryPageState();
+  _StoragePageState createState() => _StoragePageState();
 }
 
-class _GalleryPageState extends State<GalleryPage> {
+class _StoragePageState extends State<StoragePage> {
   late OverlayEntry _popupDialog;
   final _scrollController = ScrollController();
 
@@ -44,7 +46,7 @@ class _GalleryPageState extends State<GalleryPage> {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
-        List<Post> imageUrls = state.user?.posts ?? [];
+        List<Post> imageUrls = state.savedPostList ?? [];
 
         return Scaffold(
           body: imageUrls.isNotEmpty

@@ -209,6 +209,7 @@ class _UploadScreenState extends State<UploadScreen> {
                   context.read<UploadBloc>().state.imgPath != null) {
                 context.read<UploadBloc>().add(SaveUploadPost(
                     albumId: selectedAlbumId!,
+                    //TODO: Add aicaption
                     aiCaption: "a",
                     contestId: selectedContestId,
                     userCaption: _captionController.value.text,

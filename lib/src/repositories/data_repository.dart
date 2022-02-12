@@ -7,7 +7,7 @@ import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
 import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
-import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
+import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
 import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
 import 'package:imagecaptioning/src/model/search/search_history_respone.dart';
 import 'package:imagecaptioning/src/model/search/search_respone.dart';
@@ -176,6 +176,17 @@ class DataRepository implements RestClient {
   @override
   Future<PostListRespone> getMorePost(PostListRequest request) {
     return _client.getMorePost(request);
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage> getPostStorage(int limitPost) {
+    return _client.getPostStorage(limitPost);
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage> getMorePostStorage(
+      int limitPost, int currentPage) {
+    return _client.getMorePostStorage(limitPost, currentPage);
   }
 
   @override
@@ -384,13 +395,13 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<GetAlbumPostListResponseMessage> getAlbumPost(
+  Future<GetListOfPostResponseMessage> getAlbumPost(
       int limitPost, String albumId) {
     return _client.getAlbumPost(limitPost, albumId);
   }
 
   @override
-  Future<GetAlbumPostListResponseMessage> getMoreAlbumPost(
+  Future<GetListOfPostResponseMessage> getMoreAlbumPost(
       int limitPost, int currentPage, String albumId) {
     return _client.getMoreAlbumPost(limitPost, currentPage, albumId);
   }

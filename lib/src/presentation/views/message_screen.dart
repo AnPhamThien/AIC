@@ -39,7 +39,6 @@ class _MessageScreenState extends State<MessageScreen> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      log("Fetchmore");
       context.read<MessageBloc>().add(FetchMoreMessage());
     }
   }

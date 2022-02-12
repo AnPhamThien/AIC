@@ -145,6 +145,7 @@ class AppRouter {
             child: const RootScreen(),
           ),
         );
+
       case resetPasswordScreen:
         final args = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
@@ -156,7 +157,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                ProfileBloc(false)..add(ProfileInitializing('')),
+                ProfileBloc(true)..add(ProfileInitializing('')),
             child: const ProfilePage(),
           ),
         );

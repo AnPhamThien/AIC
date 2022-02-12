@@ -35,12 +35,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
+  Future refreshNetworkImage(String url) async {
+    NetworkImage provider = NetworkImage(url);
+    await provider.evict();
+  }
+
   SafeArea getBody() {
-    // List<String> genderList = [
-    //   'Male',
-    //   'Female',
-    //   'Other',
-    // ];
     return SafeArea(
       child: SingleChildScrollView(
         child: Center(
@@ -52,13 +52,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               listener: (context, state) {
                 if (state.status is EditProfileSuccess) {
                   if (state.user?.avataUrl != null) {
-                    NetworkImage provider = NetworkImage(
+                    refreshNetworkImage(
                         avatarUrl + state.user!.avataUrl.toString());
-                    provider.evict();
                   }
-                  Navigator.pop(context, () {
-                    return true;
-                  });
+                  Navigator.pop(context);
                 }
               },
               child: BlocBuilder<EditProfileBloc, EditProfileState>(
@@ -69,10 +66,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     _descController.text = state.user?.description ?? '';
                     _emailController.text = state.user?.userEmail ?? '';
                     _phoneController.text = state.user?.phone ?? '';
+
                     if (state.user?.avataUrl != null) {
-                      NetworkImage provider = NetworkImage(
+                      refreshNetworkImage(
                           avatarUrl + state.user!.avataUrl.toString());
-                      provider.evict();
                     }
 
                     return Form(
@@ -256,7 +253,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       onTap: () async {
         final newAvatar = await pickAvatar(source, context);
         if (newAvatar != null) {
-          context.read<EditProfileBloc>().add(ChangeAvatar(newAvatar.path));
+          context.read<EditProfileBloc>().add(ChangeAvatar(newAvatar));
         }
       },
       textStyle: const TextStyle(

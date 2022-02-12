@@ -291,6 +291,42 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<GetListOfPostResponseMessage> getPostStorage(limitPost) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'limitPost': limitPost};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetListOfPostResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/getpoststorage',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetListOfPostResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage> getMorePostStorage(
+      limitPost, currentPage) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limitPost': limitPost,
+      r'currentPage': currentPage
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetListOfPostResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/getmorepoststorage',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetListOfPostResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<AddPostResponseMessage> addPost(
       albumId, contestId, postImg, aiCaption, userCaption) async {
     const _extra = <String, dynamic>{};
@@ -986,8 +1022,7 @@ class _RestClient implements RestClient {
   }
 
   @override
-  Future<GetAlbumPostListResponseMessage> getAlbumPost(
-      limitPost, albumId) async {
+  Future<GetListOfPostResponseMessage> getAlbumPost(limitPost, albumId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
       r'limitPost': limitPost,
@@ -996,17 +1031,17 @@ class _RestClient implements RestClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetAlbumPostListResponseMessage>(
+        _setStreamType<GetListOfPostResponseMessage>(
             Options(method: 'GET', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/posts/getalbumpost',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = GetAlbumPostListResponseMessage.fromJson(_result.data!);
+    final value = GetListOfPostResponseMessage.fromJson(_result.data!);
     return value;
   }
 
   @override
-  Future<GetAlbumPostListResponseMessage> getMoreAlbumPost(
+  Future<GetListOfPostResponseMessage> getMoreAlbumPost(
       limitPost, currentPage, albumId) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{
@@ -1017,12 +1052,12 @@ class _RestClient implements RestClient {
     final _headers = <String, dynamic>{};
     final _data = <String, dynamic>{};
     final _result = await _dio.fetch<Map<String, dynamic>>(
-        _setStreamType<GetAlbumPostListResponseMessage>(
+        _setStreamType<GetListOfPostResponseMessage>(
             Options(method: 'GET', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/posts/getmorealbumpost',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-    final value = GetAlbumPostListResponseMessage.fromJson(_result.data!);
+    final value = GetListOfPostResponseMessage.fromJson(_result.data!);
     return value;
   }
 

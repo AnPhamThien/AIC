@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -40,7 +38,6 @@ class _ConversationScreenState extends State<ConversationScreen> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      log("Fetchmore");
       context.read<ConversationBloc>().add(FetchMoreConversation());
     }
   }

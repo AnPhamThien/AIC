@@ -1,20 +1,35 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/repositories/follow/follow_repository.dart';
 import 'package:imagecaptioning/src/repositories/user/user_repository.dart';
+import 'package:stream_transform/stream_transform.dart';
 
 part "profile_event.dart";
 part "profile_state.dart";
+
+const throttleDuration = Duration(milliseconds: 10);
+
+EventTransformer<E> throttleDroppable<E>(Duration duration) {
+  return (events, mapper) {
+    return droppable<E>().call(events.throttle(duration), mapper);
+  };
+}
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc(bool isCurrentUser)
       : _userRepository = UserRepository(),
         _followRepository = FollowRepository(),
         super(ProfileState(isCurrentUser: isCurrentUser)) {
-    on<ProfileInitializing>(_onInitial);
+    on<ProfileInitializing>(_onInitial,
+        transformer: throttleDroppable(throttleDuration));
     on<ProfileChangeFollowUser>(_onChangeFollowStatusUser);
   }
   final UserRepository _userRepository;
@@ -35,15 +50,21 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
 
       GetUserDetailsResponseMessage? userRes =
-          await _userRepository.getUserDetail(userID: userID, limitPost: 5);
+          await _userRepository.getUserDetail(userID: userID, limitPost: 9);
 
       if (userRes == null) {
         throw Exception("");
       }
       if (userRes.statusCode == StatusCode.successStatus &&
           userRes.data != null) {
+        GetListOfPostResponseMessage? savedPostResponse =
+            await _userRepository.getPostStorage(limitPost: 9);
+
+        log((savedPostResponse?.data != null).toString());
+
         emit(state.copyWith(
             user: userRes.data,
+            savedPostList: savedPostResponse?.data,
             isFollow: (userRes.data?.isFollow == 1),
             status: FinishInitializing()));
       } else {

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
@@ -13,6 +15,8 @@ import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
+import 'package:image/image.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 /// viet hoa va cac chuoi
 String uppercaseAndTrim(String a) {
@@ -74,28 +78,83 @@ String getErrorMessage(String errorCode) {
 
 Future pickImage(ImageSource source, BuildContext context) async {
   try {
-    final image = await ImagePicker().pickImage(source: source);
-    if (image == null) return;
-    final imageTemp = File(image.path);
+    final chosenImage = await ImagePicker().pickImage(source: source);
+    if (chosenImage == null) return;
+    //Uint8List list = await chosenImage.readAsBytes();
+    // var result = await FlutterImageCompress.compressWithList(
+    //   list,
+    //   minWidth: 2000,
+    //   minHeight: 2400,
+    // );
+
+    // final imageTemp = File(chosenImage.path).readAsBytesSync();
+    // var image = decodeImage(imageTemp);
+    // var thumbnail = copyResize(image!, width: 300, height: 300);
+    // File a = File(chosenImage.path);
+    // await a.writeAsBytes(encodeJpg(thumbnail));
+    // a.readAsBytesSync();
+
+    File? croppedFile = await ImageCropper.cropImage(
+        sourcePath: chosenImage.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: const AndroidUiSettings(
+            toolbarTitle: 'Crop your image',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            hideBottomControls: true,
+            lockAspectRatio: true),
+        iosUiSettings: const IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+    if (croppedFile == null) return;
+
     await Navigator.of(context)
-        .pushNamed(AppRouter.uploadScreen, arguments: image.path);
+        .pushNamed(AppRouter.uploadScreen, arguments: croppedFile.path);
     context.read<HomeBloc>().add(InitPostFetched());
     context.read<ProfileBloc>().add(ProfileInitializing(''));
   } on PlatformException catch (e) {
-    log('Failed to pick image: $e');
+    log('Failed to pick image due to wrong platform: $e');
   }
 }
 
-Future<XFile?> pickAvatar(ImageSource source, BuildContext context) async {
+Future<String?> pickAvatar(ImageSource source, BuildContext context) async {
   try {
-    final image = await ImagePicker()
-        .pickImage(source: source, maxHeight: 100, maxWidth: 100);
+    final chosenImage = await ImagePicker().pickImage(source: source);
+    if (chosenImage == null) return null;
 
-    return image;
+    File? croppedFile = await ImageCropper.cropImage(
+        sourcePath: chosenImage.path,
+        aspectRatioPresets: [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: const AndroidUiSettings(
+            toolbarTitle: 'Crop your image',
+            toolbarColor: Colors.deepOrange,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            hideBottomControls: true,
+            lockAspectRatio: true),
+        iosUiSettings: const IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ));
+    if (croppedFile == null) return null;
+
+    return croppedFile.path;
   } on PlatformException catch (e) {
-    log('Failed to pick image: $e');
+    log('Failed to pick image due to wrong platform: $e');
+    return null;
   }
-  return null;
 }
 
 // scroll controller

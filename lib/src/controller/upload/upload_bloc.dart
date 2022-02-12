@@ -2,11 +2,9 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
-import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
 import 'package:imagecaptioning/src/model/contest/contest.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
-import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/repositories/album/album_repository.dart';
 import 'package:imagecaptioning/src/repositories/contest/contest_repository.dart';
 import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
@@ -27,18 +25,18 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   final AlbumRepository _albumRepository;
   final ContestRepository _contestRepository;
 
-  final int _limitContest = 9;
+  final int _limitAlbum = 50;
+  final int _limitContest = 50;
 
   void _onInitial(
     UploadInitializing event,
     Emitter<UploadState> emit,
   ) async {
     try {
-      String userID = getIt<AppPref>().getUserID;
       String imgPath = event.imgPath;
 
       GetAlbumResponseMessage? albumRes =
-          await _albumRepository.getAlbumInit(productPerPage: 5);
+          await _albumRepository.getAlbumInit(productPerPage: _limitAlbum);
 
       final List<Contest>? _activeContestList = await _contestRepository
           .getActiveContestList('', _limitContest, '', '');

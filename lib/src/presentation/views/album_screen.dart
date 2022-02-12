@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
@@ -5,6 +7,7 @@ import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/album/album_bloc.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 class AlbumScreen extends StatefulWidget {
   const AlbumScreen({
@@ -16,6 +19,28 @@ class AlbumScreen extends StatefulWidget {
 }
 
 class _AlbumScreenState extends State<AlbumScreen> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    _scrollController.addListener(_onScroll);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (isScrollEnd(_scrollController)) {
+      context.read<AlbumBloc>().add(FetchMoreAlbumPosts());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AlbumBloc, AlbumState>(
@@ -32,6 +57,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
   SafeArea getBody(AlbumState state) {
     return SafeArea(
         child: GridView.builder(
+      controller: _scrollController,
       padding: const EdgeInsets.all(15),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           childAspectRatio: 1,
@@ -71,6 +97,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
   }
 
   AppBar getAppBar(AlbumState state) {
+    log(state.album?.albumName ?? 'no');
     return AppBar(
       elevation: 0,
       leadingWidth: 30,

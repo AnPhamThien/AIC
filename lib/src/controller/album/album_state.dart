@@ -5,23 +5,27 @@ class AlbumState {
   final AlbumBlocStatus status;
   final Album? album;
   final bool hasReachedMax;
+  final int currentPage;
 
   AlbumState(
       {this.postList,
       this.status = const InitialStatus(),
       this.album,
-      this.hasReachedMax = false});
+      this.hasReachedMax = false,
+      this.currentPage = 0});
 
   AlbumState copyWith(
       {List<Post>? postList,
       AlbumBlocStatus? status,
       Album? album,
-      bool? hasReachedMax}) {
+      bool? hasReachedMax,
+      int? currentPage}) {
     return AlbumState(
         postList: postList ?? this.postList,
         status: status ?? this.status,
         album: album ?? this.album,
-        hasReachedMax: hasReachedMax ?? this.hasReachedMax);
+        hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+        currentPage: currentPage ?? this.currentPage);
   }
 }
 

@@ -6,6 +6,8 @@ import 'package:imagecaptioning/src/controller/album_list/album_list_bloc.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
 import 'package:imagecaptioning/src/presentation/widgets/get_user_input_field.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 
 class AlbumListScreen extends StatefulWidget {
   const AlbumListScreen({Key? key}) : super(key: key);
@@ -16,7 +18,30 @@ class AlbumListScreen extends StatefulWidget {
 
 class _AlbumListScreenState extends State<AlbumListScreen> {
   final _addAlbumController = TextEditingController();
+  final _editAlbumController = TextEditingController();
+  final _scrollController = ScrollController();
+
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    _scrollController.addListener(_onScroll);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (isScrollEnd(_scrollController)) {
+      context.read<AlbumListBloc>().add(FetchMoreAlbum());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +60,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
       actions: [
         IconButton(
           //* tạo album
-          onPressed: () => showCreateAlbumnDialog(),
+          onPressed: () => showAlbumnDialog("Add new album", null, null),
           icon: const Icon(
             Icons.add_rounded,
             size: 32,
@@ -46,35 +71,50 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
   }
 
   //hàm tạo album
-  Future<String?> showCreateAlbumnDialog() {
+  Future<String?> showAlbumnDialog(
+      String text, String? albumId, BuildContext? wrapContext) {
     return showDialog<String>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         actionsAlignment: MainAxisAlignment.center,
-        title: const Text('New Album',
+        title: Text(text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
                 fontSize: 23,
                 color: Colors.black87,
                 letterSpacing: 1.25,
                 fontWeight: FontWeight.w500)),
         content: SizedBox(
           width: MediaQuery.of(dialogContext).size.width * .9,
-          child: GetUserInput(
-              label: "",
-              hint: "Your new album name",
-              isPassword: false,
-              controller: _addAlbumController),
+          child: Form(
+            key: _formKey,
+            child: GetUserInput(
+                label: "",
+                hint: "Your new album name",
+                isPassword: false,
+                validator: Validation.blankValidation,
+                controller: albumId == null
+                    ? _addAlbumController
+                    : _editAlbumController),
+          ),
         ),
         contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
         actions: <Widget>[
           TextButton(
             onPressed: () {
-              context
-                  .read<AlbumListBloc>()
-                  .add(AddNewAlbum(_addAlbumController.value.text));
-              Navigator.of(dialogContext).pop();
+              if (_formKey.currentState!.validate()) {
+                albumId == null
+                    ? context
+                        .read<AlbumListBloc>()
+                        .add(AddNewAlbum(_addAlbumController.value.text))
+                    : context.read<AlbumListBloc>().add(
+                        EditAlbum(_editAlbumController.value.text, albumId));
+                Navigator.of(dialogContext).pop();
+                if (wrapContext != null) {
+                  Navigator.of(wrapContext).pop();
+                }
+              }
             },
             child: const Text(
               'OK',
@@ -91,6 +131,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
       child: BlocBuilder<AlbumListBloc, AlbumListState>(
         builder: (context, state) {
           return GridView.builder(
+            controller: _scrollController,
             padding: const EdgeInsets.all(15),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 childAspectRatio: 2 / 2.35,
@@ -164,7 +205,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
             SizedBox(
               width: MediaQuery.of(wrapContext).size.width,
               child: Text(
-                albumName, //TODO nhét contest name vào đây
+                albumName,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                     fontSize: 25,
@@ -192,7 +233,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                   style: TextStyle(fontSize: 19),
                 ),
                 onTap: () {
-                  //TODO hàm edit album
+                  showAlbumnDialog("Edit Album", albumId, wrapContext);
                 },
               ),
             ),
@@ -210,6 +251,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                 ),
                 onTap: () {
                   context.read<AlbumListBloc>().add(DeleteAlbum(albumId));
+                  Navigator.pop(wrapContext);
                 },
               ),
             ),

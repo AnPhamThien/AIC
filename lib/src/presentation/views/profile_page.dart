@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +7,7 @@ import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
+import 'package:imagecaptioning/src/presentation/views/storage_page.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
@@ -24,35 +27,37 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context, state) {
         bool isMe = state.isCurrentUser;
         bool isFollow = state.isFollow;
+
         return Scaffold(
           backgroundColor: Colors.white,
           appBar: getProfileAppBar(state.user?.userName ?? '', isMe),
           body: DefaultTabController(
             length: 2,
             child: NestedScrollView(
-              headerSliverBuilder: (context, _) {
+              headerSliverBuilder: (context, innerBoxIsScrolled) {
+                if (state.user?.avataUrl != null) {
+                  refreshNetworkImage(avatarUrl + state.user?.avataUrl);
+                }
                 return [
                   SliverList(
-                    delegate: SliverChildListDelegate(
-                      [
-                        const SizedBox(height: 10),
-                        getUserHeader(
-                            state.user?.avataUrl ?? "",
-                            state.user?.numberOfpost ?? 0,
-                            state.user?.numberFollower ?? 0,
-                            state.user?.numberFollowee ?? 0),
-                        getUserDescription(state.user?.userRealName ?? '',
-                            state.user?.description ?? ''),
-                        isMe == true
-                            ? getEditProfileButton()
-                            : getFollowMessageButton(
-                                state.user?.userName,
-                                state.user?.avataUrl,
-                                state.user?.userRealName,
-                                state.user?.id,
-                                isFollow)
-                      ],
-                    ),
+                    delegate: SliverChildListDelegate([
+                      const SizedBox(height: 10),
+                      getUserHeader(
+                          state.user?.avataUrl ?? "",
+                          state.user?.numberOfpost ?? 0,
+                          state.user?.numberFollower ?? 0,
+                          state.user?.numberFollowee ?? 0),
+                      getUserDescription(state.user?.userRealName ?? '',
+                          state.user?.description ?? ''),
+                      isMe == true
+                          ? getEditProfileButton(context)
+                          : getFollowMessageButton(
+                              state.user?.userName,
+                              state.user?.avataUrl,
+                              state.user?.userRealName,
+                              state.user?.id,
+                              isFollow)
+                    ]),
                   ),
                 ];
               },
@@ -80,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     child: TabBarView(
                       children: [
                         GalleryPage(),
-                        Center(child: Text("Saved post")),
+                        StoragePage(),
                       ],
                     ),
                   ),
@@ -143,6 +148,11 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+  Future refreshNetworkImage(String url) async {
+    NetworkImage provider = NetworkImage(url);
+    await provider.evict();
+  }
+
   Padding getAvatar(String imagePath) {
     return Padding(
       padding: const EdgeInsets.only(left: 10),
@@ -152,8 +162,9 @@ class _ProfilePageState extends State<ProfilePage> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
+            onError: (exception, stackTrace) => log(exception.toString()),
             image: imagePath.isNotEmpty
-                ? NetworkImage(avatarUrl + imagePath)
+                ? NetworkImage(avatarUrl + imagePath.toString())
                 : const AssetImage("assets/images/avatar_placeholder.png")
                     as ImageProvider,
             fit: BoxFit.cover,
@@ -197,7 +208,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Padding getEditProfileButton() {
+  Padding getEditProfileButton(BuildContext c) {
     Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -214,6 +225,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         onPressed: () async {
+          //Navigator.pop(c);
           await Navigator.of(context).pushNamed(AppRouter.editProfileScreen);
           context.read<ProfileBloc>().add(ProfileInitializing(''));
         },

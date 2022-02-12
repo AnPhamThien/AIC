@@ -8,6 +8,10 @@ class ProfileInitializing extends ProfileEvent {
   ProfileInitializing(this.userID);
 }
 
+class ProfileFetchMorePost extends ProfileEvent {}
+
+class ProfileFetchMoreSavedPost extends ProfileEvent {}
+
 class ProfileChangeFollowUser extends ProfileEvent {
   final String followeeID;
 

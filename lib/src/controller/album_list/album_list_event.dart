@@ -13,6 +13,12 @@ class AddNewAlbum extends AlbumListEvent {
   AddNewAlbum(this.albumName);
 }
 
+class EditAlbum extends AlbumListEvent {
+  String albumName;
+  String albumId;
+  EditAlbum(this.albumName, this.albumId);
+}
+
 class DeleteAlbum extends AlbumListEvent {
   String albumId;
   DeleteAlbum(this.albumId);

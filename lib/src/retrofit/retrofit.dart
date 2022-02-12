@@ -4,7 +4,7 @@ import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/model/album/album.dart';
 import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
-import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
+import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
 import '../constant/env.dart';
 import '../model/post/post_detail_respone.dart';
 import '../model/search/search_history_respone.dart';
@@ -108,6 +108,16 @@ abstract class RestClient {
 
   @POST('/posts/getmorepostver2')
   Future<PostListRespone> getMorePost(@Body() PostListRequest request);
+
+  @GET('/posts/getpoststorage')
+  Future<GetListOfPostResponseMessage> getPostStorage(
+      @Query('limitPost') int limitPost);
+
+  @GET('/posts/getmorepoststorage')
+  Future<GetListOfPostResponseMessage> getMorePostStorage(
+    @Query('limitPost') int limitPost,
+    @Query('currentPage') int currentPage,
+  );
 
   @POST('/posts/addpost')
   @MultiPart()
@@ -315,13 +325,13 @@ abstract class RestClient {
       @Field('Id') String id, @Field('status') int status);
 
   @GET('/posts/getalbumpost')
-  Future<GetAlbumPostListResponseMessage> getAlbumPost(
+  Future<GetListOfPostResponseMessage> getAlbumPost(
     @Query('limitPost') int limitPost,
     @Query('albumId') String albumId,
   );
 
   @GET('/posts/getmorealbumpost')
-  Future<GetAlbumPostListResponseMessage> getMoreAlbumPost(
+  Future<GetListOfPostResponseMessage> getMoreAlbumPost(
     @Query('limitPost') int limitPost,
     @Query('currentPage') int currentPage,
     @Query('albumId') String albumId,

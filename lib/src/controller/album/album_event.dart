@@ -9,6 +9,6 @@ class FetchAlbumPosts extends AlbumListEvent {
   FetchAlbumPosts(this.album);
 }
 
-class FetchMoreAlbum extends AlbumListEvent {}
+class FetchMoreAlbumPosts extends AlbumListEvent {}
 
 class DeleteAlbum extends AlbumListEvent {}

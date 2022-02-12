@@ -38,7 +38,7 @@ class _PostWidgetState extends State<PostWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      height: 580.h,
+      height: 650.h,
       child: GestureDetector(
         child: Material(
           color: Colors.white,

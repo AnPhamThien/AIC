@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
-import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
 import 'package:imagecaptioning/src/repositories/album/album_repository.dart';
@@ -26,6 +25,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
     on<FetchMoreAlbum>(_onFetchMore,
         transformer: throttleDroppable(throttleDuration));
     on<AddNewAlbum>(_onAddNewAlbum);
+    on<EditAlbum>(_onEditAlbum);
     on<DeleteAlbum>(_onDeleteAlbum);
   }
   final AlbumRepository _albumRepository;
@@ -36,7 +36,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
   ) async {
     try {
       GetAlbumResponseMessage? resMessage =
-          await _albumRepository.getAlbumInit(productPerPage: 5);
+          await _albumRepository.getAlbumInit(productPerPage: 6);
 
       if (resMessage == null) {
         throw Exception("");
@@ -46,13 +46,12 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
       final message = resMessage.messageCode ?? "";
       final data = resMessage.data ?? [];
 
-      if (status == StatusCode.successStatus ||
-          message == MessageCode.noMessageToDisplay) {
+      if (status == StatusCode.successStatus) {
         emit(state.copyWith(
             status: FinishInitializing(),
             albumList: data,
-            hasReachedMax:
-                (message == MessageCode.noMessageToDisplay) ? true : false));
+            currentPage: 1,
+            hasReachedMax: false));
       } else {
         throw Exception(message);
       }
@@ -67,8 +66,9 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
   ) async {
     try {
       if (!state.hasReachedMax) {
+        int currentPage = state.currentPage;
         GetAlbumResponseMessage? resMessage = await _albumRepository
-            .getPageAlbum(currentPage: 2, productPerPage: 5);
+            .getPageAlbum(currentPage: currentPage + 1, productPerPage: 6);
 
         if (resMessage == null) {
           throw Exception("");
@@ -76,17 +76,18 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
 
         final status = resMessage.statusCode ?? 0;
         final message = resMessage.messageCode ?? "";
-        final data = resMessage.data;
+        final data = resMessage.data ?? [];
 
-        if (status == StatusCode.successStatus && data != null) {
+        if (status == StatusCode.successStatus && data.isNotEmpty) {
           List<Album> albumList = data;
           final currentList = state.albumList;
 
           emit(state.copyWith(
               status: FinishInitializing(),
               albumList: [...currentList, ...albumList],
-              hasReachedMax: false));
-        } else if (message == MessageCode.noMessageToDisplay) {
+              hasReachedMax: false,
+              currentPage: currentPage + 1));
+        } else if (data.isEmpty) {
           emit(state.copyWith(
               status: FinishInitializing(), hasReachedMax: true));
         } else {
@@ -103,10 +104,40 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
     Emitter<AlbumListState> emit,
   ) async {
     try {
-      String albumName = event.albumName;
+      String albumName = event.albumName.trim();
       if (albumName.isNotEmpty) {
         final resMessage =
             await _albumRepository.addAlbum(albumName: albumName);
+
+        if (resMessage == null) {
+          throw Exception("");
+        }
+
+        if (resMessage is int) {
+          if (resMessage == StatusCode.successStatus) {
+            add(FetchAlbum());
+          } else {
+            throw Exception('');
+          }
+        } else {
+          throw Exception(resMessage);
+        }
+      }
+    } catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_.toString())));
+    }
+  }
+
+  void _onEditAlbum(
+    EditAlbum event,
+    Emitter<AlbumListState> emit,
+  ) async {
+    try {
+      String albumName = event.albumName.trim();
+      String albumId = event.albumId;
+      if (albumName.isNotEmpty && albumId.isNotEmpty) {
+        final resMessage = await _albumRepository.updateAlbum(
+            albumName: albumName, id: albumId);
 
         if (resMessage == null) {
           throw Exception("");

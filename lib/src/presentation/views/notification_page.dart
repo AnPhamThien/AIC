@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
@@ -38,7 +36,6 @@ class _NotificationPageState extends State<NotificationPage> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      log("Fetchmore");
       context.read<NotificationBloc>().add(FetchNotification());
     }
   }

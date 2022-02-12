@@ -1,12 +1,10 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
-import 'package:imagecaptioning/src/model/post/album_post_list_respone.dart';
+import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/repositories/album/album_repository.dart';
 import 'package:stream_transform/stream_transform.dart';
@@ -28,7 +26,7 @@ class AlbumBloc extends Bloc<AlbumListEvent, AlbumState> {
         super(AlbumState()) {
     on<FetchAlbumPosts>(_onInitial,
         transformer: throttleDroppable(throttleDuration));
-    on<FetchMoreAlbum>(_onFetchMore,
+    on<FetchMoreAlbumPosts>(_onFetchMore,
         transformer: throttleDroppable(throttleDuration));
     on<DeleteAlbum>(_onDeleteAlbum);
   }
@@ -43,7 +41,7 @@ class AlbumBloc extends Bloc<AlbumListEvent, AlbumState> {
       if (album.id == null) {
         throw Exception();
       }
-      GetAlbumPostListResponseMessage? resMessage = await _albumRepository
+      GetListOfPostResponseMessage? resMessage = await _albumRepository
           .getAlbumPost(limitPost: limitPost, albumId: album.id!);
 
       if (resMessage == null) {
@@ -54,16 +52,15 @@ class AlbumBloc extends Bloc<AlbumListEvent, AlbumState> {
       final message = resMessage.messageCode ?? "";
       final data = resMessage.data ?? [];
 
-      log(data.length.toString());
-
       if (status == StatusCode.successStatus ||
           message == MessageCode.noMessageToDisplay) {
         emit(state.copyWith(
             status: FinishInitializing(),
             album: album,
             postList: data,
+            currentPage: 1,
             hasReachedMax:
-                (message == MessageCode.noMessageToDisplay) ? true : false));
+                (message == MessageCode.noPostToDisplay) ? true : false));
       } else {
         throw Exception(message);
       }
@@ -73,15 +70,16 @@ class AlbumBloc extends Bloc<AlbumListEvent, AlbumState> {
   }
 
   void _onFetchMore(
-    FetchMoreAlbum event,
+    FetchMoreAlbumPosts event,
     Emitter<AlbumState> emit,
   ) async {
     try {
       if (!state.hasReachedMax) {
-        GetAlbumPostListResponseMessage? resMessage =
+        int currentPage = state.currentPage;
+        GetListOfPostResponseMessage? resMessage =
             await _albumRepository.getMoreAlbumPost(
                 limitPost: limitPost,
-                currentPage: 2,
+                currentPage: currentPage + 1,
                 albumId: state.album!.id!);
 
         if (resMessage == null) {
@@ -99,8 +97,9 @@ class AlbumBloc extends Bloc<AlbumListEvent, AlbumState> {
           emit(state.copyWith(
               status: FinishInitializing(),
               postList: [...currentList, ...postList],
-              hasReachedMax: false));
-        } else if (message == MessageCode.noMessageToDisplay) {
+              hasReachedMax: false,
+              currentPage: currentPage + 1));
+        } else if (message == MessageCode.noPostToDisplay) {
           emit(state.copyWith(
               status: FinishInitializing(), hasReachedMax: true));
         } else {

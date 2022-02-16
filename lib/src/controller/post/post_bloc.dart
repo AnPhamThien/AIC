@@ -35,10 +35,27 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<ReportPost>(_onReportPost,
         transformer: throttleDroppable(throttleDuration));
     on<AddPost>(_onAddPost, transformer: throttleDroppable(throttleDuration));
+    on<GetIsSave>(_onGetIsSave,
+        transformer: throttleDroppable(throttleDuration));
   }
 
   final PostRepository _postRepository = PostRepository();
   final HomeBloc homeBloc = HomeBloc();
+
+  void _onGetIsSave(
+    GetIsSave event,
+    Emitter<PostState> emit,
+  ) async {
+    try {
+      if (event.isSave == 0) {
+        emit(state.copyWith(isSaved: false));
+      } else if (event.isSave == 1) {
+        emit(state.copyWith(isSaved: true));
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 
   void _onReportPost(
     ReportPost event,
@@ -87,6 +104,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           status: PostStatus.save,
           isSaved: true,
         ));
+        add(Reset());
       } else {
         throw Exception(_respone.messageCode);
       }
@@ -107,6 +125,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           status: PostStatus.save,
           isSaved: false,
         ));
+        add(Reset());
       } else {
         throw Exception(_respone.messageCode);
       }

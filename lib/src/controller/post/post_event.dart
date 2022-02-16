@@ -35,10 +35,10 @@ class ReportPost extends PostEvent {
   const ReportPost(this.postId, this.categoryId, this.description);
 }
 
-// class DeletePost extends PostEvent {
-//   final String postId;
-//   const DeletePost(this.postId);
-// }
+class GetIsSave extends PostEvent {
+  final int isSave;
+  const GetIsSave(this.isSave);
+}
 
 class AddPost extends PostEvent {
   final Post post;

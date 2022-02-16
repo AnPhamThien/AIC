@@ -135,6 +135,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
   @override
   void initState() {
     context.read<PostBloc>().add(GetCategory());
+    context.read<PostBloc>().add(GetIsSave(widget.isSave));
     super.initState();
   }
 
@@ -178,7 +179,6 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
 
       ///options
       trailing: BlocListener<PostBloc, PostState>(
-        listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
           if (state.status == PostStatus.reported) {
             ScaffoldMessenger.of(context)
@@ -191,19 +191,6 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                     (value) => ScaffoldMessenger.of(context).clearSnackBars());
             context.read<PostBloc>().add(Reset());
           }
-          if (state.status == PostStatus.save) {
-            if (state.isSaved == true) {
-              setState(() {
-                widget.isSave == 1;
-                context.read<PostBloc>().add(Reset());
-              });
-            } else {
-              setState(() {
-                widget.isSave == 0;
-                context.read<PostBloc>().add(Reset());
-              });
-            }
-          }
         },
         child: BlocBuilder<PostBloc, PostState>(
           builder: (context, state) {
@@ -215,14 +202,12 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                   case 'report':
                     return showReportDialog(state.categoryList, widget.postId);
                   case 'unsave':
-                    log(state.isSaved.toString());
-                    context.read<PostBloc>().add(UnsavePost(widget.postId));
-                    log(state.isSaved.toString());
+                    context.read<PostBloc>().add(
+                          UnsavePost(widget.postId),
+                        );
                     break;
                   case 'save':
-                    log(state.isSaved.toString());
                     context.read<PostBloc>().add(SavePost(widget.postId));
-                    log(state.isSaved.toString());
                     break;
                   default:
                     return;
@@ -253,7 +238,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                       value: 'report',
                       child: getPopupMenuItem(
                           "Report", Icons.error_outline_rounded)),
-                  widget.isSave == 0
+                  state.isSaved == true
                       ? PopupMenuItem(
                           value: 'unsave',
                           child: getPopupMenuItem(

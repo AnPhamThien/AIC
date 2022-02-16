@@ -128,63 +128,72 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
 
   SafeArea getBody() {
     return SafeArea(
-      child: BlocBuilder<AlbumListBloc, AlbumListState>(
-        builder: (context, state) {
-          return GridView.builder(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(15),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                childAspectRatio: 2 / 2.35,
-                crossAxisCount: 2,
-                crossAxisSpacing: 15,
-                mainAxisSpacing: 10),
-            itemCount: state.albumList.length,
-            itemBuilder: (_, index) {
-              final Album album = state.albumList[index];
-              return GestureDetector(
-                onTap: () async {
-                  Map<String, dynamic> args = {"album": album};
-                  await Navigator.pushNamed(context, AppRouter.albumScreen,
-                      arguments: args);
-                  context.read<AlbumListBloc>().add(FetchAlbum());
-                },
-                onLongPress: () {
-                  getSheet(context, album.albumName ?? '', album.id ?? '');
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AspectRatio(
-                      aspectRatio: 1,
-                      child: Container(
-                        decoration: album.imgUrl != null
-                            ? BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                image: DecorationImage(
-                                    image: NetworkImage(
-                                        postImageUrl + album.imgUrl!),
-                                    fit: BoxFit.cover),
-                              )
-                            : BoxDecoration(
-                                color: Colors.grey.shade200,
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 7.0, horizontal: 3),
-                      child: Text(
-                        album.albumName ?? '',
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
+      child: BlocListener<AlbumListBloc, AlbumListState>(
+        listener: (context, state) {
+          final status = state.status;
+          if (status is ErrorStatus) {
+            String errorMessage = getErrorMessage(status.exception.toString());
+            _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+          }
         },
+        child: BlocBuilder<AlbumListBloc, AlbumListState>(
+          builder: (context, state) {
+            return GridView.builder(
+              controller: _scrollController,
+              padding: const EdgeInsets.all(15),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 2 / 2.35,
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 15,
+                  mainAxisSpacing: 10),
+              itemCount: state.albumList.length,
+              itemBuilder: (_, index) {
+                final Album album = state.albumList[index];
+                return GestureDetector(
+                  onTap: () async {
+                    Map<String, dynamic> args = {"album": album};
+                    await Navigator.pushNamed(context, AppRouter.albumScreen,
+                        arguments: args);
+                    context.read<AlbumListBloc>().add(FetchAlbum());
+                  },
+                  onLongPress: () {
+                    getSheet(context, album.albumName ?? '', album.id ?? '');
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1,
+                        child: Container(
+                          decoration: album.imgUrl != null
+                              ? BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                          postImageUrl + album.imgUrl!),
+                                      fit: BoxFit.cover),
+                                )
+                              : BoxDecoration(
+                                  color: Colors.grey.shade200,
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 7.0, horizontal: 3),
+                        child: Text(
+                          album.albumName ?? '',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
@@ -261,6 +270,39 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
           ],
         );
       },
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

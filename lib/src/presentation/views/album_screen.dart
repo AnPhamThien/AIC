@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
@@ -43,14 +41,27 @@ class _AlbumScreenState extends State<AlbumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AlbumBloc, AlbumState>(
-      builder: (context, state) {
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: getAppBar(state),
-          body: getBody(state),
-        );
+    return BlocListener<AlbumBloc, AlbumState>(
+      listener: (context, state) async {
+        final status = state.status;
+        if (status is DeletedStatus) {
+          await _getDialog(
+              "Delete successfully", 'Success !', () => Navigator.pop(context));
+          Navigator.pop(context);
+        } else if (status is ErrorStatus) {
+          String errorMessage = getErrorMessage(status.exception.toString());
+          _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+        }
       },
+      child: BlocBuilder<AlbumBloc, AlbumState>(
+        builder: (context, state) {
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: getAppBar(state),
+            body: getBody(state),
+          );
+        },
+      ),
     );
   }
 
@@ -97,7 +108,6 @@ class _AlbumScreenState extends State<AlbumScreen> {
   }
 
   AppBar getAppBar(AlbumState state) {
-    log(state.album?.albumName ?? 'no');
     return AppBar(
       elevation: 0,
       leadingWidth: 30,
@@ -187,6 +197,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
                 ),
                 onTap: () {
                   context.read<AlbumBloc>().add(DeleteAlbum());
+                  Navigator.of(wrapContext).pop();
                 },
               ),
             ),
@@ -196,6 +207,39 @@ class _AlbumScreenState extends State<AlbumScreen> {
           ],
         );
       },
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

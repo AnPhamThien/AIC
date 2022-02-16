@@ -10,7 +10,6 @@ import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
@@ -95,6 +94,8 @@ Future pickImage(ImageSource source, BuildContext context) async {
 
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: chosenImage.path,
+        maxHeight: 300,
+        maxWidth: 300,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,
@@ -132,6 +133,9 @@ Future<String?> pickAvatar(ImageSource source, BuildContext context) async {
 
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: chosenImage.path,
+        maxHeight: 300,
+        maxWidth: 300,
+        cropStyle: CropStyle.circle,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
@@ -97,6 +99,22 @@ class _SearchPageState extends State<SearchPage> {
                       ],
                       isScrollControlled: true,
                       builder: (context, transition) {
+                        if (state.searchList.length == 0) {
+                          log('run this');
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 15),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25),
+                              color: Colors.white,
+                            ),
+                            child: const Center(
+                              child: Text(
+                                'no user found',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                            ),
+                          );
+                        }
                         return Container(
                           margin: const EdgeInsets.only(bottom: 15),
                           decoration: BoxDecoration(

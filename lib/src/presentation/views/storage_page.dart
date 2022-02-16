@@ -58,7 +58,7 @@ class _StoragePageState extends State<StoragePage> {
                   children: imageUrls.map(_createGridTileWidget).toList(),
                   controller: _scrollController,
                 )
-              : const Text("No post found"),
+              : Center(child: const Text("No post")),
         );
       },
     );

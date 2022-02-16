@@ -75,7 +75,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     listener: (context, state) {
                       if (state.status == PostDetailStatus.deleted) {
                         state.commentList.removeAt(state.deleted!);
-                        state.commentCount! - 1;
                         context.read<PostDetailBloc>().add(CommentDeleted());
                       }
                     },
@@ -85,10 +84,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       if (state.status == PostStatus.like &&
                           state.needUpdate == true) {
                         post.isLike = 1;
+                        post.likecount = post.likecount! + 1;
                         context.read<PostBloc>().add(Reset());
                       } else if (state.status == PostStatus.unlike &&
                           state.needUpdate == true) {
                         post.isLike = 0;
+                        post.likecount = post.likecount! - 1;
                         context.read<PostBloc>().add(Reset());
                       }
                     },
@@ -221,6 +222,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
+                  isSave: post.isSaved!,
                   route: widget.isInContest
                       ? AppRouter.contestScreen
                       : AppRouter.rootScreen,
@@ -323,12 +325,58 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                 color: Colors.grey,
                 iconSize: 27,
                 onPressed: () {
-                  context.read<PostDetailBloc>().add(
-                        PostDetailDeleteComment(comment.id!, index),
-                      );
+                  showDeleteDialog(comment.id!, index);
                 },
               )
             : null,
+      ),
+    );
+  }
+
+  Future<void> showDeleteDialog(String commentId, int index) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text('Delete',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 23,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.w500)),
+        content: const Text('This comment will be deleted',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.black87,
+              letterSpacing: 1.25,
+            )),
+        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              context.read<PostDetailBloc>().add(
+                    PostDetailDeleteComment(commentId, index),
+                  );
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
       ),
     );
   }

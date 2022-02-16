@@ -1,3 +1,5 @@
+import 'package:imagecaptioning/src/model/category/category.dart';
+
 import 'base_prefs.dart';
 
 class AppPref extends BasePrefs {
@@ -46,6 +48,10 @@ class AppPref extends BasePrefs {
   Future<void> setAvatarPath(String avatarPath) {
     return setValueForKey(PrefKey.avatarPath, avatarPath);
   }
+
+  List<Category> get getCategory{
+    return getValueForKey(PrefKey.categoryList);
+  }
 }
 
 class PrefKey {
@@ -54,4 +60,5 @@ class PrefKey {
   static const String username = 'USERNAME';
   static const String refreshToken = 'REFRESHTOKEN';
   static const String avatarPath = 'AVATARPATH';
+  static const String categoryList = 'CATEGORYLIST';
 }

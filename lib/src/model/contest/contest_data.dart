@@ -1,3 +1,5 @@
+import 'package:imagecaptioning/src/model/contest/prize.dart';
+
 import '../post/post.dart';
 
 class ContestData {
@@ -11,7 +13,7 @@ class ContestData {
   int? totalParticipaters;
   List<Post>? topThreePosts;
   List<Post>? posts;
-  List<dynamic>? prizes;
+  List<Prize>? prizes;
 
   factory ContestData.fromJson(Map<String, dynamic> json) => ContestData(
         totalParticipaters: json["total_Participaters"],
@@ -22,13 +24,15 @@ class ContestData {
         posts: json["posts"] != null
             ? List<Post>.from(json["posts"].map((x) => Post.fromJson(x)))
             : null,
-        prizes: List<dynamic>.from(json["prizes"].map((x) => x)),
+        prizes: json["prizes"] != null
+            ? List<Prize>.from(json["prizes"].map((x) => Prize.fromJson(x)))
+            : null,
       );
 
   Map<String, dynamic> toJson() => {
         "total_Participaters": totalParticipaters,
-        "top_ThreePosts": List<Post>.from(topThreePosts!.map((x) => x)),
-        "posts": List<Post>.from(posts!.map((x) => x)),
-        "prizes": List<dynamic>.from(prizes!.map((x) => x)),
+        "top_ThreePosts": topThreePosts,
+        "posts": posts,
+        "prizes": List<dynamic>.from(prizes!.map((x) => x.toJson())),
       };
 }

@@ -81,6 +81,7 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
           state.copyWith(
             deleted: event.index,
             status: PostDetailStatus.deleted,
+            commentCount: state.commentCount! - 1,
           ),
         );
       } else if (_respone.statusCode == StatusCode.failStatus &&

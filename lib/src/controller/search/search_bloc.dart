@@ -162,8 +162,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
               searchList: _searchedUser,
               searchName: _searchName,
               hasReachMaxSearchList: false));
-        } else if (_respone.messageCode ==
-            MessageCode.noSearchHistoryToDisplay) {
+        } else if (_respone.messageCode == MessageCode.userNotFound) {
           emit(state.copyWith(status: SearchStatus.success, searchList: []));
         } else {
           throw Exception(_respone.messageCode);

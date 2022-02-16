@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import '../../app/routes.dart';
 import '../../controller/home/home_bloc.dart';
 import '../../model/post/post.dart';
@@ -74,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                         log(_postList[_index].likecount.toString());
                       });
                     }
-
+                    context.read<ProfileBloc>().add(ProfileInitializing(''));
                     context.read<PostBloc>().add(Reset());
                   }
 

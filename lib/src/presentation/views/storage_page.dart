@@ -67,12 +67,11 @@ class _StoragePageState extends State<StoragePage> {
   Widget _createGridTileWidget(Post post) => Builder(
         builder: (context) => GestureDetector(
           onTap: () {
+            post.isSaved = 1;
             Map<String, dynamic> args = {'post': post};
 
-            context.read<AuthBloc>().add(NavigateToPageEvent(
-                  route: AppRouter.postDetailScreen,
-                  args: args,
-                ));
+            Navigator.of(context)
+                .pushNamed(AppRouter.postDetailScreen, arguments: args);
           },
           onLongPress: () {
             _popupDialog = _createPopupDialog(post);

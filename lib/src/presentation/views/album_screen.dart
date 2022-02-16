@@ -183,24 +183,27 @@ class _AlbumScreenState extends State<AlbumScreen> {
                 height: 25,
               ),
             ),
-            SizedBox(
-              width: MediaQuery.of(wrapContext).size.width,
-              child: ListTile(
-                leading: const Icon(
-                  Icons.delete_rounded,
-                  color: Colors.redAccent,
-                  size: 35,
-                ),
-                title: const Text(
-                  "Delete",
-                  style: TextStyle(fontSize: 19, color: Colors.redAccent),
-                ),
-                onTap: () {
-                  context.read<AlbumBloc>().add(DeleteAlbum());
-                  Navigator.of(wrapContext).pop();
-                },
-              ),
-            ),
+            album.albumName != "Save Post Storage" &&
+                    album.albumName != "Contest Post Storage"
+                ? SizedBox(
+                    width: MediaQuery.of(wrapContext).size.width,
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.delete_rounded,
+                        color: Colors.redAccent,
+                        size: 35,
+                      ),
+                      title: const Text(
+                        "Delete",
+                        style: TextStyle(fontSize: 19, color: Colors.redAccent),
+                      ),
+                      onTap: () {
+                        context.read<AlbumBloc>().add(DeleteAlbum());
+                        Navigator.of(wrapContext).pop();
+                      },
+                    ),
+                  )
+                : const Text(""),
             const SizedBox(
               height: 15,
             ),

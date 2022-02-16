@@ -10,6 +10,7 @@ import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
@@ -39,7 +40,6 @@ class _PostWidgetState extends State<PostWidget> {
 
   @override
   Widget build(BuildContext context) {
-    log(post.postId.toString());
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       height: 580.h,
@@ -97,6 +97,7 @@ class _PostWidgetState extends State<PostWidget> {
               return;
             }
             setState(() {
+              context.read<ProfileBloc>().add(ProfileInitializing(""));
               post = _post;
             });
           }
@@ -253,7 +254,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                       value: 'report',
                       child: getPopupMenuItem(
                           "Report", Icons.error_outline_rounded)),
-                  widget.isSave == 0
+                  widget.isSave == 1
                       ? PopupMenuItem(
                           value: 'unsave',
                           child: getPopupMenuItem(

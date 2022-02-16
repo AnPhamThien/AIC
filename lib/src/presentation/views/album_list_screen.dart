@@ -229,41 +229,49 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                 height: 25,
               ),
             ),
-            SizedBox(
-              width: MediaQuery.of(wrapContext).size.width,
-              child: ListTile(
-                leading: const Icon(
-                  Icons.edit_rounded,
-                  color: Colors.black87,
-                  size: 35,
-                ),
-                title: const Text(
-                  "Edit Album",
-                  style: TextStyle(fontSize: 19),
-                ),
-                onTap: () {
-                  showAlbumnDialog("Edit Album", albumId, wrapContext);
-                },
-              ),
-            ),
-            SizedBox(
-              width: MediaQuery.of(wrapContext).size.width,
-              child: ListTile(
-                leading: const Icon(
-                  Icons.delete_rounded,
-                  color: Colors.redAccent,
-                  size: 35,
-                ),
-                title: const Text(
-                  "Delete",
-                  style: TextStyle(fontSize: 19, color: Colors.redAccent),
-                ),
-                onTap: () {
-                  context.read<AlbumListBloc>().add(DeleteAlbum(albumId));
-                  Navigator.pop(wrapContext);
-                },
-              ),
-            ),
+            albumName != "Save Post Storage" &&
+                    albumName != "Contest Post Storage"
+                ? SizedBox(
+                    width: MediaQuery.of(wrapContext).size.width,
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.edit_rounded,
+                        color: Colors.black87,
+                        size: 35,
+                      ),
+                      title: const Text(
+                        "Edit Album",
+                        style: TextStyle(fontSize: 19),
+                      ),
+                      onTap: () {
+                        showAlbumnDialog("Edit Album", albumId, wrapContext);
+                      },
+                    ),
+                  )
+                : const Text(
+                    "",
+                  ),
+            albumName != "Save Post Storage" &&
+                    albumName != "Contest Post Storage"
+                ? SizedBox(
+                    width: MediaQuery.of(wrapContext).size.width,
+                    child: ListTile(
+                      leading: const Icon(
+                        Icons.delete_rounded,
+                        color: Colors.redAccent,
+                        size: 35,
+                      ),
+                      title: const Text(
+                        "Delete",
+                        style: TextStyle(fontSize: 19, color: Colors.redAccent),
+                      ),
+                      onTap: () {
+                        context.read<AlbumListBloc>().add(DeleteAlbum(albumId));
+                        Navigator.pop(wrapContext);
+                      },
+                    ),
+                  )
+                : const Text(""),
             const SizedBox(
               height: 15,
             ),

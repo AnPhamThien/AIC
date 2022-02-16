@@ -86,8 +86,6 @@ class _UploadScreenState extends State<UploadScreen> {
           builder: (context, state) {
             return Column(
               children: [
-                getItemPicker(
-                    "Choose an album for your picture", state.albumList, 1),
                 const SizedBox(
                   height: 20,
                 ),
@@ -102,15 +100,16 @@ class _UploadScreenState extends State<UploadScreen> {
                             joinContest = !joinContest;
                             if (!joinContest) {
                               selectedContestId = null;
+                            } else {
+                              selectedAlbumId = null;
                             }
                           });
                         })),
                 joinContest
                     ? getItemPicker("Choose a contest for your picture",
                         state.contestList, 2)
-                    : const SizedBox(
-                        height: 20,
-                      ),
+                    : getItemPicker(
+                        "Choose an album for your picture", state.albumList, 1),
               ],
             );
           },

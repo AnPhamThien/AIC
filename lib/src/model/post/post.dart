@@ -1,3 +1,4 @@
+
 class Post {
   Post({
     this.postId,
@@ -13,6 +14,7 @@ class Post {
     this.likecount,
     this.isLike,
     this.contestId,
+    this.isSaved,
   });
 
   String? postId;
@@ -22,12 +24,13 @@ class Post {
   String? userName;
   String? avataUrl;
   String? aiCaption;
-  dynamic userCaption;
+  String? userCaption;
   DateTime? dateCreate;
   DateTime? dateUpdate;
   int? likecount;
   int? isLike;
   String? contestId;
+  int? isSaved;
 
   factory Post.fromJson(Map<String, dynamic> json) => Post(
         postId: json["post_id"],
@@ -37,12 +40,13 @@ class Post {
         userName: json["user_name"],
         avataUrl: json["avata_url"],
         aiCaption: json["ai_caption"],
-        userCaption: json["user_caption"],
+        userCaption: json["user_caption"] == null ? null : json["user_caption"],
         dateCreate: DateTime.parse(json["date_create"]),
         dateUpdate: DateTime.parse(json["date_update"]),
         likecount: json["likecount"],
         isLike: json["isLike"],
         contestId: json["contest_id"],
+        isSaved: json["isSaved"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -53,11 +57,12 @@ class Post {
         "user_name": userName,
         "avata_url": avataUrl,
         "ai_caption": aiCaption,
-        "user_caption": userCaption,
+        "user_caption": userCaption == null ? null : userCaption,
         "date_create": dateCreate?.toIso8601String(),
         "date_update": dateUpdate?.toIso8601String(),
         "likecount": likecount,
         "isLike": isLike,
         "contest_id": contestId,
+        "isSaved": isSaved,
       };
 }

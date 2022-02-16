@@ -15,11 +15,6 @@ class LikePress extends PostEvent {
 
 class Reset extends PostEvent {}
 
-class CheckSavePost extends PostEvent {
-  final String postId;
-  const CheckSavePost(this.postId);
-}
-
 class SavePost extends PostEvent {
   final String postId;
   const SavePost(this.postId);
@@ -40,10 +35,10 @@ class ReportPost extends PostEvent {
   const ReportPost(this.postId, this.categoryId, this.description);
 }
 
-class DeletePost extends PostEvent {
-  final String postId;
-  const DeletePost(this.postId);
-}
+// class DeletePost extends PostEvent {
+//   final String postId;
+//   const DeletePost(this.postId);
+// }
 
 class AddPost extends PostEvent {
   final Post post;

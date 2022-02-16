@@ -103,6 +103,20 @@ class _ContestScreenState extends State<ContestScreen> {
               switch (state.status) {
                 case ContestStatus.success:
                   return Scaffold(
+                    bottomNavigationBar:
+                        widget.contest.timeLeft!.contains("Closed")
+                            ? BottomAppBar(
+                                child: Container(
+                                    color: Colors.black,
+                                    height: 50,
+                                    child: const Center(
+                                        child: Text(
+                                      "This contest has ended",
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 18),
+                                    ))),
+                              )
+                            : null,
                     backgroundColor: bgApp,
                     floatingActionButton: _showBackToTopButton == false
                         ? null
@@ -196,33 +210,72 @@ class _ContestScreenState extends State<ContestScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 state.topThreePost.length > 1
-                    ? Column(
-                        children: [
-                          getLBAva(state.topThreePost[1].avataUrl, 80,
-                              Colors.grey.shade400),
-                          getLBLikeCount(
-                              state.topThreePost[1].likecount.toString() +
-                                  ' likes')
-                        ],
+                    ? GestureDetector(
+                        onTap: () {
+                          Map<String, dynamic> args = {
+                            'post': state.topThreePost[1],
+                            'isInContest': true
+                          };
+                          Navigator.pushNamed(
+                            context,
+                            AppRouter.postDetailScreen,
+                            arguments: args,
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            getLBAva(state.topThreePost[1].avataUrl, 80,
+                                Colors.grey.shade400),
+                            getLBLikeCount(
+                                state.topThreePost[1].likecount.toString() +
+                                    ' likes')
+                          ],
+                        ),
                       )
                     : getLBPlacehodler(),
-                Column(
-                  children: [
-                    getLBAva(state.topThreePost[0].avataUrl, 100,
-                        Colors.amberAccent.shade700),
-                    getLBLikeCount(
-                        state.topThreePost[0].likecount.toString() + ' likes')
-                  ],
+                GestureDetector(
+                  onTap: () {
+                    Map<String, dynamic> args = {
+                      'post': state.topThreePost[0],
+                      'isInContest': true
+                    };
+                    Navigator.pushNamed(
+                      context,
+                      AppRouter.postDetailScreen,
+                      arguments: args,
+                    );
+                  },
+                  child: Column(
+                    children: [
+                      getLBAva(state.topThreePost[0].avataUrl, 100,
+                          Colors.amberAccent.shade700),
+                      getLBLikeCount(
+                          state.topThreePost[0].likecount.toString() + ' likes')
+                    ],
+                  ),
                 ),
                 state.topThreePost.length == 3
-                    ? Column(
-                        children: [
-                          getLBAva(state.topThreePost[2].avataUrl, 80,
-                              Colors.brown.shade400),
-                          getLBLikeCount(
-                              state.topThreePost[2].likecount.toString() +
-                                  ' likes')
-                        ],
+                    ? GestureDetector(
+                        onTap: () {
+                          Map<String, dynamic> args = {
+                            'post': state.topThreePost[2],
+                            'isInContest': true
+                          };
+                          Navigator.pushNamed(
+                            context,
+                            AppRouter.postDetailScreen,
+                            arguments: args,
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            getLBAva(state.topThreePost[2].avataUrl, 80,
+                                Colors.brown.shade400),
+                            getLBLikeCount(
+                                state.topThreePost[2].likecount.toString() +
+                                    ' likes')
+                          ],
+                        ),
                       )
                     : getLBPlacehodler(),
               ],

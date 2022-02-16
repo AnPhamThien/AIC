@@ -52,6 +52,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       authStatus: AuthenticationAuthenticated(),
       user: user,
     ));
+    
     navigatorKey.currentState!.pushNamed(AppRouter.rootScreen);
   }
 

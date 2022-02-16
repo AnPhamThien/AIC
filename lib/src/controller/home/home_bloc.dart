@@ -3,6 +3,9 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
+import 'package:imagecaptioning/src/constant/status_code.dart';
+import 'package:imagecaptioning/src/model/category/category.dart';
+import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/post/list_post_data.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
@@ -27,36 +30,46 @@ const _postDate = 100;
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(const HomeState()) {
-    on<InitPostFetched>(
-      _onInitPostFetched,
-      transformer: throttleDroppable(throttleDuration),
-    );
-    on<FetchMorePost>(
-      _fetchMorePost,
-      transformer: throttleDroppable(throttleDuration),
-    );
-    on<PostDeleted>(
-      _postDeleted,
-      transformer: throttleDroppable(throttleDuration),
-    );
-    on<PostAdded>(
-      _postAdded,
-      transformer: throttleDroppable(throttleDuration),
-    );
+    on<InitPostFetched>(_onInitPostFetched,
+        transformer: throttleDroppable(throttleDuration));
+    on<FetchMorePost>(_fetchMorePost,
+        transformer: throttleDroppable(throttleDuration));
+
+    on<PostAdded>(_postAdded, transformer: throttleDroppable(throttleDuration));
+    on<DeletePost>(_onDeletePost,
+        transformer: throttleDroppable(throttleDuration));
+    on<PostListReset>(_onReset,
+        transformer: throttleDroppable(throttleDuration));
   }
 
   List<Followee> _listFollowee = [];
   final PostRepository _postRepository = PostRepository();
 
-  void _postDeleted(PostDeleted event, Emitter<HomeState> emit) async {
+  void _onDeletePost(
+    DeletePost event,
+    Emitter<HomeState> emit,
+  ) async {
     try {
-      state.postsList.removeWhere((element) => element.postId == event.postId);
-      emit(state.copyWith(
-          status: HomeStatus.success,
-          postsList: state.postsList,
-          hasReachedMax: false));
-    } catch (_) {
-      emit(state.copyWith(status: HomeStatus.failure));
+      GetResponseMessage _respone =
+          await _postRepository.deletePost(event.postId);
+      if (_respone.statusCode == StatusCode.successStatus) {
+        emit(state.copyWith(status: HomeStatus.success,deletedPostId: event.postId));
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  void _onReset(
+    PostListReset event,
+    Emitter<HomeState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(deletedPostId: ''));
+    } catch (e) {
+      log(e.toString());
     }
   }
 
@@ -108,8 +121,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       List<Post> list = state.postsList;
       list.insert(0, event.post);
-
-      log("ere");
 
       emit(state.copyWith(
           status: HomeStatus.success, postsList: list, hasReachedMax: false));

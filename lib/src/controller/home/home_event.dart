@@ -22,3 +22,10 @@ class PostAdded extends HomeEvent {
 
   const PostAdded(this.post);
 }
+
+class DeletePost extends HomeEvent{
+  final String postId;
+  const DeletePost(this.postId);
+}
+
+class PostListReset extends HomeEvent{}

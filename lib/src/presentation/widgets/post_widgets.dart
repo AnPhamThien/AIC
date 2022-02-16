@@ -42,7 +42,7 @@ class _PostWidgetState extends State<PostWidget> {
     log(post.postId.toString());
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      height: 650.h,
+      height: 580.h,
       child: GestureDetector(
         child: Material(
           color: Colors.white,
@@ -58,6 +58,7 @@ class _PostWidgetState extends State<PostWidget> {
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
+                  isSave: post.isSaved!,
                 ),
                 PostImgWidget(postImage: widget.post.imageUrl ?? ""),
                 PostIconWidget(
@@ -87,9 +88,8 @@ class _PostWidgetState extends State<PostWidget> {
               AppRouter.postDetailScreen,
               arguments: args,
             ) as Post?;
-            context.read<PostBloc>().add(CheckSavePost(post.postId!));
+
             if (_post == null) {
-              log('ahihihihi');
               setState(() {
                 context.read<HomeBloc>().add(PostDeleted(post.postId!));
               });
@@ -97,7 +97,6 @@ class _PostWidgetState extends State<PostWidget> {
               return;
             }
             setState(() {
-              log('ahihihi1');
               post = _post;
             });
           }
@@ -117,6 +116,7 @@ class PostHeadlineWidget extends StatefulWidget {
     required this.postAvatar,
     required this.postId,
     this.route,
+    required this.isSave,
   }) : super(key: key);
 
   final String userId;
@@ -125,6 +125,7 @@ class PostHeadlineWidget extends StatefulWidget {
   final String? postAvatar;
   final String postId;
   final String? route;
+  final int isSave;
 
   @override
   State<PostHeadlineWidget> createState() => _PostHeadlineWidgetState();
@@ -134,7 +135,6 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
   @override
   void initState() {
     context.read<PostBloc>().add(GetCategory());
-    context.read<PostBloc>().add(CheckSavePost(widget.postId));
     super.initState();
   }
 
@@ -147,8 +147,8 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
       onTap: () => widget.userId != getIt<AppPref>().getUserID
           ? context.read<AuthBloc>().add(NavigateToPageEvent(
               route: AppRouter.otherUserProfileScreen, args: args))
-          : context.read<AuthBloc>().add(NavigateToPageEvent(
-              route: AppRouter.otherUserProfileScreen, args: args)),
+          : context.read<AuthBloc>().add(
+              NavigateToPageEvent(route: AppRouter.currentUserProfileScreen)),
       leading: Container(
         width: 45,
         height: 45,
@@ -191,28 +191,37 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                     (value) => ScaffoldMessenger.of(context).clearSnackBars());
             context.read<PostBloc>().add(Reset());
           }
+          if (state.status == PostStatus.save) {
+            if (state.isSaved == true) {
+              setState(() {
+                widget.isSave == 1;
+                context.read<PostBloc>().add(Reset());
+              });
+            } else {
+              setState(() {
+                widget.isSave == 0;
+                context.read<PostBloc>().add(Reset());
+              });
+            }
+          }
         },
         child: BlocBuilder<PostBloc, PostState>(
           builder: (context, state) {
             return PopupMenuButton(
               onSelected: (value) async {
                 switch (value) {
+                  case 'delete':
+                    return showDeleteDialog();
                   case 'report':
                     return showReportDialog(state.categoryList, widget.postId);
                   case 'unsave':
-                    log('unsave');
                     log(state.isSaved.toString());
                     context.read<PostBloc>().add(UnsavePost(widget.postId));
-                    context.read<PostBloc>().add(Reset());
-                    context.read<PostBloc>().add(CheckSavePost(widget.postId));
                     log(state.isSaved.toString());
                     break;
                   case 'save':
-                    log('save');
                     log(state.isSaved.toString());
                     context.read<PostBloc>().add(SavePost(widget.postId));
-                    context.read<PostBloc>().add(Reset());
-                    context.read<PostBloc>().add(CheckSavePost(widget.postId));
                     log(state.isSaved.toString());
                     break;
                   default:
@@ -233,23 +242,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 if (isUser(widget.userId)) {
                   return <PopupMenuEntry>[
                     PopupMenuItem(
-                        onTap: () {
-                          context
-                              .read<PostBloc>()
-                              .add(DeletePost(widget.postId));
-
-                          if (widget.route != null) {
-                            setState(() {
-                              context
-                                  .read<HomeBloc>()
-                                  .add(PostDeleted(widget.postId));
-                            });
-                            Navigator.pop(context, null);
-                            Navigator.of(context).popAndPushNamed(
-                              widget.route!,
-                            );
-                          }
-                        },
+                        value: 'delete',
                         child: getPopupMenuItem(
                             "Delete", Icons.delete_outline_rounded))
                   ];
@@ -260,7 +253,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                       value: 'report',
                       child: getPopupMenuItem(
                           "Report", Icons.error_outline_rounded)),
-                  state.isSaved == true
+                  widget.isSave == 0
                       ? PopupMenuItem(
                           value: 'unsave',
                           child: getPopupMenuItem(
@@ -274,6 +267,62 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Future<void> showDeleteDialog() {
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text('Delete',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 23,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.w500)),
+        content: const Text('This post will be deleted',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.black87,
+              letterSpacing: 1.25,
+            )),
+        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              context.read<HomeBloc>().add(DeletePost(widget.postId));
+
+              if (widget.route != null) {
+                setState(() {
+                  context.read<HomeBloc>().add(PostDeleted(widget.postId));
+                });
+                Navigator.pop(context, null);
+                Navigator.of(context).popAndPushNamed(
+                  widget.route!,
+                );
+              }
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -584,11 +633,11 @@ class PostDescription extends StatelessWidget {
             ),
           ),
           //COMMENTS
-          const Padding(
-            padding: EdgeInsets.only(top: 7),
+          Padding(
+            padding: const EdgeInsets.only(top: 7),
             child: Text(
               "View comments",
-              style: TextStyle(color: bgGrey),
+              style: TextStyle(color: Colors.grey.shade600),
             ),
           ),
         ],

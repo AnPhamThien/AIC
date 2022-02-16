@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BasePrefs {

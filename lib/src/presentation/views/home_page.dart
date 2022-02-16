@@ -51,40 +51,53 @@ class _HomePageState extends State<HomePage> {
       body: SafeArea(
         child: SizedBox(
           height: MediaQuery.of(context).size.height,
-          child: BlocListener<PostBloc, PostState>(
-            listener: (context, state) {
-              if (state.needUpdate == true) {
-                int _index = _postList
-                    .indexWhere((element) => element.postId == state.postId);
-                if (_postList[_index].isLike == 0) {
-                  setState(() {
-                    _postList[_index].isLike = 1;
-                    _postList[_index].likecount! + 1;
-                  });
-                } else {
-                  setState(() {
-                    _postList[_index].isLike = 0;
-                    _postList[_index].likecount! - 1;
-                  });
-                }
+          child: MultiBlocListener(
+            listeners: [
+              BlocListener<PostBloc, PostState>(
+                listener: (context, state) {
+                  if (state.needUpdate == true) {
+                    log('run this ?');
+                    int _index = _postList.indexWhere(
+                        (element) => element.postId == state.postId);
+                    if (_postList[_index].isLike == 0) {
+                      setState(() {
+                        _postList[_index].isLike = 1;
+                        _postList[_index].likecount =
+                            _postList[_index].likecount! + 1;
+                        log(_postList[_index].likecount.toString());
+                      });
+                    } else {
+                      setState(() {
+                        _postList[_index].isLike = 0;
+                        _postList[_index].likecount =
+                            _postList[_index].likecount! - 1;
+                        log(_postList[_index].likecount.toString());
+                      });
+                    }
 
-                context.read<PostBloc>().add(Reset());
-              }
-              if (state.status == PostStatus.deleted) {
-                log(state.postId);
-                log('run this');
-                setState(() {
-                  context.read<HomeBloc>().add(PostDeleted(state.postId));
-                  context.read<PostBloc>().add(Reset());
-                });
-              }
-              if (state.status == PostStatus.added) {
-                setState(() {
-                  context.read<HomeBloc>().add(InitPostFetched());
-                  context.read<PostBloc>().add(Reset());
-                });
-              }
-            },
+                    context.read<PostBloc>().add(Reset());
+                  }
+
+                  if (state.status == PostStatus.added) {
+                    setState(() {
+                      context.read<HomeBloc>().add(InitPostFetched());
+                      context.read<PostBloc>().add(Reset());
+                    });
+                  }
+                },
+              ),
+              BlocListener<HomeBloc, HomeState>(
+                listenWhen: (previous, current) => previous != current,
+                listener: (context, state) {
+                  if (state.deletedPostId != '') {
+                    setState(() {
+                      context.read<HomeBloc>().add(PostListReset());
+                      context.read<HomeBloc>().add(InitPostFetched());
+                    });
+                  }
+                },
+              ),
+            ],
             child: BlocBuilder<PostBloc, PostState>(
               builder: (context, state) {
                 return BlocBuilder<HomeBloc, HomeState>(

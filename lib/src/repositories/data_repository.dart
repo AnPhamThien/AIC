@@ -456,4 +456,10 @@ class DataRepository implements RestClient {
   Future<GetResponseMessage> deletePost(String postId, int status) {
     return _client.deletePost(postId, status);
   }
+
+  @override
+  Future<GetListOfPostResponseMessage> getMoreUserPost(
+      String userID, int limitPost, String dateBoundary) {
+    return _client.getMoreUserPost(userID, limitPost, dateBoundary);
+  }
 }

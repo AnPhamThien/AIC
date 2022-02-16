@@ -31,8 +31,9 @@ class CategoryRespone {
       CategoryRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data:
-            List<Category>.from(json["data"].map((x) => Category.fromJson(x))),
+        data: json["data"] != null
+            ? List<Category>.from(json["data"].map((x) => Category.fromJson(x)))
+            : null,
         total: json["total"],
         sunOfPages: json["sunOfPages"],
       );

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -46,9 +47,12 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       }
       if (albumRes.statusCode == StatusCode.successStatus &&
           albumRes.data != null) {
+        final data = albumRes.data;
+        data!.removeWhere(
+            (element) => element.albumName == "Contest Post Storage");
         emit(state.copyWith(
             imgPath: imgPath,
-            albumList: albumRes.data,
+            albumList: data,
             contestList: _activeContestList,
             status: FinishInitializing()));
       } else {
@@ -62,14 +66,14 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
   void _onSaveUploadPostChanges(
       SaveUploadPost event, Emitter<UploadState> emit) async {
     try {
-      String albumId = event.albumId;
+      String? albumId = event.albumId;
       String? contestId = event.contestId;
       String aiCaption = event.aiCaption;
       String userCaption = event.userCaption;
       String postImg = event.postImg;
 
       final response = await _postRepository.addPost(
-          albumId: albumId,
+          albumId: albumId ?? "d5bd480f-1ddd-4bd6-9942-5f267792cdb7",
           contestId: contestId,
           postImg: File(postImg),
           aiCaption: aiCaption,
@@ -78,7 +82,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       if (response == null) {
         throw Exception("");
       }
-
+      log(response.messageCode.toString());
       int status = response.statusCode ?? 0;
       Post? post = response.data;
 

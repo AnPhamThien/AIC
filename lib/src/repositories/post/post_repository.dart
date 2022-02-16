@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/post/add_post_response.dart';
+import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
 
 import '../../model/post/list_post_data.dart';
 import '../../model/post/post_add_comment_request.dart';
@@ -37,6 +38,14 @@ abstract class PostBehavior {
   Future<GetResponseMessage> addReport(
       String postId, String categoryId, String description);
   Future<CategoryRespone> getCategory();
+  Future<GetListOfPostResponseMessage?> getPostStorage(
+      {required int limitPost});
+  Future<GetListOfPostResponseMessage?> getMorePostStorage(
+      {required int limitPost, required int currentPage});
+  Future<GetListOfPostResponseMessage?> getMoreUserPost(
+      {required String userID,
+      required int limitPost,
+      required String dateBoundary});
 }
 
 class PostRepository extends PostBehavior {
@@ -228,5 +237,66 @@ class PostRepository extends PostBehavior {
       log(e.toString());
     }
     return respone;
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage?> getPostStorage(
+      {required int limitPost}) async {
+    try {
+      final resMessage = await _dataRepository.getPostStorage(limitPost);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetListOfPostResponseMessage resMessage =
+              GetListOfPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage?> getMorePostStorage(
+      {required int limitPost, required int currentPage}) async {
+    try {
+      final resMessage =
+          await _dataRepository.getMorePostStorage(limitPost, currentPage);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetListOfPostResponseMessage resMessage =
+              GetListOfPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage?> getMoreUserPost(
+      {required String userID,
+      required int limitPost,
+      required String dateBoundary}) async {
+    try {
+      final resMessage = await _dataRepository.getMoreUserPost(
+          userID, limitPost, dateBoundary);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetListOfPostResponseMessage resMessage =
+              GetListOfPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
   }
 }

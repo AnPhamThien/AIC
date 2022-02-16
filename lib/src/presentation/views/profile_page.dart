@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/storage_page.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
@@ -33,13 +34,15 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       },
       child: BlocBuilder<ProfileBloc, ProfileState>(
+        buildWhen: (previous, current) => previous.status != current.status,
         builder: (context, state) {
           bool isMe = state.isCurrentUser;
+          bool needLeadBack = state.needLeadBack;
           bool isFollow = state.isFollow;
 
           return Scaffold(
             backgroundColor: Colors.white,
-            appBar: getProfileAppBar(state.user?.userName ?? '', isMe),
+            appBar: getProfileAppBar(state.user?.userName ?? '', needLeadBack),
             body: DefaultTabController(
               length: 2,
               child: NestedScrollView(
@@ -109,9 +112,9 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  AppBar getProfileAppBar(String username, bool isCurrentUser) {
+  AppBar getProfileAppBar(String username, bool needLeadBack) {
     return AppBar(
-      automaticallyImplyLeading: !isCurrentUser,
+      automaticallyImplyLeading: needLeadBack,
       leadingWidth: 30,
       elevation: 0,
       title: AppBarTitle(
@@ -299,7 +302,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<dynamic> getSheet(BuildContext context) {
+  Future<dynamic> getSheet(BuildContext contextc) {
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
@@ -323,8 +326,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   "Album",
                   style: TextStyle(fontSize: 19),
                 ),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRouter.albumListScreen);
+                onTap: () async {
+                  await Navigator.pushNamed(
+                      contextc, AppRouter.albumListScreen);
+                  contextc.read<ProfileBloc>().add(ProfileInitializing(''));
+                  contextc.read<HomeBloc>().add(InitPostFetched());
                 },
               ),
             ),

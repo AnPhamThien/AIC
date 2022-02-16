@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -35,6 +36,7 @@ class _UploadScreenState extends State<UploadScreen> {
       listener: (context, state) {
         final status = state.status;
         if (status is ErrorStatus) {
+          log(status.exception.toString());
           String errorMessage = getErrorMessage(status.exception.toString());
           _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }
@@ -209,10 +211,9 @@ class _UploadScreenState extends State<UploadScreen> {
           padding: const EdgeInsets.only(right: 5),
           child: IconButton(
             onPressed: () {
-              if (selectedAlbumId != null &&
-                  context.read<UploadBloc>().state.imgPath != null) {
+              if (context.read<UploadBloc>().state.imgPath != null) {
                 context.read<UploadBloc>().add(SaveUploadPost(
-                    albumId: selectedAlbumId!,
+                    albumId: selectedAlbumId,
                     //TODO: Add aicaption
                     aiCaption: "a",
                     contestId: selectedContestId,

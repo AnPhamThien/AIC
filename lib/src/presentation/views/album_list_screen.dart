@@ -229,8 +229,8 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                 height: 25,
               ),
             ),
-            albumName != "Save Post Storage" &&
-                    albumName != "Contest Post Storage"
+            // albumName != "Save Post Storage" &&
+            albumName != "Contest Post Storage"
                 ? SizedBox(
                     width: MediaQuery.of(wrapContext).size.width,
                     child: ListTile(
@@ -251,8 +251,8 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                 : const Text(
                     "",
                   ),
-            albumName != "Save Post Storage" &&
-                    albumName != "Contest Post Storage"
+            // albumName != "Save Post Storage" &&
+            albumName != "Contest Post Storage"
                 ? SizedBox(
                     width: MediaQuery.of(wrapContext).size.width,
                     child: ListTile(

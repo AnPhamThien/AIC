@@ -29,6 +29,7 @@ class MessageCode {
     noNotificationToDisplay: "There is no notification to display.",
     conversationNotFound: "Conversation not found",
     noConversationToDisplay: "There is no conversation to display.",
+    duplicatePostInContest: "You cannot post twice in a contest."
   };
 
   static const String genericError = "Something went wrong";

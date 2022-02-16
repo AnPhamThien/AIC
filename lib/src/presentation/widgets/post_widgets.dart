@@ -14,7 +14,6 @@ import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
-import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 
 import 'get_user_input_field.dart';
@@ -97,7 +96,9 @@ class _PostWidgetState extends State<PostWidget> {
               return;
             }
             setState(() {
-              context.read<ProfileBloc>().add(ProfileInitializing(""));
+              if (context.read<ProfileBloc?>() != null) {
+                context.read<ProfileBloc>().add(ProfileInitializing(""));
+              }
               post = _post;
             });
           }
@@ -478,6 +479,7 @@ class PostImgWidget extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25),
             image: DecorationImage(
+              onError: (exception, stackTrace) => log(exception.toString()),
               image: postImage != ""
                   ? NetworkImage(postImageUrl + postImage)
                   : const AssetImage("assets/images/Kroni.jpg")

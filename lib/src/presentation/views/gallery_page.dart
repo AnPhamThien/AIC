@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 import 'package:imagecaptioning/src/model/post/post.dart';
@@ -36,7 +37,7 @@ class _GalleryPageState extends State<GalleryPage> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      //context.read<ProfileBloc>().add(FetchMoreMessage());
+      context.read<ProfileBloc>().add(ProfileFetchMorePost());
     }
   }
 
@@ -58,7 +59,7 @@ class _GalleryPageState extends State<GalleryPage> {
                   children: imageUrls.map(_createGridTileWidget).toList(),
                   controller: _scrollController,
                 )
-              : Center(child: const Text("No post")),
+              : const Center(child: Text("No post")),
         );
       },
     );

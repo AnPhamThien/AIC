@@ -11,9 +11,13 @@ class ListPostData {
   List<Followee> followees;
 
   factory ListPostData.fromJson(Map<String, dynamic> json) => ListPostData(
-        posts: List<Post>.from(json["posts"].map((x) => Post.fromJson(x))),
-        followees: List<Followee>.from(
-            json["followees"].map((x) => Followee.fromJson(x))),
+        posts: json["posts"] != null
+            ? List<Post>.from(json["posts"].map((x) => Post.fromJson(x)))
+            : [],
+        followees: json["followees"] != null
+            ? List<Followee>.from(
+                json["followees"].map((x) => Followee.fromJson(x)))
+            : [],
       );
 
   Map<String, dynamic> toJson() => {

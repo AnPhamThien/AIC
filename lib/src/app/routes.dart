@@ -134,7 +134,7 @@ class AppRouter {
               }),
               BlocProvider(
                   create: (context) =>
-                      ProfileBloc(true)..add(ProfileInitializing(''))),
+                      ProfileBloc(true, false)..add(ProfileInitializing(''))),
               BlocProvider(
                   create: (context) => HomeBloc()..add(InitPostFetched())),
               BlocProvider(
@@ -157,7 +157,7 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) =>
-                ProfileBloc(true)..add(ProfileInitializing('')),
+                ProfileBloc(true, true)..add(ProfileInitializing('')),
             child: const ProfilePage(),
           ),
         );
@@ -165,8 +165,8 @@ class AppRouter {
         final args = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) =>
-                ProfileBloc(false)..add(ProfileInitializing(args['userId'])),
+            create: (context) => ProfileBloc(false, true)
+              ..add(ProfileInitializing(args['userId'])),
             child: const ProfilePage(),
           ),
         );

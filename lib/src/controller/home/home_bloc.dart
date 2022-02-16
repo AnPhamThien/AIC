@@ -25,7 +25,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-const _postPerPerson = 1;
+const _postPerPerson = 3;
 const _postDate = 100;
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
@@ -53,7 +53,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       GetResponseMessage _respone =
           await _postRepository.deletePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
-        emit(state.copyWith(status: HomeStatus.success,deletedPostId: event.postId));
+        emit(state.copyWith(
+            status: HomeStatus.success, deletedPostId: event.postId));
       } else {
         throw Exception(_respone.messageCode);
       }

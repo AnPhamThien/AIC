@@ -7806,3 +7806,11 @@ build/shared_preferences_android/tmp/compileDebugJavaWithJavac/source-classes-ma
 .dart_tool/flutter_gen/gen_l10n/app_localizations_en.dart
 .dart_tool/flutter_gen/gen_l10n/app_localizations.dart
 build/.last_build_id
+.dart_tool/package_config_subset
+.dart_tool/package_config.json
+.dart_tool/version
+.dart_tool/flutter_gen/gen_l10n/app_localizations_en.dart
+.dart_tool/flutter_gen/gen_l10n/app_localizations.dart
+build/.last_build_id
+.flutter-plugins-dependencies
+.packages

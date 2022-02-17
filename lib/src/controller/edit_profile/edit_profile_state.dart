@@ -5,7 +5,7 @@ class EditProfileState {
   final String? avatarPath;
 
   final EditProfileStatus status;
-  bool avatarChanged;
+  final bool avatarChanged;
 
   EditProfileState({
     this.user,

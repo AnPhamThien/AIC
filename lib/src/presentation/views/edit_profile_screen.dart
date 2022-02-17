@@ -24,6 +24,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _descController = TextEditingController();
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
+  bool firstInit = true;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -49,23 +50,38 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               horizontal: 20,
             ),
             child: BlocListener<EditProfileBloc, EditProfileState>(
-              listener: (context, state) {
-                if (state.status is EditProfileSuccess) {
+              listener: (context, state) async {
+                final status = state.status;
+                if (status is EditProfileSuccess) {
                   if (state.user?.avataUrl != null) {
                     refreshNetworkImage(
                         avatarUrl + state.user!.avataUrl.toString());
                   }
+
                   Navigator.pop(context);
+                }
+                if (status is ErrorStatus) {
+                  String errorMessage =
+                      getErrorMessage(status.exception.toString());
+                  await _getDialog(
+                      errorMessage, 'Error !', () => Navigator.pop(context));
+                  // context
+                  //     .read<EditProfileBloc>()
+                  //     .add(EditProfileInitializing());
                 }
               },
               child: BlocBuilder<EditProfileBloc, EditProfileState>(
                 builder: (context, state) {
-                  if (state.status is FinishInitializing) {
-                    _usernameController.text = state.user?.userName ?? '';
-                    _nameController.text = state.user?.userRealName ?? '';
-                    _descController.text = state.user?.description ?? '';
-                    _emailController.text = state.user?.userEmail ?? '';
-                    _phoneController.text = state.user?.phone ?? '';
+                  if (state.status is FinishInitializing ||
+                      state.status is ErrorStatus) {
+                    if (firstInit) {
+                      _usernameController.text = state.user?.userName ?? '';
+                      _nameController.text = state.user?.userRealName ?? '';
+                      _descController.text = state.user?.description ?? '';
+                      _emailController.text = state.user?.userEmail ?? '';
+                      _phoneController.text = state.user?.phone ?? '';
+                      firstInit = false;
+                    }
 
                     if (state.user?.avataUrl != null) {
                       refreshNetworkImage(
@@ -266,6 +282,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             iconData,
             color: Colors.black87,
             size: 30,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
           ),
         ],
       ),

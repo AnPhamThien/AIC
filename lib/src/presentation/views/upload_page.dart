@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 import '../../controller/get_it/get_it.dart';
 import '../../controller/upload/upload_bloc.dart';
 import '../../model/album/album.dart';
@@ -34,6 +35,11 @@ class _UploadScreenState extends State<UploadScreen> {
     return BlocListener<UploadBloc, UploadState>(
       listener: (context, state) {
         final status = state.status;
+        if (status is ErrorStatus) {
+          log(status.exception.toString());
+          String errorMessage = getErrorMessage(status.exception.toString());
+          _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+        }
         if (status is UploadSuccess) {
           Navigator.of(context).pop(status.post);
         }
@@ -82,8 +88,6 @@ class _UploadScreenState extends State<UploadScreen> {
           builder: (context, state) {
             return Column(
               children: [
-                getItemPicker(
-                    "Choose an album for your picture", state.albumList, 1),
                 const SizedBox(
                   height: 20,
                 ),
@@ -98,15 +102,16 @@ class _UploadScreenState extends State<UploadScreen> {
                             joinContest = !joinContest;
                             if (!joinContest) {
                               selectedContestId = null;
+                            } else {
+                              selectedAlbumId = null;
                             }
                           });
                         })),
                 joinContest
                     ? getItemPicker("Choose a contest for your picture",
                         state.contestList, 2)
-                    : const SizedBox(
-                        height: 20,
-                      ),
+                    : getItemPicker(
+                        "Choose an album for your picture", state.albumList, 1),
               ],
             );
           },
@@ -206,10 +211,9 @@ class _UploadScreenState extends State<UploadScreen> {
           padding: const EdgeInsets.only(right: 5),
           child: IconButton(
             onPressed: () {
-              if (selectedAlbumId != null &&
-                  context.read<UploadBloc>().state.imgPath != null) {
+              if (context.read<UploadBloc>().state.imgPath != null) {
                 context.read<UploadBloc>().add(SaveUploadPost(
-                    albumId: selectedAlbumId!,
+                    albumId: selectedAlbumId,
                     //TODO: Add aicaption
                     aiCaption: "a",
                     contestId: selectedContestId,
@@ -314,6 +318,39 @@ class _UploadScreenState extends State<UploadScreen> {
           ),
           border: InputBorder.none,
         ),
+      ),
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
       ),
     );
   }

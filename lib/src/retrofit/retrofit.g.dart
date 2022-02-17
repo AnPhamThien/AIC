@@ -152,6 +152,27 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<GetListOfPostResponseMessage> getMoreUserPost(
+      userID, limitPost, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'user_id': userID,
+      r'limitpost': limitPost,
+      r'date_boundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetListOfPostResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/getmoreuserpost',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetListOfPostResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<GetResponseMessage> refreshJwtToken(token, refreshToken) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

@@ -6,10 +6,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/storage_page.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 import 'gallery_page.dart';
 
@@ -23,84 +25,96 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state) {
-        bool isMe = state.isCurrentUser;
-        bool isFollow = state.isFollow;
+    return BlocListener<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        final status = state.status;
+        if (status is ErrorStatus) {
+          String errorMessage = getErrorMessage(status.exception.toString());
+          _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+        }
+      },
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        buildWhen: (previous, current) => previous.status != current.status,
+        builder: (context, state) {
+          bool isMe = state.isCurrentUser;
+          bool needLeadBack = state.needLeadBack;
+          bool isFollow = state.isFollow;
 
-        return Scaffold(
-          backgroundColor: Colors.white,
-          appBar: getProfileAppBar(state.user?.userName ?? '', isMe),
-          body: DefaultTabController(
-            length: 2,
-            child: NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) {
-                if (state.user?.avataUrl != null) {
-                  refreshNetworkImage(avatarUrl + state.user?.avataUrl);
-                }
-                return [
-                  SliverList(
-                    delegate: SliverChildListDelegate([
-                      const SizedBox(height: 10),
-                      getUserHeader(
-                          state.user?.avataUrl ?? "",
-                          state.user?.numberOfpost ?? 0,
-                          state.user?.numberFollower ?? 0,
-                          state.user?.numberFollowee ?? 0),
-                      getUserDescription(state.user?.userRealName ?? '',
-                          state.user?.description ?? ''),
-                      isMe == true
-                          ? getEditProfileButton(context)
-                          : getFollowMessageButton(
-                              state.user?.userName,
-                              state.user?.avataUrl,
-                              state.user?.userRealName,
-                              state.user?.id,
-                              isFollow)
-                    ]),
-                  ),
-                ];
-              },
-              body: Column(
-                children: const [
-                  TabBar(
-                    labelColor: Colors.black,
-                    unselectedLabelColor: Colors.grey,
-                    indicatorWeight: 1,
-                    indicatorColor: Colors.black,
-                    tabs: [
-                      Tab(
-                        icon: Icon(
-                          Icons.grid_on_rounded,
+          return Scaffold(
+            backgroundColor: Colors.white,
+            appBar: getProfileAppBar(state.user?.userName ?? '', needLeadBack),
+            body: DefaultTabController(
+              length: 2,
+              child: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  if (state.user?.avataUrl != null) {
+                    refreshNetworkImage(avatarUrl + state.user?.avataUrl);
+                  }
+                  return [
+                    SliverList(
+                      delegate: SliverChildListDelegate([
+                        const SizedBox(height: 10),
+                        getUserHeader(
+                            state.user?.avataUrl ?? "",
+                            state.user?.numberOfpost ?? 0,
+                            state.user?.numberFollower ?? 0,
+                            state.user?.numberFollowee ?? 0),
+                        getUserDescription(state.user?.userRealName ?? '',
+                            state.user?.description ?? ''),
+                        isMe == true
+                            ? getEditProfileButton(
+                                context, state.user?.avataUrl ?? "")
+                            : getFollowMessageButton(
+                                state.user?.userName,
+                                state.user?.avataUrl,
+                                state.user?.userRealName,
+                                state.user?.id,
+                                isFollow)
+                      ]),
+                    ),
+                  ];
+                },
+                body: Column(
+                  children: const [
+                    TabBar(
+                      labelColor: Colors.black,
+                      unselectedLabelColor: Colors.grey,
+                      indicatorWeight: 1,
+                      indicatorColor: Colors.black,
+                      tabs: [
+                        Tab(
+                          icon: Icon(
+                            Icons.grid_on_rounded,
+                          ),
                         ),
-                      ),
-                      Tab(
-                        icon: Icon(
-                          Icons.save_alt_rounded,
-                        ),
-                      )
-                    ],
-                  ),
-                  Expanded(
-                    child: TabBarView(
-                      children: [
-                        GalleryPage(),
-                        StoragePage(),
+                        Tab(
+                          icon: Icon(
+                            Icons.save_alt_rounded,
+                          ),
+                        )
                       ],
                     ),
-                  ),
-                ],
+                    Expanded(
+                      child: TabBarView(
+                        children: [
+                          GalleryPage(),
+                          StoragePage(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
-  AppBar getProfileAppBar(String username, bool isCurrentUser) {
+  AppBar getProfileAppBar(String username, bool needLeadBack) {
     return AppBar(
-      automaticallyImplyLeading: !isCurrentUser,
+      automaticallyImplyLeading: needLeadBack,
       leadingWidth: 30,
       elevation: 0,
       title: AppBarTitle(
@@ -164,7 +178,10 @@ class _ProfilePageState extends State<ProfilePage> {
           image: DecorationImage(
             onError: (exception, stackTrace) => log(exception.toString()),
             image: imagePath.isNotEmpty
-                ? NetworkImage(avatarUrl + imagePath.toString())
+                ? NetworkImage(avatarUrl +
+                    imagePath.toString() +
+                    "?v=" +
+                    DateTime.now().toString())
                 : const AssetImage("assets/images/avatar_placeholder.png")
                     as ImageProvider,
             fit: BoxFit.cover,
@@ -208,7 +225,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Padding getEditProfileButton(BuildContext c) {
+  Padding getEditProfileButton(BuildContext context, String imagePath) {
     Size size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -225,10 +242,8 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ),
         onPressed: () async {
-          //Navigator.pop(c);
           await Navigator.of(context).pushNamed(AppRouter.editProfileScreen);
           context.read<ProfileBloc>().add(ProfileInitializing(''));
-          setState(() {});
         },
         child: const Text("Edit Profile"),
       ),
@@ -287,7 +302,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future<dynamic> getSheet(BuildContext context) {
+  Future<dynamic> getSheet(BuildContext contextc) {
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
@@ -311,8 +326,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   "Album",
                   style: TextStyle(fontSize: 19),
                 ),
-                onTap: () {
-                  Navigator.pushNamed(context, AppRouter.albumListScreen);
+                onTap: () async {
+                  await Navigator.pushNamed(
+                      contextc, AppRouter.albumListScreen);
+                  contextc.read<ProfileBloc>().add(ProfileInitializing(''));
+                  contextc.read<HomeBloc>().add(InitPostFetched());
                 },
               ),
             ),
@@ -339,6 +357,39 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         );
       },
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

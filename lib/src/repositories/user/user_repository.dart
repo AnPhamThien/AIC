@@ -32,10 +32,6 @@ abstract class UserBehavior {
       required String? desc,
       required String? userRealName,
       required File? avatarImg});
-  Future<GetListOfPostResponseMessage?> getPostStorage(
-      {required int limitPost});
-  Future<GetListOfPostResponseMessage?> getMorePostStorage(
-      {required int limitPost, required int currentPage});
 }
 
 class UserRepository extends UserBehavior {
@@ -222,45 +218,6 @@ class UserRepository extends UserBehavior {
               GetResponseMessage.fromJson(e.response!.data);
           final response = resMessage.messageCode;
           return response;
-        }
-      }
-      return null;
-    }
-  }
-
-  @override
-  Future<GetListOfPostResponseMessage?> getPostStorage(
-      {required int limitPost}) async {
-    try {
-      final resMessage = await _dataRepository.getPostStorage(limitPost);
-
-      return resMessage;
-    } catch (e) {
-      if (e is DioError) {
-        if (e.response != null) {
-          GetListOfPostResponseMessage resMessage =
-              GetListOfPostResponseMessage.fromJson(e.response!.data);
-          return resMessage;
-        }
-      }
-      return null;
-    }
-  }
-
-  @override
-  Future<GetListOfPostResponseMessage?> getMorePostStorage(
-      {required int limitPost, required int currentPage}) async {
-    try {
-      final resMessage =
-          await _dataRepository.getMorePostStorage(limitPost, currentPage);
-
-      return resMessage;
-    } catch (e) {
-      if (e is DioError) {
-        if (e.response != null) {
-          GetListOfPostResponseMessage resMessage =
-              GetListOfPostResponseMessage.fromJson(e.response!.data);
-          return resMessage;
         }
       }
       return null;

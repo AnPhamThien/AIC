@@ -52,13 +52,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       authStatus: AuthenticationAuthenticated(),
       user: user,
     ));
-    
+
     navigatorKey.currentState!.pushNamed(AppRouter.rootScreen);
   }
 
   void _onLogout(LogoutEvent event, Emitter emit) async {
     try {
       emit(state.copyWith(authStatus: AuthenticationUnauthenticated()));
+      //TODO: add logout screen
+
       await _signalRHelper.closeConnection();
 
       await _authRepository.deleteRefreshToken();

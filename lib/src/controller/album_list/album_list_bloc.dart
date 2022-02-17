@@ -47,6 +47,9 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
       final data = resMessage.data ?? [];
 
       if (status == StatusCode.successStatus) {
+        if (state.albumList.isNotEmpty) {
+          state.albumList.clear();
+        }
         emit(state.copyWith(
             status: FinishInitializing(),
             albumList: data,

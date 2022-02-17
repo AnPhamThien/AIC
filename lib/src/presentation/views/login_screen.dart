@@ -45,9 +45,11 @@ class LoginScreenState extends State<LoginScreen> {
               context.read<AuthBloc>().add(
                   NavigateToPageEvent(route: AppRouter.verificationScreen));
             });
-          } else {
+          } else if (errorMessage == MessageCode.userNotFound) {
             _getDialog(MessageCode.errorMap[MessageCode.userPassWordInCorrect],
                 () => Navigator.pop(context));
+          } else {
+            _getDialog(errorMessage, () => Navigator.pop(context));
           }
         }
       },

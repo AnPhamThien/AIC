@@ -53,7 +53,7 @@ class AlbumBloc extends Bloc<AlbumListEvent, AlbumState> {
       final data = resMessage.data ?? [];
 
       if (status == StatusCode.successStatus ||
-          message == MessageCode.noMessageToDisplay) {
+          message == MessageCode.noPostToDisplay) {
         emit(state.copyWith(
             status: FinishInitializing(),
             album: album,
@@ -127,7 +127,8 @@ class AlbumBloc extends Bloc<AlbumListEvent, AlbumState> {
 
         if (resMessage is int) {
           if (resMessage == StatusCode.successStatus) {
-            add(FetchAlbumPosts(state.album!));
+            emit(state.copyWith(status: DeletedStatus()));
+            //add(FetchAlbumPosts(state.album!));
           } else {
             throw Exception('');
           }

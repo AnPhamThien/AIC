@@ -36,7 +36,7 @@ class _StoragePageState extends State<StoragePage> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      //context.read<ProfileBloc>().add(FetchMoreMessage());
+      context.read<ProfileBloc>().add(ProfileFetchMoreSavedPost());
     }
   }
 
@@ -44,7 +44,7 @@ class _StoragePageState extends State<StoragePage> {
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
-        List<Post> imageUrls = state.savedPostList ?? [];
+        List<Post> imageUrls = state.galleryPostList ?? [];
 
         return Scaffold(
           body: imageUrls.isNotEmpty
@@ -58,7 +58,7 @@ class _StoragePageState extends State<StoragePage> {
                   children: imageUrls.map(_createGridTileWidget).toList(),
                   controller: _scrollController,
                 )
-              : Center(child: const Text("No post")),
+              : const Center(child: Text("No post")),
         );
       },
     );
@@ -67,12 +67,11 @@ class _StoragePageState extends State<StoragePage> {
   Widget _createGridTileWidget(Post post) => Builder(
         builder: (context) => GestureDetector(
           onTap: () {
+            post.isSaved = 1;
             Map<String, dynamic> args = {'post': post};
 
-            context.read<AuthBloc>().add(NavigateToPageEvent(
-                  route: AppRouter.postDetailScreen,
-                  args: args,
-                ));
+            Navigator.of(context)
+                .pushNamed(AppRouter.postDetailScreen, arguments: args);
           },
           onLongPress: () {
             _popupDialog = _createPopupDialog(post);

@@ -126,7 +126,8 @@ class SignalRHelper {
         if (messageContext?.read<MessageBloc?>() != null) {
           final message = Message.fromJson(data?['message']);
 
-          if (message.conversationId == conversationId) {
+          if (message.conversationId == conversationId ||
+              conversationId.isEmpty) {
             if (message.content != null) {
               message.content = utf8.decode(message.content!.runes.toList());
             }

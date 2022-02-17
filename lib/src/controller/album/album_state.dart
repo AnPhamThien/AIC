@@ -45,3 +45,5 @@ class ErrorStatus extends AlbumBlocStatus {
   final String exception;
   ErrorStatus(this.exception);
 }
+
+class DeletedStatus extends AlbumBlocStatus {}

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
@@ -72,6 +73,12 @@ abstract class RestClient {
     @Query('user_id') String userID,
     @Query('limitpost') int limitPost,
   );
+
+  @GET('/users/getmoreuserpost')
+  Future<GetListOfPostResponseMessage> getMoreUserPost(
+      @Query('user_id') String userID,
+      @Query('limitpost') int limitPost,
+      @Query('date_boundary') String dateBoundary);
 
   @POST('/users/refreshtoken')
   Future<GetResponseMessage> refreshJwtToken(@Field('JwtToken') String token,

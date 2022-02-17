@@ -35,7 +35,7 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       }
       if (userRes.statusCode == StatusCode.successStatus &&
           userRes.data != null) {
-        final avatar = userRes.data?.avataUrl ?? '';
+        final avatar = userRes.data?.avataUrl;
         emit(state.copyWith(
             user: userRes.data,
             avatarPath: avatar,
@@ -47,24 +47,6 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
       emit(state.copyWith(status: ErrorStatus(_)));
     }
   }
-
-  // void _onOpenImagePicker(
-  //     OpenImagePicker event, Emitter<ProfileState> emit) async {
-  //   try {
-  //     emit(state.copyWith(imageSourceActionSheetIsVisible: false));
-  //     final pickedImage = await _picker.pickImage(source: event.imageSource);
-  //     if (pickedImage == null) return;
-
-  //     //final imageKey = await storageRepo.uploadFile(File(pickedImage.path));
-
-  //     final updatedUser =
-  //         state.user!.copyWith(avataUrl: File(pickedImage.path));
-
-  //     emit(state.copyWith(user: updatedUser));
-  //   } on Exception catch (_) {
-  //     emit(state.copyWith(status: ErrorStatus(_)));
-  //   }
-  // }
 
   void _onChangeAvatar(
       ChangeAvatar event, Emitter<EditProfileState> emit) async {

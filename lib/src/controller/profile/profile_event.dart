@@ -10,7 +10,7 @@ class ProfileInitializing extends ProfileEvent {
 
 class ProfileFetchMorePost extends ProfileEvent {}
 
-class ProfileFetchMoreSavedPost extends ProfileEvent {}
+class ProfileFetchMoreGalleryPost extends ProfileEvent {}
 
 class ProfileChangeFollowUser extends ProfileEvent {
   final String followeeID;

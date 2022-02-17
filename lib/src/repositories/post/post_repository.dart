@@ -46,6 +46,12 @@ abstract class PostBehavior {
       {required String userID,
       required int limitPost,
       required String dateBoundary});
+  Future<GetListOfPostResponseMessage?> getMoreUserContestPost(
+      {required String userID,
+      required int limitPost,
+      required String dateBoundary});
+  Future<GetListOfPostResponseMessage?> getUserContestPost(
+      {required String userID, required int limitPost});
 }
 
 class PostRepository extends PostBehavior {
@@ -286,6 +292,48 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage = await _dataRepository.getMoreUserPost(
           userID, limitPost, dateBoundary);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetListOfPostResponseMessage resMessage =
+              GetListOfPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage?> getMoreUserContestPost(
+      {required String userID,
+      required int limitPost,
+      required String dateBoundary}) async {
+    try {
+      final resMessage = await _dataRepository.getMoreUserPost(
+          userID, limitPost, dateBoundary);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetListOfPostResponseMessage resMessage =
+              GetListOfPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage?> getUserContestPost(
+      {required String userID, required int limitPost}) async {
+    try {
+      final resMessage =
+          await _dataRepository.getUserContestPost(userID, limitPost);
 
       return resMessage;
     } catch (e) {

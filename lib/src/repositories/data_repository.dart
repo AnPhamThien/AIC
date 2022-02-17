@@ -462,4 +462,16 @@ class DataRepository implements RestClient {
       String userID, int limitPost, String dateBoundary) {
     return _client.getMoreUserPost(userID, limitPost, dateBoundary);
   }
+
+  @override
+  Future<GetListOfPostResponseMessage> getMoreUserContestPost(
+      String userID, int limitPost, String dateBoundary) {
+    return _client.getMoreUserContestPost(userID, limitPost, dateBoundary);
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage> getUserContestPost(
+      String userID, int limitPost) {
+    return _client.getUserContestPost(userID, limitPost);
+  }
 }

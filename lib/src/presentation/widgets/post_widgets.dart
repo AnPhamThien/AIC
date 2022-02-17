@@ -198,11 +198,17 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
               setState(() {
                 widget.isSave == 1;
                 context.read<PostBloc>().add(Reset());
+                if (context.read<ProfileBloc?>() != null) {
+                  context.read<ProfileBloc>().add(ProfileInitializing(""));
+                }
               });
             } else {
               setState(() {
                 widget.isSave == 0;
                 context.read<PostBloc>().add(Reset());
+                if (context.read<ProfileBloc?>() != null) {
+                  context.read<ProfileBloc>().add(ProfileInitializing(""));
+                }
               });
             }
           }

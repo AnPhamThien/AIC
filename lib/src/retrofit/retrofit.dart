@@ -74,6 +74,18 @@ abstract class RestClient {
     @Query('limitpost') int limitPost,
   );
 
+  @GET('/posts/getusercontestpost')
+  Future<GetListOfPostResponseMessage> getUserContestPost(
+    @Query('userId') String userID,
+    @Query('limitPost') int limitPost,
+  );
+
+  @GET('/posts/getmoreusercontestpost')
+  Future<GetListOfPostResponseMessage> getMoreUserContestPost(
+      @Query('userId') String userID,
+      @Query('limitPost') int limitPost,
+      @Query('date_boundary') String dateBoundary);
+
   @GET('/users/getmoreuserpost')
   Future<GetListOfPostResponseMessage> getMoreUserPost(
       @Query('user_id') String userID,

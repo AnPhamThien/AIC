@@ -36,7 +36,7 @@ class _StoragePageState extends State<StoragePage> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      context.read<ProfileBloc>().add(ProfileFetchMoreSavedPost());
+      context.read<ProfileBloc>().add(ProfileFetchMoreGalleryPost());
     }
   }
 

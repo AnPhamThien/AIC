@@ -37,7 +37,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileChangeFollowUser>(_onChangeFollowStatusUser);
     on<ProfileFetchMorePost>(_onFetchMorePost,
         transformer: throttleDroppable(throttleDuration));
-    on<ProfileFetchMoreSavedPost>(_onFetchMoreSavedPost,
+    on<ProfileFetchMoreGalleryPost>(_onFetchMoreGalleryPost,
         transformer: throttleDroppable(throttleDuration));
   }
   final UserRepository _userRepository;
@@ -85,6 +85,20 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             }
             galleryPostList = savedPostResponse.data;
           }
+        } else {
+          GetListOfPostResponseMessage? contestPostResponse =
+              await _postRepository.getUserContestPost(
+                  userID: userID, limitPost: 9);
+          if (contestPostResponse == null) {
+            throw Exception("");
+          }
+          if (contestPostResponse.statusCode == StatusCode.successStatus &&
+              contestPostResponse.data != null) {
+            if (state.galleryPostList != null) {
+              state.galleryPostList?.clear();
+            }
+            galleryPostList = contestPostResponse.data;
+          }
         }
         emit(state.copyWith(
             user: userRes.data,
@@ -129,18 +143,36 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  void _onFetchMoreSavedPost(
-      ProfileFetchMoreSavedPost event, Emitter<ProfileState> emit) async {
-    if (state.hasReachedMax) {
+  void _onFetchMoreGalleryPost(
+      ProfileFetchMoreGalleryPost event, Emitter<ProfileState> emit) async {
+    if (state.galleryPostHasReachedMax) {
       return;
     }
     try {
-      int page = state.galleryPostListPage;
-      if (state.user?.posts == null) {
+      int page = 0;
+      if (state.galleryPostList == null) {
         throw Exception();
       }
-      final data = await _postRepository.getMorePostStorage(
-          limitPost: 9, currentPage: page + 1);
+      GetListOfPostResponseMessage? data;
+
+      if (state.isCurrentUser) {
+        page = state.galleryPostListPage;
+        data = await _postRepository.getMorePostStorage(
+            limitPost: 9, currentPage: page + 1);
+      } else {
+        if (state.user?.id == null) {
+          throw Exception("");
+        }
+        if (state.galleryPostList!.isEmpty) {
+          emit(state.copyWith(galleryPostHasReachedMax: true));
+          return;
+        }
+        data = await _postRepository.getMoreUserContestPost(
+            userID: state.user!.id!,
+            limitPost: 9,
+            dateBoundary: state.galleryPostList!.last.dateCreate.toString());
+      }
+
       if (data == null) {
         throw Exception();
       }

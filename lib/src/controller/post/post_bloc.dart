@@ -26,7 +26,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc() : super(const PostState()) {
     on<LikePress>(_onLikePress);
     on<Reset>(_onReset);
-
     on<SavePost>(_onSavePost, transformer: throttleDroppable(throttleDuration));
     on<UnsavePost>(_onUnsavePost,
         transformer: throttleDroppable(throttleDuration));
@@ -35,10 +34,27 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<ReportPost>(_onReportPost,
         transformer: throttleDroppable(throttleDuration));
     on<AddPost>(_onAddPost, transformer: throttleDroppable(throttleDuration));
+    on<GetIsSave>(_onGetIsSave,
+        transformer: throttleDroppable(throttleDuration));
   }
 
   final PostRepository _postRepository = PostRepository();
   final HomeBloc homeBloc = HomeBloc();
+
+  void _onGetIsSave(
+    GetIsSave event,
+    Emitter<PostState> emit,
+  ) async {
+    try {
+      if (event.isSave == 0) {
+        emit(state.copyWith(isSaved: false));
+      } else if (event.isSave == 1) {
+        emit(state.copyWith(isSaved: true));
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+  }
 
   void _onReportPost(
     ReportPost event,
@@ -84,9 +100,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           await _postRepository.savePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
         emit(state.copyWith(
+          postId: event.postId,
           status: PostStatus.save,
           isSaved: true,
         ));
+        
       } else {
         throw Exception(_respone.messageCode);
       }
@@ -104,9 +122,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           await _postRepository.unsavePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
         emit(state.copyWith(
+          postId: event.postId,
           status: PostStatus.save,
           isSaved: false,
         ));
+        
       } else {
         throw Exception(_respone.messageCode);
       }

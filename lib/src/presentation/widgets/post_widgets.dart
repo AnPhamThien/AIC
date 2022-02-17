@@ -90,7 +90,8 @@ class _PostWidgetState extends State<PostWidget> {
 
             if (_post == null) {
               setState(() {
-                context.read<HomeBloc>().add(PostDeleted(post.postId!));
+                context.read<HomeBloc>().add(PostListReset());
+                context.read<HomeBloc>().add(InitPostFetched());
               });
 
               return;
@@ -180,7 +181,6 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
 
       ///options
       trailing: BlocListener<PostBloc, PostState>(
-        listenWhen: (previous, current) => previous != current,
         listener: (context, state) {
           if (state.status == PostStatus.reported) {
             ScaffoldMessenger.of(context)
@@ -223,14 +223,14 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                   case 'report':
                     return showReportDialog(state.categoryList, widget.postId);
                   case 'unsave':
-                    log(state.isSaved.toString());
-                    context.read<PostBloc>().add(UnsavePost(widget.postId));
-                    log(state.isSaved.toString());
+                    context.read<PostBloc>().add(
+                          UnsavePost(widget.postId),
+                        );
+
                     break;
                   case 'save':
-                    log(state.isSaved.toString());
                     context.read<PostBloc>().add(SavePost(widget.postId));
-                    log(state.isSaved.toString());
+
                     break;
                   default:
                     return;
@@ -304,11 +304,10 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
           TextButton(
             onPressed: () {
               context.read<HomeBloc>().add(DeletePost(widget.postId));
-
+              if (context.read<ProfileBloc?>() != null) {
+                context.read<ProfileBloc>().add(ProfileInitializing(""));
+              }
               if (widget.route != null) {
-                setState(() {
-                  context.read<HomeBloc>().add(PostDeleted(widget.postId));
-                });
                 Navigator.pop(context, null);
                 Navigator.of(context).popAndPushNamed(
                   widget.route!,

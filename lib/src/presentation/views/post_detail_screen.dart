@@ -92,6 +92,16 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         post.likecount = post.likecount! - 1;
                         context.read<PostBloc>().add(Reset());
                       }
+                      if (state.status == PostStatus.save &&
+                          state.isSaved == false) {
+                        post.isSaved = 0;
+                        context.read<PostBloc>().add(Reset());
+                      }
+                      if (state.status == PostStatus.save &&
+                          state.isSaved == true) {
+                        post.isSaved = 1;
+                        context.read<PostBloc>().add(Reset());
+                      }
                     },
                   ),
                 ],

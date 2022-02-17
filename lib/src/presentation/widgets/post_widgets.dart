@@ -90,7 +90,8 @@ class _PostWidgetState extends State<PostWidget> {
 
             if (_post == null) {
               setState(() {
-                context.read<HomeBloc>().add(PostDeleted(post.postId!));
+                context.read<HomeBloc>().add(PostListReset());
+                context.read<HomeBloc>().add(InitPostFetched());
               });
 
               return;
@@ -137,7 +138,6 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
   @override
   void initState() {
     context.read<PostBloc>().add(GetCategory());
-    context.read<PostBloc>().add(GetIsSave(widget.isSave));
     super.initState();
   }
 
@@ -207,9 +207,11 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                     context.read<PostBloc>().add(
                           UnsavePost(widget.postId),
                         );
+
                     break;
                   case 'save':
                     context.read<PostBloc>().add(SavePost(widget.postId));
+
                     break;
                   default:
                     return;
@@ -240,7 +242,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                       value: 'report',
                       child: getPopupMenuItem(
                           "Report", Icons.error_outline_rounded)),
-                  state.isSaved == true
+                  widget.isSave == 1
                       ? PopupMenuItem(
                           value: 'unsave',
                           child: getPopupMenuItem(
@@ -283,11 +285,10 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
           TextButton(
             onPressed: () {
               context.read<HomeBloc>().add(DeletePost(widget.postId));
-
+              if (context.read<ProfileBloc?>() != null) {
+                context.read<ProfileBloc>().add(ProfileInitializing(""));
+              }
               if (widget.route != null) {
-                setState(() {
-                  context.read<HomeBloc>().add(PostDeleted(widget.postId));
-                });
                 Navigator.pop(context, null);
                 Navigator.of(context).popAndPushNamed(
                   widget.route!,

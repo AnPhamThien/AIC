@@ -57,7 +57,6 @@ class _HomePageState extends State<HomePage> {
               BlocListener<PostBloc, PostState>(
                 listener: (context, state) {
                   if (state.needUpdate == true) {
-                    log('run this ?');
                     int _index = _postList.indexWhere(
                         (element) => element.postId == state.postId);
                     if (_postList[_index].isLike == 0) {
@@ -78,12 +77,29 @@ class _HomePageState extends State<HomePage> {
                     context.read<ProfileBloc>().add(ProfileInitializing(''));
                     context.read<PostBloc>().add(Reset());
                   }
-
                   if (state.status == PostStatus.added) {
                     setState(() {
                       context.read<HomeBloc>().add(InitPostFetched());
                       context.read<PostBloc>().add(Reset());
                     });
+                  }
+                  if (state.status == PostStatus.save &&
+                      state.isSaved == false) {
+                    int _index = _postList.indexWhere(
+                        (element) => element.postId == state.postId);
+                    setState(() {
+                      _postList[_index].isSaved = 0;
+                    });
+                    context.read<PostBloc>().add(Reset());
+                  }
+                  if (state.status == PostStatus.save &&
+                      state.isSaved == true) {
+                    int _index = _postList.indexWhere(
+                        (element) => element.postId == state.postId);
+                    setState(() {
+                      _postList[_index].isSaved = 1;
+                    });
+                    context.read<PostBloc>().add(Reset());
                   }
                 },
               ),

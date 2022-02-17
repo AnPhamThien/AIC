@@ -26,7 +26,6 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   PostBloc() : super(const PostState()) {
     on<LikePress>(_onLikePress);
     on<Reset>(_onReset);
-
     on<SavePost>(_onSavePost, transformer: throttleDroppable(throttleDuration));
     on<UnsavePost>(_onUnsavePost,
         transformer: throttleDroppable(throttleDuration));
@@ -101,10 +100,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           await _postRepository.savePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
         emit(state.copyWith(
+          postId: event.postId,
           status: PostStatus.save,
           isSaved: true,
         ));
-        add(Reset());
+        
       } else {
         throw Exception(_respone.messageCode);
       }
@@ -122,10 +122,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
           await _postRepository.unsavePost(event.postId);
       if (_respone.statusCode == StatusCode.successStatus) {
         emit(state.copyWith(
+          postId: event.postId,
           status: PostStatus.save,
           isSaved: false,
         ));
-        add(Reset());
+        
       } else {
         throw Exception(_respone.messageCode);
       }

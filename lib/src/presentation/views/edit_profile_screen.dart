@@ -127,6 +127,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           ),
                           //username
                           GetUserInput(
+                            validator: Validation.blankValidation,
                             controller: _usernameController,
                             label: "Username",
                           ),
@@ -243,13 +244,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           builder: (context, state) {
             return IconButton(
               onPressed: () {
-                context.read<EditProfileBloc>().add(SaveProfileChanges(
-                    username: _usernameController.value.text,
-                    email: _emailController.value.text,
-                    phone: _phoneController.value.text,
-                    desc: _descController.value.text,
-                    userRealName: _nameController.value.text,
-                    avatar: state.avatarPath ?? ''));
+                if (_formKey.currentState!.validate()) {
+                  context.read<EditProfileBloc>().add(SaveProfileChanges(
+                      username: _usernameController.value.text,
+                      email: _emailController.value.text,
+                      phone: _phoneController.value.text,
+                      desc: _descController.value.text,
+                      userRealName: _nameController.value.text,
+                      avatar: state.avatarPath ?? ''));
+                }
               },
               icon: const Icon(
                 Icons.done_rounded,

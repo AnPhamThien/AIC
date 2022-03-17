@@ -100,8 +100,11 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
     try {
       _post = event.post;
       final String _postId = _post.postId!;
-      final PostCommentLikeRespone _respone =
+      final _respone =
           await _postRepository.getInitLikeComment(_commentPerPage, _postId);
+          if (_respone.data == null) {
+            throw Exception();
+          }
       final PostCommentLikeData _data = _respone.data!;
       if (_respone.statusCode == StatusCode.successStatus) {
         event.post.likecount = _data.totalLike;

@@ -4,13 +4,14 @@ class UploadState {
   final String? imgPath;
   final List<Contest> contestList;
   final List<Album> albumList;
-
+  final String aiCaption;
   final UploadStatus status;
 
   UploadState({
     this.imgPath,
     this.contestList = const <Contest>[],
     this.albumList = const <Album>[],
+    this.aiCaption = '',
     this.status = const InitialStatus(),
   });
 
@@ -18,12 +19,14 @@ class UploadState {
     String? imgPath,
     List<Contest>? contestList,
     List<Album>? albumList,
+    String? aiCaption,
     UploadStatus? status,
   }) {
     return UploadState(
       imgPath: imgPath ?? this.imgPath,
       contestList: contestList ?? this.contestList,
       albumList: albumList ?? this.albumList,
+      aiCaption: aiCaption ?? this.aiCaption,
       status: status ?? this.status,
     );
   }

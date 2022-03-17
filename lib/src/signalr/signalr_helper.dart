@@ -78,7 +78,7 @@ class SignalRHelper {
 
   void _handleForceLogout(List<dynamic>? parameters) {
     try {
-      log("Thang cho hoang anh dam ep tao logout luc " +
+      log(
           DateTime.now().toString());
       navigatorKey.currentContext!.read<AuthBloc>().add(ForceLogoutEvent());
     } on Exception catch (e) {
@@ -127,7 +127,7 @@ class SignalRHelper {
           final message = Message.fromJson(data?['message']);
 
           if (message.conversationId == conversationId ||
-              conversationId.isEmpty) {
+              message.userId == messageContext!.read<MessageBloc>().state.userId) {
             if (message.content != null) {
               message.content = utf8.decode(message.content!.runes.toList());
             }

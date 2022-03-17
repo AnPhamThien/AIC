@@ -21,6 +21,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         super(UploadState()) {
     on<UploadInitializing>(_onInitial);
     on<SaveUploadPost>(_onSaveUploadPostChanges);
+    on<RequestCaption>(_onRequestCaption);
   }
   final PostRepository _postRepository;
   final AlbumRepository _albumRepository;
@@ -50,9 +51,19 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         final data = albumRes.data;
         data!.removeWhere(
             (element) => element.albumName == "Contest Post Storage");
+
+final response = await _postRepository.getCaption(
+          img: File(imgPath));
+
+      if (response == null) {
+        throw Exception("");
+      }
+      log(response.data);
+
         emit(state.copyWith(
             imgPath: imgPath,
             albumList: data,
+            aiCaption: response.data,
             contestList: _activeContestList,
             status: FinishInitializing()));
       } else {
@@ -68,7 +79,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     try {
       String? albumId = event.albumId;
       String? contestId = event.contestId;
-      String aiCaption = event.aiCaption;
+      String aiCaption = state.aiCaption;
       String userCaption = event.userCaption;
       String postImg = event.postImg;
 
@@ -82,7 +93,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       if (response == null) {
         throw Exception("");
       }
-      log(response.messageCode.toString());
       int status = response.statusCode ?? 0;
       Post? post = response.data;
 
@@ -91,6 +101,23 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       } else {
         throw Exception(response.messageCode);
       }
+    } on Exception catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_)));
+    }
+  }
+
+  void _onRequestCaption(
+      RequestCaption event, Emitter<UploadState> emit) async {
+    try {
+      String postImg = event.postImg;
+
+      final response = await _postRepository.getCaption(
+          img: File(postImg));
+
+      if (response == null) {
+        throw Exception("");
+      }
+        emit(state.copyWith(aiCaption: response.data));
     } on Exception catch (_) {
       emit(state.copyWith(status: ErrorStatus(_)));
     }

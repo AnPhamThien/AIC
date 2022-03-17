@@ -61,7 +61,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.copyWith(authStatus: AuthenticationUnauthenticated()));
       //TODO: add logout screen
 
-      await _signalRHelper.closeConnection();
+      //await _signalRHelper.closeConnection();
 
       await _authRepository.deleteRefreshToken();
 
@@ -74,13 +74,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       log(e.toString());
     } finally {
       navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
+      //await _signalRHelper.closeConnection();
     }
   }
 
   void _onForceLogout(ForceLogoutEvent event, Emitter emit) async {
     try {
       emit(state.copyWith(authStatus: AuthenticationUnauthenticated()));
-      await _signalRHelper.closeConnection();
+      
 
       getIt<AppPref>().setToken("");
       getIt<AppPref>().setRefreshToken("");
@@ -91,6 +92,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       log(e.toString());
     } finally {
       navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
+      //await _signalRHelper.closeConnection();
     }
   }
 
@@ -118,7 +120,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } catch (_) {
       log("Reconnect Failed: " + _.toString());
-      emit(state.copyWith(authStatus: AuthenticationForceLogout()));
+      add(ForceLogoutEvent());
     }
   }
 }

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
@@ -398,4 +397,8 @@ abstract class RestClient {
     @Field('Id') String postId,
     @Field('status') int status,
   );
+  @POST('/users/getcaption')
+  @MultiPart()
+  Future<GetResponseMessage> getCaption(
+      @Part(value: 'Img') File img);
 }

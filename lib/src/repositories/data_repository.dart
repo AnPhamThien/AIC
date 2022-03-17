@@ -87,6 +87,7 @@ class DataRepository implements RestClient {
               handler.next(error);
             }
           } catch (_) {
+            log("DataRepos");
             log(_.toString());
             handler.reject(error);
           }
@@ -473,5 +474,10 @@ class DataRepository implements RestClient {
   Future<GetListOfPostResponseMessage> getUserContestPost(
       String userID, int limitPost) {
     return _client.getUserContestPost(userID, limitPost);
+  }
+
+  @override
+  Future<GetResponseMessage> getCaption(File img) {
+    return _client.getCaption(img);
   }
 }

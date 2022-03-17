@@ -34,6 +34,7 @@ class _UploadScreenState extends State<UploadScreen> {
   Widget build(BuildContext context) {
     return BlocListener<UploadBloc, UploadState>(
       listener: (context, state) {
+        _captionController.text = state.aiCaption;
         final status = state.status;
         if (status is ErrorStatus) {
           log(status.exception.toString());
@@ -214,8 +215,6 @@ class _UploadScreenState extends State<UploadScreen> {
               if (context.read<UploadBloc>().state.imgPath != null) {
                 context.read<UploadBloc>().add(SaveUploadPost(
                     albumId: selectedAlbumId,
-                    //TODO: Add aicaption
-                    aiCaption: "a",
                     contestId: selectedContestId,
                     userCaption: _captionController.value.text,
                     postImg: context.read<UploadBloc>().state.imgPath!));
@@ -308,7 +307,7 @@ class _UploadScreenState extends State<UploadScreen> {
           suffixIcon: IconButton(
             padding: const EdgeInsets.all(0),
             onPressed: () {
-              //TODO: Fetch caption mới ở đây
+              context.read<UploadBloc>().add(RequestCaption(postImg: context.read<UploadBloc>().state.imgPath!));
             },
             icon: const Icon(
               Icons.refresh_rounded,

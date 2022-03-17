@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:imagecaptioning/src/utils/validations.dart';
 import '../../app/routes.dart';
 import '../theme/style.dart';
@@ -32,7 +33,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         backgroundColor: Colors.black12,
         body: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
           listener: (context, state) {
-            if (state.formStatus is FormSubmissionSuccess) {
+            final status = state.formStatus;
+            if (status is ErrorStatus) {
+          String errorMessage = getErrorMessage(status.exception.toString());
+          _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+        } else if (status is FormSubmissionSuccess) {
               Map<String, dynamic> args = {
                 "userId": state.userId,
               };
@@ -165,6 +170,39 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
       ),
     );
   }

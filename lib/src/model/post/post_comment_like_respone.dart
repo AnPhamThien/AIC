@@ -31,7 +31,7 @@ class PostCommentLikeRespone {
       PostCommentLikeRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: PostCommentLikeData.fromJson(json["data"]),
+        data: (json["data"] != null && json["data"] is Map<String, dynamic>) ? PostCommentLikeData.fromJson(json["data"]) : null,
         total: json["total"],
         sunOfPages: json["sunOfPages"],
       );

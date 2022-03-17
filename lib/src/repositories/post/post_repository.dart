@@ -52,6 +52,8 @@ abstract class PostBehavior {
       required String dateBoundary});
   Future<GetListOfPostResponseMessage?> getUserContestPost(
       {required String userID, required int limitPost});
+      Future<GetResponseMessage?> getCaption(
+      {required File img});
 }
 
 class PostRepository extends PostBehavior {
@@ -100,6 +102,26 @@ class PostRepository extends PostBehavior {
         if (e.response != null) {
           AddPostResponseMessage resMessage =
               AddPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<GetResponseMessage?> getCaption(
+      {
+      required File img}) async {
+    try {
+      final resMessage = await _dataRepository.getCaption(img);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
           return resMessage;
         }
       }

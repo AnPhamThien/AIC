@@ -31,7 +31,7 @@ class PostDetailRespone {
       PostDetailRespone(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: Post.fromJson(json["data"]),
+        data: json["data"] != null ? Post.fromJson(json["data"]) : null,
         total: json["total"],
         sunOfPages: json["sunOfPages"],
       );

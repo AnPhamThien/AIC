@@ -264,12 +264,10 @@ class _RestClient implements RestClient {
     if (userRealName != null) {
       _data.fields.add(MapEntry('user_real_name', userRealName));
     }
-    if (avatarImg != null) {
-      _data.files.add(MapEntry(
-          'avatar_img',
-          MultipartFile.fromFileSync(avatarImg.path,
-              filename: avatarImg.path.split(Platform.pathSeparator).last)));
-    }
+    if (avatarImg != null) {_data.files.add(MapEntry(
+        'avatar_img',
+        MultipartFile.fromFileSync(avatarImg.path,
+            filename: avatarImg.path.split(Platform.pathSeparator).last)));}
     final _result = await _dio.fetch<Map<String, dynamic>>(
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
@@ -1265,6 +1263,27 @@ class _RestClient implements RestClient {
         _setStreamType<GetResponseMessage>(
             Options(method: 'POST', headers: _headers, extra: _extra)
                 .compose(_dio.options, '/posts/deletepost',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> getCaption(img) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    queryParameters.removeWhere((k, v) => v == null);
+    final _headers = <String, dynamic>{};
+    final _data = FormData();
+    _data.files.add(MapEntry(
+        'Img',
+        MultipartFile.fromFileSync(img.path,
+            filename: img.path.split(Platform.pathSeparator).last)));
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/users/getcaption',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetResponseMessage.fromJson(_result.data!);

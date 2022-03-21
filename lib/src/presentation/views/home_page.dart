@@ -90,6 +90,7 @@ class _HomePageState extends State<HomePage> {
                     setState(() {
                       _postList[_index].isSaved = 0;
                     });
+                    context.read<ProfileBloc>().add(ProfileInitializing(""));
                     context.read<PostBloc>().add(Reset());
                   }
                   if (state.status == PostStatus.save &&
@@ -99,6 +100,7 @@ class _HomePageState extends State<HomePage> {
                     setState(() {
                       _postList[_index].isSaved = 1;
                     });
+                    context.read<ProfileBloc>().add(ProfileInitializing(""));
                     context.read<PostBloc>().add(Reset());
                   }
                 },

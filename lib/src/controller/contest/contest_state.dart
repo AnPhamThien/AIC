@@ -13,36 +13,36 @@ class ContestState extends Equatable {
     this.contest,
     this.post = const <Post>[],
     this.topThreePost = const <Post>[],
-    this.contestPrizes = const <dynamic>[],
     this.totalParticipaters = 0,
     this.hasReachMax = false,
+    this.prizes = const <Prize>[],
   });
 
   final ContestStatus status;
   final Contest? contest;
   final List<Post> post;
   final List<Post> topThreePost;
-  final List<dynamic> contestPrizes;
   final int totalParticipaters;
   final bool hasReachMax;
+  final List<Prize> prizes;
 
   ContestState copyWith({
     ContestStatus? status,
     Contest? contest,
     List<Post>? post,
     List<Post>? topThreePost,
-    List<dynamic>? contestPrizes,
     int? totalParticipaters,
     bool? hasReachMax,
+    List<Prize>? prizes,
   }) {
     return ContestState(
       status: status ?? this.status,
       contest: contest ?? this.contest,
       post: post ?? this.post,
       topThreePost: topThreePost ?? this.topThreePost,
-      contestPrizes: contestPrizes ?? this.contestPrizes,
       totalParticipaters: totalParticipaters ?? this.totalParticipaters,
       hasReachMax: hasReachMax ?? this.hasReachMax,
+      prizes: prizes ?? this.prizes,
     );
   }
 
@@ -51,8 +51,8 @@ class ContestState extends Equatable {
         status,
         post,
         topThreePost,
-        contestPrizes,
         totalParticipaters,
-        hasReachMax
+        hasReachMax,
+        prizes,
       ];
 }

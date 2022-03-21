@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
@@ -9,6 +12,8 @@ import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/search_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+
+import 'post_search_screen.dart';
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -39,9 +44,10 @@ class _RootScreenState extends State<RootScreen> {
       index: indexPage,
       children: const [
         HomePage(),
-        SearchPage(),
+        SizedBox(),
         SizedBox(),
         NotificationPage(),
+        //PostSearchScreen(),
         ProfilePage(),
       ],
     );
@@ -67,27 +73,75 @@ class _RootScreenState extends State<RootScreen> {
           children: List.generate(
             icons.length,
             (index) {
-              if (index != 2) {
-                return IconButton(
-                  splashRadius: 45,
-                  onPressed: () {
-                    setState(() {
-                      indexPage = index;
-                    });
-                  },
-                  icon: SvgPicture.asset(
-                    indexPage == index
-                        ? icons[index]['active']!
-                        : icons[index]['inactive']!,
-                    width: 27,
-                    height: 27,
-                    color: Colors.black87,
-                  ),
-                );
+              switch (index) {
+                case 1:
+                  return getSearchButton();
+                case 2:
+                  return getUploadButton();
+                default:
+                  return IconButton(
+                    splashRadius: 45,
+                    onPressed: () {
+                      setState(() {
+                        indexPage = index;
+                      });
+                    },
+                    icon: SvgPicture.asset(
+                      indexPage == index
+                          ? icons[index]['active']!
+                          : icons[index]['inactive']!,
+                      width: 27,
+                      height: 27,
+                      color: Colors.black87,
+                    ),
+                  );
               }
-              return getUploadButton();
             },
           ),
+        ),
+      ),
+    );
+  }
+
+  Theme getSearchButton() {
+    return Theme(
+      data: Theme.of(context).copyWith(
+        dividerTheme:
+            const DividerThemeData(color: Colors.grey, thickness: 0.5),
+      ),
+      child: PopupMenuButton(
+        onSelected: (result) {
+          if (result == 0) {
+            log('a');
+            Navigator.pushNamed(
+              context,
+              AppRouter.userSearchScreen,
+            );
+          }
+        },
+        color: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        offset: const Offset(-35, -150),
+        elevation: 10,
+        itemBuilder: (context) {
+          final list = <PopupMenuEntry<int>>[];
+          list.add(
+            getUploadMenuItem(null, "User", Icons.grid_on_rounded, 0),
+          );
+          list.add(
+            const PopupMenuDivider(),
+          );
+          list.add(
+            getUploadMenuItem(
+                ImageSource.gallery, "Post", Icons.camera_enhance_outlined, 1),
+          );
+          return list;
+        },
+        icon: SvgPicture.asset(
+          "assets/icons/search_icon.svg",
+          width: 27,
+          height: 27,
+          color: Colors.black87,
         ),
       ),
     );
@@ -108,14 +162,14 @@ class _RootScreenState extends State<RootScreen> {
           final list = <PopupMenuEntry<int>>[];
           list.add(
             getUploadMenuItem(
-                ImageSource.gallery, "Gallery", Icons.grid_on_rounded),
+                ImageSource.gallery, "Gallery", Icons.grid_on_rounded, 1),
           );
           list.add(
             const PopupMenuDivider(),
           );
           list.add(
             getUploadMenuItem(
-                ImageSource.camera, "Camera", Icons.camera_enhance_outlined),
+                ImageSource.camera, "Camera", Icons.camera_enhance_outlined, 1),
           );
           return list;
         },
@@ -130,10 +184,13 @@ class _RootScreenState extends State<RootScreen> {
   }
 
   PopupMenuItem<int> getUploadMenuItem(
-      ImageSource source, String label, IconData iconData) {
+      ImageSource? source, String label, IconData iconData, int? value) {
     return PopupMenuItem(
+      value: value,
       onTap: () {
-        pickImage(source, context);
+        if (source != null) {
+          pickImage(source, context);
+        } else {}
       },
       textStyle: const TextStyle(
           fontSize: 20, fontWeight: FontWeight.w400, color: Colors.black),

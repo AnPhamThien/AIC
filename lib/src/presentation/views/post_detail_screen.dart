@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../controller/post_detail/post_detail_bloc.dart';
@@ -95,11 +96,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       if (state.status == PostStatus.save &&
                           state.isSaved == false) {
                         post.isSaved = 0;
+                        context
+                            .read<ProfileBloc>()
+                            .add(ProfileInitializing(""));
                         context.read<PostBloc>().add(Reset());
                       }
                       if (state.status == PostStatus.save &&
                           state.isSaved == true) {
                         post.isSaved = 1;
+                        context
+                            .read<ProfileBloc>()
+                            .add(ProfileInitializing(""));
                         context.read<PostBloc>().add(Reset());
                       }
                     },

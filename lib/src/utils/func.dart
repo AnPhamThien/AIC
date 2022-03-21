@@ -78,19 +78,7 @@ Future pickImage(ImageSource source, BuildContext context) async {
   try {
     final chosenImage = await ImagePicker().pickImage(source: source);
     if (chosenImage == null) return;
-    //Uint8List list = await chosenImage.readAsBytes();
-    // var result = await FlutterImageCompress.compressWithList(
-    //   list,
-    //   minWidth: 2000,
-    //   minHeight: 2400,
-    // );
-
-    // final imageTemp = File(chosenImage.path).readAsBytesSync();
-    // var image = decodeImage(imageTemp);
-    // var thumbnail = copyResize(image!, width: 300, height: 300);
-    // File a = File(chosenImage.path);
-    // await a.writeAsBytes(encodeJpg(thumbnail));
-    // a.readAsBytesSync();
+    
 
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: chosenImage.path,

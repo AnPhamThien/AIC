@@ -177,6 +177,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
 
         if (resMessage is int) {
           if (resMessage == StatusCode.successStatus) {
+            emit(state.copyWith(status: DeleteAlbumStatus()));
             add(FetchAlbum());
           } else {
             throw Exception('');

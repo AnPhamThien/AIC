@@ -129,11 +129,14 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
   SafeArea getBody() {
     return SafeArea(
       child: BlocListener<AlbumListBloc, AlbumListState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           final status = state.status;
           if (status is ErrorStatus) {
             String errorMessage = getErrorMessage(status.exception.toString());
             _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+          } else if (status is DeleteAlbumStatus) {
+            await _getDialog(
+              "Delete Album successfully", 'Success !', () => Navigator.pop(context));
           }
         },
         child: BlocBuilder<AlbumListBloc, AlbumListState>(
@@ -265,8 +268,8 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                         "Delete",
                         style: TextStyle(fontSize: 19, color: Colors.redAccent),
                       ),
-                      onTap: () {
-                        context.read<AlbumListBloc>().add(DeleteAlbum(albumId));
+                      onTap: () async {
+                        await showDeleteDialog(albumId);
                         Navigator.pop(wrapContext);
                       },
                     ),
@@ -306,6 +309,51 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
             onPressed: func,
             child: const Text(
               'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  Future<void> showDeleteDialog(String albumId) {
+    return showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text('Delete',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 23,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.w500)),
+        content: const Text('Are you sure you want to delete this Album?',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18,
+              color: Colors.black87,
+              letterSpacing: 1.25,
+            )),
+        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              context.read<AlbumListBloc>().add(DeleteAlbum(albumId));
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Cancel',
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
           ),

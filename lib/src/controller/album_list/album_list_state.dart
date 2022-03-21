@@ -35,7 +35,7 @@ class InitialStatus extends AlbumListStatus {
 
 class FinishInitializing extends AlbumListStatus {}
 
-class ReachedMaxedStatus extends AlbumListStatus {}
+class DeleteAlbumStatus extends AlbumListStatus {}
 
 class ErrorStatus extends AlbumListStatus {
   final String exception;

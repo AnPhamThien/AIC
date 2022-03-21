@@ -5,6 +5,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
+import 'package:imagecaptioning/src/model/contest/prize.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../../model/contest/contest.dart';
@@ -51,9 +52,9 @@ class ContestBloc extends Bloc<ContestEvent, ContestState> {
           contest: _contest,
           topThreePost: _contestData.topThreePosts,
           totalParticipaters: _contestData.totalParticipaters,
-          contestPrizes: _contestData.prizes,
           post: _contestData.posts,
           hasReachMax: false,
+          prizes: _contestData.prizes,
         ));
       } else {
         throw Exception(_respone.messageCode);

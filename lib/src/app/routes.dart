@@ -30,6 +30,7 @@ import 'package:imagecaptioning/src/presentation/views/contest_list_screen.dart'
 import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/leaderboard_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
@@ -38,6 +39,7 @@ import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/root_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/search_page.dart';
 import 'package:imagecaptioning/src/presentation/views/upload_page.dart';
 import 'package:imagecaptioning/src/presentation/views/verification_screen.dart';
 
@@ -62,7 +64,8 @@ class AppRouter {
   static const String contestScreen = '/contestscreen';
   static const String contestUserScreen = '/contestuserscreen';
   static const String uploadScreen = '/uploadscreen';
-
+  static const String leaderboardScreen = '/leaderboardScreen';
+  static const String userSearchScreen = '/userSearchScreen';
   static const List<String> noAuthNeededScreens = [
     loginScreen,
     registrationScreen,
@@ -137,9 +140,6 @@ class AppRouter {
                       ProfileBloc(true, false)..add(ProfileInitializing(''))),
               BlocProvider(
                   create: (context) => HomeBloc()..add(InitPostFetched())),
-              BlocProvider(
-                  create: (context) =>
-                      SearchBloc()..add(InitSearchHistoryFetched())),
               BlocProvider.value(value: _postBloc),
             ],
             child: const RootScreen(),
@@ -267,6 +267,18 @@ class AppRouter {
                       UploadBloc()..add(UploadInitializing(arg)),
                   child: const UploadScreen(),
                 ));
+      case leaderboardScreen:
+        return MaterialPageRoute(
+          builder: (context) => const LeaderBoardScreen(),
+        );
+      case userSearchScreen:
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      SearchBloc()..add(InitSearchHistoryFetched()),
+                  child: const SearchPage(),
+                ));
+
       default:
         return null;
     }

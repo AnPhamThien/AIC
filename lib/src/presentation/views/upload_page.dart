@@ -76,7 +76,7 @@ class _UploadScreenState extends State<UploadScreen> {
 
   Container getAlbumContestSection() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 15),
+      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
       width: double.infinity,
       decoration: const BoxDecoration(
         color: Colors.white,

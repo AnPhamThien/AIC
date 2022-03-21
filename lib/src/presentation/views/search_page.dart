@@ -65,11 +65,22 @@ class _SearchPageState extends State<SearchPage> {
         child: Stack(
           fit: StackFit.loose,
           children: [
+            Positioned(
+              top: 10,
+              child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back_rounded)),
+            ),
             BlocBuilder<SearchBloc, SearchState>(
               builder: (context, state) {
                 switch (state.status) {
                   case SearchStatus.success:
                     return FloatingSearchBar(
+                      width: MediaQuery.of(context).size.width - 60,
+                      axisAlignment: 1,
+                      openWidth: MediaQuery.of(context).size.width,
                       margins: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 10),
                       backgroundColor: Colors.grey.shade200,

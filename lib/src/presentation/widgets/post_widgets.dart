@@ -17,6 +17,7 @@ import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 
 import 'get_user_input_field.dart';
+import 'global_widgets.dart';
 
 class PostWidget extends StatefulWidget {
   const PostWidget({Key? key, required this.post, required this.isInContest})
@@ -58,6 +59,7 @@ class _PostWidgetState extends State<PostWidget> {
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
                   isSave: post.isSaved!,
+                  contestId: post.contestId,
                 ),
                 PostImgWidget(postImage: widget.post.imageUrl ?? ""),
                 PostIconWidget(
@@ -120,6 +122,7 @@ class PostHeadlineWidget extends StatefulWidget {
     required this.postId,
     this.route,
     required this.isSave,
+    this.contestId,
   }) : super(key: key);
 
   final String userId;
@@ -129,6 +132,7 @@ class PostHeadlineWidget extends StatefulWidget {
   final String postId;
   final String? route;
   final int isSave;
+  final String? contestId;
 
   @override
   State<PostHeadlineWidget> createState() => _PostHeadlineWidgetState();
@@ -180,100 +184,131 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
       subtitle: Text(_calculatedTime),
 
       ///options
-      trailing: BlocListener<PostBloc, PostState>(
-        listener: (context, state) {
-          if (state.status == PostStatus.reported) {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(const SnackBar(
-                  content: Text('Reported !'),
-                  duration: Duration(seconds: 1),
-                ))
-                .closed
-                .then(
-                    (value) => ScaffoldMessenger.of(context).clearSnackBars());
-            context.read<PostBloc>().add(Reset());
-          }
-          if (state.status == PostStatus.save) {
-            if (state.isSaved == true) {
-              setState(() {
-                widget.isSave == 1;
-                context.read<PostBloc>().add(Reset());
-                if (context.read<ProfileBloc?>() != null) {
-                  context.read<ProfileBloc>().add(ProfileInitializing(""));
+      trailing: SizedBox(
+        width: 100,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+              child: widget.contestId != null
+                  ? RadiantGradientMask(
+                      child: IconButton(
+                        onPressed: () async {
+                          await Navigator.pushNamed(
+                              context, AppRouter.contestListScreen);
+                          context.read<HomeBloc>().add(InitPostFetched());
+                        },
+                        icon: const Icon(
+                          Icons.emoji_events_outlined,
+                          color: Colors.white,
+                          size: 32,
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
+            BlocListener<PostBloc, PostState>(
+              listener: (context, state) {
+                if (state.status == PostStatus.reported) {
+                  ScaffoldMessenger.of(context)
+                      .showSnackBar(const SnackBar(
+                        content: Text('Reported !'),
+                        duration: Duration(seconds: 1),
+                      ))
+                      .closed
+                      .then((value) =>
+                          ScaffoldMessenger.of(context).clearSnackBars());
+                  context.read<PostBloc>().add(Reset());
                 }
-              });
-            } else {
-              setState(() {
-                widget.isSave == 0;
-                context.read<PostBloc>().add(Reset());
-                if (context.read<ProfileBloc?>() != null) {
-                  context.read<ProfileBloc>().add(ProfileInitializing(""));
-                }
-              });
-            }
-          }
-        },
-        child: BlocBuilder<PostBloc, PostState>(
-          builder: (context, state) {
-            return PopupMenuButton(
-              onSelected: (value) async {
-                switch (value) {
-                  case 'delete':
-                    return showDeleteDialog();
-                  case 'report':
-                    return showReportDialog(state.categoryList, widget.postId);
-                  case 'unsave':
-                    context.read<PostBloc>().add(
-                          UnsavePost(widget.postId),
-                        );
-
-                    break;
-                  case 'save':
-                    context.read<PostBloc>().add(SavePost(widget.postId));
-
-                    break;
-                  default:
-                    return;
+                if (state.status == PostStatus.save) {
+                  if (state.isSaved == true) {
+                    setState(() {
+                      widget.isSave == 1;
+                      context.read<PostBloc>().add(Reset());
+                      if (context.read<ProfileBloc?>() != null) {
+                        context
+                            .read<ProfileBloc>()
+                            .add(ProfileInitializing(""));
+                      }
+                    });
+                  } else {
+                    setState(() {
+                      widget.isSave == 0;
+                      context.read<PostBloc>().add(Reset());
+                      if (context.read<ProfileBloc?>() != null) {
+                        context
+                            .read<ProfileBloc>()
+                            .add(ProfileInitializing(""));
+                      }
+                    });
+                  }
                 }
               },
-              icon: const Icon(
-                Icons.more_vert_rounded,
-                color: Colors.black87,
-                size: 27,
+              child: BlocBuilder<PostBloc, PostState>(
+                builder: (context, state) {
+                  return PopupMenuButton(
+                    onSelected: (value) async {
+                      switch (value) {
+                        case 'delete':
+                          return showDeleteDialog();
+                        case 'report':
+                          return showReportDialog(
+                              state.categoryList, widget.postId);
+                        case 'unsave':
+                          context.read<PostBloc>().add(
+                                UnsavePost(widget.postId),
+                              );
+
+                          break;
+                        case 'save':
+                          context.read<PostBloc>().add(SavePost(widget.postId));
+
+                          break;
+                        default:
+                          return;
+                      }
+                    },
+                    icon: const Icon(
+                      Icons.more_vert_rounded,
+                      color: Colors.black87,
+                      size: 27,
+                    ),
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15)),
+                    offset: const Offset(-10, 45),
+                    elevation: 10,
+                    itemBuilder: (context) {
+                      if (isUser(widget.userId)) {
+                        return <PopupMenuEntry>[
+                          PopupMenuItem(
+                              value: 'delete',
+                              child: getPopupMenuItem(
+                                  "Delete", Icons.delete_outline_rounded))
+                        ];
+                      }
+
+                      return <PopupMenuEntry>[
+                        PopupMenuItem(
+                            value: 'report',
+                            child: getPopupMenuItem(
+                                "Report", Icons.error_outline_rounded)),
+                        widget.isSave == 1
+                            ? PopupMenuItem(
+                                value: 'unsave',
+                                child: getPopupMenuItem(
+                                    "Unsave post", Icons.bookmark_rounded))
+                            : PopupMenuItem(
+                                value: 'save',
+                                child: getPopupMenuItem("Save post",
+                                    Icons.bookmark_border_rounded)),
+                      ];
+                    },
+                  );
+                },
               ),
-              color: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15)),
-              offset: const Offset(-10, 45),
-              elevation: 10,
-              itemBuilder: (context) {
-                if (isUser(widget.userId)) {
-                  return <PopupMenuEntry>[
-                    PopupMenuItem(
-                        value: 'delete',
-                        child: getPopupMenuItem(
-                            "Delete", Icons.delete_outline_rounded))
-                  ];
-                }
-
-                return <PopupMenuEntry>[
-                  PopupMenuItem(
-                      value: 'report',
-                      child: getPopupMenuItem(
-                          "Report", Icons.error_outline_rounded)),
-                  widget.isSave == 1
-                      ? PopupMenuItem(
-                          value: 'unsave',
-                          child: getPopupMenuItem(
-                              "Unsave post", Icons.bookmark_rounded))
-                      : PopupMenuItem(
-                          value: 'save',
-                          child: getPopupMenuItem(
-                              "Save post", Icons.bookmark_border_rounded)),
-                ];
-              },
-            );
-          },
+            ),
+          ],
         ),
       ),
     );

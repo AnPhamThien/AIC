@@ -101,7 +101,7 @@ class _ContestUserScreenState extends State<ContestUserScreen> {
                         backgroundColor: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(25),
                         elevation: 0,
-                        hint: 'Search something ...',
+                        hint: 'Search user ...',
                         physics: const BouncingScrollPhysics(),
                         openAxisAlignment: 0.0,
                         debounceDelay: const Duration(milliseconds: 500),
@@ -152,17 +152,24 @@ class _ContestUserScreenState extends State<ContestUserScreen> {
                         },
                         body: Padding(
                           padding: const EdgeInsets.only(top: 70),
-                          child: ListView.builder(
-                            controller: _userScrollController,
-                            scrollDirection: Axis.vertical,
-                            shrinkWrap: true,
-                            itemCount: state.userInContest.length,
-                            itemBuilder: (_, index) {
-                              final UserInContestData user =
-                                  state.userInContest[index];
-                              return getUserItem(user, state);
-                            },
-                          ),
+                          child: state.userInContest.isEmpty
+                              ? const Center(
+                                  child: Text(
+                                    'This contest has no participant',
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  controller: _userScrollController,
+                                  scrollDirection: Axis.vertical,
+                                  shrinkWrap: true,
+                                  itemCount: state.userInContest.length,
+                                  itemBuilder: (_, index) {
+                                    final UserInContestData user =
+                                        state.userInContest[index];
+                                    return getUserItem(user, state);
+                                  },
+                                ),
                         ),
                       );
                     case ContestUserStatus.failure:

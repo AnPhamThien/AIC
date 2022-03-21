@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
+import 'package:imagecaptioning/src/model/contest/prize.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../controller/contest/contest_bloc.dart';
@@ -198,9 +201,18 @@ class _ContestScreenState extends State<ContestScreen> {
             const SizedBox(
               height: 15,
             ),
-            const Text(
-              "Leader Board",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(
+                context,
+                AppRouter.leaderboardScreen,
+              ),
+              child: const Text(
+                "Leader Board",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black),
+              ),
             ),
             const SizedBox(
               height: 15,
@@ -299,8 +311,7 @@ class _ContestScreenState extends State<ContestScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            getSheet(_contest, state.totalParticipaters, state.contestPrizes,
-                context.read<ContestBloc>());
+            getSheet(_contest, context.read<ContestBloc>(), state);
           },
           icon: const Icon(Icons.info_outlined, size: 30),
         )
@@ -310,9 +321,8 @@ class _ContestScreenState extends State<ContestScreen> {
 
   Future<dynamic> getSheet(
     Contest contest,
-    int totalParticipaters,
-    List<dynamic> contestPrizes,
     ContestBloc bloc,
+    ContestState state,
   ) {
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
@@ -381,7 +391,7 @@ class _ContestScreenState extends State<ContestScreen> {
                   bloc.add(InitContestFetched(contest));
                 },
                 child: Text(
-                  "Participant: $totalParticipaters",
+                  "Participant: ${state.totalParticipaters}",
                   style: TextStyle(color: Colors.black87, fontSize: 18.sp),
                 ),
               ),
@@ -407,8 +417,38 @@ class _ContestScreenState extends State<ContestScreen> {
               ),
             ),
 
-            const SizedBox(
-              height: 10,
+            Container(
+              width: MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 0),
+              child: Text(
+                'Prizes: ',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: 18.sp,
+                ),
+              ),
+            ),
+
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: state.prizes.length,
+                itemBuilder: (_, index) {
+                  final Prize prize = state.prizes[index];
+                  return Container(
+                    child: ListTile(
+                      dense: true,
+                      visualDensity: VisualDensity(horizontal: 0, vertical: -3),
+                      title: Text(
+                        'Top ${prize.top}: ${prize.name}',
+                        style:
+                            TextStyle(color: Colors.black87, fontSize: 18.sp),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         );

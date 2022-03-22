@@ -346,8 +346,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   "Log out",
                   style: TextStyle(fontSize: 19),
                 ),
-                onTap: () {
+                onTap: () async {
                   context.read<AuthBloc>().add(LogoutEvent());
+                  await Navigator.of(context).pushNamedAndRemoveUntil(AppRouter.loginScreen, ModalRoute.withName('/'));
                 },
               ),
             ),

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/controller/album/album_bloc.dart';
@@ -10,10 +12,12 @@ import 'package:imagecaptioning/src/controller/edit_profile/edit_profile_bloc.da
 import 'package:imagecaptioning/src/controller/email_confirmation/email_confirmation_bloc.dart';
 import 'package:imagecaptioning/src/controller/forgot_password/forgot_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
+import 'package:imagecaptioning/src/controller/leaderboard/leaderboard_bloc.dart';
 import 'package:imagecaptioning/src/controller/login/login_bloc.dart';
 import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
 import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
+import 'package:imagecaptioning/src/controller/post_search/post_search_bloc.dart';
 import 'package:imagecaptioning/src/controller/registration/registration_bloc.dart';
 import 'package:imagecaptioning/src/controller/reset_password/reset_password_bloc.dart';
 import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
@@ -35,6 +39,7 @@ import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/post_detail_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/post_search_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/presentation/views/registration_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/reset_password_screen.dart';
@@ -66,6 +71,8 @@ class AppRouter {
   static const String uploadScreen = '/uploadscreen';
   static const String leaderboardScreen = '/leaderboardScreen';
   static const String userSearchScreen = '/userSearchScreen';
+    static const String postSearchScreen = '/postSearchScreen';
+
   static const List<String> noAuthNeededScreens = [
     loginScreen,
     registrationScreen,
@@ -268,8 +275,13 @@ class AppRouter {
                   child: const UploadScreen(),
                 ));
       case leaderboardScreen:
+      final arg = routeSettings.arguments as String;
         return MaterialPageRoute(
-          builder: (context) => const LeaderBoardScreen(),
+          builder: (context) => BlocProvider(
+                  create: (context) =>
+                      LeaderboardBloc()..add(LeaderboardInitializing(arg)),
+                  child: const LeaderBoardScreen(),
+                )
         );
       case userSearchScreen:
         return MaterialPageRoute(
@@ -278,7 +290,14 @@ class AppRouter {
                       SearchBloc()..add(InitSearchHistoryFetched()),
                   child: const SearchPage(),
                 ));
-
+      case postSearchScreen:
+      final arg = routeSettings.arguments as String;
+        return MaterialPageRoute(
+            builder: (context) => BlocProvider(
+                  create: (context) =>
+                      PostSearchBloc()..add(PostSearchInitializing(arg)),
+                  child: const PostSearchScreen(),
+                ));
       default:
         return null;
     }

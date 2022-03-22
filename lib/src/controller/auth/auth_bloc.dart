@@ -53,7 +53,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       user: user,
     ));
 
-    navigatorKey.currentState!.pushNamed(AppRouter.rootScreen);
+    navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.rootScreen, ModalRoute.withName(AppRouter.rootScreen));
   }
 
   void _onLogout(LogoutEvent event, Emitter emit) async {
@@ -72,9 +72,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       DataRepository.setJwtInHeader();
     } catch (e) {
       log(e.toString());
-    } finally {
-      navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
-      //await _signalRHelper.closeConnection();
     }
   }
 

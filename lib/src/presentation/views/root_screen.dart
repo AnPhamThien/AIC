@@ -112,7 +112,6 @@ class _RootScreenState extends State<RootScreen> {
       child: PopupMenuButton(
         onSelected: (result) {
           if (result == 0) {
-            log('a');
             Navigator.pushNamed(
               context,
               AppRouter.userSearchScreen,
@@ -126,14 +125,14 @@ class _RootScreenState extends State<RootScreen> {
         itemBuilder: (context) {
           final list = <PopupMenuEntry<int>>[];
           list.add(
-            getUploadMenuItem(null, "User", Icons.grid_on_rounded, 0),
+            getMenuItem(null, "User", Icons.grid_on_rounded, 0 , null),
           );
           list.add(
             const PopupMenuDivider(),
           );
           list.add(
-            getUploadMenuItem(
-                ImageSource.gallery, "Post", Icons.camera_enhance_outlined, 1),
+            getMenuItem(
+                ImageSource.gallery, "Post", Icons.camera_enhance_outlined, 1 , AppRouter.postSearchScreen),
           );
           return list;
         },
@@ -161,15 +160,15 @@ class _RootScreenState extends State<RootScreen> {
         itemBuilder: (context) {
           final list = <PopupMenuEntry<int>>[];
           list.add(
-            getUploadMenuItem(
-                ImageSource.gallery, "Gallery", Icons.grid_on_rounded, 1),
+            getMenuItem(
+                ImageSource.gallery, "Gallery", Icons.grid_on_rounded, 1, AppRouter.uploadScreen),
           );
           list.add(
             const PopupMenuDivider(),
           );
           list.add(
-            getUploadMenuItem(
-                ImageSource.camera, "Camera", Icons.camera_enhance_outlined, 1),
+            getMenuItem(
+                ImageSource.camera, "Camera", Icons.camera_enhance_outlined, 1 , AppRouter.uploadScreen),
           );
           return list;
         },
@@ -183,14 +182,14 @@ class _RootScreenState extends State<RootScreen> {
     );
   }
 
-  PopupMenuItem<int> getUploadMenuItem(
-      ImageSource? source, String label, IconData iconData, int? value) {
+  PopupMenuItem<int> getMenuItem(
+      ImageSource? source, String label, IconData iconData, int? value, String? destination) {
     return PopupMenuItem(
       value: value,
       onTap: () {
-        if (source != null) {
-          pickImage(source, context);
-        } else {}
+        if (source != null && destination != null) {
+          pickImage(source, context, destination);
+        }
       },
       textStyle: const TextStyle(
           fontSize: 20, fontWeight: FontWeight.w400, color: Colors.black),

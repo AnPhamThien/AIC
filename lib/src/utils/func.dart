@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
@@ -74,7 +73,7 @@ String getErrorMessage(String errorCode) {
   return message;
 }
 
-Future pickImage(ImageSource source, BuildContext context) async {
+Future pickImage(ImageSource source, BuildContext context, String destination) async {
   try {
     final chosenImage = await ImagePicker().pickImage(source: source);
     if (chosenImage == null) return;
@@ -103,7 +102,7 @@ Future pickImage(ImageSource source, BuildContext context) async {
         ));
     if (croppedFile == null) return;
 
-    Post? post = await Navigator.of(context).pushNamed(AppRouter.uploadScreen,
+    Post? post = await Navigator.of(context).pushNamed(destination,
         arguments: croppedFile.path) as Post?;
     if (post != null) {
       context.read<PostBloc>().add(AddPost(post));

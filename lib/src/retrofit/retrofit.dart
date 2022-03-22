@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/contest/list_top_post_in_contest.dart';
 import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
@@ -401,4 +402,10 @@ abstract class RestClient {
   @MultiPart()
   Future<GetResponseMessage> getCaption(
       @Part(value: 'Img') File img);
+
+  @GET('/contests/getlisttoppostcontest')
+  Future<ListTopPostInContestResponseMessage> getListTopPostInContest(
+    @Query('contestId') String contestId,
+    @Query('limitPost') int limitPost,
+  );
 }

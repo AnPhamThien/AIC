@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/contest/list_top_post_in_contest.dart';
 import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
@@ -479,5 +480,10 @@ class DataRepository implements RestClient {
   @override
   Future<GetResponseMessage> getCaption(File img) {
     return _client.getCaption(img);
+  }
+
+  @override
+  Future<ListTopPostInContestResponseMessage> getListTopPostInContest(String contestId, int limitPost) {
+    return _client.getListTopPostInContest(contestId, limitPost);
   }
 }

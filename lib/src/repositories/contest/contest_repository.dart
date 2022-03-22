@@ -1,6 +1,9 @@
 import 'dart:developer';
 
-import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
+import 'package:dio/dio.dart';
+
+import '../../model/contest/list_top_post_in_contest.dart';
+import '../../model/post/post_detail_respone.dart';
 
 import '../../model/contest/contest_post_respone.dart';
 import '../../model/contest/contest_respone.dart';
@@ -32,6 +35,7 @@ abstract class ContestBehavior {
   Future<UserInContestRespone> getUserInContest(
       String contestId, int limitUser);
   Future<PostDetailRespone> getPostDetail(String postId, String contestId);
+  Future<ListTopPostInContestResponseMessage?> getListTopPostInContest(String contestId, int limitPost);
 }
 
 class ContestRepository extends ContestBehavior {
@@ -189,5 +193,24 @@ class ContestRepository extends ContestBehavior {
       log(e.toString());
     }
     return respone;
+  }
+
+  @override
+  Future<ListTopPostInContestResponseMessage?> getListTopPostInContest(String contestId, int limitPost) async {
+    try {
+      ListTopPostInContestResponseMessage? resMessage =
+          await _dataRepository.getListTopPostInContest(contestId, limitPost);
+          
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          ListTopPostInContestResponseMessage resMessage =
+              ListTopPostInContestResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
   }
 }

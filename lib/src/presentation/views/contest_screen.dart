@@ -202,10 +202,12 @@ class _ContestScreenState extends State<ContestScreen> {
               height: 15,
             ),
             TextButton(
-              onPressed: () => Navigator.pushNamed(
+              onPressed: () {
+                String args = state.contest?.id ?? '';
+                   Navigator.pushNamed(
                 context,
-                AppRouter.leaderboardScreen,
-              ),
+                AppRouter.leaderboardScreen, arguments: args
+              );},
               child: const Text(
                 "Leader Board",
                 style: TextStyle(
@@ -525,7 +527,7 @@ class _ContestScreenState extends State<ContestScreen> {
       ImageSource source, String label, IconData iconData) {
     return PopupMenuItem(
       onTap: () {
-        pickImage(source, context);
+        pickImage(source, context, AppRouter.uploadScreen);
       },
       textStyle: const TextStyle(
           fontSize: 20, fontWeight: FontWeight.w400, color: Colors.black),

@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
-import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
 import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/model/user/user_details.dart';
 import 'package:imagecaptioning/src/repositories/data_repository.dart';

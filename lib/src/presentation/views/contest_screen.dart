@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -441,7 +440,7 @@ class _ContestScreenState extends State<ContestScreen> {
                   return Container(
                     child: ListTile(
                       dense: true,
-                      visualDensity: VisualDensity(horizontal: 0, vertical: -3),
+                      visualDensity: const VisualDensity(horizontal: 0, vertical: -3),
                       title: Text(
                         'Top ${prize.top}: ${prize.name}',
                         style:

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,12 +8,8 @@ import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
-import 'package:imagecaptioning/src/presentation/views/search_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
-
-import 'post_search_screen.dart';
-
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
 

@@ -26,7 +26,7 @@ class CameraAccessScreen extends StatelessWidget {
               onPressed: () {},
               child: Text(
                 "Allow".toUpperCase(),
-                style: TextStyle(color: Colors.white),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
           )

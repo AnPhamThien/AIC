@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/post_search/post_search_bloc.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
@@ -47,7 +50,6 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                                     fontSize: 20, fontWeight: FontWeight.w500),
                               ),
                               Image(
-                                //*bỏ ảnh đang search vào đây
                                 image: state.imgPath != null
                       ? Image.file(File((state.imgPath.toString()))).image
                       : const AssetImage("assets/images/avatar_placeholder.png"),
@@ -74,16 +76,26 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                         ),
                         delegate: SliverChildBuilderDelegate(
                           (BuildContext context, int index) {
+                            Post? post = state.searchResultPostList?[index];
+                            String imagePath = post?.imageUrl ?? '';
                             return GestureDetector(
-                                onTap: () {}, //*navigate sang post đó
-                                child: const Image(
-                                    //*bỏ ảnh các post search được vào đây
+                                onTap: () async {if (post != null) {
+                    Map<String, dynamic> args = {'post': post};
+                    await Navigator.pushNamed(
+                        context, AppRouter.postDetailScreen,
+                        arguments: args);
+                  }},
+                                child: Image(
                                     image:
-                                        AssetImage("assets/images/avatar_placeholder.png")));
+                                        imagePath.isNotEmpty
+                ? NetworkImage(postImageUrl + imagePath)
+                : const AssetImage("assets/images/avatar_placeholder.png")
+                    as ImageProvider));
                           },
-                          childCount: 100,
+                          childCount: state.searchResultPostList?.length ?? 0,
                         ),
                       ),
+                  
                     ]),
               ));
         },

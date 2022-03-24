@@ -6,6 +6,7 @@ import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
 import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
+import 'package:imagecaptioning/src/model/search/search_post.dart';
 
 import '../../model/post/list_post_data.dart';
 import '../../model/post/post_add_comment_request.dart';
@@ -54,6 +55,7 @@ abstract class PostBehavior {
       {required String userID, required int limitPost});
       Future<GetResponseMessage?> getCaption(
       {required File img});
+      Future<ListSearchPostResponseMessage?> searchPostByImg({required File img, required int limitPost});
 }
 
 class PostRepository extends PostBehavior {
@@ -67,8 +69,8 @@ class PostRepository extends PostBehavior {
       final ListPostData? data = respone.data;
       return data;
     } catch (e) {
-      //return null;
       log(e.toString());
+      return null;
     }
   }
 
@@ -80,8 +82,8 @@ class PostRepository extends PostBehavior {
       final ListPostData? data = respone.data;
       return data;
     } catch (e) {
-      //return null;
       log(e.toString());
+      return null;
     }
   }
 
@@ -363,6 +365,25 @@ class PostRepository extends PostBehavior {
         if (e.response != null) {
           GetListOfPostResponseMessage resMessage =
               GetListOfPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<ListSearchPostResponseMessage?> searchPostByImg({required File img, required int limitPost}) async {
+    try {
+      final resMessage =
+          await _dataRepository.searchPostByImg(img, limitPost);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          ListSearchPostResponseMessage resMessage =
+              ListSearchPostResponseMessage.fromJson(e.response!.data);
           return resMessage;
         }
       }

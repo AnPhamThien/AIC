@@ -6,6 +6,7 @@ import 'package:imagecaptioning/src/model/contest/list_top_post_in_contest.dart'
 import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
 import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
+import 'package:imagecaptioning/src/model/search/search_post.dart';
 import '../constant/env.dart';
 import '../model/post/post_detail_respone.dart';
 import '../model/search/search_history_respone.dart';
@@ -408,4 +409,11 @@ abstract class RestClient {
     @Query('contestId') String contestId,
     @Query('limitPost') int limitPost,
   );
+
+  @POST('/posts/searchpostbyimg')
+  @MultiPart()
+  Future<ListSearchPostResponseMessage> searchPostByImg(
+    @Part(value: 'Img') File img,
+      @Part(value: 'limitPost') int limitPost
+      );
 }

@@ -1,23 +1,27 @@
 part of 'post_search_bloc.dart';
 
 class PostSearchState {
-  final List<ListTopPostInContestData>? searchResultList;
+  final List<Post>? searchResultPostList;
+  final List<String>? searchResultWordList;
   final String? imgPath;
   final PostSearchStatus status;
 
   PostSearchState({
-    this.searchResultList,
+    this.searchResultPostList,
+    this.searchResultWordList,
     this.imgPath,
     this.status = const InitialStatus(),
   });
 
   PostSearchState copyWith({
-    List<ListTopPostInContestData>? searchResultList,
+    List<Post>? searchResultPostList,
+    List<String>? searchResultWordList,
     String? imgPath,
     PostSearchStatus? status,
   }) {
     return PostSearchState(
-      searchResultList: searchResultList ?? this.searchResultList,
+      searchResultPostList: searchResultPostList ?? this.searchResultPostList,
+      searchResultWordList: searchResultWordList ?? this.searchResultWordList,
       imgPath: imgPath ?? this.imgPath,
       status: status ?? this.status    
       );

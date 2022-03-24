@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:bloc/bloc.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
-import 'package:imagecaptioning/src/model/contest/list_top_post_in_contest.dart';
-import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/post/post.dart';
+import 'package:imagecaptioning/src/model/search/search_post.dart';
 import 'package:imagecaptioning/src/repositories/post/post_repository.dart';
 
 part 'post_search_event.dart';
@@ -25,9 +25,10 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
   ) async {
     try {
       String imgPath = event.imgPath;
+      emit(state.copyWith(imgPath: imgPath));
 
-      GetResponseMessage? response =
-          await _postRepository.getCaption(img: File(imgPath));
+      ListSearchPostResponseMessage? response =
+          await _postRepository.searchPostByImg(img: File(imgPath), limitPost: _limitPost);
 
       if (response == null) {
         throw Exception("");
@@ -36,6 +37,8 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
           response.data != null) {
         emit(state.copyWith(
           imgPath: imgPath,
+          searchResultPostList: response.data?.posts,
+          searchResultWordList: response.data?.words,
             status: FinishInitializing()));
       } else {
         throw Exception(response.messageCode);

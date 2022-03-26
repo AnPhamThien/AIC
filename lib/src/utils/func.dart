@@ -10,7 +10,6 @@ import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
-import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:image_cropper/image_cropper.dart';

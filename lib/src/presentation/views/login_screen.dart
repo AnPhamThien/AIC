@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
-
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import '../../prefs/app_prefs.dart';
 import '../../app/routes.dart';
 import '../../controller/auth/auth_bloc.dart';
 import '../../controller/login/login_bloc.dart';
@@ -40,10 +41,11 @@ class LoginScreenState extends State<LoginScreen> {
           String errorMessage = getErrorMessage(status.exception.toString());
           if (errorMessage ==
               MessageCode.errorMap[MessageCode.userAccountInActivated]) {
+                String userId = getIt<AppPref>().getUserID;
+                getIt<AppPref>().setUserID('');
             _getDialog(MessageCode.errorMap[MessageCode.userAccountInActivated],
                 () {
-              context.read<AuthBloc>().add(
-                  NavigateToPageEvent(route: AppRouter.verificationScreen));
+                  Navigator.of(context).pushNamed(AppRouter.verificationScreen, arguments: userId);
             });
           } else if (errorMessage == MessageCode.userNotFound) {
             _getDialog(MessageCode.errorMap[MessageCode.userPassWordInCorrect],

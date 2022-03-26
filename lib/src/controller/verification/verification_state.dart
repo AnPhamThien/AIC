@@ -2,16 +2,18 @@ part of 'verification_bloc.dart';
 
 class VerificationState {
   const VerificationState(
-      {this.formStatus = const InitialStatus(), this.absorbing = false});
+      {this.formStatus = const InitialStatus(), this.absorbing = false, required this.userId});
 
   final VerificationStatus formStatus;
   final bool absorbing;
+  final String userId;
 
   VerificationState copyWith(
-      {VerificationStatus? formStatus, bool? absorbing}) {
+      {VerificationStatus? formStatus, bool? absorbing, String? userId}) {
     return VerificationState(
         formStatus: formStatus ?? this.formStatus,
-        absorbing: absorbing ?? this.absorbing);
+        absorbing: absorbing ?? this.absorbing,
+        userId: userId ?? this.userId);
   }
 }
 

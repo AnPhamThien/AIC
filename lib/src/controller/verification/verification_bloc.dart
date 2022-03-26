@@ -2,27 +2,22 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
-import '../get_it/get_it.dart';
-import '../../prefs/app_prefs.dart';
 import '../../repositories/user/user_repository.dart';
 
 part 'verification_event.dart';
 part 'verification_state.dart';
 
 class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
-  VerificationBloc()
+  VerificationBloc(String userId)
       : _userRepository = UserRepository(),
-        //_ticker = Ticker(_onTick);
-        super(VerificationState()) {
+        super(VerificationState(userId: userId)) {
     on<VerificationSubmitted>(_onSubmitted);
     on<VerificationResendButtonPushed>(_onResendButtonPushed);
+    on<VerificationResendButtonRestart>(_onResendButtonRestart);
   }
 
   final UserRepository _userRepository;
-  //final Ticker _ticker ;
-  static const int _duration = 10;
-
-  StreamSubscription<int>? _tickerSubscription;
+  final timeout = const Duration(seconds: 10);
 
   void _onSubmitted(
     VerificationSubmitted event,
@@ -30,7 +25,7 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
   ) async {
     try {
       String code = event.code;
-      String userID = getIt<AppPref>().getUserID;
+      String userID = state.userId;
       final response =
           await _userRepository.activateAccount(code: code, userID: userID);
       if (response == null) {
@@ -51,7 +46,9 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
     Emitter<VerificationState> emit,
   ) async {
     try {
-      String userID = getIt<AppPref>().getUserID;
+      emit(state.copyWith(absorbing: true));
+      startTimeout();
+      String userID = state.userId;
       final response =
           await _userRepository.regenerateCodeForRegister(userID: userID);
       if (response == null) {
@@ -71,15 +68,24 @@ class VerificationBloc extends Bloc<VerificationEvent, VerificationState> {
     }
   }
 
-  void _onStarted(TimerStarted event, Emitter<VerificationState> emit) {
-    _tickerSubscription?.cancel();
-    //_ticker.start();
+  Timer startTimeout() {
+  var duration = timeout;
+  return Timer(duration, handleTimeout);
+}
 
-    //_tickerSubscription = _ticker.tick(ticks: event.duration)
-    //   .listen((duration) => add(TimerTicked(duration: duration)));
+void handleTimeout() { 
+  add(const VerificationResendButtonRestart());
+}
+
+void _onResendButtonRestart(
+    VerificationResendButtonRestart event,
+    Emitter<VerificationState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(absorbing: false));
+    } on Exception catch (_) {
+      emit(state.copyWith(formStatus: ErrorStatus(_)));
+    }
   }
 
-  void _onTicked(TimerTicked event, Emitter<VerificationState> emit) {}
-
-  void _onTick(Duration duration) {}
 }

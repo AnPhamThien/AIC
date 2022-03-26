@@ -24,7 +24,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     try {
       emit(state.copyWith(formStatus: FormSubmitting()));
-      // await Future.delayed(const Duration(seconds: 3));
       String username = event.username;
       String password = event.password;
 

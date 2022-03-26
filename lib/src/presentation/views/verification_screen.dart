@@ -220,9 +220,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         primary: Colors.black87,
                         textStyle: const TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 20)),
-                    child: const Text(
-                      "Resend code",
-                    ),
+                    child: Text(
+                              state.absorbing ? "Please wait for a few seconds" : "Resend code",
+                            ),
                   ));
             },
           )

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import '../../prefs/app_prefs.dart';
 import '../../app/routes.dart';
 import '../../controller/auth/auth_bloc.dart';
 import '../../controller/registration/registration_bloc.dart';
@@ -35,9 +36,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           String errorMessage = getErrorMessage(status.exception.toString());
           _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         } else if (status is FormSubmissionSuccess) {
-          context
-              .read<AuthBloc>()
-              .add(NavigateToPageEvent(route: AppRouter.verificationScreen));
+          String userId = getIt<AppPref>().getUserID;
+          getIt<AppPref>().setUserID('');
+          Navigator.of(context).pushNamed(AppRouter.verificationScreen, arguments: userId);
         }
       },
       child: Container(

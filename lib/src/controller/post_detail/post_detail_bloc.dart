@@ -6,7 +6,6 @@ import 'package:equatable/equatable.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
-import 'package:imagecaptioning/src/model/post/post_comment_like_respone.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../../model/post/comment.dart';

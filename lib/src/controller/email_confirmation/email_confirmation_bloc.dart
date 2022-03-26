@@ -18,6 +18,7 @@ class EmailConfirmationBloc
   }
 
   final UserRepository _userRepository;
+  final timeout = const Duration(seconds: 10);
 
   void _onSubmitted(
     EmailConfirmationSubmitted event,
@@ -71,13 +72,13 @@ class EmailConfirmationBloc
     }
   }
 
- final timeout = const Duration(seconds: 10);
-
+ 
 Timer startTimeout() {
   var duration = timeout;
   return Timer(duration, handleTimeout);
 }
-void handleTimeout() {  // callback function
+
+void handleTimeout() { 
   add(const EmailConfirmationResendButtonRestart());
 }
 

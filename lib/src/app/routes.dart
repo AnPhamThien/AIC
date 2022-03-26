@@ -113,9 +113,10 @@ class AppRouter {
                   child: const RegistrationScreen(),
                 ));
       case verificationScreen:
+      String userID = routeSettings.arguments as String;
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
-                  create: (context) => VerificationBloc(),
+                  create: (context) => VerificationBloc(userID),
                   child: const VerificationScreen(),
                 ));
       case forgotPasswordScreen:

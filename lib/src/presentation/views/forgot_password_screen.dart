@@ -40,6 +40,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         } else if (status is FormSubmissionSuccess) {
               Map<String, dynamic> args = {
                 "userId": state.userId,
+                'email': state.email
               };
               context.read<AuthBloc>().add(NavigateToPageEvent(
                   route: AppRouter.emailConfirmScreen, args: args));

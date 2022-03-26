@@ -9,7 +9,8 @@ enum PostStatus {
   reported,
   deleted,
   save,
-  added
+  added,
+  updated
 }
 
 class PostState extends Equatable {
@@ -19,7 +20,7 @@ class PostState extends Equatable {
       this.post,
       this.needUpdate = false,
       this.isSaved = null,
-      this.categoryList = const <Category>[]});
+      this.categoryList = const <Category>[], this.postCaption});
 
   final PostStatus status;
   final String postId;
@@ -27,6 +28,7 @@ class PostState extends Equatable {
   final bool needUpdate;
   final bool? isSaved;
   final List<Category> categoryList;
+  final String? postCaption;
 
   PostState copyWith({
     PostStatus? status,
@@ -35,6 +37,7 @@ class PostState extends Equatable {
     bool? needUpdate,
     bool? isSaved,
     List<Category>? categoryList,
+    String? postCaption
   }) {
     return PostState(
       status: status ?? this.status,
@@ -43,6 +46,7 @@ class PostState extends Equatable {
       needUpdate: needUpdate ?? this.needUpdate,
       isSaved: isSaved ?? this.isSaved,
       categoryList: categoryList ?? this.categoryList,
+      postCaption: postCaption ?? this.postCaption
     );
   }
 

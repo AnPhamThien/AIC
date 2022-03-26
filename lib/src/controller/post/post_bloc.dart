@@ -36,6 +36,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<AddPost>(_onAddPost, transformer: throttleDroppable(throttleDuration));
     on<GetIsSave>(_onGetIsSave,
         transformer: throttleDroppable(throttleDuration));
+    on<UpdatePost>(_onUpdatePost, transformer: throttleDroppable(throttleDuration));
   }
 
   final PostRepository _postRepository = PostRepository();
@@ -159,6 +160,30 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       }
     } catch (e) {
       log(e.toString());
+    }
+  }
+
+  void _onUpdatePost(
+      UpdatePost event, Emitter<PostState> emit) async {
+    try {
+      String postId = event.postId;
+      String newCaption = event.newCaption;
+      GetResponseMessage? _respone = await _postRepository.updatePost(postId: postId, newCaption: newCaption);
+      if (_respone == null) {
+        throw Exception();
+      } 
+      int status = _respone.statusCode ?? 0;
+
+      if (status == StatusCode.successStatus) {
+        emit(state.copyWith(
+              status: PostStatus.updated,
+              postId: postId,
+              needUpdate: true, postCaption: newCaption));
+      } else {
+        throw Exception(_respone.messageCode);
+      }
+    } catch (_) {
+      log(_.toString() + "update");
     }
   }
 

@@ -9,7 +9,6 @@ import 'package:imagecaptioning/src/model/contest/user_in_contest_respone.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/model/post/post_detail_respone.dart';
 import 'package:imagecaptioning/src/repositories/contest/contest_repository.dart';
-import 'package:imagecaptioning/src/utils/func.dart';
 import '../../model/contest/user_in_contest_data.dart';
 import 'package:stream_transform/stream_transform.dart';
 part 'contest_user_event.dart';

@@ -5636,3 +5636,4 @@ build/9c280047c2dd3f2ce496a427b2583676/outputs.json
 .dart_tool/chrome-device/Default/shared_proto_db/metadata/LOG
 .dart_tool/chrome-device/Default/shared_proto_db/metadata/MANIFEST-000001
 .flutter-plugins
+.packages

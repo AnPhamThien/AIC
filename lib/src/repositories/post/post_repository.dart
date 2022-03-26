@@ -56,6 +56,7 @@ abstract class PostBehavior {
       Future<GetResponseMessage?> getCaption(
       {required File img});
       Future<ListSearchPostResponseMessage?> searchPostByImg({required File img, required int limitPost});
+  Future<GetResponseMessage?> updatePost({required String postId, required String newCaption});
 }
 
 class PostRepository extends PostBehavior {
@@ -384,6 +385,25 @@ class PostRepository extends PostBehavior {
         if (e.response != null) {
           ListSearchPostResponseMessage resMessage =
               ListSearchPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+  @override
+  Future<GetResponseMessage?> updatePost({required String postId, required String newCaption}) async {
+    try {
+      final resMessage =
+          await _dataRepository.updatePost(postId, newCaption);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
           return resMessage;
         }
       }

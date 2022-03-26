@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -96,26 +98,31 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       if (state.status == PostStatus.save &&
                           state.isSaved == false) {
                         post.isSaved = 0;
-                        context
-                            .read<ProfileBloc>()
-                            .add(ProfileInitializing(""));
                         context.read<PostBloc>().add(Reset());
                       }
                       if (state.status == PostStatus.save &&
                           state.isSaved == true) {
                         post.isSaved = 1;
-                        context
-                            .read<ProfileBloc>()
-                            .add(ProfileInitializing(""));
                         context.read<PostBloc>().add(Reset());
                       }
+
+                      if (state.status == PostStatus.updated) {
+                        if (state.postCaption != null) {
+context.read<PostDetailBloc>().add(UpdatePostDetail(state.postCaption!));
+                        }
+                      
+                      context.read<PostBloc>().add(Reset());
+                      log("check");
+                  }
                     },
                   ),
                 ],
                 child: BlocBuilder<PostBloc, PostState>(
                   builder: (context, state) {
+                    log("check1");
                     return BlocBuilder<PostDetailBloc, PostDetailState>(
                       builder: (context, state) {
+                        log("check2");
                         switch (state.status) {
                           case PostDetailStatus.success:
                             final Post _post = state.post!;

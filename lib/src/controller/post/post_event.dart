@@ -44,3 +44,10 @@ class AddPost extends PostEvent {
   final Post post;
   const AddPost(this.post);
 }
+
+class UpdatePost extends PostEvent {
+  final String postId;
+  final String newCaption;
+
+  const UpdatePost(this.postId, this.newCaption);
+}

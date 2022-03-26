@@ -4,16 +4,19 @@ class ForgotPasswordState {
   const ForgotPasswordState({
     this.formStatus = const InitialStatus(),
     this.userId,
+    this.email
   });
 
   final ForgotPasswordStatus formStatus;
   final String? userId;
+  final String? email;
 
   ForgotPasswordState copyWith(
-      {ForgotPasswordStatus? formStatus, String? userId}) {
+      {ForgotPasswordStatus? formStatus, String? userId, String? email}) {
     return ForgotPasswordState(
         formStatus: formStatus ?? this.formStatus,
-        userId: userId ?? this.userId);
+        userId: userId ?? this.userId,
+        email: email ?? this.email);
   }
 }
 

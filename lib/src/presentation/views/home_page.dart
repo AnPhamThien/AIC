@@ -77,10 +77,11 @@ class _HomePageState extends State<HomePage> {
                     context.read<ProfileBloc>().add(ProfileInitializing(''));
                     context.read<PostBloc>().add(Reset());
                   }
-                  if (state.status == PostStatus.added) {
+                  if (state.status == PostStatus.added || state.status == PostStatus.updated) {
                     setState(() {
                       context.read<HomeBloc>().add(InitPostFetched());
                       context.read<PostBloc>().add(Reset());
+                      context.read<ProfileBloc>().add(ProfileInitializing(''));
                     });
                   }
                   if (state.status == PostStatus.save &&

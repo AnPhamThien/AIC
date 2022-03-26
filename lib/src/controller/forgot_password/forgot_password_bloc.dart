@@ -32,7 +32,7 @@ class ForgotPasswordBloc
       String data = response.data ?? '';
 
       if (status == StatusCode.successStatus && data.isNotEmpty) {
-        emit(state.copyWith(formStatus: FormSubmissionSuccess(), userId: data));
+        emit(state.copyWith(formStatus: FormSubmissionSuccess(), userId: data, email: email));
       } else {
         String message = response.messageCode ?? "";
         throw Exception(message);

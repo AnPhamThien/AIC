@@ -38,8 +38,7 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
               Map<String, dynamic> args = {
                 "userId": state.userId,
               };
-              context.read<AuthBloc>().add(NavigateToPageEvent(
-                  route: AppRouter.resetPasswordScreen, args: args));
+              Navigator.pushNamed(context, AppRouter.resetPasswordScreen, arguments: args);
             }
           },
           child: SingleChildScrollView(
@@ -169,30 +168,29 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
               height: 15.h,
             ),
             //Resend button
-            AbsorbPointer(
-              absorbing: false,
-              child: TextButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => {},
-                  //   ),
-                  // );
-                },
-                style: TextButton.styleFrom(
-                    fixedSize: Size(size.width * .94, 55),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    backgroundColor: Colors.grey.shade200,
-                    alignment: Alignment.center,
-                    primary: Colors.black87,
-                    textStyle: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 20)),
-                child: const Text(
-                  "Resend code",
-                ),
-              ),
+            BlocBuilder<EmailConfirmationBloc, EmailConfirmationState>(
+              builder: (context, state) {
+                return AbsorbPointer(
+                          absorbing: state.absorbing,
+                          child: TextButton(
+                            onPressed: () {
+                              context.read<EmailConfirmationBloc>().add(const EmailConfirmationResendButtonPushed());
+                            },
+                            style: TextButton.styleFrom(
+                                fixedSize: Size(size.width * .94, 55),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                backgroundColor: Colors.grey.shade200,
+                                alignment: Alignment.center,
+                                primary: Colors.black87,
+                                textStyle: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 20)),
+                            child: Text(
+                              state.absorbing ? "Please wait for a few seconds" : "Resend code",
+                            ),
+                          ),
+                        );
+              },
             ),
           ],
         ),

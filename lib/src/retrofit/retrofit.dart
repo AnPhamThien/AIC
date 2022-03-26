@@ -399,6 +399,11 @@ abstract class RestClient {
     @Field('Id') String postId,
     @Field('status') int status,
   );
+  @POST('/posts/updatepost')
+  Future<GetResponseMessage> updatePost(
+    @Field('post_id') String postId,
+    @Field('new_caption') String newCaption,
+  );
   @POST('/users/getcaption')
   @MultiPart()
   Future<GetResponseMessage> getCaption(

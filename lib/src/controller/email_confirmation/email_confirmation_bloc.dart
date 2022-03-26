@@ -2,9 +2,6 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
-import 'package:imagecaptioning/src/utils/ticker.dart';
-import '../get_it/get_it.dart';
-import '../../prefs/app_prefs.dart';
 import '../../repositories/user/user_repository.dart';
 
 part 'email_confirmation_event.dart';
@@ -12,19 +9,15 @@ part 'email_confirmation_state.dart';
 
 class EmailConfirmationBloc
     extends Bloc<EmailConfirmationEvent, EmailConfirmationState> {
-  EmailConfirmationBloc(String userId)
+  EmailConfirmationBloc(String userId, String email)
       : _userRepository = UserRepository(),
-        _ticker = null,
-        super(EmailConfirmationState(userId: userId)) {
+        super(EmailConfirmationState(userId: userId, email: email)) {
     on<EmailConfirmationSubmitted>(_onSubmitted);
     on<EmailConfirmationResendButtonPushed>(_onResendButtonPushed);
+    on<EmailConfirmationResendButtonRestart>(_onResendButtonRestart);
   }
 
   final UserRepository _userRepository;
-  Ticker? _ticker;
-  static const int _duration = 10;
-
-  StreamSubscription<int>? _tickerSubscription;
 
   void _onSubmitted(
     EmailConfirmationSubmitted event,
@@ -53,19 +46,24 @@ class EmailConfirmationBloc
     Emitter<EmailConfirmationState> emit,
   ) async {
     try {
-      String userID = getIt<AppPref>().getUserID;
+      emit(state.copyWith(absorbing: true));
+      startTimeout();
+      String email = state.email;
+      if (email.isEmpty) {
+        throw Exception();
+      }
       final response =
-          await _userRepository.regenerateCodeForRegister(userID: userID);
+          await _userRepository.generateResetPasswordCode(email: email);
       if (response == null) {
         throw Exception("");
       }
-      if (response is int) {
-        if (response == StatusCode.successStatus) {
-          //emit(state.copyWith(absorbing: true));
+
+      int status = response.statusCode ?? 0;
+      String data = response.data ?? '';
+
+        if (status == StatusCode.successStatus && data.isNotEmpty) {
+          
         } else {
-          throw Exception("");
-        }
-      } else {
         throw Exception(response);
       }
     } on Exception catch (_) {
@@ -73,15 +71,24 @@ class EmailConfirmationBloc
     }
   }
 
-  void _onStarted(TimerStarted event, Emitter<EmailConfirmationState> emit) {
-    _tickerSubscription?.cancel();
+ final timeout = const Duration(seconds: 10);
 
-    _tickerSubscription = _ticker
-        ?.tick(ticks: event.duration)
-        .listen((duration) => add(TimerTicked(duration: duration)));
+Timer startTimeout() {
+  var duration = timeout;
+  return Timer(duration, handleTimeout);
+}
+void handleTimeout() {  // callback function
+  add(const EmailConfirmationResendButtonRestart());
+}
+
+void _onResendButtonRestart(
+    EmailConfirmationResendButtonRestart event,
+    Emitter<EmailConfirmationState> emit,
+  ) async {
+    try {
+      emit(state.copyWith(absorbing: false));
+    } on Exception catch (_) {
+      emit(state.copyWith(formStatus: ErrorStatus(_)));
+    }
   }
-
-  void _onTicked(TimerTicked event, Emitter<EmailConfirmationState> emit) {}
-
-  void _onTick(Duration duration) {}
 }

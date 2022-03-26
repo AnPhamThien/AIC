@@ -129,7 +129,7 @@ class AppRouter {
         final args = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => EmailConfirmationBloc(args['userId']),
+            create: (context) => EmailConfirmationBloc(args['userId'], args['email']),
             child: const EmailConfirmationScreen(),
           ),
         );

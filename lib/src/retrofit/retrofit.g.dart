@@ -1270,6 +1270,22 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<GetResponseMessage> updatePost(postId, newCaption) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = {'post_id': postId, 'new_caption': newCaption};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'POST', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/updatepost',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<GetResponseMessage> getCaption(img) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

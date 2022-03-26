@@ -492,4 +492,9 @@ class DataRepository implements RestClient {
   Future<ListSearchPostResponseMessage> searchPostByImg(File img, int limitPost) {
     return _client.searchPostByImg(img, limitPost);
   }
+
+  @override
+  Future<GetResponseMessage> updatePost(String postId, String newCaption) {
+    return _client.updatePost(postId, newCaption); 
+  }
 }

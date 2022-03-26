@@ -106,7 +106,6 @@ Future pickImage(ImageSource source, BuildContext context, String destination) a
         arguments: croppedFile.path) as Post?;
     if (post != null) {
       context.read<PostBloc>().add(AddPost(post));
-      context.read<ProfileBloc>().add(ProfileInitializing(''));
     }
   } on PlatformException catch (e) {
     log('Failed to pick image due to wrong platform: $e');

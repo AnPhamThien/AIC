@@ -363,6 +363,7 @@ class _ContestListScreenState extends State<ContestListScreen>
       child: ListTile(
         onTap: () {
           Map<String, dynamic> args = {'contest': contest};
+          
           context.read<AuthBloc>().add(NavigateToPageEvent(
                 route: AppRouter.contestScreen,
                 args: args,

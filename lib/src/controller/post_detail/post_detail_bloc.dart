@@ -52,6 +52,8 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
       _commentDeleted,
       transformer: throttleDroppable(throttleDuration),
     );
+    on<UpdatePostDetail>(_onUpdatePost, transformer: throttleDroppable(throttleDuration));
+    
   }
 
   final PostRepository _postRepository = PostRepository();
@@ -171,6 +173,22 @@ class PostDetailBloc extends Bloc<PostDetailEvent, PostDetailState> {
       }
     } catch (_) {
       log(_.toString() + "add");
+      emit(state.copyWith(status: PostDetailStatus.failure));
+    }
+  }
+
+  void _onUpdatePost(
+      UpdatePostDetail event, Emitter<PostDetailState> emit) async {
+    try {
+      String postCaption = event.postCaption;
+      final post = state.post;
+      if (post != null) {
+        post.userCaption = postCaption;
+      add(PostDetailInitEvent(post));
+      } else {throw Exception('');} 
+      
+    } catch (_) {
+      log(_.toString() + "update");
       emit(state.copyWith(status: PostDetailStatus.failure));
     }
   }

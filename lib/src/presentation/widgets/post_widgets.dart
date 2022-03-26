@@ -15,6 +15,7 @@ import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 
 import 'get_user_input_field.dart';
 import 'global_widgets.dart';
@@ -32,6 +33,7 @@ class PostWidget extends StatefulWidget {
 
 class _PostWidgetState extends State<PostWidget> {
   late Post post;
+
   @override
   void initState() {
     post = widget.post;
@@ -139,6 +141,10 @@ class PostHeadlineWidget extends StatefulWidget {
 }
 
 class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
+      final _updatePostController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     context.read<PostBloc>().add(GetCategory());
@@ -264,6 +270,10 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                           context.read<PostBloc>().add(SavePost(widget.postId));
 
                           break;
+                        case 'update':
+                        
+                        return showUpdateDialog('Update caption', widget.postId);
+                        
                         default:
                           return;
                       }
@@ -284,7 +294,9 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                           PopupMenuItem(
                               value: 'delete',
                               child: getPopupMenuItem(
-                                  "Delete", Icons.delete_outline_rounded))
+                                  "Delete", Icons.delete_outline_rounded)),
+                          PopupMenuItem(value: 'update',
+                           child: getPopupMenuItem("Update caption", Icons.edit_rounded))
                         ];
                       }
 
@@ -310,6 +322,52 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Future<void> showUpdateDialog(
+      String text, String postId) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext dialogContext) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 23,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.w500)),
+        content: SizedBox(
+          width: MediaQuery.of(dialogContext).size.width * .9,
+          child: Form(
+            key: _formKey,
+            child: GetUserInput(
+                label: "",
+                hint: "Your new caption",
+                isPassword: false,
+                validator: Validation.blankValidation,
+                controller: _updatePostController),
+          ),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                 context.read<PostBloc>().add(
+                        UpdatePost(postId ,_updatePostController.value.text));
+                Navigator.of(dialogContext).pop();
+              }
+            },
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -598,10 +656,6 @@ class PostIconWidget extends StatelessWidget {
                 onPressed: () async {
                   if (post != null) {
                     Map<String, dynamic> args = {'post': post};
-                    // context.read<AuthBloc>().add(NavigateToPageEvent(
-                    //       route: AppRouter.postDetailScreen,
-                    //       args: args,
-                    //     ));
                     await Navigator.pushNamed(
                         context, AppRouter.postDetailScreen,
                         arguments: args);

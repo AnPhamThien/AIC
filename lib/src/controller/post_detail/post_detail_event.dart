@@ -28,3 +28,9 @@ class PostDetailDeleteComment extends PostDetailEvent {
 }
 
 class CommentDeleted extends PostDetailEvent {}
+
+class UpdatePostDetail extends PostDetailEvent {
+  final String postCaption;
+
+  const UpdatePostDetail(this.postCaption);
+}

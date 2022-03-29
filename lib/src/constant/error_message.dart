@@ -9,7 +9,7 @@ class MessageCode {
     userNameExist: "Username already used",
     userMailNotFound: "User's mail is not found",
     oldPassWord: "Old password",
-    userPassWordInCorrect: "Incorrect password",
+    userPassWordInCorrect: "Please check your username and password.",
     getUserDetailFail: "Get user's details fail",
     getMoreUserPostFail: "Get more user's posts fail",
     getUserAccountFail: "Get user account fail",

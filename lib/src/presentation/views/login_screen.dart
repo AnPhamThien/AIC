@@ -43,11 +43,11 @@ class LoginScreenState extends State<LoginScreen> {
               MessageCode.errorMap[MessageCode.userAccountInActivated]) {
                 String userId = getIt<AppPref>().getUserID;
                 getIt<AppPref>().setUserID('');
-            _getDialog(MessageCode.errorMap[MessageCode.userAccountInActivated],
+             _getDialog(MessageCode.errorMap[MessageCode.userAccountInActivated],
                 () {
-                  Navigator.of(context).pushNamed(AppRouter.verificationScreen, arguments: userId);
+                  Navigator.of(context).popAndPushNamed(AppRouter.verificationScreen, arguments: userId);
             });
-          } else if (errorMessage == MessageCode.userNotFound) {
+          } else if (errorMessage == MessageCode.errorMap[MessageCode.userNotFound]) {
             _getDialog(MessageCode.errorMap[MessageCode.userPassWordInCorrect],
                 () => Navigator.pop(context));
           } else {

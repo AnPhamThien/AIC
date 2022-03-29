@@ -1,11 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
+import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
+import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import '../../controller/post_detail/post_detail_bloc.dart';
@@ -82,7 +83,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                     },
                   ),
                   BlocListener<PostBloc, PostState>(
-                    listener: (context, state) {
+                    listener: (context, state) async {
                       if (state.status == PostStatus.like &&
                           state.needUpdate == true) {
                         post.isLike = 1;
@@ -109,19 +110,22 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         if (state.postCaption != null) {
 context.read<PostDetailBloc>().add(UpdatePostDetail(state.postCaption!));
                         }
-                      
+                      await _getDialog(
+                      "Update post successfully", 'Success', () => Navigator.pop(context));
                       context.read<PostBloc>().add(Reset());
-                      log("check");
+                  }
+
+                  if (state.status == PostStatus.fail) {
+                    await _getDialog(
+                      MessageCode.genericError, 'Error !', () => Navigator.pop(context));
                   }
                     },
                   ),
                 ],
                 child: BlocBuilder<PostBloc, PostState>(
                   builder: (context, state) {
-                    log("check1");
                     return BlocBuilder<PostDetailBloc, PostDetailState>(
                       builder: (context, state) {
-                        log("check2");
                         switch (state.status) {
                           case PostDetailStatus.success:
                             final Post _post = state.post!;
@@ -161,6 +165,8 @@ context.read<PostDetailBloc>().add(UpdatePostDetail(state.postCaption!));
   }
 
   Container getCommentInputSection() {
+    String avatarPath = getIt<AppPref>().getAvatarPath;
+
     return Container(
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -182,12 +188,13 @@ context.read<PostDetailBloc>().add(UpdatePostDetail(state.postCaption!));
           maxLines: null,
           keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
-            icon: const CircleAvatar(
+            icon:  CircleAvatar(
               child: ClipOval(
                 child: Image(
                   height: 50.0,
                   width: 50.0,
-                  image: AssetImage("assets/images/avatar_placeholder.png"),
+                  image: avatarPath.isNotEmpty ? NetworkImage(avatarUrl + avatarPath) : 
+                  const AssetImage("assets/images/avatar_placeholder.png") as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -242,6 +249,7 @@ context.read<PostDetailBloc>().add(UpdatePostDetail(state.postCaption!));
                 child: PostHeadlineWidget(
                   userId: post.userId!,
                   username: post.userName!,
+                  caption: post.userCaption ?? post.aiCaption!,
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
@@ -396,6 +404,39 @@ context.read<PostDetailBloc>().add(UpdatePostDetail(state.postCaption!));
             },
             child: const Text(
               'Cancel',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? MessageCode.genericError,
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
           ),

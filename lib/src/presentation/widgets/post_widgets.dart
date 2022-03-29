@@ -57,6 +57,8 @@ class _PostWidgetState extends State<PostWidget> {
                 PostHeadlineWidget(
                   userId: post.userId!,
                   username: post.userName!,
+                  caption:
+                      widget.post.userCaption ?? widget.post.aiCaption ?? "",
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
@@ -119,6 +121,7 @@ class PostHeadlineWidget extends StatefulWidget {
     Key? key,
     required this.userId,
     required this.username,
+    required this.caption,
     required this.time,
     required this.postAvatar,
     required this.postId,
@@ -129,6 +132,7 @@ class PostHeadlineWidget extends StatefulWidget {
 
   final String userId;
   final String username;
+  final String caption;
   final DateTime time;
   final String? postAvatar;
   final String postId;
@@ -155,6 +159,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
   Widget build(BuildContext context) {
     final _calculatedTime = timeCalculate(widget.time);
     Map<String, dynamic> args = {'userId': widget.userId};
+    _updatePostController.text = widget.caption;
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 15),
       onTap: () => widget.userId != getIt<AppPref>().getUserID
@@ -264,16 +269,12 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                           context.read<PostBloc>().add(
                                 UnsavePost(widget.postId),
                               );
-
                           break;
                         case 'save':
                           context.read<PostBloc>().add(SavePost(widget.postId));
-
                           break;
                         case 'update':
-                        
                         return showUpdateDialog('Update caption', widget.postId);
-                        
                         default:
                           return;
                       }

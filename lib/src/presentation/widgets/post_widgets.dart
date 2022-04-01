@@ -145,7 +145,7 @@ class PostHeadlineWidget extends StatefulWidget {
 }
 
 class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
-      final _updatePostController = TextEditingController();
+  final _updatePostController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -274,7 +274,8 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                           context.read<PostBloc>().add(SavePost(widget.postId));
                           break;
                         case 'update':
-                        return showUpdateDialog('Update caption', widget.postId);
+                          return showUpdateDialog(
+                              'Update caption', widget.postId);
                         default:
                           return;
                       }
@@ -296,8 +297,10 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                               value: 'delete',
                               child: getPopupMenuItem(
                                   "Delete", Icons.delete_outline_rounded)),
-                          PopupMenuItem(value: 'update',
-                           child: getPopupMenuItem("Update caption", Icons.edit_rounded))
+                          PopupMenuItem(
+                              value: 'update',
+                              child: getPopupMenuItem(
+                                  "Update caption", Icons.edit_rounded))
                         ];
                       }
 
@@ -327,8 +330,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
     );
   }
 
-  Future<void> showUpdateDialog(
-      String text, String postId) {
+  Future<void> showUpdateDialog(String text, String postId) {
     return showDialog<String>(
       context: context,
       builder: (BuildContext dialogContext) => AlertDialog(
@@ -358,8 +360,9 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
           TextButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
-                 context.read<PostBloc>().add(
-                        UpdatePost(postId ,_updatePostController.value.text));
+                context
+                    .read<PostBloc>()
+                    .add(UpdatePost(postId, _updatePostController.value.text));
                 Navigator.of(dialogContext).pop();
               }
             },
@@ -715,18 +718,19 @@ class PostDescription extends StatelessWidget {
             ),
           ),
           //USERNAME & CAPTIONS
-          Text.rich(
-            TextSpan(
+          RichText(
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            text: TextSpan(
               children: [
                 TextSpan(
                   text: username,
                   style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                  ),
+                      fontWeight: FontWeight.bold, color: Colors.black),
                 ),
                 TextSpan(
-                  text: "  " + caption,
-                )
+                    text: "  " + caption,
+                    style: const TextStyle(color: Colors.black))
               ],
             ),
           ),

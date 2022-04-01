@@ -117,6 +117,14 @@ class _NotificationPageState extends State<NotificationPage> {
         ),
       ),
       subtitle: Text(time.toString() + " min"),
+      trailing: Image(
+        height: 45.0,
+        width: 45.0,
+        image: (imgLink.isNotEmpty) //nhét ảnh vào đây
+            ? NetworkImage(postImageUrl + imgLink)
+            : const AssetImage('assets/images/Veibae.jpeg') as ImageProvider,
+        fit: BoxFit.cover,
+      ),
     );
   }
 

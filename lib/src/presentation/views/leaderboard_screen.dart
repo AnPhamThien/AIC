@@ -37,7 +37,7 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                     elevation: 0,
                     pinned: true,
                     expandedHeight: kToolbarHeight,
-                    title: AppBarTitle(title: 'LeaderBoard'),
+                    title: AppBarTitle(title: 'Leaderboard'),
                     leadingWidth: 30,
                   ),
                   SliverList(

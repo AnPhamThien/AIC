@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
+import 'package:crypto/crypto.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import '../get_it/get_it.dart';
 import '../../model/user/user.dart';
@@ -24,10 +27,14 @@ class RegistrationBloc extends Bloc<RegistrationEvent, RegistrationState> {
     try {
       String username = event.username;
       String password = event.password;
+
+      var bytes = utf8.encode(password);
+      var encodedPassword = sha256.convert(bytes).toString();
+      
       String email = event.email;
       RegisterDefaultResponseMessage? response =
           await _userRepository.registerDefault(
-              username: username, password: password, email: email);
+              username: username, password: encodedPassword, email: email);
       if (response == null) {
         throw Exception("");
       }

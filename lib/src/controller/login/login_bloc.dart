@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
+import 'package:crypto/crypto.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import '../get_it/get_it.dart';
 import '../../model/user/user.dart';
@@ -27,8 +31,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       String username = event.username;
       String password = event.password;
 
+      var bytes = utf8.encode(password);
+      var encodedPassword = sha256.convert(bytes).toString();
+      log(bytes.toString());
+      log(encodedPassword.toString());
+
       AuthenticationResponseMessage? response =
-          await _userRepository.login(username: username, password: password);
+          await _userRepository.login(username: username, password: encodedPassword);
 
       if (response == null) {
         throw Exception("");

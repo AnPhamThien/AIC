@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
+import 'package:crypto/crypto.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import '../../repositories/user/user_repository.dart';
 
@@ -21,8 +24,12 @@ class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
     try {
       String userId = state.userId;
       String password = event.password;
+
+      var bytes = utf8.encode(password);
+      var encodedPassword = sha256.convert(bytes).toString();
+
       final response = await _userRepository.resetPassword(
-          userId: userId, password: password);
+          userId: userId, password: encodedPassword);
       if (response == null) {
         throw Exception("");
       }

@@ -62,6 +62,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       //TODO: add logout screen
 
       //await _signalRHelper.closeConnection();
+      await _signalRHelper.unregisterAll();
 
       await _authRepository.deleteRefreshToken();
 
@@ -77,6 +78,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onForceLogout(ForceLogoutEvent event, Emitter emit) async {
     try {
+      await _signalRHelper.unregisterAll();
       emit(state.copyWith(authStatus: AuthenticationUnauthenticated()));
       
 

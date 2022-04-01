@@ -55,6 +55,19 @@ class SignalRHelper {
     }
   }
 
+  Future<void> unregisterAll() async {
+    try {
+      if (hubConnection?.state != HubConnectionState.disconnected) {
+        hubConnection!.off('forcelogout');
+        hubConnection!.off('specificnotification');
+        hubConnection!.off('getMessage');
+      }
+    } on Exception catch (_) {
+      log("Fail to close connection");
+      log(_.toString());
+    }
+  }
+
   Future<void> closeConnection() async {
     try {
       if (hubConnection?.state != HubConnectionState.disconnected) {

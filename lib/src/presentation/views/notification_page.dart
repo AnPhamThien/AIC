@@ -94,7 +94,7 @@ class _NotificationPageState extends State<NotificationPage> {
               width: 45.0,
               image: (imgLink.isNotEmpty)
                   ? NetworkImage(postImageUrl + imgLink)
-                  : const AssetImage('assets/images/Veibae.jpeg')
+                  : const AssetImage('assets/images/avatar_placeholder.jpeg')
                       as ImageProvider,
               fit: BoxFit.cover,
             ),

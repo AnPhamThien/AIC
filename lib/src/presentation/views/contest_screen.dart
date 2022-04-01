@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -203,10 +202,9 @@ class _ContestScreenState extends State<ContestScreen> {
             TextButton(
               onPressed: () {
                 String args = state.contest?.id ?? '';
-                   Navigator.pushNamed(
-                context,
-                AppRouter.leaderboardScreen, arguments: args
-              );},
+                Navigator.pushNamed(context, AppRouter.leaderboardScreen,
+                    arguments: args);
+              },
               child: const Text(
                 "Leader Board",
                 style: TextStyle(
@@ -310,6 +308,17 @@ class _ContestScreenState extends State<ContestScreen> {
       title: AppBarTitle(title: _contest.contestName ?? ''),
       leadingWidth: 30,
       actions: [
+        !state.contest!.timeLeft!.contains("Closed")
+            ? IconButton(
+                onPressed: () {
+                  //chuyển màn upload post
+                },
+                icon: SvgPicture.asset(
+                  'assets/icons/upload_icon.svg',
+                  color: Colors.black87,
+                ),
+              )
+            : const SizedBox.shrink(),
         IconButton(
           onPressed: () {
             getSheet(_contest, context.read<ContestBloc>(), state);
@@ -440,7 +449,8 @@ class _ContestScreenState extends State<ContestScreen> {
                   return Container(
                     child: ListTile(
                       dense: true,
-                      visualDensity: const VisualDensity(horizontal: 0, vertical: -3),
+                      visualDensity:
+                          const VisualDensity(horizontal: 0, vertical: -3),
                       title: Text(
                         'Top ${prize.top}: ${prize.name}',
                         style:

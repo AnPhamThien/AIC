@@ -16,10 +16,12 @@ class Validation {
   }
 
   static String? passwordValidation(String? value) {
+    final regexp = RegExp(r'^([A-Za-z]+[0-9|]|[0-9]+[A-Za-z])[A-Za-z0-9]*$');
+
     if (value == null || value.isEmpty) {
       return 'Cannot be empty';
-    } else if (value.length < 6) {
-      return 'Password must have at least 6 characters';
+    } else if (value.length < 6 || !regexp.hasMatch(value)) {
+      return 'Password must have at least 6 characters which contains at least 1 number and 1 character';
     }
     return null;
   }

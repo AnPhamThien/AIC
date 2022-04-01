@@ -208,7 +208,7 @@ class _ContestScreenState extends State<ContestScreen> {
                 AppRouter.leaderboardScreen, arguments: args
               );},
               child: const Text(
-                "Leader Board",
+                "Leaderboard",
                 style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w700,

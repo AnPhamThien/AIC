@@ -141,19 +141,31 @@ class _ContestScreenState extends State<ContestScreen> {
                               : const SliverToBoxAdapter(
                                   child: SizedBox.shrink(),
                                 ),
-                          SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (BuildContext context, int index) {
-                                _postList = state.post;
-                                final Post post = _postList[index];
-                                return PostWidget(
-                                  post: post,
-                                  isInContest: true,
-                                );
-                              },
-                              childCount: state.post.length,
-                            ),
-                          )
+                          state.post.isEmpty
+                              ? SliverToBoxAdapter(
+                                  child: SizedBox(
+                                    height: MediaQuery.of(context).size.height,
+                                    child: const Center(
+                                      child: Text(
+                                        "THIS CONTEST HAS NO POST",
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              : SliverList(
+                                  delegate: SliverChildBuilderDelegate(
+                                    (BuildContext context, int index) {
+                                      _postList = state.post;
+                                      final Post post = _postList[index];
+                                      return PostWidget(
+                                        post: post,
+                                        isInContest: true,
+                                      );
+                                    },
+                                    childCount: state.post.length,
+                                  ),
+                                )
                         ],
                       ),
                     ),

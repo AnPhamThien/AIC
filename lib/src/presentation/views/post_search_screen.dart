@@ -100,6 +100,7 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                   icon: const Icon(Icons.arrow_back_rounded)),
             ),
             FloatingSearchBar(
+              controller: controller,
               title: Text(
                 selectedTerm ?? 'The Search App',
                 style: Theme.of(context).textTheme.headline6,
@@ -216,8 +217,11 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                 );
               },
               body: Padding(
+                //post search item
                 padding: const EdgeInsets.only(top: 70),
-                child: ListView.builder(
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: 20,
@@ -284,6 +288,7 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
   //                         ),
   //                       ),
   //                     ),
+  //TODO lấy từ cái này
   //                     SliverGrid(
   //                       gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
   //                         maxCrossAxisExtent:

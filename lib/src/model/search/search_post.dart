@@ -11,14 +11,14 @@ class ListSearchPostResponseMessage {
 
     dynamic messageCode;
     int? statusCode;
-    SearchResultsData? data;
+    List<Post>? data;
     dynamic total;
     int? sunOfPages;
 
     factory ListSearchPostResponseMessage.fromJson(Map<String, dynamic> json) => ListSearchPostResponseMessage(
         messageCode: json["messageCode"],
         statusCode: json["statusCode"],
-        data: json["data"] != null ? SearchResultsData.fromJson(json["data"]) : null,
+        data: json["data"] != null ? (List<Post>.from(json["data"].map((x) => Post.fromJson(x)))) : null,
         total: json["total"],
         sunOfPages: json["sunOfPages"],
     );
@@ -26,28 +26,8 @@ class ListSearchPostResponseMessage {
     Map<String, dynamic> toJson() => {
         "messageCode": messageCode,
         "statusCode": statusCode,
-        "data": data!.toJson(),
+        "data": data,
         "total": total,
         "sunOfPages": sunOfPages,
-    };
-}
-
-class SearchResultsData {
-    SearchResultsData({
-        this.posts,
-        this.words,
-    });
-
-    List<Post>? posts;
-    List<String>? words;
-
-    factory SearchResultsData.fromJson(Map<String, dynamic> json) => SearchResultsData(
-        posts: List<Post>.from(json["posts"].map((x) => Post.fromJson(x))),
-        words: List<String>.from(json["words"].map((x) => x)),
-    );
-
-    Map<String, dynamic> toJson() => {
-        "posts": List<dynamic>.from(posts!.map((x) => x.toJson())),
-        "words": List<dynamic>.from(words!.map((x) => x)),
     };
 }

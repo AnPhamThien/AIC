@@ -24,8 +24,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         super(NotificationState()) {
     on<FetchNotification>(_onFetch,
         transformer: throttleDroppable(throttleDuration));
-    // on<FetchMoreNotification>(_onFetchMore,
-    //     transformer: throttleDroppable(throttleDuration));
+    on<FetchMoreNotification>(_onFetchMore,
+        transformer: throttleDroppable(throttleDuration));
   }
   final NotificationRepository _notificationRepository;
 
@@ -36,6 +36,45 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     try {
       GetNotificationResponseMessage? resMessage =
           await _notificationRepository.getNotification(limit: limitNoti);
+
+      if (resMessage == null) {
+        throw Exception(null);
+      }
+
+      final status = resMessage.statusCode ?? 0;
+      final message = resMessage.messageCode ?? "";
+      final data = resMessage.data ?? [];
+
+      if (status == StatusCode.successStatus && data.isNotEmpty) {
+        emit(state.copyWith(
+            status: FinishInitializing(),
+            notificationList: data,
+            hasReachedMax: false));
+      } else if (message == MessageCode.noNotificationToDisplay) {
+        emit(state.copyWith(
+            status: FinishInitializing(),
+            notificationList: [],
+            hasReachedMax: true));
+      } else {
+        throw Exception(message);
+      }
+    } catch (_) {
+      emit(state.copyWith(status: ErrorStatus(_.toString())));
+    }
+  }
+
+  void _onFetchMore(
+    FetchMoreNotification event,
+    Emitter<NotificationState> emit,
+  ) async {
+    try {
+      if (state.hasReachedMax) {
+        return;
+      }
+      String dateBoundary = state.notificationList?.last.dateCreate.toString() ?? '';
+
+      GetNotificationResponseMessage? resMessage =
+          await _notificationRepository.getMoreNotification(limit: limitNoti, dateBoundary: dateBoundary);
 
       if (resMessage == null) {
         throw Exception(null);

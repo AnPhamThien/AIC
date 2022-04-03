@@ -2,28 +2,32 @@ part of 'post_search_bloc.dart';
 
 class PostSearchState {
   final List<Post>? searchResultPostList;
-  final List<String>? searchResultWordList;
   final String? imgPath;
   final PostSearchStatus status;
+  final String? searchString;
+  final bool hasReachedMax;
 
   PostSearchState({
     this.searchResultPostList,
-    this.searchResultWordList,
     this.imgPath,
     this.status = const InitialStatus(),
+    this.searchString,
+    this.hasReachedMax = false
   });
 
   PostSearchState copyWith({
     List<Post>? searchResultPostList,
-    List<String>? searchResultWordList,
     String? imgPath,
     PostSearchStatus? status,
+    String? searchString,
+    bool? hasReachedMax
   }) {
     return PostSearchState(
       searchResultPostList: searchResultPostList ?? this.searchResultPostList,
-      searchResultWordList: searchResultWordList ?? this.searchResultWordList,
       imgPath: imgPath ?? this.imgPath,
-      status: status ?? this.status    
+      status: status ?? this.status,
+      searchString: searchString ?? this.searchString,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax
       );
   }
 }

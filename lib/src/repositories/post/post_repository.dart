@@ -421,6 +421,7 @@ class PostRepository extends PostBehavior {
 
       return resMessage;
     } catch (e) {
+      log(e.toString());
       if (e is DioError) {
         if (e.response != null) {
           ListSearchPostResponseMessage resMessage =

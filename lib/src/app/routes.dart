@@ -290,11 +290,11 @@ class AppRouter {
                   child: const SearchPage(),
                 ));
       case postSearchScreen:
-      final arg = routeSettings.arguments as String;
+      //final arg = routeSettings.arguments as String;
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) =>
-                      PostSearchBloc()..add(PostSearchInitializing(arg)),
+                      PostSearchBloc(),
                   child: const PostSearchScreen(),
                 ));
       default:

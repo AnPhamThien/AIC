@@ -1346,6 +1346,47 @@ class _RestClient implements RestClient {
     return value;
   }
 
+  @override
+  Future<ListSearchPostResponseMessage> searchPostByKey(
+      searchString, limitPost) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'searchString': searchString,
+      r'limitPost': limitPost
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ListSearchPostResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/searchpostbykey',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ListSearchPostResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<ListSearchPostResponseMessage> searchMorePostByKey(
+      searchString, limitPost, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'searchString': searchString,
+      r'limitPost': limitPost,
+      r'date_boundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<ListSearchPostResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/searchmorepostbykey',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = ListSearchPostResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

@@ -77,7 +77,8 @@ class _HomePageState extends State<HomePage> {
                     context.read<ProfileBloc>().add(ProfileInitializing(''));
                     context.read<PostBloc>().add(Reset());
                   }
-                  if (state.status == PostStatus.added || state.status == PostStatus.updated) {
+                  if (state.status == PostStatus.added ||
+                      state.status == PostStatus.updated) {
                     setState(() {
                       context.read<HomeBloc>().add(InitPostFetched());
                       context.read<PostBloc>().add(Reset());
@@ -190,7 +191,7 @@ class _HomePageState extends State<HomePage> {
           },
           icon: SvgPicture.asset(
             "assets/icons/message_icon.svg",
-            color: Colors.black,
+            color: Colors.black, //khi có noti thì màu gì thì để
             width: 27,
             height: 27,
           ),

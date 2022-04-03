@@ -1,6 +1,3 @@
-
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,6 +9,7 @@ import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
 
@@ -89,7 +87,8 @@ class _RootScreenState extends State<RootScreen> {
                           : icons[index]['inactive']!,
                       width: 27,
                       height: 27,
-                      color: Colors.black87,
+                      color: Colors
+                          .black87, //nếu có noti và index page != noti thì màu đ
                     ),
                   );
               }
@@ -125,14 +124,14 @@ class _RootScreenState extends State<RootScreen> {
         itemBuilder: (context) {
           final list = <PopupMenuEntry<int>>[];
           list.add(
-            getMenuItem(null, "User", Icons.grid_on_rounded, 0 , null),
+            getMenuItem(null, "User", Icons.grid_on_rounded, 0, null),
           );
           list.add(
             const PopupMenuDivider(),
           );
           list.add(
-            getMenuItem(
-                null, "Post", Icons.camera_enhance_outlined, 1 , AppRouter.postSearchScreen),
+            getMenuItem(ImageSource.gallery, "Post",
+                Icons.camera_enhance_outlined, 1, AppRouter.postSearchScreen),
           );
           return list;
         },
@@ -160,15 +159,15 @@ class _RootScreenState extends State<RootScreen> {
         itemBuilder: (context) {
           final list = <PopupMenuEntry<int>>[];
           list.add(
-            getMenuItem(
-                ImageSource.gallery, "Gallery", Icons.grid_on_rounded, 1, AppRouter.uploadScreen),
+            getMenuItem(ImageSource.gallery, "Gallery", Icons.grid_on_rounded,
+                1, AppRouter.uploadScreen),
           );
           list.add(
             const PopupMenuDivider(),
           );
           list.add(
-            getMenuItem(
-                ImageSource.camera, "Camera", Icons.camera_enhance_outlined, 1 , AppRouter.uploadScreen),
+            getMenuItem(ImageSource.camera, "Camera",
+                Icons.camera_enhance_outlined, 1, AppRouter.uploadScreen),
           );
           return list;
         },
@@ -182,8 +181,8 @@ class _RootScreenState extends State<RootScreen> {
     );
   }
 
-  PopupMenuItem<int> getMenuItem(
-      ImageSource? source, String label, IconData iconData, int? value, String? destination) {
+  PopupMenuItem<int> getMenuItem(ImageSource? source, String label,
+      IconData iconData, int? value, String? destination) {
     return PopupMenuItem(
       value: value,
       onTap: () {

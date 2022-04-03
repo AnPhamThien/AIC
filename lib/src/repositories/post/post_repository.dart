@@ -57,6 +57,8 @@ abstract class PostBehavior {
       {required File img});
       Future<ListSearchPostResponseMessage?> searchPostByImg({required File img, required int limitPost});
   Future<GetResponseMessage?> updatePost({required String postId, required String newCaption});
+  Future<ListSearchPostResponseMessage?> searchPostByKey({required String searchString, required int limitPost});
+  Future<ListSearchPostResponseMessage?> searchMorePostByKey({required String searchString, required int limitPost, required String dateBoundary});
 }
 
 class PostRepository extends PostBehavior {
@@ -404,6 +406,44 @@ class PostRepository extends PostBehavior {
         if (e.response != null) {
           GetResponseMessage resMessage =
               GetResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+   @override
+  Future<ListSearchPostResponseMessage?> searchPostByKey({required String searchString, required int limitPost}) async {
+    try {
+      final resMessage =
+          await _dataRepository.searchPostByKey(searchString, limitPost);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          ListSearchPostResponseMessage resMessage =
+              ListSearchPostResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
+    }
+  }
+
+   @override
+  Future<ListSearchPostResponseMessage?> searchMorePostByKey({required String searchString, required int limitPost, required String dateBoundary}) async {
+    try {
+      final resMessage =
+          await _dataRepository.searchMorePostByKey(searchString, limitPost, dateBoundary);
+
+      return resMessage;
+    } catch (e) {
+      if (e is DioError) {
+        if (e.response != null) {
+          ListSearchPostResponseMessage resMessage =
+              ListSearchPostResponseMessage.fromJson(e.response!.data);
           return resMessage;
         }
       }

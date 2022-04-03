@@ -421,4 +421,17 @@ abstract class RestClient {
     @Part(value: 'Img') File img,
       @Part(value: 'limitPost') int limitPost
       );
+  
+  @GET('/posts/searchpostbykey')
+  Future<ListSearchPostResponseMessage> searchPostByKey(
+    @Query('searchString') String searchString,
+    @Query('limitPost') int limitPost
+  );
+
+  @GET('/posts/searchmorepostbykey')
+  Future<ListSearchPostResponseMessage> searchMorePostByKey(
+    @Query('searchString') String searchString,
+    @Query('limitPost') int limitPost,
+    @Query('date_boundary') String dateBoundary
+  );
 }

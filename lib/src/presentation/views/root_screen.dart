@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -112,6 +114,9 @@ class _RootScreenState extends State<RootScreen> {
               AppRouter.userSearchScreen,
             );
           }
+          else if (result == 1) {
+            Navigator.pushNamed(context, AppRouter.postSearchScreen);
+          }
         },
         color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -127,7 +132,7 @@ class _RootScreenState extends State<RootScreen> {
           );
           list.add(
             getMenuItem(
-                ImageSource.gallery, "Post", Icons.camera_enhance_outlined, 1 , AppRouter.postSearchScreen),
+                null, "Post", Icons.camera_enhance_outlined, 1 , AppRouter.postSearchScreen),
           );
           return list;
         },

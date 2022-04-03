@@ -497,4 +497,14 @@ class DataRepository implements RestClient {
   Future<GetResponseMessage> updatePost(String postId, String newCaption) {
     return _client.updatePost(postId, newCaption); 
   }
+
+  @override
+  Future<ListSearchPostResponseMessage> searchMorePostByKey(String searchString, int limitPost, String dateBoundary) {
+    return _client.searchMorePostByKey(searchString, limitPost, dateBoundary);
+  }
+
+  @override
+  Future<ListSearchPostResponseMessage> searchPostByKey(String searchString, int limitPost) {
+   return _client.searchPostByKey(searchString, limitPost);
+  }
 }

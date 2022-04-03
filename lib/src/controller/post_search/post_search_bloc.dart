@@ -13,21 +13,20 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
   PostSearchBloc()
       : _postRepository = PostRepository(),
         super(PostSearchState()) {
-    on<PostSearchInitializing>(_onInitial);
+    on<PostSearch>(_onPostSearch);
   }
   final PostRepository _postRepository;
   final int _limitPost = 20;
 
-  void _onInitial(
-    PostSearchInitializing event,
+  void _onPostSearch(
+    PostSearch event,
     Emitter<PostSearchState> emit,
   ) async {
     try {
-      String imgPath = event.imgPath;
-      emit(state.copyWith(imgPath: imgPath));
+      String searchString = event.searchString;
 
       ListSearchPostResponseMessage? response =
-          await _postRepository.searchPostByImg(img: File(imgPath), limitPost: _limitPost);
+          await _postRepository.searchPostByKey(searchString: searchString, limitPost: _limitPost);
 
       if (response == null) {
         throw Exception("");
@@ -35,7 +34,6 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
       if (response.statusCode == StatusCode.successStatus &&
           response.data != null) {
         emit(state.copyWith(
-          imgPath: imgPath,
           searchResultPostList: response.data?.posts,
           searchResultWordList: response.data?.words,
             status: FinishInitializing()));

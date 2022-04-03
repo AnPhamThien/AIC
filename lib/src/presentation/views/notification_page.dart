@@ -36,7 +36,7 @@ class _NotificationPageState extends State<NotificationPage> {
 
   void _onScroll() {
     if (isScrollEnd(_scrollController)) {
-      context.read<NotificationBloc>().add(FetchNotification());
+      context.read<NotificationBloc>().add(FetchMoreNotification());
     }
   }
 

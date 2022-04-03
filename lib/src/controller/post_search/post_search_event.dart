@@ -6,3 +6,5 @@ class PostSearch extends PostSearchEvent {
   final String searchString;
   PostSearch(this.searchString);
 }
+
+class PostSearchMore extends PostSearchEvent {}

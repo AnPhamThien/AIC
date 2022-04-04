@@ -194,7 +194,7 @@ class _RootScreenState extends State<RootScreen> {
       value: value,
       onTap: () {
         if (source != null && destination != null) {
-          pickImage(source, context, destination);
+          pickImage(source, context, destination, null);
         }
       },
       textStyle: const TextStyle(

@@ -72,11 +72,10 @@ String getErrorMessage(String errorCode) {
   return message;
 }
 
-Future pickImage(ImageSource source, BuildContext context, String destination) async {
+Future pickImage(ImageSource source, BuildContext context, String destination, String? contestId) async {
   try {
     final chosenImage = await ImagePicker().pickImage(source: source);
     if (chosenImage == null) return;
-    
 
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: chosenImage.path,
@@ -100,9 +99,9 @@ Future pickImage(ImageSource source, BuildContext context, String destination) a
           minimumAspectRatio: 1.0,
         ));
     if (croppedFile == null) return;
-
+    Map<String, dynamic> arg = {"imgPath": croppedFile.path, "contestId": contestId};
     Post? post = await Navigator.of(context).pushNamed(destination,
-        arguments: croppedFile.path) as Post?;
+        arguments: arg) as Post?;
     if (post != null) {
       context.read<PostBloc>().add(AddPost(post));
     }

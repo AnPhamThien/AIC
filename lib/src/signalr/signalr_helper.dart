@@ -23,6 +23,7 @@ class SignalRHelper {
   static BuildContext? messageContext;
   static BuildContext? conversationContext;
   static BuildContext? notificationContext;
+  bool closed = false;
 
   Future<void> initiateConnection() async {
     try {
@@ -48,6 +49,7 @@ class SignalRHelper {
         hubConnection!.on('forcelogout', _handleForceLogout);
         hubConnection!.on('specificnotification', _handleSpecificNotification);
         hubConnection!.on('getMessage', _handleGetMessage);
+        closed = false;
       }
     } catch (_) {
       log("Fail to initiate connection");
@@ -58,6 +60,8 @@ class SignalRHelper {
   Future<void> unregisterAll() async {
     try {
       if (hubConnection?.state != HubConnectionState.disconnected) {
+        closed = true;
+        hubConnection!.onclose((exception) { });
         hubConnection!.off('forcelogout');
         hubConnection!.off('specificnotification');
         hubConnection!.off('getMessage');
@@ -81,9 +85,9 @@ class SignalRHelper {
 
   void _handleOnClose(Exception? e) {
     try {
-      navigatorKey.currentContext!
+      if(!closed) {navigatorKey.currentContext!
           .read<AuthBloc>()
-          .add(ReconnectSignalREvent());
+          .add(ReconnectSignalREvent());}
     } on Exception catch (e) {
       log(e.toString());
     }

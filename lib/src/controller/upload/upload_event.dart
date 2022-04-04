@@ -4,8 +4,9 @@ abstract class UploadEvent {}
 
 class UploadInitializing extends UploadEvent {
   final String imgPath;
+  final String? contestId;
 
-  UploadInitializing(this.imgPath);
+  UploadInitializing(this.imgPath, this.contestId);
 }
 
 class ChangeAvatar extends UploadEvent {

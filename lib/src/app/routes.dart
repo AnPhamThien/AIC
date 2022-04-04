@@ -266,11 +266,11 @@ class AppRouter {
                   ),
                 ));
       case uploadScreen:
-        final arg = routeSettings.arguments as String;
+        final arg = routeSettings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) =>
-                      UploadBloc()..add(UploadInitializing(arg)),
+                      UploadBloc()..add(UploadInitializing(arg['imgPath'], arg['contestId'])),
                   child: const UploadScreen(),
                 ));
       case leaderboardScreen:

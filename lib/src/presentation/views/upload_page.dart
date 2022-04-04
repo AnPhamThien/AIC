@@ -87,7 +87,9 @@ class _UploadScreenState extends State<UploadScreen> {
       child: Center(
         child: BlocBuilder<UploadBloc, UploadState>(
           builder: (context, state) {
-            return Column(
+            if (state.contestId == null)
+            {
+              return Column(
               children: [
                 const SizedBox(
                   height: 20,
@@ -114,7 +116,10 @@ class _UploadScreenState extends State<UploadScreen> {
                     : getItemPicker(
                         "Choose an album for your picture", state.albumList, 1),
               ],
-            );
+            );} else {
+              selectedContestId = state.contestId;
+              return const Text("Choose caption for your contest post");
+            }
           },
         ),
       ),

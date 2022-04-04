@@ -321,15 +321,18 @@ class _ContestScreenState extends State<ContestScreen> {
       leadingWidth: 30,
       actions: [
         !state.contest!.timeLeft!.contains("Closed")
-            ? IconButton(
+            ? 
+            IconButton(
                 onPressed: () {
                   //chuyển màn upload post
+                  pickImage(ImageSource.gallery, context, AppRouter.uploadScreen, state.contest?.id);
                 },
                 icon: SvgPicture.asset(
                   'assets/icons/upload_icon.svg',
                   color: Colors.black87,
                 ),
-              )
+              ) 
+            //getUploadButton()
             : const SizedBox.shrink(),
         IconButton(
           onPressed: () {
@@ -479,13 +482,8 @@ class _ContestScreenState extends State<ContestScreen> {
     );
   }
 
-  Theme getUploadButton() {
-    return Theme(
-      data: Theme.of(context).copyWith(
-        dividerTheme:
-            const DividerThemeData(color: Colors.grey, thickness: 0.5),
-      ),
-      child: PopupMenuButton(
+  PopupMenuButton getUploadButton() {
+    return PopupMenuButton(
         color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         offset: const Offset(65, -150),
@@ -540,15 +538,14 @@ class _ContestScreenState extends State<ContestScreen> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 
   PopupMenuItem<int> getUploadMenuItem(
       ImageSource source, String label, IconData iconData) {
     return PopupMenuItem(
       onTap: () {
-        pickImage(source, context, AppRouter.uploadScreen);
+        pickImage(source, context, AppRouter.uploadScreen, null);
       },
       textStyle: const TextStyle(
           fontSize: 20, fontWeight: FontWeight.w400, color: Colors.black),

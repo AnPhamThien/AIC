@@ -64,7 +64,8 @@ class _NotificationPageState extends State<NotificationPage> {
                             noti.avataUrl ?? '',
                             noti.userName,
                             noti.notifyContent ?? '',
-                            noti.totalHours?.toInt() ?? 0, noti.imageUrl ?? '');
+                            timeCalculateDouble(noti.totalHours ?? 0),
+                             noti.imageUrl ?? '');
                       },
                       itemCount: state.notificationList?.length,
                       controller: _scrollController,
@@ -82,7 +83,7 @@ class _NotificationPageState extends State<NotificationPage> {
   }
 
   ListTile getNotificationItem(
-      String avatar, String? username, String context, int time, String imgLink) {
+      String avatar, String? username, String context, String time, String imgLink) {
     return ListTile(
       leading: SizedBox(
         width: 45.0,
@@ -116,7 +117,7 @@ class _NotificationPageState extends State<NotificationPage> {
           ],
         ),
       ),
-      subtitle: Text(time.toString() + " min"),
+      subtitle: Text(time),
       trailing: Image(
         height: 45.0,
         width: 45.0,

@@ -26,35 +26,53 @@ class LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-    return BlocListener<LoginBloc, LoginState>(
-      listenWhen: (previous, current) =>
-          previous.formStatus != current.formStatus,
-      listener: (context, state) {
-        final status = state.formStatus;
-        if (status is FormSubmitting) {
-          _isLogin = true;
-        }
-        if (status is FormSubmissionSuccess) {
-          context.read<AuthBloc>().add(AuthenticateEvent(state.user));
-        } else if (status is ErrorStatus) {
-          _isLogin = false;
-          String errorMessage = getErrorMessage(status.exception.toString());
-          if (errorMessage ==
-              MessageCode.errorMap[MessageCode.userAccountInActivated]) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<LoginBloc, LoginState>(
+          listenWhen: (previous, current) =>
+              previous.formStatus != current.formStatus,
+          listener: (context, state) {
+            final status = state.formStatus;
+            if (status is FormSubmitting) {
+              _isLogin = true;
+            }
+            if (status is FormSubmissionSuccess) {
+              context.read<AuthBloc>().add(AuthenticateEvent(state.user));
+            } else if (status is ErrorStatus) {
+              _isLogin = false;
+              String errorMessage =
+                  getErrorMessage(status.exception.toString());
+              if (errorMessage ==
+                  MessageCode.errorMap[MessageCode.userAccountInActivated]) {
                 String userId = getIt<AppPref>().getUserID;
                 getIt<AppPref>().setUserID('');
-             _getDialog(MessageCode.errorMap[MessageCode.userAccountInActivated],
-                () {
-                  Navigator.of(context).popAndPushNamed(AppRouter.verificationScreen, arguments: userId);
-            });
-          } else if (errorMessage == MessageCode.errorMap[MessageCode.userNotFound]) {
-            _getDialog(MessageCode.errorMap[MessageCode.userPassWordInCorrect],
-                () => Navigator.pop(context));
-          } else {
-            _getDialog(errorMessage, () => Navigator.pop(context));
-          }
-        }
-      },
+                _getDialog(
+                    MessageCode.errorMap[MessageCode.userAccountInActivated],
+                    () {
+                  Navigator.of(context).popAndPushNamed(
+                      AppRouter.verificationScreen,
+                      arguments: userId);
+                });
+              } else if (errorMessage ==
+                  MessageCode.errorMap[MessageCode.userNotFound]) {
+                _getDialog(
+                    MessageCode.errorMap[MessageCode.userPassWordInCorrect],
+                    () => Navigator.pop(context));
+              } else {
+                _getDialog(errorMessage, () => Navigator.pop(context));
+              }
+            }
+          },
+        ),
+        BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state.message != null) {
+              _getDialog(state.message, () => Navigator.pop(context));
+              _isLogin = false;
+            }
+          },
+        ),
+      ],
       child: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(

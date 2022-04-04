@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import '../../app/routes.dart';
@@ -185,16 +186,21 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        IconButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed(AppRouter.conversationScreen);
+        BlocBuilder<AuthBloc, AuthState>(
+          builder: (context, state) {
+            return IconButton(
+              onPressed: () async {
+                await Navigator.of(context).pushNamed(AppRouter.conversationScreen);
+                context.read<AuthBloc>().add(CheckMessageAndNoti());
+              },
+              icon: SvgPicture.asset(
+                "assets/icons/message_icon.svg",
+                color: state.newMessage ? Colors.red : Colors.black,
+                width: 27,
+                height: 27,
+              ),
+            );
           },
-          icon: SvgPicture.asset(
-            "assets/icons/message_icon.svg",
-            color: Colors.black, //khi có noti thì màu gì thì để
-            width: 27,
-            height: 27,
-          ),
         ), //Message
       ],
     );

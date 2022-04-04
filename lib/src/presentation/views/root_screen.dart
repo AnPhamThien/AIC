@@ -3,12 +3,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -42,7 +45,6 @@ class _RootScreenState extends State<RootScreen> {
         SizedBox(),
         SizedBox(),
         NotificationPage(),
-        //PostSearchScreen(),
         ProfilePage(),
       ],
     );
@@ -62,38 +64,43 @@ class _RootScreenState extends State<RootScreen> {
       ),
       child: Material(
         color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: List.generate(
-            icons.length,
-            (index) {
-              switch (index) {
-                case 1:
-                  return getSearchButton();
-                case 2:
-                  return getUploadButton();
-                default:
-                  return IconButton(
-                    splashRadius: 45,
-                    onPressed: () {
-                      setState(() {
-                        indexPage = index;
-                      });
+        child: BlocBuilder<AuthBloc, AuthState>(
+          buildWhen: (previous, current) => previous.newNoti != current.newNoti,
+          builder: (context, state) {
+            return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: List.generate(
+                    icons.length,
+                    (index) {
+                      switch (index) {
+                        case 1:
+                          return getSearchButton();
+                        case 2:
+                          return getUploadButton();
+                        default:
+                          return IconButton(
+                            splashRadius: 45,
+                            onPressed: () {
+                              setState(() {
+                                indexPage = index;
+                              });
+                            },
+                            icon: SvgPicture.asset(
+                              indexPage == index
+                                  ? icons[index]['active']!
+                                  : icons[index]['inactive']!,
+                              width: 27,
+                              height: 27,
+                              color: (indexPage != 3) && (state.newNoti) ? Colors.red : Colors
+                                  .black87, //nếu có noti và index page != noti thì màu đ
+                            ),
+                          );
+                      }
                     },
-                    icon: SvgPicture.asset(
-                      indexPage == index
-                          ? icons[index]['active']!
-                          : icons[index]['inactive']!,
-                      width: 27,
-                      height: 27,
-                      color: Colors
-                          .black87, //nếu có noti và index page != noti thì màu đ
-                    ),
-                  );
-              }
-            },
-          ),
+                  ),
+                );
+          },
         ),
       ),
     );

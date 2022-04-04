@@ -25,3 +25,5 @@ class ConnectSignalREvent extends AuthEvent {}
 class ReconnectSignalREvent extends AuthEvent {}
 
 class FinishReconnectEvent extends AuthEvent {}
+
+class CheckMessageAndNoti extends AuthEvent {}

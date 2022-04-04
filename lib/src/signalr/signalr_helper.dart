@@ -112,12 +112,12 @@ class SignalRHelper {
   Future<void> _handleGetMessage(List<dynamic>? parameters) async {
     try {
       log(parameters.toString());
-      if (parameters != null &&
-          (conversationContext != null || messageContext != null)) {
+      if (parameters != null) {
         final data = parameters.first;
         String conversationId = '';
-
-        if (conversationContext?.read<ConversationBloc?>() != null) {
+        navigatorKey.currentContext!.read<AuthBloc>().add(CheckMessageAndNoti());
+       if (conversationContext != null) {
+         if (conversationContext?.read<ConversationBloc?>() != null) {
           final conversation = Conversation.fromJson(data?['conversation']);
           if (conversation.userRealName != null) {
             conversation.userRealName =
@@ -134,9 +134,10 @@ class SignalRHelper {
           conversationContext!
               .read<ConversationBloc>()
               .add(ReceiveNewConversation(conversation));
-        }
+        }}
 
-        if (messageContext?.read<MessageBloc?>() != null) {
+        if(messageContext != null) {
+          if (messageContext?.read<MessageBloc?>() != null) {
           final message = Message.fromJson(data?['message']);
 
           if (message.conversationId == conversationId ||
@@ -146,7 +147,7 @@ class SignalRHelper {
             }
             messageContext!.read<MessageBloc>().add(ReceiveNewMessage(message));
           }
-        }
+        }}
       }
     } catch (e) {
       log(e.toString());

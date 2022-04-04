@@ -42,7 +42,6 @@ class _RootScreenState extends State<RootScreen> {
         SizedBox(),
         SizedBox(),
         NotificationPage(),
-        //PostSearchScreen(),
         ProfilePage(),
       ],
     );
@@ -68,11 +67,33 @@ class _RootScreenState extends State<RootScreen> {
           children: List.generate(
             icons.length,
             (index) {
+              bool isClicked = false;
               switch (index) {
                 case 1:
                   return getSearchButton();
                 case 2:
                   return getUploadButton();
+                case 3: //TODO nút notification nè
+                  return IconButton(
+                    splashRadius: 45,
+                    onPressed: () {
+                      setState(() {
+                        indexPage = index;
+                        isClicked = true;
+                      });
+                    },
+                    icon: SvgPicture.asset(
+                      indexPage == index
+                          ? icons[index]['active']!
+                          : icons[index]['inactive']!,
+                      width: 27,
+                      height: 27,
+                      color: isClicked
+                          ? Colors.black87
+                          : Colors
+                              .red, //nếu có noti và index page != noti thì màu đ
+                    ),
+                  );
                 default:
                   return IconButton(
                     splashRadius: 45,

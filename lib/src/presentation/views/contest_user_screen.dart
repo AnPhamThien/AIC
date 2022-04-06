@@ -155,7 +155,7 @@ class _ContestUserScreenState extends State<ContestUserScreen> {
                           child: state.userInContest.isEmpty
                               ? const Center(
                                   child: Text(
-                                    'This contest has no participant',
+                                    'This poll has no participant',
                                     style: TextStyle(color: Colors.black),
                                   ),
                                 )

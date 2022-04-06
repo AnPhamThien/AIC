@@ -33,7 +33,7 @@ class _UploadScreenState extends State<UploadScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<UploadBloc, UploadState>(
-      listener: (context, state) {
+      listener: (context, state) async {
         _captionController.text = state.aiCaption;
         final status = state.status;
         if (status is ErrorStatus) {
@@ -42,6 +42,7 @@ class _UploadScreenState extends State<UploadScreen> {
           _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }
         if (status is UploadSuccess) {
+          await _getDialog("Your post will be uploaded soon!", 'Success !', () => Navigator.pop(context));
           Navigator.of(context).pop(status.post);
         }
       },

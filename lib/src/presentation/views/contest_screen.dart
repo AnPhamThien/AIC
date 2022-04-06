@@ -112,7 +112,7 @@ class _ContestScreenState extends State<ContestScreen> {
                                     height: 50,
                                     child: const Center(
                                         child: Text(
-                                      "This contest has ended",
+                                      "This poll has ended",
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 18),
                                     ))),
@@ -147,7 +147,7 @@ class _ContestScreenState extends State<ContestScreen> {
                                     height: MediaQuery.of(context).size.height,
                                     child: const Center(
                                       child: Text(
-                                        "THIS CONTEST HAS NO POST",
+                                        "THIS POLL HAS NO POST",
                                         style: TextStyle(color: Colors.black),
                                       ),
                                     ),

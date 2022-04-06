@@ -35,6 +35,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ForceLogoutEvent>(_onForceLogout);
     on<ReconnectSignalREvent>(_onReconnectSignalR);
     on<CheckMessageAndNoti>(_onCheckMessageAndNoti);
+    on<ChangeReadNotiStatus>(_onChangeReadNotiStatus);
   }
 
   void _onNavigate(NavigateToPageEvent event, Emitter emit) {
@@ -149,6 +150,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       log(e.toString());
     }
   }
+
   Future<bool> checkMessage() async {
     try {
       final conversationData = await _conversationRepository.getConversations();
@@ -165,6 +167,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       log("Check Message");
       log(e.toString());
       return false;
+    }
+  }
+
+  void _onChangeReadNotiStatus(ChangeReadNotiStatus event, Emitter emit) async {
+    try {
+    bool newStatus = event.isRead;
+    emit(state.copyWith(
+      newNoti: newStatus
+    ));
+    } 
+    catch (e) {
+      log("Change Noti");
+      log(e.toString());
     }
   }
 }

@@ -280,7 +280,7 @@ class LoginScreenState extends State<LoginScreen> {
           children: const [
             TextSpan(text: "Hello,\n"),
             TextSpan(
-              text: "Wellcome Back!",
+              text: "Welcome Back!",
               style: TextStyle(fontWeight: FontWeight.w900, fontSize: 40),
             )
           ],

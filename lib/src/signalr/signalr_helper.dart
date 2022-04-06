@@ -105,6 +105,7 @@ class SignalRHelper {
 
   void _handleSpecificNotification(List<dynamic>? parameters) {
     try {
+      navigatorKey.currentContext!.read<AuthBloc>().add(ChangeReadNotiStatus(true));
       if (notificationContext != null) {
         notificationContext!.read<NotificationBloc>().add(FetchNotification());
       }

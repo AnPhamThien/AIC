@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import '../../prefs/app_prefs.dart';
 import '../../app/routes.dart';
@@ -23,6 +26,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool agreeToTerm = false;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +120,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
       child: Form(
         key: _formKey,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GetUserInput(
               controller: _usernameController,
@@ -156,16 +160,31 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               hint: 'Re-type your password',
               isPassword: true,
             ),
+            // SizedBox(
+            //   height: 30.h,
+            // ),
+            Row( 
+              children: [
+              Checkbox(value: agreeToTerm, onChanged: (bool? value) => setState(() {
+              agreeToTerm = value!;
+            })), 
+            const Text("I agree to the"),
+            TextButton(onPressed: () => _getDialog(appPolicies, "Policies", () => Navigator.pop(context)), child: const Text("Terms of use"))]),
             SizedBox(
               height: 30.h,
             ),
             TextButton(
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
-                  context.read<RegistrationBloc>().add(RegistrationSubmitted(
+                  if (!agreeToTerm) {
+                    _getDialog("You must agree to Terms of use to continue", "Warning", () => Navigator.pop(context));
+                  }
+                  else {
+                    context.read<RegistrationBloc>().add(RegistrationSubmitted(
                       _usernameController.text,
                       _passwordController.text,
                       _emailController.text));
+                  }
                 }
               },
               style: TextButton.styleFrom(
@@ -214,6 +233,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(
+        scrollable: true,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         actionsAlignment: MainAxisAlignment.center,
         title: Text(header ?? 'Error !',

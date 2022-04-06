@@ -127,11 +127,11 @@ class _ContestListScreenState extends State<ContestListScreen>
               builder: (context, state) {
                 switch (state.status) {
                   case ContestListStatus.failure:
-                    return const Center(child: Text('failed to fetch contest'));
+                    return const Center(child: Text('failed to fetch poll'));
 
                   case ContestListStatus.success:
                     if (state.activeContestList.isEmpty) {
-                      return const Center(child: Text('no contest'));
+                      return const Center(child: Text('no poll'));
                     }
                     return ListView.builder(
                       itemBuilder: (BuildContext context, int index) {
@@ -161,10 +161,10 @@ class _ContestListScreenState extends State<ContestListScreen>
               builder: (context, state) {
                 switch (state.status) {
                   case ContestListStatus.failure:
-                    return const Center(child: Text('failed to fetch contest'));
+                    return const Center(child: Text('failed to fetch poll'));
                   case ContestListStatus.success:
                     if (state.inactiveContestList.isEmpty) {
-                      return const Center(child: Text('no contest'));
+                      return const Center(child: Text('no poll'));
                     }
                     return ListView.builder(
                       itemBuilder: (BuildContext context, int index) {
@@ -199,7 +199,7 @@ class _ContestListScreenState extends State<ContestListScreen>
 
   BackdropAppBar getAppBar() {
     return BackdropAppBar(
-      title: Text(_searchText == '' ? 'Contest list' : _searchText),
+      title: Text(_searchText == '' ? 'Vote for the picture you like, or upload your own' : _searchText),
       foregroundColor: Colors.black87,
       backgroundColor: bgApp,
       leading: IconButton(
@@ -289,7 +289,7 @@ class _ContestListScreenState extends State<ContestListScreen>
           children: [
             TextField(
               decoration: InputDecoration(
-                hintText: 'Contest name ...',
+                hintText: 'Voting Poll name ...',
                 fillColor: bgGrey,
                 filled: true,
                 border: OutlineInputBorder(

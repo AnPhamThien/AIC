@@ -12,7 +12,6 @@ import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
 
@@ -22,6 +21,7 @@ class RootScreen extends StatefulWidget {
 
 class _RootScreenState extends State<RootScreen> {
   int indexPage = 0;
+  bool isClicked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -105,19 +105,42 @@ class _RootScreenState extends State<RootScreen> {
           children: List.generate(
             icons.length,
             (index) {
-              bool isClicked = false;
               switch (index) {
                 case 1:
                   return getSearchButton();
                 case 2:
                   return getUploadButton();
                 case 3: //TODO nút notification nè
+                  return BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return IconButton(
+                        splashRadius: 45,
+                        onPressed: () {
+                          setState(() {
+                            indexPage = index;
+                            context.read<AuthBloc>().add(ChangeReadNotiStatus(false));
+                          });
+                        },
+                        icon: SvgPicture.asset(
+                          indexPage == index
+                              ? icons[index]['active']!
+                              : icons[index]['inactive']!,
+                          width: 27,
+                          height: 27,
+                          color: state.newNoti
+                              ? Colors.red
+                              : Colors
+                                  .black87, //nếu có noti và index page != noti thì màu đ
+                        ),
+                      );
+                    },
+                  );
+                default:
                   return IconButton(
                     splashRadius: 45,
                     onPressed: () {
                       setState(() {
                         indexPage = index;
-                        isClicked = true;
                       });
                     },
                     icon: SvgPicture.asset(
@@ -126,12 +149,11 @@ class _RootScreenState extends State<RootScreen> {
                           : icons[index]['inactive']!,
                       width: 27,
                       height: 27,
-                      color: isClicked
-                          ? Colors.black87
-                          : Colors
-                              .red, //nếu có noti và index page != noti thì màu đ
+                      color: Colors
+                          .black87, //nếu có noti và index page != noti thì màu đ
                     ),
                   );
+<<<<<<< HEAD
                 default:
                   return IconButton(
                     splashRadius: 45,
@@ -144,6 +166,11 @@ class _RootScreenState extends State<RootScreen> {
                   ),
                 );
           },
+=======
+              }
+            },
+          ),
+>>>>>>> 91375e1 (Update Policy and Fix Bugs)
         ),
       ),
     );
@@ -162,8 +189,7 @@ class _RootScreenState extends State<RootScreen> {
               context,
               AppRouter.userSearchScreen,
             );
-          }
-          else if (result == 1) {
+          } else if (result == 1) {
             Navigator.pushNamed(context, AppRouter.postSearchScreen);
           }
         },
@@ -180,8 +206,13 @@ class _RootScreenState extends State<RootScreen> {
             const PopupMenuDivider(),
           );
           list.add(
+<<<<<<< HEAD
             getMenuItem(ImageSource.gallery, "Post",
                 Icons.camera_enhance_outlined, 1, AppRouter.postSearchScreen),
+=======
+            getMenuItem(null, "Post", Icons.camera_enhance_outlined, 1,
+                AppRouter.postSearchScreen),
+>>>>>>> 91375e1 (Update Policy and Fix Bugs)
           );
           return list;
         },

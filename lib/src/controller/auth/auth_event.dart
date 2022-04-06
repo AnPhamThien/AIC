@@ -27,3 +27,9 @@ class ReconnectSignalREvent extends AuthEvent {}
 class FinishReconnectEvent extends AuthEvent {}
 
 class CheckMessageAndNoti extends AuthEvent {}
+
+class ChangeReadNotiStatus extends AuthEvent {
+  bool isRead;
+  ChangeReadNotiStatus(this.isRead);
+}
+

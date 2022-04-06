@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
@@ -38,7 +40,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           await _notificationRepository.getNotification(limit: limitNoti);
 
       if (resMessage == null) {
-        throw Exception(null);
+        throw Exception('');
       }
 
       final status = resMessage.statusCode ?? 0;
@@ -85,14 +87,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       final data = resMessage.data ?? [];
 
       if (status == StatusCode.successStatus && data.isNotEmpty) {
+        List<NotificationItem> list = [];
+        if (state.notificationList != null) {
+          list.addAll(state.notificationList!);
+        }
+        list.addAll(data);
         emit(state.copyWith(
             status: FinishInitializing(),
-            notificationList: data,
+            notificationList: list,
             hasReachedMax: false));
       } else if (message == MessageCode.noNotificationToDisplay) {
         emit(state.copyWith(
             status: FinishInitializing(),
-            notificationList: [],
             hasReachedMax: true));
       } else {
         throw Exception(message);

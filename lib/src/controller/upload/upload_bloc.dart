@@ -64,7 +64,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
           albumRes.data != null) {
         final data = albumRes.data;
         data!.removeWhere(
-            (element) => element.albumName == "Contest Post Storage");
+            (element) => element.albumName == "Poll Post Storage");
 
 final response = await _postRepository.getCaption(
           img: File(imgPath));

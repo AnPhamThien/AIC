@@ -42,7 +42,11 @@ class _UploadScreenState extends State<UploadScreen> {
           _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }
         if (status is UploadSuccess) {
-          await _getDialog("Your post will be uploaded soon!", 'Success !', () => Navigator.pop(context));
+          if (state.contestId != null) {
+            await _getDialog("Please wait for approval from admin!", 'Success !', () => Navigator.pop(context));
+          } else {
+            await _getDialog("Your post will be uploaded soon!", 'Success !', () => Navigator.pop(context));
+          }
           Navigator.of(context).pop(status.post);
         }
       },
@@ -95,8 +99,8 @@ class _UploadScreenState extends State<UploadScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                ListTile(
-                    title: const Text("Do you wanna join a contest ?"),
+                state.contestList.isNotEmpty ? ListTile(
+                    title: const Text("Do you wanna join a poll ?"),
                     trailing: IconButton(
                         icon: joinContest
                             ? const Icon(Icons.clear_rounded)
@@ -110,16 +114,16 @@ class _UploadScreenState extends State<UploadScreen> {
                               selectedAlbumId = null;
                             }
                           });
-                        })),
+                        })) : const Text(""),
                 joinContest
-                    ? getItemPicker("Choose a contest for your picture",
+                    ? getItemPicker("Choose a poll for your picture",
                         state.contestList, 2)
                     : getItemPicker(
                         "Choose an album for your picture", state.albumList, 1),
               ],
             );} else {
               selectedContestId = state.contestId;
-              return const Text("Choose caption for your contest post");
+              return const Text("Choose caption for your post");
             }
           },
         ),

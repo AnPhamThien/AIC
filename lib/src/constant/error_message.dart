@@ -19,8 +19,7 @@ class MessageCode {
     albumNotFound: "There is no album yet",
     albumNameIsDuplicated: "There is already an album with this name",
     addPostInforNotValid: "Post's info is invalid",
-    contestNotFound: "Contest not found",
-    contestNameIsDuplicated: "There is already a contest with this name",
+    contestNotFound: "Poll not found",
     commentNotFound: "Comment not found",
     noCommentToDisplay: "There is no comment to display",
     codeIsExpired:
@@ -29,7 +28,6 @@ class MessageCode {
     noNotificationToDisplay: "There is no notification to display.",
     conversationNotFound: "Conversation not found",
     noConversationToDisplay: "There is no conversation to display.",
-    duplicatePostInContest: "You cannot post twice in a contest.",
     codeNotFound: "Wrong code"
   };
 

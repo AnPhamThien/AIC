@@ -54,6 +54,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 final status = state.status;
                 if (status is EditProfileSuccess) {
                   if (state.user?.avataUrl != null) {
+                    await _getDialog(
+                      "Profile is updated successfully", 'Error !', () => Navigator.pop(context));
                     refreshNetworkImage(
                         avatarUrl + state.user!.avataUrl.toString());
                   }

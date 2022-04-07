@@ -26,6 +26,17 @@ class Validation {
     return null;
   }
 
+  static String? phoneValidation(String? value) {
+    final regexp = RegExp(r"^\d{10}$");
+
+    if (value == null || value.isEmpty) {
+      return 'Cannot be empty';
+    } else if (!regexp.hasMatch(value)) {
+      return 'Phone number must have 10 digits';
+    }
+    return null;
+  }
+
   static String? emailValidation(String? value) {
     if (value == null || value.isEmpty) {
       return 'Cannot be empty';

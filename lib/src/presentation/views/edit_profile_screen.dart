@@ -65,9 +65,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       getErrorMessage(status.exception.toString());
                   await _getDialog(
                       errorMessage, 'Error !', () => Navigator.pop(context));
-                  // context
-                  //     .read<EditProfileBloc>()
-                  //     .add(EditProfileInitializing());
                 }
               },
               child: BlocBuilder<EditProfileBloc, EditProfileState>(
@@ -163,6 +160,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           GetUserInput(
                             controller: _phoneController,
                             label: "Phone",
+                            validator: Validation.phoneValidation
                           ),
                           const SizedBox(
                             height: 20,

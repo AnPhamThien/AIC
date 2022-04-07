@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -37,7 +36,6 @@ class _UploadScreenState extends State<UploadScreen> {
         _captionController.text = state.aiCaption;
         final status = state.status;
         if (status is ErrorStatus) {
-          log(status.exception.toString());
           String errorMessage = getErrorMessage(status.exception.toString());
           _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }

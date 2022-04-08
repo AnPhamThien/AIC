@@ -32,7 +32,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return BlocListener<RegistrationBloc, RegistrationState>(
       listenWhen: (previous, current) =>
           previous.formStatus != current.formStatus,
-      listener: (context, state) {
+      listener: (context, state) async {
         final status = state.formStatus;
         if (status is ErrorStatus) {
           String errorMessage = getErrorMessage(status.exception.toString());
@@ -40,6 +40,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         } else if (status is FormSubmissionSuccess) {
           String userId = getIt<AppPref>().getUserID;
           getIt<AppPref>().setUserID('');
+          await _getDialog("Create a new account successfully. Please verify your account through the link in your email.",
+           'Success !', () => Navigator.pop(context));
           Navigator.of(context).pushNamed(AppRouter.verificationScreen, arguments: userId);
         }
       },
@@ -175,7 +177,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   if (!agreeToTerm) {
-                    _getDialog("You must agree to Terms of use to continue", "Warning", () => Navigator.pop(context));
+                    _getDialog("You must agree to the Terms of use to continue", "Warning", () => Navigator.pop(context));
                   }
                   else {
                     context.read<RegistrationBloc>().add(RegistrationSubmitted(

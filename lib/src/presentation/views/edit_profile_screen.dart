@@ -25,7 +25,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   bool firstInit = true;
-
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -55,11 +54,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 if (status is EditProfileSuccess) {
                   if (state.user?.avataUrl != null) {
                     await _getDialog(
-                      "Profile is updated successfully", 'Error !', () => Navigator.pop(context));
+                      "Profile is updated successfully", 'Success !', () => Navigator.pop(context));
                     refreshNetworkImage(
                         avatarUrl + state.user!.avataUrl.toString());
                   }
-
                   Navigator.pop(context);
                 }
                 if (status is ErrorStatus) {

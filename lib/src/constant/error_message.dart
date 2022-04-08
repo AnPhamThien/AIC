@@ -7,7 +7,7 @@ class MessageCode {
     userAccountDeleted: "User's account has been deleted",
     userStorageNotFound: "User's storage is not found",
     userNameExist: "Username already used",
-    userMailNotFound: "User's mail is not found",
+    userMailNotFound: "There is no account associated with this email",
     oldPassWord: "Old password",
     userPassWordInCorrect: "Please check your username and password.",
     getUserDetailFail: "Get user's details fail",

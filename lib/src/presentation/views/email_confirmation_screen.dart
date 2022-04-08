@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/email_confirmation/email_confirmation_bloc.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:imagecaptioning/src/utils/validations.dart';
 
 import '../../app/routes.dart';
@@ -33,11 +34,16 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
       child: Scaffold(
         backgroundColor: Colors.black12,
         body: BlocListener<EmailConfirmationBloc, EmailConfirmationState>(
-          listener: (context, state) {
-            if (state.formStatus is FormSubmissionSuccess) {
+          listener: (context, state) async {
+            final status = state.formStatus;
+            if (status is ErrorStatus) {
+              String errorMessage = getErrorMessage(status.exception.toString());
+              await _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+        }  else if (status is FormSubmissionSuccess) {
               Map<String, dynamic> args = {
                 "userId": state.userId,
               };
+              await _getDialog("", 'Success !', () => Navigator.pop(context));
               Navigator.pushNamed(context, AppRouter.resetPasswordScreen, arguments: args);
             }
           },
@@ -161,7 +167,7 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
                   textStyle: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20)),
               child: const Text(
-                "Verify",
+                "Confirm",
               ),
             ),
             SizedBox(
@@ -216,6 +222,38 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
             )
           ],
         ),
+      ),
+    );
+  }
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -271,6 +271,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           onPressed: () {
             context.read<ProfileBloc>().add(ProfileChangeFollowUser(userId));
+            context.read<ProfileBloc>().add(ProfileInitializing(''));
           },
           child: isFollow ? const Text("Unfollow") : const Text("Follow"),
         ),
@@ -348,7 +349,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 onTap: () async {
                   context.read<AuthBloc>().add(LogoutEvent());
-                  await Navigator.of(context).pushNamedAndRemoveUntil(AppRouter.loginScreen, ModalRoute.withName('/'));
+                  await Navigator.of(context).pushNamedAndRemoveUntil(
+                      AppRouter.loginScreen, ModalRoute.withName('/'));
                 },
               ),
             ),

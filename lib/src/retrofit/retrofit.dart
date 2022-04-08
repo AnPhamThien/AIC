@@ -126,6 +126,19 @@ abstract class RestClient {
     @Query('limitDay') int limitDay,
   );
 
+  @GET('/posts/getrandompost')
+  Future<GetListOfPostResponseMessage> getRandomPost(
+    @Query('limitPost') int limitPost,
+    @Query('limitDay') int limitDay,
+  );
+
+  @GET('/posts/getmorerandompost')
+  Future<GetListOfPostResponseMessage> getMoreRandomPost(
+    @Query('limitPost') int limitPost,
+    @Query('limitDay') int limitDay,
+    @Query('date_boundary') String dateBoundary,
+  );
+
   @POST('/posts/getmorepostver2')
   Future<PostListRespone> getMorePost(@Body() PostListRequest request);
 
@@ -406,8 +419,7 @@ abstract class RestClient {
   );
   @POST('/users/getcaption')
   @MultiPart()
-  Future<GetResponseMessage> getCaption(
-      @Part(value: 'Img') File img);
+  Future<GetResponseMessage> getCaption(@Part(value: 'Img') File img);
 
   @GET('/contests/getlisttoppostcontest')
   Future<ListTopPostInContestResponseMessage> getListTopPostInContest(
@@ -418,20 +430,16 @@ abstract class RestClient {
   @POST('/posts/searchpostbyimg')
   @MultiPart()
   Future<ListSearchPostResponseMessage> searchPostByImg(
-    @Part(value: 'Img') File img,
-      @Part(value: 'limitPost') int limitPost
-      );
-  
+      @Part(value: 'Img') File img, @Part(value: 'limitPost') int limitPost);
+
   @GET('/posts/searchpostbykey')
   Future<ListSearchPostResponseMessage> searchPostByKey(
-    @Query('searchString') String searchString,
-    @Query('limitPost') int limitPost
-  );
+      @Query('searchString') String searchString,
+      @Query('limitPost') int limitPost);
 
   @GET('/posts/searchmorepostbykey')
   Future<ListSearchPostResponseMessage> searchMorePostByKey(
-    @Query('searchString') String searchString,
-    @Query('limitPost') int limitPost,
-    @Query('date_boundary') String dateBoundary
-  );
+      @Query('searchString') String searchString,
+      @Query('limitPost') int limitPost,
+      @Query('date_boundary') String dateBoundary);
 }

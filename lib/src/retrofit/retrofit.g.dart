@@ -334,6 +334,47 @@ class _RestClient implements RestClient {
   }
 
   @override
+  Future<GetListOfPostResponseMessage> getRandomPost(
+      limitPost, limitDay) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limitPost': limitPost,
+      r'limitDay': limitDay
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetListOfPostResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/getrandompost',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetListOfPostResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage> getMoreRandomPost(
+      limitPost, limitDay, dateBoundary) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{
+      r'limitPost': limitPost,
+      r'limitDay': limitDay,
+      r'date_boundary': dateBoundary
+    };
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetListOfPostResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/posts/getmorerandompost',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetListOfPostResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
   Future<PostListRespone> getMorePost(request) async {
     const _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

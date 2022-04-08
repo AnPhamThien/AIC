@@ -38,6 +38,10 @@ abstract class PostBehavior {
   Future<GetResponseMessage> deletePost(String postId);
   Future<GetResponseMessage> addReport(
       String postId, String categoryId, String description);
+  Future<GetListOfPostResponseMessage?> getRandomPost(
+      int limitPost, int LimitDay);
+  Future<GetListOfPostResponseMessage?> getMoreRandomPost(
+      int limitPost, int LimitDay, String dateBoundary);
   Future<CategoryRespone> getCategory();
   Future<GetListOfPostResponseMessage?> getPostStorage(
       {required int limitPost});
@@ -53,12 +57,17 @@ abstract class PostBehavior {
       required String dateBoundary});
   Future<GetListOfPostResponseMessage?> getUserContestPost(
       {required String userID, required int limitPost});
-      Future<GetResponseMessage?> getCaption(
-      {required File img});
-      Future<ListSearchPostResponseMessage?> searchPostByImg({required File img, required int limitPost});
-  Future<GetResponseMessage?> updatePost({required String postId, required String newCaption});
-  Future<ListSearchPostResponseMessage?> searchPostByKey({required String searchString, required int limitPost});
-  Future<ListSearchPostResponseMessage?> searchMorePostByKey({required String searchString, required int limitPost, required String dateBoundary});
+  Future<GetResponseMessage?> getCaption({required File img});
+  Future<ListSearchPostResponseMessage?> searchPostByImg(
+      {required File img, required int limitPost});
+  Future<GetResponseMessage?> updatePost(
+      {required String postId, required String newCaption});
+  Future<ListSearchPostResponseMessage?> searchPostByKey(
+      {required String searchString, required int limitPost});
+  Future<ListSearchPostResponseMessage?> searchMorePostByKey(
+      {required String searchString,
+      required int limitPost,
+      required String dateBoundary});
 }
 
 class PostRepository extends PostBehavior {
@@ -115,9 +124,7 @@ class PostRepository extends PostBehavior {
   }
 
   @override
-  Future<GetResponseMessage?> getCaption(
-      {
-      required File img}) async {
+  Future<GetResponseMessage?> getCaption({required File img}) async {
     try {
       final resMessage = await _dataRepository.getCaption(img);
 
@@ -376,10 +383,10 @@ class PostRepository extends PostBehavior {
   }
 
   @override
-  Future<ListSearchPostResponseMessage?> searchPostByImg({required File img, required int limitPost}) async {
+  Future<ListSearchPostResponseMessage?> searchPostByImg(
+      {required File img, required int limitPost}) async {
     try {
-      final resMessage =
-          await _dataRepository.searchPostByImg(img, limitPost);
+      final resMessage = await _dataRepository.searchPostByImg(img, limitPost);
 
       return resMessage;
     } catch (e) {
@@ -395,10 +402,10 @@ class PostRepository extends PostBehavior {
   }
 
   @override
-  Future<GetResponseMessage?> updatePost({required String postId, required String newCaption}) async {
+  Future<GetResponseMessage?> updatePost(
+      {required String postId, required String newCaption}) async {
     try {
-      final resMessage =
-          await _dataRepository.updatePost(postId, newCaption);
+      final resMessage = await _dataRepository.updatePost(postId, newCaption);
 
       return resMessage;
     } catch (e) {
@@ -413,8 +420,9 @@ class PostRepository extends PostBehavior {
     }
   }
 
-   @override
-  Future<ListSearchPostResponseMessage?> searchPostByKey({required String searchString, required int limitPost}) async {
+  @override
+  Future<ListSearchPostResponseMessage?> searchPostByKey(
+      {required String searchString, required int limitPost}) async {
     try {
       final resMessage =
           await _dataRepository.searchPostByKey(searchString, limitPost);
@@ -433,11 +441,14 @@ class PostRepository extends PostBehavior {
     }
   }
 
-   @override
-  Future<ListSearchPostResponseMessage?> searchMorePostByKey({required String searchString, required int limitPost, required String dateBoundary}) async {
+  @override
+  Future<ListSearchPostResponseMessage?> searchMorePostByKey(
+      {required String searchString,
+      required int limitPost,
+      required String dateBoundary}) async {
     try {
-      final resMessage =
-          await _dataRepository.searchMorePostByKey(searchString, limitPost, dateBoundary);
+      final resMessage = await _dataRepository.searchMorePostByKey(
+          searchString, limitPost, dateBoundary);
 
       return resMessage;
     } catch (e) {
@@ -448,6 +459,35 @@ class PostRepository extends PostBehavior {
           return resMessage;
         }
       }
+      return null;
+    }
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage?> getMoreRandomPost(
+      int limitPost, int LimitDay, String dateBoundary) async {
+    try {
+      final GetListOfPostResponseMessage respone = await _dataRepository
+          .getMoreRandomPost(limitPost, LimitDay, dateBoundary);
+      return respone;
+    } catch (e) {
+      log(e.toString());
+      return null;
+    }
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage?> getRandomPost(
+      int limitPost, int LimitDay) async {
+    try {
+      final GetListOfPostResponseMessage respone =
+          await _dataRepository.getRandomPost(
+        limitPost,
+        LimitDay,
+      );
+      return respone;
+    } catch (e) {
+      log(e.toString());
       return null;
     }
   }

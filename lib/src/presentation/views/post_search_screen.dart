@@ -110,17 +110,19 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
             BlocListener<PostSearchBloc, PostSearchState>(
               listener: (context, state) {
                 final status = state.status;
-        if (status is ErrorStatus) {
-          String errorMessage = getErrorMessage(status.exception.toString());
-          _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
-        }
+                if (status is ErrorStatus) {
+                  String errorMessage =
+                      getErrorMessage(status.exception.toString());
+                  _getDialog(
+                      errorMessage, 'Error !', () => Navigator.pop(context));
+                }
               },
               child: BlocBuilder<PostSearchBloc, PostSearchState>(
                 builder: (context, state) {
                   return FloatingSearchBar(
                     controller: controller,
                     title: Text(
-                      selectedTerm ?? 'The Search App',
+                      selectedTerm ?? 'Start searching',
                       style: Theme.of(context).textTheme.headline6,
                     ),
                     width: MediaQuery.of(context).size.width - 60,
@@ -221,7 +223,6 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                                               setState(() {
                                                 deleteSearchTerm(term);
                                               });
-                                              controller.close();
                                             },
                                           ),
                                           onTap: () {
@@ -249,9 +250,11 @@ class _PostSearchScreenState extends State<PostSearchScreen> {
                         controller: _searchScrollController,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3),
+                                crossAxisCount: 3,
+                                mainAxisSpacing: 5,
+                                crossAxisSpacing: 5),
                         scrollDirection: Axis.vertical,
-                        shrinkWrap: true,
+                        shrinkWrap: false,
                         itemCount: state.searchResultPostList?.length ?? 0,
                         itemBuilder: (_, index) {
                           Post? post = state.searchResultPostList?[index];

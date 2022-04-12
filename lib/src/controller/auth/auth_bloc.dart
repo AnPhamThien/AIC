@@ -13,6 +13,7 @@ import 'package:imagecaptioning/src/repositories/auth/auth_repository.dart';
 import 'package:imagecaptioning/src/repositories/conversation/conversation_repostitory.dart';
 
 import 'package:imagecaptioning/src/repositories/data_repository.dart';
+import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
 import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 
 part 'auth_event.dart';
@@ -23,11 +24,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignalRHelper _signalRHelper;
   final AuthRepository _authRepository;
   final ConversationRepository _conversationRepository;
+  final NotificationRepository _notificationRepository;
 
   AuthBloc(this.navigatorKey)
       : _signalRHelper = SignalRHelper(navigatorKey),
         _authRepository = AuthRepository(),
         _conversationRepository = ConversationRepository(),
+         _notificationRepository = NotificationRepository(),
         super(const AuthState()) {
     on<NavigateToPageEvent>(_onNavigate);
     on<AuthenticateEvent>(_onAuthenticate);
@@ -54,12 +57,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
     DataRepository.setJwtInHeader();
     final user = event.user;
-    bool newMessage = await checkMessage();
     emit(state.copyWith(
       status: AuthenticationAuthenticated(),
-      user: user,
-      newMessage: newMessage
+      user: user
     ));
+    add(CheckMessageAndNoti());
     await _signalRHelper.initiateConnection();
 
     navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.rootScreen, ModalRoute.withName(AppRouter.rootScreen));
@@ -81,13 +83,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await _authRepository.deleteRefreshToken();
 
+    } catch (e) {
+      log(e.toString());
+    } finally {
       getIt<AppPref>().setToken("");
       getIt<AppPref>().setRefreshToken("");
       getIt<AppPref>().setUsername("");
       getIt<AppPref>().setUserID("");
       DataRepository.setJwtInHeader();
-    } catch (e) {
-      log(e.toString());
     }
   }
 
@@ -95,17 +98,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await _signalRHelper.unregisterAll();
       emit(state.copyWith(status: AuthenticationUnauthenticated()));
-      
-
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
       getIt<AppPref>().setToken("");
       getIt<AppPref>().setRefreshToken("");
       getIt<AppPref>().setUsername("");
       getIt<AppPref>().setUserID("");
       DataRepository.setJwtInHeader();
-    } catch (e) {
-      log(e.toString());
-    } finally {
-      navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
       //await _signalRHelper.closeConnection();
     }
   }
@@ -141,8 +142,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onCheckMessageAndNoti(CheckMessageAndNoti event, Emitter emit) async {
     try {
     bool newMessage = await checkMessage();
+    bool newNoti = await checkNoti();
     emit(state.copyWith(
-      newMessage: newMessage
+      newMessage: newMessage,
+      newNoti: newNoti
     ));
     } 
     catch (e) {
@@ -170,9 +173,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+  Future<bool> checkNoti() async {
+    try {
+      final notificationData = await _notificationRepository.getNotification(limit: 1);
+    if (notificationData != null) {
+      if (notificationData.data != null) {
+        final lastNoti = notificationData.data?.first;
+        if (lastNoti?.isRead == false) {
+          return true;
+        }
+      }
+    }
+    return false;
+    } catch (e) {
+      log("Check Noti");
+      log(e.toString());
+      return false;
+    }
+  }
+
   void _onChangeReadNotiStatus(ChangeReadNotiStatus event, Emitter emit) async {
     try {
     bool newStatus = event.isRead;
+    if (!newStatus) {
+      final resMessage = await _notificationRepository.updateIsRead();
+      if (resMessage == null) {
+        throw Exception();
+      }
+
+      String message = resMessage.messageCode ?? '';
+
+      if (message.isNotEmpty) {
+        throw Exception(message);
+      }
+    }
     emit(state.copyWith(
       newNoti: newStatus
     ));

@@ -70,6 +70,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -178,7 +179,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         emit(state.copyWith(
               status: PostStatus.updated,
               postId: postId,
-              needUpdate: true, postCaption: newCaption));
+              postCaption: newCaption));
       } else {
         throw Exception(_respone.messageCode);
       }
@@ -192,7 +193,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     Emitter<PostState> emit,
   ) async {
     emit(state.copyWith(
-        status: PostStatus.init, postId: '', needUpdate: false, isSaved: null));
+        status: PostStatus.init, postId: '', post: null, needUpdate: false, isSaved: null, postCaption: '', error: ''));
   }
 
   void _onAddPost(

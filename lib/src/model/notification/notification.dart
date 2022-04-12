@@ -54,6 +54,7 @@ class NotificationItem {
     this.imageUrl,
     this.dateCreate,
     this.totalHours,
+    this.isRead
   });
 
   String? notificationId;
@@ -65,6 +66,7 @@ class NotificationItem {
   dynamic imageUrl;
   DateTime? dateCreate;
   double? totalHours;
+  bool? isRead;
 
   factory NotificationItem.fromJson(Map<String, dynamic> json) =>
       NotificationItem(
@@ -77,6 +79,7 @@ class NotificationItem {
         imageUrl: json["image_url"],
         dateCreate: DateTime.parse(json["date_create"]),
         totalHours: json["totalHours"].toDouble(),
+        isRead: json["isRead"]
       );
 
   Map<String, dynamic> toJson() => {
@@ -89,5 +92,6 @@ class NotificationItem {
         "image_url": imageUrl,
         "date_create": dateCreate?.toIso8601String(),
         "totalHours": totalHours,
+        "isRead": isRead
       };
 }

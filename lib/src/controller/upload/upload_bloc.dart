@@ -1,6 +1,4 @@
-import 'dart:developer';
 import 'dart:io';
-
 import 'package:bloc/bloc.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
@@ -44,7 +42,6 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (response == null) {
         throw Exception("");
         }
-           log(response.data);
         emit(state.copyWith(
             imgPath: imgPath,
             aiCaption: response.data,
@@ -72,7 +69,6 @@ final response = await _postRepository.getCaption(
       if (response == null) {
         throw Exception("");
       }
-      log(response.data);
 
         emit(state.copyWith(
             imgPath: imgPath,

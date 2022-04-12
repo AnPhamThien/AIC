@@ -225,7 +225,9 @@ class _RestClient implements RestClient {
                 .compose(_dio.options, '/users/refreshtoken',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+                log("here");
     final value = GetResponseMessage.fromJson(_result.data!);
+    log("here1");
     return value;
   }
 
@@ -1384,6 +1386,22 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = ListSearchPostResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetResponseMessage> updateIsRead() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/notifications/updateisread',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
     return value;
   }
 

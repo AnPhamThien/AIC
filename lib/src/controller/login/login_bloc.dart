@@ -33,7 +33,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       var bytes = utf8.encode(password);
       var encodedPassword = sha256.convert(bytes).toString();
-      log(bytes.toString());
       log(encodedPassword.toString());
 
       AuthenticationResponseMessage? response =

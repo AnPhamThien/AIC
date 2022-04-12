@@ -19,8 +19,10 @@ class PostState extends Equatable {
       this.postId = '',
       this.post,
       this.needUpdate = false,
-      this.isSaved = null,
-      this.categoryList = const <Category>[], this.postCaption});
+      this.isSaved,
+      this.categoryList = const <Category>[], 
+      this.postCaption,
+      this.error});
 
   final PostStatus status;
   final String postId;
@@ -29,6 +31,7 @@ class PostState extends Equatable {
   final bool? isSaved;
   final List<Category> categoryList;
   final String? postCaption;
+  final String? error;
 
   PostState copyWith({
     PostStatus? status,
@@ -37,7 +40,8 @@ class PostState extends Equatable {
     bool? needUpdate,
     bool? isSaved,
     List<Category>? categoryList,
-    String? postCaption
+    String? postCaption,
+    String? error
   }) {
     return PostState(
       status: status ?? this.status,
@@ -46,7 +50,8 @@ class PostState extends Equatable {
       needUpdate: needUpdate ?? this.needUpdate,
       isSaved: isSaved ?? this.isSaved,
       categoryList: categoryList ?? this.categoryList,
-      postCaption: postCaption ?? this.postCaption
+      postCaption: postCaption ?? this.postCaption,
+      error: error ?? this.error
     );
   }
 

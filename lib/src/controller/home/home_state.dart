@@ -9,6 +9,7 @@ class HomeState extends Equatable {
     this.hasReachedMax = false,
     this.categoryList = const <Category>[],
     this.deletedPostId = '',
+    this.error
   });
 
   final HomeStatus status;
@@ -16,6 +17,7 @@ class HomeState extends Equatable {
   final bool hasReachedMax;
   final String deletedPostId;
   final List<Category> categoryList;
+  final String? error;
 
   HomeState copyWith({
     HomeStatus? status,
@@ -23,6 +25,7 @@ class HomeState extends Equatable {
     bool? hasReachedMax,
     String? deletedPostId,
     List<Category>? categoryList,
+    String? error
   }) {
     return HomeState(
       status: status ?? this.status,
@@ -30,6 +33,7 @@ class HomeState extends Equatable {
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       deletedPostId: deletedPostId ?? this.deletedPostId,
       categoryList: categoryList ?? this.categoryList,
+      error: error ?? this.error
     );
   }
 

@@ -42,6 +42,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   @override
   Widget build(BuildContext context) {
+    post = widget.post;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       height: 580.h,
@@ -58,7 +59,7 @@ class _PostWidgetState extends State<PostWidget> {
                   userId: post.userId!,
                   username: post.userName!,
                   caption:
-                      widget.post.userCaption ?? widget.post.aiCaption ?? "",
+                      post.userCaption ?? post.aiCaption ?? "",
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
@@ -223,8 +224,8 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 if (state.status == PostStatus.reported) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(const SnackBar(
-                        content: Text('Reported !'),
-                        duration: Duration(seconds: 1),
+                        content: Text('This post has been reported! Please wait for system to process.'),
+                        duration: Duration(seconds: 5),
                       ))
                       .closed
                       .then((value) =>
@@ -367,10 +368,20 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
               }
             },
             child: const Text(
-              'OK',
+              'Finish',
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
-          ),
+          ), 
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          )
+          
         ],
       ),
     );

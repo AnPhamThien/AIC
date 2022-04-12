@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 import '../../controller/get_it/get_it.dart';
 import '../../controller/upload/upload_bloc.dart';
 import '../../model/album/album.dart';
@@ -28,6 +29,8 @@ class _UploadScreenState extends State<UploadScreen> {
   String? selectedContestId;
   bool joinContest = false;
   final _captionController = TextEditingController();
+  final _formKey = GlobalKey<FormFieldState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -40,11 +43,7 @@ class _UploadScreenState extends State<UploadScreen> {
           _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }
         if (status is UploadSuccess) {
-          if (state.contestId != null) {
-            await _getDialog("Please wait for approval from admin!", 'Success !', () => Navigator.pop(context));
-          } else {
-            await _getDialog("Your post will be uploaded soon!", 'Success !', () => Navigator.pop(context));
-          }
+            await _getDialog("Create post successfully.", 'Success !', () => Navigator.pop(context));
           Navigator.of(context).pop(status.post);
         }
       },
@@ -220,7 +219,7 @@ class _UploadScreenState extends State<UploadScreen> {
           padding: const EdgeInsets.only(right: 5),
           child: IconButton(
             onPressed: () {
-              if (context.read<UploadBloc>().state.imgPath != null) {
+              if (context.read<UploadBloc>().state.imgPath != null && _formKey.currentState!.validate()) {
                 context.read<UploadBloc>().add(SaveUploadPost(
                     albumId: selectedAlbumId,
                     contestId: selectedContestId,
@@ -285,6 +284,8 @@ class _UploadScreenState extends State<UploadScreen> {
       ),
       child: TextFormField(
         controller: _captionController,
+        key: _formKey,
+        validator: Validation.blankValidation,
         style: const TextStyle(
           fontSize: 18,
         ),

@@ -277,7 +277,6 @@ class PostRepository extends PostBehavior {
       {required int limitPost}) async {
     try {
       final resMessage = await _dataRepository.getPostStorage(limitPost);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -297,7 +296,6 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage =
           await _dataRepository.getMorePostStorage(limitPost, currentPage);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -319,7 +317,6 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage = await _dataRepository.getMoreUserPost(
           userID, limitPost, dateBoundary);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -361,7 +358,6 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage =
           await _dataRepository.getUserContestPost(userID, limitPost);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -380,7 +376,6 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage =
           await _dataRepository.searchPostByImg(img, limitPost);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -421,7 +416,6 @@ class PostRepository extends PostBehavior {
 
       return resMessage;
     } catch (e) {
-      log(e.toString());
       if (e is DioError) {
         if (e.response != null) {
           ListSearchPostResponseMessage resMessage =
@@ -438,7 +432,6 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage =
           await _dataRepository.searchMorePostByKey(searchString, limitPost, dateBoundary);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {

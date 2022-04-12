@@ -40,6 +40,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         transformer: throttleDroppable(throttleDuration));
     on<PostListReset>(_onReset,
         transformer: throttleDroppable(throttleDuration));
+    on<PostUpdated>(_postUpdated, transformer: throttleDroppable(throttleDuration));
   }
 
   List<Followee> _listFollowee = [];
@@ -59,6 +60,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: HomeStatus.failure, error: e.toString()));
       log(e.toString());
     }
   }
@@ -68,7 +70,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     Emitter<HomeState> emit,
   ) async {
     try {
-      emit(state.copyWith(deletedPostId: ''));
+      emit(state.copyWith(deletedPostId: '', status: HomeStatus.success));
     } catch (e) {
       log(e.toString());
     }
@@ -89,7 +91,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           postsList: data?.posts ?? [],
           hasReachedMax: false));
     } catch (_) {
-      emit(state.copyWith(status: HomeStatus.failure));
+      emit(state.copyWith(status: HomeStatus.failure, error: _.toString()));
     }
   }
 
@@ -114,19 +116,35 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
             hasReachedMax: false));
       }
     } catch (_) {
-      emit(state.copyWith(status: HomeStatus.failure));
+      emit(state.copyWith(status: HomeStatus.failure, error: _.toString()));
     }
   }
 
   void _postAdded(PostAdded event, Emitter<HomeState> emit) async {
     try {
       List<Post> list = state.postsList;
+      list.clear();
       list.insert(0, event.post);
+      
+      emit(state.copyWith(
+          status: HomeStatus.success, postsList: list, hasReachedMax: false));
+    } catch (_) {
+      emit(state.copyWith(status: HomeStatus.failure, error: _.toString()));
+    }
+  }
+
+  void _postUpdated(PostUpdated event, Emitter<HomeState> emit) async {
+    try {
+      String postId = event.postId;
+      String postCaption = event.postCaption;
+      int index = state.postsList.indexWhere((element) => element.postId == postId);
+      List<Post> list = state.postsList;
+      list[index].userCaption = postCaption;
 
       emit(state.copyWith(
           status: HomeStatus.success, postsList: list, hasReachedMax: false));
     } catch (_) {
-      emit(state.copyWith(status: HomeStatus.failure));
+      emit(state.copyWith(status: HomeStatus.failure, error: _.toString()));
     }
   }
 }

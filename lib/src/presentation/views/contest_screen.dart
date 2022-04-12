@@ -320,7 +320,7 @@ class _ContestScreenState extends State<ContestScreen> {
       title: AppBarTitle(title: _contest.contestName ?? ''),
       leadingWidth: 30,
       actions: [
-        !state.contest!.timeLeft!.contains("Closed")
+        (!state.contest!.timeLeft!.contains("Closed") && state.contest!.isPosted == 0)
             ? 
             IconButton(
                 onPressed: () {

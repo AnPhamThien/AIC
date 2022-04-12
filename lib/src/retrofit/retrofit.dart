@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
@@ -434,4 +435,7 @@ abstract class RestClient {
     @Query('limitPost') int limitPost,
     @Query('date_boundary') String dateBoundary
   );
+
+  @GET('/notifications/updateisread')
+  Future<GetResponseMessage> updateIsRead();
 }

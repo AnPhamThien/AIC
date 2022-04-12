@@ -9,7 +9,7 @@ class HomeState extends Equatable {
     this.hasReachedMax = false,
     this.categoryList = const <Category>[],
     this.deletedPostId = '',
-    this.error
+    this.error,
     this.hasReachMaxRandom = false,
   });
 

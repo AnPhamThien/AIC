@@ -10,6 +10,7 @@ class HomeState extends Equatable {
     this.categoryList = const <Category>[],
     this.deletedPostId = '',
     this.error
+    this.hasReachMaxRandom = false,
   });
 
   final HomeStatus status;
@@ -18,6 +19,7 @@ class HomeState extends Equatable {
   final String deletedPostId;
   final List<Category> categoryList;
   final String? error;
+  final bool hasReachMaxRandom;
 
   HomeState copyWith({
     HomeStatus? status,
@@ -25,7 +27,8 @@ class HomeState extends Equatable {
     bool? hasReachedMax,
     String? deletedPostId,
     List<Category>? categoryList,
-    String? error
+    String? error,
+    bool? hasReachMaxRandom,
   }) {
     return HomeState(
       status: status ?? this.status,
@@ -33,11 +36,18 @@ class HomeState extends Equatable {
       hasReachedMax: hasReachedMax ?? this.hasReachedMax,
       deletedPostId: deletedPostId ?? this.deletedPostId,
       categoryList: categoryList ?? this.categoryList,
+      hasReachMaxRandom: hasReachMaxRandom ?? this.hasReachMaxRandom,
       error: error ?? this.error
     );
   }
 
   @override
-  List<Object> get props =>
-      [status, postsList, hasReachedMax, deletedPostId, categoryList];
+  List<Object> get props => [
+        status,
+        postsList,
+        hasReachedMax,
+        deletedPostId,
+        categoryList,
+        hasReachMaxRandom
+      ];
 }

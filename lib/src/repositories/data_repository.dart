@@ -484,28 +484,44 @@ class DataRepository implements RestClient {
   }
 
   @override
-  Future<ListTopPostInContestResponseMessage> getListTopPostInContest(String contestId, int limitPost) {
+  Future<ListTopPostInContestResponseMessage> getListTopPostInContest(
+      String contestId, int limitPost) {
     return _client.getListTopPostInContest(contestId, limitPost);
   }
 
   @override
-  Future<ListSearchPostResponseMessage> searchPostByImg(File img, int limitPost) {
+  Future<ListSearchPostResponseMessage> searchPostByImg(
+      File img, int limitPost) {
     return _client.searchPostByImg(img, limitPost);
   }
 
   @override
   Future<GetResponseMessage> updatePost(String postId, String newCaption) {
-    return _client.updatePost(postId, newCaption); 
+    return _client.updatePost(postId, newCaption);
   }
 
   @override
-  Future<ListSearchPostResponseMessage> searchMorePostByKey(String searchString, int limitPost, String dateBoundary) {
+  Future<ListSearchPostResponseMessage> searchMorePostByKey(
+      String searchString, int limitPost, String dateBoundary) {
     return _client.searchMorePostByKey(searchString, limitPost, dateBoundary);
   }
 
   @override
-  Future<ListSearchPostResponseMessage> searchPostByKey(String searchString, int limitPost) {
-   return _client.searchPostByKey(searchString, limitPost);
+  Future<ListSearchPostResponseMessage> searchPostByKey(
+      String searchString, int limitPost) {
+    return _client.searchPostByKey(searchString, limitPost);
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage> getMoreRandomPost(
+      int limitPost, int limitDay, String dateBoundary) {
+    return _client.getMoreRandomPost(limitPost, limitDay, dateBoundary);
+  }
+
+  @override
+  Future<GetListOfPostResponseMessage> getRandomPost(
+      int limitPost, int limitDay) {
+    return _client.getRandomPost(limitPost, limitDay);
   }
 
   @override

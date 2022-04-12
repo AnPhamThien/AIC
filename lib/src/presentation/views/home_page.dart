@@ -160,7 +160,6 @@ class _HomePageState extends State<HomePage> {
                           itemBuilder: (BuildContext context, int index) {
                             _postList = state.postsList;
                             final Post post = _postList[index];
-                            //context.read<HomeBloc>().add(FetchMorePost());
                             return PostWidget(
                               post: post,
                               isInContest: false,
@@ -214,7 +213,8 @@ class _HomePageState extends State<HomePage> {
           builder: (context, state) {
             return IconButton(
               onPressed: () async {
-                await Navigator.of(context).pushNamed(AppRouter.conversationScreen);
+                await Navigator.of(context)
+                    .pushNamed(AppRouter.conversationScreen);
                 context.read<AuthBloc>().add(CheckMessageAndNoti());
               },
               icon: SvgPicture.asset(

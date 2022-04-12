@@ -3,9 +3,11 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/model/category/category.dart';
 import 'package:imagecaptioning/src/model/generic/generic.dart';
+import 'package:imagecaptioning/src/model/post/list_of_post_respone.dart';
 import 'package:imagecaptioning/src/model/post/list_post_data.dart';
 import 'package:imagecaptioning/src/model/post/followee.dart';
 import 'package:imagecaptioning/src/model/post/post.dart';
@@ -85,38 +87,68 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final ListPostData? data =
           await _postRepository.getPost(_postPerPerson, _postDate);
       _listFollowee = data?.followees ?? [];
-
-      emit(state.copyWith(
-          status: HomeStatus.success,
-          postsList: data?.posts ?? [],
-          hasReachedMax: false));
+      if (data!.posts.isEmpty) {
+        final GetListOfPostResponseMessage? data =
+            await _postRepository.getRandomPost(10, 100);
+        emit(state.copyWith(
+            status: HomeStatus.success,
+            hasReachedMax: true,
+            postsList: data?.data ?? []));
+      } else {
+        emit(state.copyWith(
+            status: HomeStatus.success,
+            postsList: data.posts,
+            hasReachedMax: false));
+      }
     } catch (_) {
       emit(state.copyWith(status: HomeStatus.failure, error: _.toString()));
     }
   }
 
   void _fetchMorePost(FetchMorePost event, Emitter<HomeState> emit) async {
-    if (state.hasReachedMax) {
+    if (state.hasReachedMax && state.hasReachMaxRandom) {
       return;
     }
-    try {
-      final ListPostData? data = await _postRepository.getMorePost(
-          PostListRequest(
-              postPerPerson: _postPerPerson,
-              limitDay: _postDate,
-              listFollowees: _listFollowee));
-      final List<Post>? _newPosts = data?.posts;
-      if (_newPosts == null) {
-        emit(state.copyWith(hasReachedMax: true));
-      } else {
-        _listFollowee = data?.followees ?? [];
-        emit(state.copyWith(
-            status: HomeStatus.success,
-            postsList: [...state.postsList, ..._newPosts],
-            hasReachedMax: false));
+    if (state.hasReachedMax && !state.hasReachMaxRandom) {
+      try {
+        final GetListOfPostResponseMessage? data =
+            await _postRepository.getMoreRandomPost(
+                10, 100, state.postsList.last.dateCreate.toString());
+
+        if (data!.statusCode == StatusCode.failStatus &&
+            data.messageCode == MessageCode.noPostToDisplay) {
+          emit(state.copyWith(hasReachMaxRandom: true, hasReachedMax: true));
+        } else {
+          final List<Post>? _newPosts = data.data;
+          emit(state.copyWith(
+              status: HomeStatus.success,
+              hasReachedMax: true,
+              postsList: [...state.postsList, ..._newPosts!],
+              hasReachMaxRandom: false));
+        }
+      } catch (e) {
+        emit(state.copyWith(status: HomeStatus.failure, error: e.toString()));
       }
-    } catch (_) {
-      emit(state.copyWith(status: HomeStatus.failure, error: _.toString()));
+    } else {
+      try {
+        final ListPostData? data = await _postRepository.getMorePost(
+            PostListRequest(
+                postPerPerson: _postPerPerson,
+                limitDay: _postDate,
+                listFollowees: _listFollowee));
+        final List<Post>? _newPosts = data?.posts;
+        if (_newPosts == null) {
+          emit(state.copyWith(hasReachedMax: true));
+        } else {
+          _listFollowee = data?.followees ?? [];
+          emit(state.copyWith(
+              status: HomeStatus.success,
+              postsList: [...state.postsList, ..._newPosts],
+              hasReachedMax: false));
+        }
+      } catch (_) {
+        emit(state.copyWith(status: HomeStatus.failure, error: _.toString()));
+      }
     }
   }
 

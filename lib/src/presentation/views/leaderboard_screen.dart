@@ -43,19 +43,24 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (BuildContext context, int index) {
-                        int likeCount = state.topPostInContestList?[index].likecount ?? 0;
-                        String? avaUrl = state.topPostInContestList?[index].avataUrl;
-                        String username = state.topPostInContestList?[index].userName ?? '';
+                        int likeCount =
+                            state.topPostInContestList?[index].likecount ?? 0;
+                        String? avaUrl =
+                            state.topPostInContestList?[index].avataUrl;
+                        String username =
+                            state.topPostInContestList?[index].userName ?? '';
                         switch (index) {
                           case 0:
                             return SizedBox(
-                              height: 200,
+                              height: 220,
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  getLBAva(avaUrl, 100,
-                                      Colors.amberAccent.shade700),
-                                  getLBLikeCount(likeCount.toString() + ((likeCount > 1) ? ' likes' : ' like')),
+                                  getLBAva(
+                                      avaUrl, 100, Colors.amberAccent.shade700),
+                                  getLBLikeCount(username),
+                                  getLBLikeCount(likeCount.toString() +
+                                      ((likeCount > 1) ? ' likes' : ' like')),
                                   const Divider(
                                     color: bgGrey,
                                     thickness: 1,
@@ -67,10 +72,11 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                             );
                           case 1: //top2
                             return ListTile(
-                              leading: getLBAva(avaUrl, 50,
-                                  Colors.grey.shade400),
+                              leading:
+                                  getLBAva(avaUrl, 50, Colors.grey.shade400),
                               title: Text(username),
-                              subtitle: Text(likeCount.toString() + ((likeCount > 1) ? ' likes' : ' like')),
+                              subtitle: Text(likeCount.toString() +
+                                  ((likeCount > 1) ? ' likes' : ' like')),
                               trailing: Text(
                                 '${index + 1}nd',
                                 style: const TextStyle(
@@ -79,10 +85,11 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                             );
                           case 2: //top3
                             return ListTile(
-                              leading: getLBAva(avaUrl, 50,
-                                  Colors.brown.shade400),
+                              leading:
+                                  getLBAva(avaUrl, 50, Colors.brown.shade400),
                               title: Text(username),
-                              subtitle: Text(likeCount.toString() + ((likeCount > 1) ? ' likes' : ' like')),
+                              subtitle: Text(likeCount.toString() +
+                                  ((likeCount > 1) ? ' likes' : ' like')),
                               trailing: Text(
                                 '${index + 1}rd',
                                 style: const TextStyle(
@@ -96,21 +103,24 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                             if (index == 12) end = 'rd';
                             return ListTile(
                               leading: Padding(
-                                padding: const EdgeInsets.only(left: 20, right: 20),
+                                padding:
+                                    const EdgeInsets.only(left: 20, right: 20),
                                 child: SizedBox(
                                   width: 50.0,
                                   height: 50.0,
                                   child: Image(
-                  image: avaUrl != null
-                      ? NetworkImage(avatarUrl + avaUrl) as ImageProvider
-                      :
-                      const AssetImage("assets/images/avatar_placeholder.png"),
+                                    image: avaUrl != null
+                                        ? NetworkImage(avatarUrl + avaUrl)
+                                            as ImageProvider
+                                        : const AssetImage(
+                                            "assets/images/avatar_placeholder.png"),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
                               ),
                               title: Text(username),
-                              subtitle: Text(likeCount.toString() + ((likeCount > 1) ? ' likes' : ' like')),
+                              subtitle: Text(likeCount.toString() +
+                                  ((likeCount > 1) ? ' likes' : ' like')),
                               trailing: Text('${index + 1}' + end,
                                   style: const TextStyle(
                                       fontSize: 15,
@@ -150,11 +160,10 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
             child: Center(
               child: ClipOval(
                 child: Image(
-                  image:
-                      avaUrl != null
+                  image: avaUrl != null
                       ? NetworkImage(avatarUrl + avaUrl) as ImageProvider
-                      :
-                      const AssetImage("assets/images/avatar_placeholder.png"),
+                      : const AssetImage(
+                          "assets/images/avatar_placeholder.png"),
                   height: size,
                   width: size,
                   fit: BoxFit.cover,

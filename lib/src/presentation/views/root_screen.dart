@@ -4,7 +4,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
-import 'package:imagecaptioning/src/controller/notification/notification_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
@@ -76,7 +75,7 @@ class _RootScreenState extends State<RootScreen> {
                   return getSearchButton();
                 case 2:
                   return getUploadButton();
-                case 3: //TODO nút notification nè
+                case 3:
                   return BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       return IconButton(

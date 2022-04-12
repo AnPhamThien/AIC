@@ -89,6 +89,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -111,6 +112,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -133,6 +135,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -160,6 +163,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         }
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -184,6 +188,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (_) {
+      emit(state.copyWith(status: PostStatus.fail, error: _.toString()));
       log(_.toString() + "update");
     }
   }

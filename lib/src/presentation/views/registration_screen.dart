@@ -42,7 +42,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         } else if (status is FormSubmissionSuccess) {
           String userId = getIt<AppPref>().getUserID;
           getIt<AppPref>().setUserID('');
-          Navigator.of(context).pushNamed(AppRouter.verificationScreen, arguments: userId);
+          Navigator.of(context)
+              .pushNamed(AppRouter.verificationScreen, arguments: userId);
         }
       },
       child: Container(
@@ -160,16 +161,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               hint: 'Re-type your password',
               isPassword: true,
             ),
-            // SizedBox(
-            //   height: 30.h,
-            // ),
-            Row( 
-              children: [
-              Checkbox(value: agreeToTerm, onChanged: (bool? value) => setState(() {
-              agreeToTerm = value!;
-            })), 
-            const Text("I agree to the"),
-            TextButton(onPressed: () => _getDialog(appPolicies, "Policies", () => Navigator.pop(context)), child: const Text("Terms of use"))]),
+            Row(children: [
+              Checkbox(
+                  value: agreeToTerm,
+                  onChanged: (bool? value) => setState(() {
+                        agreeToTerm = value!;
+                      })),
+              const Text("I agree to the"),
+              TextButton(
+                  
+                  onPressed: () => _getDialog(
+                      appPolicies, "Policies", () => Navigator.pop(context)),
+                  child: const Text("Terms of use"))
+            ]),
             SizedBox(
               height: 30.h,
             ),
@@ -177,13 +181,13 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   if (!agreeToTerm) {
-                    _getDialog("You must agree to Terms of use to continue", "Warning", () => Navigator.pop(context));
-                  }
-                  else {
+                    _getDialog("You must agree to Terms of use to continue",
+                        "Warning", () => Navigator.pop(context));
+                  } else {
                     context.read<RegistrationBloc>().add(RegistrationSubmitted(
-                      _usernameController.text,
-                      _passwordController.text,
-                      _emailController.text));
+                        _usernameController.text,
+                        _passwordController.text,
+                        _emailController.text));
                   }
                 }
               },

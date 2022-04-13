@@ -269,9 +269,8 @@ class _ProfilePageState extends State<ProfilePage> {
               borderRadius: BorderRadius.circular(7),
             ),
           ),
-          onPressed: () {
+          onPressed: () async {
             context.read<ProfileBloc>().add(ProfileChangeFollowUser(userId));
-            context.read<ProfileBloc>().add(ProfileInitializing(''));
           },
           child: isFollow ? const Text("Unfollow") : const Text("Follow"),
         ),

@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthBloc(_navigatorKey),
+      create: (context) => AuthBloc(_navigatorKey)..add(CheckToken()),
       child: ScreenUtilInit(
         designSize: const Size(411.5, 775),
         builder: () => MaterialApp(

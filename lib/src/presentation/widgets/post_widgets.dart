@@ -224,7 +224,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 if (state.status == PostStatus.reported) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(const SnackBar(
-                        content: Text('This post has been reported! Please wait for system to process.'),
+                        content: Text('This post has been reported! Please wait for the system to process.'),
                         duration: Duration(seconds: 5),
                       ))
                       .closed
@@ -234,6 +234,14 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 }
                 if (state.status == PostStatus.save) {
                   if (state.isSaved == true) {
+                    ScaffoldMessenger.of(context)
+                      .showSnackBar(const SnackBar(
+                        content: Text('This post has been saved! Please check your profile.'),
+                        duration: Duration(seconds: 5),
+                      ))
+                      .closed
+                      .then((value) =>
+                          ScaffoldMessenger.of(context).clearSnackBars());
                     setState(() {
                       widget.isSave == 1;
                       context.read<PostBloc>().add(Reset());
@@ -400,7 +408,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 color: Colors.black87,
                 letterSpacing: 1.25,
                 fontWeight: FontWeight.w500)),
-        content: const Text('This post will be deleted',
+        content: const Text('Are you sure you want to delete this post?',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18,
@@ -434,42 +442,6 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
             },
             child: const Text(
               'Cancel',
-              style: TextStyle(color: Colors.black87, fontSize: 20),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> showReportedDialog() {
-    return showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        actionsAlignment: MainAxisAlignment.center,
-        title: const Text('Reported',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 23,
-                color: Colors.black87,
-                letterSpacing: 1.25,
-                fontWeight: FontWeight.w500)),
-        content: const Text('This post is reported',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.black87,
-              letterSpacing: 1.25,
-            )),
-        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-            },
-            child: const Text(
-              'OK',
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
           ),

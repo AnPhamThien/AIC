@@ -189,7 +189,8 @@ class _SearchPageState extends State<SearchPage> {
         userId != getIt<AppPref>().getUserID
             ? context.read<AuthBloc>().add(NavigateToPageEvent(
                 route: AppRouter.otherUserProfileScreen, args: args))
-            : null;
+            : context.read<AuthBloc>().add(
+                NavigateToPageEvent(route: AppRouter.currentUserProfileScreen));
       },
       contentPadding: const EdgeInsets.fromLTRB(20, 8, 10, 8),
       leading: Container(

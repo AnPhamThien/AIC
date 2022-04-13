@@ -7,7 +7,6 @@ import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/controller/auth/authentication_status.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/repositories/auth/auth_repository.dart';
 import 'package:imagecaptioning/src/repositories/conversation/conversation_repostitory.dart';
@@ -39,6 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ReconnectSignalREvent>(_onReconnectSignalR);
     on<CheckMessageAndNoti>(_onCheckMessageAndNoti);
     on<ChangeReadNotiStatus>(_onChangeReadNotiStatus);
+    on<CheckToken>(_onCheckToken);
   }
 
   void _onNavigate(NavigateToPageEvent event, Emitter emit) {
@@ -48,6 +48,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (state.status is AuthenticationAuthenticated) {
       authen = true;
     }
+    log(authen.toString());
     if (authen) {
       navigatorKey.currentState!.pushNamed(event.route, arguments: event.args);
     }
@@ -56,11 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onAuthenticate(AuthenticateEvent event, Emitter emit) async {
     try {
     DataRepository.setJwtInHeader();
-    final user = event.user;
-    emit(state.copyWith(
-      status: AuthenticationAuthenticated(),
-      user: user
-    ));
+    emit(state.copyWith(status: AuthenticationAuthenticated()));
     add(CheckMessageAndNoti());
     await _signalRHelper.initiateConnection();
 
@@ -213,6 +210,40 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } 
     catch (e) {
       log("Change Noti");
+      log(e.toString());
+    }
+  }
+
+  void _onCheckToken(CheckToken event, Emitter emit) async {
+    try {
+      String token = getIt<AppPref>().getToken;
+      String refreshToken = getIt<AppPref>().getRefreshToken;
+      String username = getIt<AppPref>().getUsername;
+      String userId = getIt<AppPref>().getUserID;
+      if (token.isNotEmpty && refreshToken.isNotEmpty && username.isNotEmpty && userId.isNotEmpty) {
+        final response = await _authRepository.refreshJwtToken(
+            token: token, refreshToken: refreshToken);
+        if (response == null) {
+          throw Exception("");
+        }
+        String? data = response.data;
+        int? status = response.statusCode;
+        String messageCode = response.messageCode ?? '';
+
+        if (status == StatusCode.successStatus && data != null) {
+          getIt<AppPref>().setToken(data);
+          add(AuthenticateEvent());
+        } else if(messageCode == MessageCode.tokenIsNotExpired) {
+          add(AuthenticateEvent());
+        } else {
+          throw Exception("RefreshToken expires");
+        }    
+      } else {
+        throw Exception("No token found");
+      }
+    } 
+    catch (e) {
+      log("Check token");
       log(e.toString());
     }
   }

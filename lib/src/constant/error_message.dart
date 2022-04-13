@@ -30,7 +30,7 @@ class MessageCode {
     noConversationToDisplay: "There is no conversation to display.",
     codeNotFound: "Wrong code.",
     duplicatePostInContest: "You have already posted in this poll.",
-    reportExist: "You have already reported this post. Please wait for system to process."
+    reportExist: "You have already reported this post. Please wait for the system to process."
   };
 
   static const String genericError = "Something went wrong";

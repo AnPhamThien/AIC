@@ -11,10 +11,7 @@ class NavigateToPageEvent extends AuthEvent {
   NavigateToPageEvent({required this.route, this.args, this.function});
 }
 
-class AuthenticateEvent extends AuthEvent {
-  User? user;
-  AuthenticateEvent(this.user);
-}
+class AuthenticateEvent extends AuthEvent {}
 
 class LogoutEvent extends AuthEvent {}
 
@@ -33,3 +30,4 @@ class ChangeReadNotiStatus extends AuthEvent {
   ChangeReadNotiStatus(this.isRead);
 }
 
+class CheckToken extends AuthEvent {}

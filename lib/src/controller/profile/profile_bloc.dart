@@ -213,6 +213,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         }
         if (resMessage is int) {
           if (resMessage == StatusCode.successStatus) {
+            add(ProfileInitializing(followeeId));
+            add(ProfileInitializing(''));
             emit(state.copyWith(
                 isFollow: !state.isFollow, status: FinishInitializing()));
           } else {

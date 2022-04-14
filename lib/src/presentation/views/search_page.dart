@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/controller/search/search_bloc.dart';
 import 'package:imagecaptioning/src/model/search/search_data.dart';
 import 'package:imagecaptioning/src/model/search/search_history_data.dart';
@@ -191,6 +192,7 @@ class _SearchPageState extends State<SearchPage> {
                 route: AppRouter.otherUserProfileScreen, args: args))
             : context.read<AuthBloc>().add(
                 NavigateToPageEvent(route: AppRouter.currentUserProfileScreen));
+        context.read<ProfileBloc>().add(ProfileInitializing(''));
       },
       contentPadding: const EdgeInsets.fromLTRB(20, 8, 10, 8),
       leading: Container(

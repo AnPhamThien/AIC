@@ -31,7 +31,7 @@ abstract class PostBehavior {
       String dateBoundary, int commentPerPage, String postId);
   Future<GetResponseMessage> addComment(PostAddCommentRequest request);
   Future<GetResponseMessage> deleteComment(String id);
-  Future<GetResponseMessage> addAndDeleteLike(String postId);
+  Future<GetResponseMessage?> addAndDeleteLike(String postId);
   Future<GetResponseMessage> checkSavePost(String postId);
   Future<GetResponseMessage> savePost(String postId);
   Future<GetResponseMessage> unsavePost(String postId);
@@ -194,15 +194,21 @@ class PostRepository extends PostBehavior {
   }
 
   @override
-  Future<GetResponseMessage> addAndDeleteLike(String postId) async {
+  Future<GetResponseMessage?> addAndDeleteLike(String postId) async {
     GetResponseMessage respone = GetResponseMessage();
     try {
       respone = await _dataRepository.addAndDeleteLike(postId);
       return respone;
     } catch (e) {
-      log(e.toString());
+      if (e is DioError) {
+        if (e.response != null) {
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
     }
-    return respone;
   }
 
   @override

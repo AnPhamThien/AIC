@@ -163,11 +163,13 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
     _updatePostController.text = widget.caption;
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 15),
-      onTap: () => widget.userId != getIt<AppPref>().getUserID
-          ? context.read<AuthBloc>().add(NavigateToPageEvent(
-              route: AppRouter.otherUserProfileScreen, args: args))
-          : context.read<AuthBloc>().add(
-              NavigateToPageEvent(route: AppRouter.currentUserProfileScreen)),
+      onTap: () async { widget.userId != getIt<AppPref>().getUserID
+          ? await Navigator.of(context).pushNamed(AppRouter.otherUserProfileScreen, arguments: args)
+          : await Navigator.of(context).pushNamed(AppRouter.currentUserProfileScreen, arguments: args);
+          if (context.read<ProfileBloc?>() != null) {
+            context.read<ProfileBloc>().add(ProfileInitializing(''));
+          }
+              },
       leading: Container(
         width: 45,
         height: 45,

@@ -199,7 +199,7 @@ class _ContestListScreenState extends State<ContestListScreen>
 
   BackdropAppBar getAppBar() {
     return BackdropAppBar(
-      title: Text(_searchText == '' ? 'Vote for the picture you like, or upload your own' : _searchText),
+      title: Text(_searchText == '' ? 'Search poll' : _searchText),
       foregroundColor: Colors.black87,
       backgroundColor: bgApp,
       leading: IconButton(

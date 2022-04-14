@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 import 'package:imagecaptioning/src/model/post/post.dart';
@@ -43,9 +46,9 @@ class _GalleryPageState extends State<GalleryPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => previous.userPostList != current.userPostList,
       builder: (context, state) {
-        List<Post> imageUrls = state.user?.posts ?? [];
-
+        List<Post> imageUrls = state.userPostList ?? [];
         return Scaffold(
           body: imageUrls.isNotEmpty
               ? GridView.count(
@@ -66,13 +69,15 @@ class _GalleryPageState extends State<GalleryPage> {
 
   Widget _createGridTileWidget(Post post) => Builder(
         builder: (context) => GestureDetector(
-          onTap: () {
+          onTap: () async {
             Map<String, dynamic> args = {'post': post};
-
-            context.read<AuthBloc>().add(NavigateToPageEvent(
-                  route: AppRouter.postDetailScreen,
-                  args: args,
-                ));
+            await Navigator.of(context).pushNamed(AppRouter.postDetailScreen, arguments: args);
+            if (context.read<ProfileBloc?>() != null) {
+            context.read<ProfileBloc>().add(ProfileInitializing(''));
+          }
+            if (context.read<HomeBloc?>() != null) {
+            context.read<HomeBloc>().add(InitPostFetched());
+          }
           },
           onLongPress: () {
             _popupDialog = _createPopupDialog(post);

@@ -23,6 +23,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+    final _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ProfileBloc, ProfileState>(
@@ -34,7 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       },
       child: BlocBuilder<ProfileBloc, ProfileState>(
-        buildWhen: (previous, current) => previous.status != current.status,
+        buildWhen: (previous, current) => previous.user != current.user,
         builder: (context, state) {
           bool isMe = state.isCurrentUser;
           bool needLeadBack = state.needLeadBack;
@@ -47,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
               length: 2,
               child: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  innerBoxIsScrolled = false;
                   if (state.user?.avataUrl != null) {
                     refreshNetworkImage(avatarUrl + state.user?.avataUrl);
                   }
@@ -269,7 +272,7 @@ class _ProfilePageState extends State<ProfilePage> {
               borderRadius: BorderRadius.circular(7),
             ),
           ),
-          onPressed: () async {
+          onPressed: () {
             context.read<ProfileBloc>().add(ProfileChangeFollowUser(userId));
           },
           child: isFollow ? const Text("Unfollow") : const Text("Follow"),

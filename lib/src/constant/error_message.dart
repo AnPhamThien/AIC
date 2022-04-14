@@ -19,7 +19,7 @@ class MessageCode {
     albumNotFound: "There is no album yet.",
     albumNameIsDuplicated: "There is already an album with this name.",
     addPostInforNotValid: "Post's info is invalid.",
-    contestNotFound: "Poll not found.",
+    contestNotFound: "Poll has ended.",
     commentNotFound: "Comment not found.",
     noCommentToDisplay: "There is no comment to display.",
     codeIsExpired:

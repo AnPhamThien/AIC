@@ -35,9 +35,10 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     try {
       String imgPath = event.imgPath;
       String? contestId = event.contestId;
+      String originalImgPath = event.originalImgPath;
       if (contestId != null) {
         final response = await _postRepository.getCaption(
-          img: File(imgPath));
+          img: File(originalImgPath));
 
         if (response == null) {
         throw Exception("");
@@ -46,6 +47,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
             imgPath: imgPath,
             aiCaption: response.data,
             contestId: contestId,
+            originalImgPath: originalImgPath,
             status: FinishInitializing()));
       } else {
         GetAlbumResponseMessage? albumRes =
@@ -75,6 +77,7 @@ final response = await _postRepository.getCaption(
             albumList: data,
             aiCaption: response.data,
             contestList: _activeContestList,
+            originalImgPath: originalImgPath,
             status: FinishInitializing()));
       } else {
         throw Exception(albumRes.messageCode);
@@ -106,7 +109,7 @@ final response = await _postRepository.getCaption(
       int status = response.statusCode ?? 0;
       Post? post = response.data;
 
-      if (status == StatusCode.successStatus && post != null) {
+      if (status == StatusCode.successStatus) {
         emit(state.copyWith(status: UploadSuccess(post)));
       } else {
         throw Exception(response.messageCode);

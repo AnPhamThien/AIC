@@ -146,20 +146,30 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   ) async {
     try {
       if (event.isLike == 0) {
-        GetResponseMessage _respone =
+        GetResponseMessage? _respone =
             await _postRepository.addAndDeleteLike(event.postId);
+            if (_respone == null) {
+              throw Exception("Empty response");
+            }
         if (_respone.statusCode == StatusCode.successStatus) {
           emit(state.copyWith(
               status: PostStatus.like, postId: event.postId, needUpdate: true));
+        } else {
+          throw Exception(_respone.messageCode);
         }
       } else {
-        GetResponseMessage _respone =
+        GetResponseMessage? _respone =
             await _postRepository.addAndDeleteLike(event.postId);
+            if (_respone == null) {
+              throw Exception("Empty response");
+            }
         if (_respone.statusCode == StatusCode.successStatus) {
           emit(state.copyWith(
               status: PostStatus.unlike,
               postId: event.postId,
               needUpdate: true));
+        } else {
+          throw Exception(_respone.messageCode);
         }
       }
     } catch (e) {

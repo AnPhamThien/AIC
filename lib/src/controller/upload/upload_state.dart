@@ -7,6 +7,7 @@ class UploadState {
   final String aiCaption;
   final UploadStatus status;
   final String? contestId;
+  final String? originalImgPath;
 
   UploadState({
     this.imgPath,
@@ -14,7 +15,8 @@ class UploadState {
     this.albumList = const <Album>[],
     this.aiCaption = '',
     this.status = const InitialStatus(),
-    this.contestId
+    this.contestId,
+    this.originalImgPath
   });
 
   UploadState copyWith({
@@ -23,7 +25,8 @@ class UploadState {
     List<Album>? albumList,
     String? aiCaption,
     UploadStatus? status,
-    String? contestId
+    String? contestId,
+    String? originalImgPath
   }) {
     return UploadState(
       imgPath: imgPath ?? this.imgPath,
@@ -31,7 +34,8 @@ class UploadState {
       albumList: albumList ?? this.albumList,
       aiCaption: aiCaption ?? this.aiCaption,
       status: status ?? this.status,
-      contestId: contestId ?? this.contestId
+      contestId: contestId ?? this.contestId,
+      originalImgPath: originalImgPath ?? this.originalImgPath
     );
   }
 }
@@ -47,7 +51,7 @@ class InitialStatus extends UploadStatus {
 class FinishInitializing extends UploadStatus {}
 
 class UploadSuccess extends UploadStatus {
-  Post post;
+  Post? post;
   UploadSuccess(this.post);
 }
 

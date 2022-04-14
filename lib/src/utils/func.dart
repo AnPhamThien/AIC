@@ -99,7 +99,7 @@ Future pickImage(ImageSource source, BuildContext context, String destination, S
           minimumAspectRatio: 1.0,
         ));
     if (croppedFile == null) return;
-    Map<String, dynamic> arg = {"imgPath": croppedFile.path, "contestId": contestId};
+    Map<String, dynamic> arg = {"imgPath": croppedFile.path, "contestId": contestId, "oringinalImg" : chosenImage.path};
     Post? post = await Navigator.of(context).pushNamed(destination,
         arguments: arg) as Post?;
     if (post != null) {

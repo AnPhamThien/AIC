@@ -270,7 +270,7 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) =>
-                      UploadBloc()..add(UploadInitializing(arg['imgPath'], arg['contestId'])),
+                      UploadBloc()..add(UploadInitializing(arg['imgPath'], arg['contestId'], arg['oringinalImg'])),
                   child: const UploadScreen(),
                 ));
       case leaderboardScreen:

@@ -199,7 +199,9 @@ class _ContestListScreenState extends State<ContestListScreen>
 
   BackdropAppBar getAppBar() {
     return BackdropAppBar(
-      title: Text(_searchText == '' ? 'Vote for the picture you like, or upload your own' : _searchText),
+      title: Text(_searchText == ''
+          ? 'Vote for the picture you like, or upload your own'
+          : _searchText),
       foregroundColor: Colors.black87,
       backgroundColor: bgApp,
       leading: IconButton(
@@ -363,7 +365,7 @@ class _ContestListScreenState extends State<ContestListScreen>
       child: ListTile(
         onTap: () {
           Map<String, dynamic> args = {'contest': contest};
-          
+
           context.read<AuthBloc>().add(NavigateToPageEvent(
                 route: AppRouter.contestScreen,
                 args: args,
@@ -398,7 +400,10 @@ class _ContestListScreenState extends State<ContestListScreen>
         ),
         //from end
         subtitle: contest.contestActive == 0 && contest.timeLeft != 'Present'
-            ? Text("Start in: " + contest.timeLeft!.split('.').first + " mins")
+            ? int.parse(contest.timeLeft!.split('.').first) > 1
+                ? Text(
+                    "Start in: " + contest.timeLeft!.split('.').first + " mins")
+                : const Text("Start in: a few more second !")
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

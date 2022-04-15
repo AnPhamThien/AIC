@@ -110,10 +110,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                         if (state.postCaption != null) {
                           context.read<PostDetailBloc>().add(UpdatePostDetail(state.postCaption!));
                         }
-                      await _getDialog(
-                      "Update post successfully", 'Success', () => Navigator.pop(context));
-                      context.read<PostBloc>().add(Reset());
-                  }
+                        await _getDialog("Update post successfully", 'Success',
+                            () => Navigator.pop(context));
+                        context.read<PostBloc>().add(Reset());
+                      }
 
                   if (state.status == PostStatus.fail) {
                     String error = getErrorMessage(state.error ?? '');
@@ -189,13 +189,15 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           maxLines: null,
           keyboardType: TextInputType.multiline,
           decoration: InputDecoration(
-            icon:  CircleAvatar(
+            icon: CircleAvatar(
               child: ClipOval(
                 child: Image(
                   height: 50.0,
                   width: 50.0,
-                  image: avatarPath.isNotEmpty ? NetworkImage(avatarUrl + avatarPath) : 
-                  const AssetImage("assets/images/avatar_placeholder.png") as ImageProvider,
+                  image: avatarPath.isNotEmpty
+                      ? NetworkImage(avatarUrl + avatarPath)
+                      : const AssetImage("assets/images/avatar_placeholder.png")
+                          as ImageProvider,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -248,6 +250,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               ),
               Expanded(
                 child: PostHeadlineWidget(
+                  contestId: post.contestId,
                   userId: post.userId!,
                   username: post.userName!,
                   caption: post.userCaption ?? post.aiCaption!,

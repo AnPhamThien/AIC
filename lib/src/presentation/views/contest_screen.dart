@@ -86,8 +86,10 @@ class _ContestScreenState extends State<ContestScreen> {
               _postList.indexWhere((element) => element.postId == state.postId);
           if (_postList[_index].isLike == 0) {
             _postList[_index].isLike = 1;
+            _postList[_index].likecount = _postList[_index].likecount! + 1;
           } else {
             _postList[_index].isLike = 0;
+            _postList[_index].likecount = _postList[_index].likecount! - 1;
           }
 
           context.read<PostBloc>().add(Reset());
@@ -325,13 +327,14 @@ class _ContestScreenState extends State<ContestScreen> {
             IconButton(
                 onPressed: () {
                   //chuyển màn upload post
-                  pickImage(ImageSource.gallery, context, AppRouter.uploadScreen, state.contest?.id);
+                  pickImage(ImageSource.gallery, context,
+                      AppRouter.uploadScreen, state.contest?.id);
                 },
                 icon: SvgPicture.asset(
                   'assets/icons/upload_icon.svg',
                   color: Colors.black87,
                 ),
-              ) 
+              )
             //getUploadButton()
             : const SizedBox.shrink(),
         IconButton(
@@ -484,61 +487,61 @@ class _ContestScreenState extends State<ContestScreen> {
 
   PopupMenuButton getUploadButton() {
     return PopupMenuButton(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        offset: const Offset(65, -150),
-        elevation: 10,
-        itemBuilder: (context) {
-          final list = <PopupMenuEntry<int>>[];
-          list.add(
-            getUploadMenuItem(
-                ImageSource.gallery, "Gallery", Icons.grid_on_rounded),
-          );
-          list.add(
-            const PopupMenuDivider(),
-          );
-          list.add(
-            getUploadMenuItem(
-                ImageSource.camera, "Camera", Icons.camera_enhance_outlined),
-          );
-          return list;
-        },
-        child: Container(
-          width: 108,
-          height: 48,
-          decoration: const BoxDecoration(
-            color: Colors.black,
-            borderRadius: BorderRadius.all(
-              Radius.circular(25),
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: SvgPicture.asset(
-                  "assets/icons/upload_icon.svg",
-                  width: 25,
-                  height: 25,
-                  color: Colors.white,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.only(right: 16.0),
-                child: Text(
-                  "JOIN",
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 1.25,
-                      color: Colors.white),
-                ),
-              )
-            ],
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      offset: const Offset(65, -150),
+      elevation: 10,
+      itemBuilder: (context) {
+        final list = <PopupMenuEntry<int>>[];
+        list.add(
+          getUploadMenuItem(
+              ImageSource.gallery, "Gallery", Icons.grid_on_rounded),
+        );
+        list.add(
+          const PopupMenuDivider(),
+        );
+        list.add(
+          getUploadMenuItem(
+              ImageSource.camera, "Camera", Icons.camera_enhance_outlined),
+        );
+        return list;
+      },
+      child: Container(
+        width: 108,
+        height: 48,
+        decoration: const BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.all(
+            Radius.circular(25),
           ),
         ),
-      );
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: SvgPicture.asset(
+                "assets/icons/upload_icon.svg",
+                width: 25,
+                height: 25,
+                color: Colors.white,
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(right: 16.0),
+              child: Text(
+                "JOIN",
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 1.25,
+                    color: Colors.white),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   PopupMenuItem<int> getUploadMenuItem(

@@ -79,8 +79,6 @@ Future pickImage(ImageSource source, BuildContext context, String destination, S
 
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: chosenImage.path,
-        maxHeight: 300,
-        maxWidth: 300,
         compressQuality: 100,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,

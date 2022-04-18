@@ -23,7 +23,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-    final _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:imagecaptioning/src/model/contest/contest_details_response.dart';
-import 'package:imagecaptioning/src/model/user/user_details.dart';
 
 import '../../model/contest/list_top_post_in_contest.dart';
 import '../../model/post/post_detail_respone.dart';

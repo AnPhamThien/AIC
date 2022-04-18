@@ -81,6 +81,7 @@ Future pickImage(ImageSource source, BuildContext context, String destination, S
         sourcePath: chosenImage.path,
         maxHeight: 300,
         maxWidth: 300,
+        compressQuality: 100,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,

@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
               ),
               BlocListener<HomeBloc, HomeState>(
                 listenWhen: (previous, current) => previous != current,
-                listener: (context, state) {
+                listener: (context, state) async {
                   if (state.deletedPostId != '') {
                     setState(() {
                       context.read<HomeBloc>().add(PostListReset());
@@ -138,7 +138,12 @@ class _HomePageState extends State<HomePage> {
                   }
                   if (state.status == HomeStatus.failure) {
                     String error = getErrorMessage(state.error ?? '');
-                    _getDialog(error, "Error", () => Navigator.of(context).pop());
+                    if (error == MessageCode.errorMap[MessageCode.duplicatePostInContest]) {
+                      await _getDialog(error, "Warning", () => Navigator.of(context).pop());
+                    }
+                    else {
+                      await _getDialog(error, "Error", () => Navigator.of(context).pop());
+                    } 
                     context.read<HomeBloc>().add(PostListReset());
                   }
                 },

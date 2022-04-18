@@ -67,7 +67,7 @@ class SignalRHelper {
         hubConnection!.off('getMessage');
       }
     } on Exception catch (_) {
-      log("Fail to close connection");
+      log("Fail to unregister");
       log(_.toString());
     }
   }

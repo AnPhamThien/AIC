@@ -98,7 +98,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       log(e.toString());
     } finally {
-      navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.loginScreen, ModalRoute.withName(AppRouter.loginScreen));
       getIt<AppPref>().setToken("");
       getIt<AppPref>().setRefreshToken("");
       getIt<AppPref>().setUsername("");

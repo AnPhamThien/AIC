@@ -192,7 +192,7 @@ class _SearchPageState extends State<SearchPage> {
                 route: AppRouter.otherUserProfileScreen, args: args))
             : context.read<AuthBloc>().add(
                 NavigateToPageEvent(route: AppRouter.currentUserProfileScreen));
-        context.read<ProfileBloc>().add(ProfileInitializing(''));
+        //context.read<ProfileBloc>().add(ProfileInitializing(''));
       },
       contentPadding: const EdgeInsets.fromLTRB(20, 8, 10, 8),
       leading: Container(

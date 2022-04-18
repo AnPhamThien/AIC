@@ -40,7 +40,7 @@ class _UploadScreenState extends State<UploadScreen> {
         final status = state.status;
         if (status is ErrorStatus) {
           String errorMessage = getErrorMessage(status.exception.toString());
-          _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+          await _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }
         if (status is UploadSuccess) {
             await _getDialog("Create post successfully.", 'Success !', () => Navigator.pop(context));

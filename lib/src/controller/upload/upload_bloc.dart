@@ -36,6 +36,11 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       String imgPath = event.imgPath;
       String? contestId = event.contestId;
       String originalImgPath = event.originalImgPath;
+      emit(state.copyWith(
+            imgPath: imgPath,
+            contestId: contestId,
+            originalImgPath: originalImgPath,
+            status: FinishInitializing()));
       if (contestId != null) {
         final response = await _postRepository.getCaption(
           img: File(originalImgPath));
@@ -43,11 +48,15 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (response == null) {
         throw Exception("");
         }
+
+        String message = response.messageCode ?? '';
+
+        if (message.isNotEmpty) {
+          throw Exception(message);
+        }
+
         emit(state.copyWith(
-            imgPath: imgPath,
             aiCaption: response.data,
-            contestId: contestId,
-            originalImgPath: originalImgPath,
             status: FinishInitializing()));
       } else {
         GetAlbumResponseMessage? albumRes =
@@ -65,19 +74,26 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         data!.removeWhere(
             (element) => element.albumName == "Poll Post Storage");
 
-final response = await _postRepository.getCaption(
+            emit(state.copyWith(
+            albumList: data,
+            contestList: _activeContestList,
+            status: FinishInitializing()));
+
+      final response = await _postRepository.getCaption(
           img: File(imgPath));
 
       if (response == null) {
         throw Exception("");
       }
 
+      String message = response.messageCode ?? '';
+
+        if (message.isNotEmpty) {
+          throw Exception(message);
+        }
+
         emit(state.copyWith(
-            imgPath: imgPath,
-            albumList: data,
             aiCaption: response.data,
-            contestList: _activeContestList,
-            originalImgPath: originalImgPath,
             status: FinishInitializing()));
       } else {
         throw Exception(albumRes.messageCode);
@@ -130,6 +146,12 @@ final response = await _postRepository.getCaption(
       if (response == null) {
         throw Exception("");
       }
+
+      String message = response.messageCode ?? '';
+
+        if (message.isNotEmpty) {
+          throw Exception(message);
+        }
         emit(state.copyWith(aiCaption: response.data));
     } on Exception catch (_) {
       emit(state.copyWith(status: ErrorStatus(_)));

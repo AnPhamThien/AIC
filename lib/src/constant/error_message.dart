@@ -30,7 +30,8 @@ class MessageCode {
     noConversationToDisplay: "There is no conversation to display.",
     codeNotFound: "Wrong code.",
     duplicatePostInContest: "You have already posted in this poll.",
-    reportExist: "You have already reported this post. Please wait for the system to process."
+    reportExist: "You have already reported this post. Please wait for the system to process.",
+    aiIsNotActive: "AI is not active"
   };
 
   static const String genericError = "Something went wrong";
@@ -749,4 +750,9 @@ class MessageCode {
   /// RP116 : post is already reported
   /// </summary>
   static const String reportExist = "RP116";
+
+  /// <summary>
+  /// AI111 : AI server is inactive
+  /// </summary>
+  static const String aiIsNotActive = "AI111";
 }

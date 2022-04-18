@@ -225,9 +225,7 @@ class _RestClient implements RestClient {
                 .compose(_dio.options, '/users/refreshtoken',
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
-                log("here");
     final value = GetResponseMessage.fromJson(_result.data!);
-    log("here1");
     return value;
   }
 
@@ -1443,6 +1441,24 @@ class _RestClient implements RestClient {
                     queryParameters: queryParameters, data: _data)
                 .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
     final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetContestDetailsRespone> getContestDetailForTransaction(
+      contestId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'contestId': contestId};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetContestDetailsRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(
+                    _dio.options, '/contests/getcontestdetailfortransaction',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetContestDetailsRespone.fromJson(_result.data!);
     return value;
   }
 

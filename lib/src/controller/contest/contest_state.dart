@@ -16,6 +16,7 @@ class ContestState extends Equatable {
     this.totalParticipaters = 0,
     this.hasReachMax = false,
     this.prizes = const <Prize>[],
+    this.error
   });
 
   final ContestStatus status;
@@ -25,6 +26,7 @@ class ContestState extends Equatable {
   final int totalParticipaters;
   final bool hasReachMax;
   final List<Prize> prizes;
+  final String? error;
 
   ContestState copyWith({
     ContestStatus? status,
@@ -34,6 +36,7 @@ class ContestState extends Equatable {
     int? totalParticipaters,
     bool? hasReachMax,
     List<Prize>? prizes,
+    String? error
   }) {
     return ContestState(
       status: status ?? this.status,
@@ -43,6 +46,7 @@ class ContestState extends Equatable {
       totalParticipaters: totalParticipaters ?? this.totalParticipaters,
       hasReachMax: hasReachMax ?? this.hasReachMax,
       prizes: prizes ?? this.prizes,
+      error: error ?? this.error
     );
   }
 

@@ -89,8 +89,7 @@ class _UploadScreenState extends State<UploadScreen> {
       child: Center(
         child: BlocBuilder<UploadBloc, UploadState>(
           builder: (context, state) {
-            if (state.contestId == null)
-            {
+            if (state.contestId == null) {
               return Column(
               children: [
                 const SizedBox(
@@ -120,7 +119,7 @@ class _UploadScreenState extends State<UploadScreen> {
               ],
             );} else {
               selectedContestId = state.contestId;
-              return const Text("Choose caption for your post");
+              return const SizedBox.shrink();
             }
           },
         ),

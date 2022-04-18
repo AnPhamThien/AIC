@@ -24,7 +24,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-const _paging = 2;
+const _paging = 20;
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
   SearchBloc() : super(const SearchState()) {

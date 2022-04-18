@@ -105,16 +105,18 @@ class _LeaderBoardScreenState extends State<LeaderBoardScreen> {
                               leading: Padding(
                                 padding:
                                     const EdgeInsets.only(left: 20, right: 20),
-                                child: SizedBox(
-                                  width: 50.0,
-                                  height: 50.0,
-                                  child: Image(
-                                    image: avaUrl != null
-                                        ? NetworkImage(avatarUrl + avaUrl)
-                                            as ImageProvider
-                                        : const AssetImage(
-                                            "assets/images/avatar_placeholder.png"),
-                                    fit: BoxFit.cover,
+                                child: ClipOval(
+                                  child: SizedBox(
+                                    width: 50.0,
+                                    height: 50.0,
+                                    child: Image(
+                                      image: avaUrl != null
+                                          ? NetworkImage(avatarUrl + avaUrl)
+                                              as ImageProvider
+                                          : const AssetImage(
+                                              "assets/images/avatar_placeholder.png"),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),

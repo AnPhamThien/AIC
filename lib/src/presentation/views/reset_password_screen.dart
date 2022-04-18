@@ -165,7 +165,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
             ),
             GetUserInput(
                 label: 'Confirm Password',
-                hint: "",
+                hint: "Confirm your new password",
                 isPassword: true,
                 validator: (value) => value == _passwordController.text
                     ? null

@@ -38,7 +38,8 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
               Map<String, dynamic> args = {
                 "userId": state.userId,
               };
-              Navigator.pushNamed(context, AppRouter.resetPasswordScreen, arguments: args);
+              Navigator.pushNamed(context, AppRouter.resetPasswordScreen,
+                  arguments: args);
             }
           },
           child: SingleChildScrollView(
@@ -171,25 +172,29 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
             BlocBuilder<EmailConfirmationBloc, EmailConfirmationState>(
               builder: (context, state) {
                 return AbsorbPointer(
-                          absorbing: state.absorbing,
-                          child: TextButton(
-                            onPressed: () {
-                              context.read<EmailConfirmationBloc>().add(const EmailConfirmationResendButtonPushed());
-                            },
-                            style: TextButton.styleFrom(
-                                fixedSize: Size(size.width * .94, 55),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20)),
-                                backgroundColor: Colors.grey.shade200,
-                                alignment: Alignment.center,
-                                primary: Colors.black87,
-                                textStyle: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 20)),
-                            child: Text(
-                              state.absorbing ? "Please wait for a few seconds" : "Resend code",
-                            ),
-                          ),
-                        );
+                  absorbing: state.absorbing,
+                  child: TextButton(
+                    onPressed: () {
+                      context
+                          .read<EmailConfirmationBloc>()
+                          .add(const EmailConfirmationResendButtonPushed());
+                    },
+                    style: TextButton.styleFrom(
+                        fixedSize: Size(size.width * .94, 55),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        backgroundColor: Colors.grey.shade200,
+                        alignment: Alignment.center,
+                        primary: Colors.black87,
+                        textStyle: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20)),
+                    child: Text(
+                      state.absorbing
+                          ? "Please wait for a few seconds"
+                          : "Resend code",
+                    ),
+                  ),
+                );
               },
             ),
           ],
@@ -209,7 +214,7 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
               fontSize: 40,
               color: Colors.black.withOpacity(0.8)),
           children: const [
-            TextSpan(text: "Confirming your\n"),
+            TextSpan(text: "Verifying your\n"),
             TextSpan(
               text: "Account!",
               style: TextStyle(fontWeight: FontWeight.w900, fontSize: 42),

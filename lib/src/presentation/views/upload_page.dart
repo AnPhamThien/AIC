@@ -42,7 +42,8 @@ class _UploadScreenState extends State<UploadScreen> {
           _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }
         if (status is UploadSuccess) {
-          await _getDialog("Your post will be uploaded soon!", 'Success !', () => Navigator.pop(context));
+          await _getDialog("Your post will be uploaded soon!", 'Success !',
+              () => Navigator.pop(context));
           Navigator.of(context).pop(status.post);
         }
       },
@@ -88,38 +89,38 @@ class _UploadScreenState extends State<UploadScreen> {
       child: Center(
         child: BlocBuilder<UploadBloc, UploadState>(
           builder: (context, state) {
-            if (state.contestId == null)
-            {
+            if (state.contestId == null) {
               return Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                ListTile(
-                    title: const Text("Do you wanna join a contest ?"),
-                    trailing: IconButton(
-                        icon: joinContest
-                            ? const Icon(Icons.clear_rounded)
-                            : const Icon(Icons.check_box),
-                        onPressed: () {
-                          setState(() {
-                            joinContest = !joinContest;
-                            if (!joinContest) {
-                              selectedContestId = null;
-                            } else {
-                              selectedAlbumId = null;
-                            }
-                          });
-                        })),
-                joinContest
-                    ? getItemPicker("Choose a contest for your picture",
-                        state.contestList, 2)
-                    : getItemPicker(
-                        "Choose an album for your picture", state.albumList, 1),
-              ],
-            );} else {
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  ListTile(
+                      title: const Text("Do you wanna join a contest ?"),
+                      trailing: IconButton(
+                          icon: joinContest
+                              ? const Icon(Icons.clear_rounded)
+                              : const Icon(Icons.check_box),
+                          onPressed: () {
+                            setState(() {
+                              joinContest = !joinContest;
+                              if (!joinContest) {
+                                selectedContestId = null;
+                              } else {
+                                selectedAlbumId = null;
+                              }
+                            });
+                          })),
+                  joinContest
+                      ? getItemPicker("Choose a contest for your picture",
+                          state.contestList, 2)
+                      : getItemPicker("Choose an album for your picture",
+                          state.albumList, 1),
+                ],
+              );
+            } else {
               selectedContestId = state.contestId;
-              return const Text("Choose caption for your contest post");
+              return const SizedBox.shrink();
             }
           },
         ),
@@ -313,7 +314,8 @@ class _UploadScreenState extends State<UploadScreen> {
           suffixIcon: IconButton(
             padding: const EdgeInsets.all(0),
             onPressed: () {
-              context.read<UploadBloc>().add(RequestCaption(postImg: context.read<UploadBloc>().state.imgPath!));
+              context.read<UploadBloc>().add(RequestCaption(
+                  postImg: context.read<UploadBloc>().state.imgPath!));
             },
             icon: const Icon(
               Icons.refresh_rounded,

@@ -64,7 +64,8 @@ class _NotificationPageState extends State<NotificationPage> {
                             noti.avataUrl ?? '',
                             noti.userName,
                             noti.notifyContent ?? '',
-                            noti.totalHours?.toInt() ?? 0, noti.imageUrl ?? '');
+                            noti.totalHours?.toInt() ?? 0,
+                            noti.imageUrl ?? '');
                       },
                       itemCount: state.notificationList?.length,
                       controller: _scrollController,
@@ -81,8 +82,8 @@ class _NotificationPageState extends State<NotificationPage> {
     );
   }
 
-  ListTile getNotificationItem(
-      String avatar, String? username, String context, int time, String imgLink) {
+  ListTile getNotificationItem(String avatar, String? username, String context,
+      int time, String imgLink) {
     return ListTile(
       leading: SizedBox(
         width: 45.0,
@@ -92,9 +93,9 @@ class _NotificationPageState extends State<NotificationPage> {
             child: Image(
               height: 45.0,
               width: 45.0,
-              image: (avatar.isNotEmpty)
-                  ? NetworkImage(avatarUrl + avatar)
-                  : const AssetImage('assets/images/Veibae.jpeg')
+              image: (imgLink.isNotEmpty)
+                  ? NetworkImage(postImageUrl + imgLink)
+                  : const AssetImage('assets/images/avatar_placeholder.jpeg')
                       as ImageProvider,
               fit: BoxFit.cover,
             ),

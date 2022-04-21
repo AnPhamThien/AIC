@@ -67,7 +67,7 @@ class SignalRHelper {
         hubConnection!.off('getMessage');
       }
     } on Exception catch (_) {
-      log("Fail to close connection");
+      log("Fail to unregister");
       log(_.toString());
     }
   }
@@ -146,7 +146,8 @@ class SignalRHelper {
           final message = Message.fromJson(data?['message']);
 
           if (message.conversationId == conversationId ||
-              message.userId == messageContext!.read<MessageBloc>().state.userId) {
+              message.userId == messageContext!.read<MessageBloc>().state.userId 
+              || message.userId == getIt<AppPref>().getUserID) {
             if (message.content != null) {
               message.content = utf8.decode(message.content!.runes.toList());
             }

@@ -5,6 +5,7 @@ import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
+import 'package:imagecaptioning/src/model/contest/contest_details_response.dart';
 import 'package:imagecaptioning/src/model/contest/prize.dart';
 import 'package:stream_transform/stream_transform.dart';
 
@@ -41,8 +42,18 @@ class ContestBloc extends Bloc<ContestEvent, ContestState> {
   void _onContestInitial(
       InitContestFetched event, Emitter<ContestState> emit) async {
     try {
-      final _contest = event.contest;
-      final ContestRespone _respone =
+      Contest? _contest = event.contest;
+      final _contestId = event.contestId;
+      if (_contest == null && _contestId != null) {
+        GetContestDetailsRespone? _response = await _contestRepository.getContestDetailForTransaction(_contestId);
+        if (_response == null) {
+          throw Exception("GetContestDetailsRespone is null");
+        }
+        _contest = _response.data;
+      }
+
+      if (_contest != null) {
+        final ContestRespone _respone =
           await _contestRepository.getInitContest(_contest.id, _limitPost);
       final ContestData? _contestData = _respone.data;
       if (_respone.statusCode == StatusCode.successStatus &&
@@ -59,9 +70,12 @@ class ContestBloc extends Bloc<ContestEvent, ContestState> {
       } else {
         throw Exception(_respone.messageCode);
       }
+      } else {
+        throw Exception("Contest is null");
+      }
     } catch (_) {
       emit(state.copyWith(
-          status: ContestStatus.failure, contest: event.contest));
+          status: ContestStatus.failure, contest: event.contest, error: _.toString()));
     }
   }
 
@@ -93,7 +107,7 @@ class ContestBloc extends Bloc<ContestEvent, ContestState> {
       }
     } catch (_) {
       log(_.toString());
-      emit(state.copyWith(status: ContestStatus.failure));
+      emit(state.copyWith(status: ContestStatus.failure, error: _.toString()));
     }
   }
 }

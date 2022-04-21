@@ -65,12 +65,17 @@ class _NotificationPageState extends State<NotificationPage> {
                             noti.userName,
                             noti.notifyContent ?? '',
 <<<<<<< HEAD
+<<<<<<< HEAD
                             noti.totalHours?.toInt() ?? 0,
                             noti.imageUrl ?? '');
 =======
                             timeCalculateDouble(noti.totalHours ?? 0),
                              noti.imageUrl ?? '');
 >>>>>>> 161649f (Update Message)
+=======
+                            timeCalculateDouble(noti.totalHours ?? 0),
+                             noti.imageUrl ?? '');
+>>>>>>> origin/NhanNT
                       },
                       itemCount: state.notificationList?.length,
                       controller: _scrollController,
@@ -93,7 +98,10 @@ class _NotificationPageState extends State<NotificationPage> {
 =======
   ListTile getNotificationItem(
       String avatar, String? username, String context, String time, String imgLink) {
+<<<<<<< HEAD
 >>>>>>> 161649f (Update Message)
+=======
+>>>>>>> origin/NhanNT
     return ListTile(
       leading: SizedBox(
         width: 45.0,
@@ -103,9 +111,15 @@ class _NotificationPageState extends State<NotificationPage> {
             child: Image(
               height: 45.0,
               width: 45.0,
+<<<<<<< HEAD
               image: (imgLink.isNotEmpty)
                   ? NetworkImage(postImageUrl + imgLink)
                   : const AssetImage('assets/images/avatar_placeholder.jpeg')
+=======
+              image: (avatar.isNotEmpty)
+                  ? NetworkImage(avatarUrl + avatar)
+                  : const AssetImage('assets/images/avatar_placeholder.png')
+>>>>>>> origin/NhanNT
                       as ImageProvider,
               fit: BoxFit.cover,
             ),
@@ -133,7 +147,11 @@ class _NotificationPageState extends State<NotificationPage> {
         width: 45.0,
         image: (imgLink.isNotEmpty)
             ? NetworkImage(postImageUrl + imgLink)
+<<<<<<< HEAD
             : const AssetImage('assets/images/Veibae.jpeg') as ImageProvider,
+=======
+            : const AssetImage('assets/images/avatar_placeholder.png') as ImageProvider,
+>>>>>>> origin/NhanNT
         fit: BoxFit.cover,
       ),
     );

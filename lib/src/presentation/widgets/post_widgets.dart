@@ -2,11 +2,9 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
-import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
@@ -42,6 +40,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   @override
   Widget build(BuildContext context) {
+    post = widget.post;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       // height: 650.h,
@@ -58,7 +57,7 @@ class _PostWidgetState extends State<PostWidget> {
                   userId: post.userId!,
                   username: post.userName!,
                   caption:
-                      widget.post.userCaption ?? widget.post.aiCaption ?? "",
+                      post.userCaption ?? post.aiCaption ?? "",
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
@@ -162,11 +161,13 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
     _updatePostController.text = widget.caption;
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 15),
-      onTap: () => widget.userId != getIt<AppPref>().getUserID
-          ? context.read<AuthBloc>().add(NavigateToPageEvent(
-              route: AppRouter.otherUserProfileScreen, args: args))
-          : context.read<AuthBloc>().add(
-              NavigateToPageEvent(route: AppRouter.currentUserProfileScreen)),
+      onTap: () async { widget.userId != getIt<AppPref>().getUserID
+          ? await Navigator.of(context).pushNamed(AppRouter.otherUserProfileScreen, arguments: args)
+          : await Navigator.of(context).pushNamed(AppRouter.currentUserProfileScreen, arguments: args);
+          if (context.read<ProfileBloc?>() != null) {
+            context.read<ProfileBloc>().add(ProfileInitializing(''));
+          }
+              },
       leading: Container(
         width: 45,
         height: 45,
@@ -205,8 +206,10 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                   ? RadiantGradientMask(
                       child: IconButton(
                         onPressed: () async {
+                          Map<String, dynamic> args = {"contestId" : widget.contestId};
                           await Navigator.pushNamed(
-                              context, AppRouter.contestListScreen);
+                              context, AppRouter.contestScreen, arguments: args);
+                          
                           context.read<HomeBloc>().add(InitPostFetched());
                         },
                         icon: const Icon(
@@ -223,8 +226,8 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 if (state.status == PostStatus.reported) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(const SnackBar(
-                        content: Text('Reported !'),
-                        duration: Duration(seconds: 1),
+                        content: Text('This post has been reported! Please wait for the system to process.'),
+                        duration: Duration(seconds: 5),
                       ))
                       .closed
                       .then((value) =>
@@ -233,6 +236,14 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 }
                 if (state.status == PostStatus.save) {
                   if (state.isSaved == true) {
+                    ScaffoldMessenger.of(context)
+                      .showSnackBar(const SnackBar(
+                        content: Text('This post has been saved! Please check your profile.'),
+                        duration: Duration(seconds: 5),
+                      ))
+                      .closed
+                      .then((value) =>
+                          ScaffoldMessenger.of(context).clearSnackBars());
                     setState(() {
                       widget.isSave == 1;
                       context.read<PostBloc>().add(Reset());
@@ -367,10 +378,20 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
               }
             },
             child: const Text(
-              'OK',
+              'Finish',
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
-          ),
+          ), 
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          )
+          
         ],
       ),
     );
@@ -389,7 +410,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 color: Colors.black87,
                 letterSpacing: 1.25,
                 fontWeight: FontWeight.w500)),
-        content: const Text('This post will be deleted',
+        content: const Text('Are you sure you want to delete this post?',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18,
@@ -423,42 +444,6 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
             },
             child: const Text(
               'Cancel',
-              style: TextStyle(color: Colors.black87, fontSize: 20),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Future<void> showReportedDialog() {
-    return showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        actionsAlignment: MainAxisAlignment.center,
-        title: const Text('Reported',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 23,
-                color: Colors.black87,
-                letterSpacing: 1.25,
-                fontWeight: FontWeight.w500)),
-        content: const Text('This post is reported',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.black87,
-              letterSpacing: 1.25,
-            )),
-        contentPadding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-            },
-            child: const Text(
-              'OK',
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
           ),

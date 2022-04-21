@@ -144,7 +144,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   textStyle: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20)),
               child: const Text(
-                "Confirm",
+                "Send",
               ),
             ),
           ],

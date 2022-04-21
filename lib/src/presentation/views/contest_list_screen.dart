@@ -199,9 +199,13 @@ class _ContestListScreenState extends State<ContestListScreen>
 
   BackdropAppBar getAppBar() {
     return BackdropAppBar(
+<<<<<<< HEAD
       title: Text(_searchText == ''
           ? 'Vote for the picture you like, or upload your own'
           : _searchText),
+=======
+      title: Text(_searchText == '' ? 'Search poll' : _searchText),
+>>>>>>> origin/NhanNT
       foregroundColor: Colors.black87,
       backgroundColor: bgApp,
       leading: IconButton(

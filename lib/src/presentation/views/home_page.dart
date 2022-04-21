@@ -3,6 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+<<<<<<< HEAD
+=======
+import 'package:imagecaptioning/src/constant/error_message.dart';
+>>>>>>> origin/NhanNT
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
@@ -78,10 +82,27 @@ class _HomePageState extends State<HomePage> {
                     context.read<ProfileBloc>().add(ProfileInitializing(''));
                     context.read<PostBloc>().add(Reset());
                   }
+<<<<<<< HEAD
                   if (state.status == PostStatus.added ||
                       state.status == PostStatus.updated) {
+=======
+                  if (state.status == PostStatus.added) {
+>>>>>>> origin/NhanNT
                     setState(() {
-                      context.read<HomeBloc>().add(InitPostFetched());
+                      if (state.post != null) {
+                        context.read<HomeBloc>().add(PostAdded(state.post!));
+                      }
+                      //context.read<HomeBloc>().add(InitPostFetched());
+                      context.read<PostBloc>().add(Reset());
+                      context.read<ProfileBloc>().add(ProfileInitializing(''));
+                    });
+                  }
+                  if (state.status == PostStatus.updated) {
+                    setState(() {
+                      if (state.postId.isNotEmpty && state.postCaption != null) {
+                        context.read<HomeBloc>().add(PostUpdated(state.postId, state.postCaption!));
+                      }
+                      //context.read<HomeBloc>().add(InitPostFetched());
                       context.read<PostBloc>().add(Reset());
                       context.read<ProfileBloc>().add(ProfileInitializing(''));
                     });
@@ -106,16 +127,32 @@ class _HomePageState extends State<HomePage> {
                     context.read<ProfileBloc>().add(ProfileInitializing(""));
                     context.read<PostBloc>().add(Reset());
                   }
+
+                  if (state.status == PostStatus.fail) {
+                    String error = getErrorMessage(state.error ?? '');
+                    _getDialog(error, "Error", () => Navigator.of(context).pop());
+                    context.read<PostBloc>().add(Reset());
+                  }
                 },
               ),
               BlocListener<HomeBloc, HomeState>(
                 listenWhen: (previous, current) => previous != current,
-                listener: (context, state) {
+                listener: (context, state) async {
                   if (state.deletedPostId != '') {
                     setState(() {
                       context.read<HomeBloc>().add(PostListReset());
                       context.read<HomeBloc>().add(InitPostFetched());
                     });
+                  }
+                  if (state.status == HomeStatus.failure) {
+                    String error = getErrorMessage(state.error ?? '');
+                    if (error == MessageCode.errorMap[MessageCode.duplicatePostInContest]) {
+                      await _getDialog(error, "Warning", () => Navigator.of(context).pop());
+                    }
+                    else {
+                      await _getDialog(error, "Error", () => Navigator.of(context).pop());
+                    } 
+                    context.read<HomeBloc>().add(PostListReset());
                   }
                 },
               ),
@@ -203,6 +240,38 @@ class _HomePageState extends State<HomePage> {
           },
         ), //Message
       ],
+    );
+  }
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? MessageCode.genericError,
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

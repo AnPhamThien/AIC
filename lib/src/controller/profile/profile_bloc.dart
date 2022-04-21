@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
+import 'package:equatable/equatable.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
@@ -57,7 +58,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
 
       GetUserDetailsResponseMessage? userRes =
-          await _userRepository.getUserDetail(userID: userID, limitPost: 9);
+          await _userRepository.getUserDetail(userID: userID, limitPost: 18);
 
       if (userRes == null) {
         throw Exception("");
@@ -72,7 +73,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
         if (state.isCurrentUser) {
           GetListOfPostResponseMessage? savedPostResponse =
-              await _postRepository.getPostStorage(limitPost: 9);
+              await _postRepository.getPostStorage(limitPost: 18);
           if (savedPostResponse == null) {
             throw Exception("");
           }
@@ -86,7 +87,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         } else {
           GetListOfPostResponseMessage? contestPostResponse =
               await _postRepository.getUserContestPost(
-                  userID: userID, limitPost: 9);
+                  userID: userID, limitPost: 18);
           if (contestPostResponse == null) {
             throw Exception("");
           }
@@ -104,6 +105,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
             isFollow: (userRes.data?.isFollow == 1),
             postListPage: 1,
             galleryPostListPage: 1,
+            userPostList: userRes.data?.posts,
             status: FinishInitializing()));
       } else {
         throw Exception(userRes.messageCode);
@@ -119,22 +121,23 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       return;
     }
     try {
-      if (state.user?.posts == null) {
+      List<Post>? list = state.userPostList;
+      if (list == null) {
         throw Exception();
       }
       final data = await _postRepository.getMoreUserPost(
-          userID: getIt<AppPref>().getUserID,
-          limitPost: 9,
-          dateBoundary: state.user!.posts!.last.dateCreate.toString());
+          userID: state.user!.id!,
+          limitPost: 6,
+          dateBoundary: list.last.dateCreate.toString());
       if (data == null) {
         throw Exception();
       } else if (data.messageCode == MessageCode.noPostToDisplay) {
         emit(state.copyWith(hasReachedMax: true));
       } else {
-        UserDetails? user = state.user;
-        user?.posts?.addAll(data.data!);
+        //data.data!.insertAll(0, list);
+        // list.addAll(data.data!);
         emit(state.copyWith(
-            status: FinishInitializing(), user: user, hasReachedMax: false));
+            status: FinishInitializing(), userPostList: [...state.userPostList!, ...data.data!], hasReachedMax: false));
       }
     } on Exception catch (_) {
       emit(state.copyWith(status: ErrorStatus(_)));
@@ -156,7 +159,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (state.isCurrentUser) {
         page = state.galleryPostListPage;
         data = await _postRepository.getMorePostStorage(
-            limitPost: 9, currentPage: page + 1);
+            limitPost: 6, currentPage: page + 1);
       } else {
         if (state.user?.id == null) {
           throw Exception("");
@@ -167,7 +170,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         }
         data = await _postRepository.getMoreUserContestPost(
             userID: state.user!.id!,
-            limitPost: 9,
+            limitPost: 6,
             dateBoundary: state.galleryPostList!.last.dateCreate.toString());
       }
 
@@ -178,11 +181,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (data.messageCode == MessageCode.noPostToDisplay) {
         emit(state.copyWith(hasReachedMax: true));
       } else {
-        List<Post> savedPostList = state.galleryPostList ?? [];
-        savedPostList.addAll(data.data!);
         emit(state.copyWith(
             status: FinishInitializing(),
-            galleryPostList: savedPostList,
+            galleryPostList: [...state.galleryPostList!, ...data.data!],
             hasReachedMax: false,
             galleryPostListPage: page + 1));
       }
@@ -214,7 +215,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         if (resMessage is int) {
           if (resMessage == StatusCode.successStatus) {
             add(ProfileInitializing(followeeId));
+<<<<<<< HEAD
             add(ProfileInitializing(''));
+=======
+>>>>>>> origin/NhanNT
             emit(state.copyWith(
                 isFollow: !state.isFollow, status: FinishInitializing()));
           } else {

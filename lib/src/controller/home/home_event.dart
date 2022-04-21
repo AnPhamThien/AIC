@@ -23,6 +23,13 @@ class PostAdded extends HomeEvent {
   const PostAdded(this.post);
 }
 
+class PostUpdated extends HomeEvent {
+  final String postId;
+  final String postCaption;
+
+  const PostUpdated(this.postId, this.postCaption);
+}
+
 class DeletePost extends HomeEvent{
   final String postId;
   const DeletePost(this.postId);

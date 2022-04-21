@@ -191,7 +191,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   textStyle: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 20)),
               child: const Text(
-                "Update password",
+                "Reset password",
               ),
             ),
           ],

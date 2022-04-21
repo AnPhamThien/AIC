@@ -33,7 +33,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       var bytes = utf8.encode(password);
       var encodedPassword = sha256.convert(bytes).toString();
+<<<<<<< HEAD
       log(bytes.toString());
+=======
+>>>>>>> origin/NhanNT
       log(encodedPassword.toString());
 
       AuthenticationResponseMessage? response =

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart' hide Headers;
 import 'package:imagecaptioning/src/model/album/album.dart';
+import 'package:imagecaptioning/src/model/contest/contest_details_response.dart';
 import 'package:imagecaptioning/src/model/contest/list_top_post_in_contest.dart';
 import 'package:imagecaptioning/src/model/post/add_post_response.dart';
 import 'package:imagecaptioning/src/model/category/category_respone.dart';
@@ -439,7 +440,20 @@ abstract class RestClient {
 
   @GET('/posts/searchmorepostbykey')
   Future<ListSearchPostResponseMessage> searchMorePostByKey(
+<<<<<<< HEAD
       @Query('searchString') String searchString,
       @Query('limitPost') int limitPost,
       @Query('date_boundary') String dateBoundary);
+=======
+    @Query('searchString') String searchString,
+    @Query('limitPost') int limitPost,
+    @Query('date_boundary') String dateBoundary);
+
+  @GET('/notifications/updateisread')
+  Future<GetResponseMessage> updateIsRead();
+
+  @GET('/contests/getcontestdetailfortransaction')
+  Future<GetContestDetailsRespone> getContestDetailForTransaction(
+    @Query('contestId') String contestId);
+>>>>>>> origin/NhanNT
 }

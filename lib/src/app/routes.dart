@@ -247,13 +247,11 @@ class AppRouter {
                   providers: [
                     BlocProvider(
                       create: (context) => ContestBloc()
-                        ..add(InitContestFetched(arg['contest'])),
+                        ..add(InitContestFetched(arg['contest'], arg['contestId'])),
                     ),
                     BlocProvider.value(value: _postBloc),
                   ],
-                  child: ContestScreen(
-                    contest: arg['contest'],
-                  ),
+                  child: const ContestScreen(),
                 ));
       case contestUserScreen:
         final arg = routeSettings.arguments as Map<String, dynamic>;
@@ -270,7 +268,11 @@ class AppRouter {
         return MaterialPageRoute(
             builder: (context) => BlocProvider(
                   create: (context) =>
+<<<<<<< HEAD
                       UploadBloc()..add(UploadInitializing(arg['imgPath'], arg['contestId'])),
+=======
+                      UploadBloc()..add(UploadInitializing(arg['imgPath'], arg['contestId'], arg['oringinalImg'])),
+>>>>>>> origin/NhanNT
                   child: const UploadScreen(),
                 ));
       case leaderboardScreen:

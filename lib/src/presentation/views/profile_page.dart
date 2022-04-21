@@ -23,6 +23,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<ProfileBloc, ProfileState>(
@@ -34,7 +35,7 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       },
       child: BlocBuilder<ProfileBloc, ProfileState>(
-        buildWhen: (previous, current) => previous.status != current.status,
+        buildWhen: (previous, current) => previous.user != current.user,
         builder: (context, state) {
           bool isMe = state.isCurrentUser;
           bool needLeadBack = state.needLeadBack;
@@ -42,11 +43,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
           return Scaffold(
             backgroundColor: Colors.white,
-            appBar: getProfileAppBar(state.user?.userName ?? '', needLeadBack),
+            appBar: getProfileAppBar(state.user?.userName ?? '', needLeadBack, isMe),
             body: DefaultTabController(
               length: 2,
               child: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) {
+                  innerBoxIsScrolled = false;
                   if (state.user?.avataUrl != null) {
                     refreshNetworkImage(avatarUrl + state.user?.avataUrl);
                   }
@@ -112,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  AppBar getProfileAppBar(String username, bool needLeadBack) {
+  AppBar getProfileAppBar(String username, bool needLeadBack, bool isMe) {
     return AppBar(
       automaticallyImplyLeading: needLeadBack,
       leadingWidth: 30,
@@ -123,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: 5),
-          child: IconButton(
+          child: isMe ? IconButton(
             onPressed: () {
               getSheet(context);
             },
@@ -131,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Icons.dehaze_rounded,
               size: 30,
             ),
-          ),
+          ) : null,
         )
       ],
     );

@@ -70,6 +70,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -88,6 +89,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -110,6 +112,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -132,6 +135,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         throw Exception(_respone.messageCode);
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -142,23 +146,34 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   ) async {
     try {
       if (event.isLike == 0) {
-        GetResponseMessage _respone =
+        GetResponseMessage? _respone =
             await _postRepository.addAndDeleteLike(event.postId);
+            if (_respone == null) {
+              throw Exception("Empty response");
+            }
         if (_respone.statusCode == StatusCode.successStatus) {
           emit(state.copyWith(
               status: PostStatus.like, postId: event.postId, needUpdate: true));
+        } else {
+          throw Exception(_respone.messageCode);
         }
       } else {
-        GetResponseMessage _respone =
+        GetResponseMessage? _respone =
             await _postRepository.addAndDeleteLike(event.postId);
+            if (_respone == null) {
+              throw Exception("Empty response");
+            }
         if (_respone.statusCode == StatusCode.successStatus) {
           emit(state.copyWith(
               status: PostStatus.unlike,
               postId: event.postId,
               needUpdate: true));
+        } else {
+          throw Exception(_respone.messageCode);
         }
       }
     } catch (e) {
+      emit(state.copyWith(status: PostStatus.fail, error: e.toString()));
       log(e.toString());
     }
   }
@@ -178,11 +193,12 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         emit(state.copyWith(
               status: PostStatus.updated,
               postId: postId,
-              needUpdate: true, postCaption: newCaption));
+              postCaption: newCaption));
       } else {
         throw Exception(_respone.messageCode);
       }
     } catch (_) {
+      emit(state.copyWith(status: PostStatus.fail, error: _.toString()));
       log(_.toString() + "update");
     }
   }
@@ -192,7 +208,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     Emitter<PostState> emit,
   ) async {
     emit(state.copyWith(
-        status: PostStatus.init, postId: '', needUpdate: false, isSaved: null));
+        status: PostStatus.init, postId: '', post: null, needUpdate: false, isSaved: null, postCaption: '', error: ''));
   }
 
   void _onAddPost(

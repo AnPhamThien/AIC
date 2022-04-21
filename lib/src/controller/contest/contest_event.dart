@@ -8,9 +8,10 @@ abstract class ContestEvent extends Equatable {
 }
 
 class InitContestFetched extends ContestEvent {
-  final Contest contest;
+  final Contest? contest;
+  final String? contestId;
 
-  const InitContestFetched(this.contest);
+  const InitContestFetched(this.contest, this.contestId);
 }
 
 class MoreContestPostFetched extends ContestEvent {}

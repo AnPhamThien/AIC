@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:imagecaptioning/src/utils/validations.dart';
 import '../../controller/get_it/get_it.dart';
 import '../../controller/upload/upload_bloc.dart';
 import '../../model/album/album.dart';
@@ -29,6 +29,8 @@ class _UploadScreenState extends State<UploadScreen> {
   String? selectedContestId;
   bool joinContest = false;
   final _captionController = TextEditingController();
+  final _formKey = GlobalKey<FormFieldState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,13 +39,16 @@ class _UploadScreenState extends State<UploadScreen> {
         _captionController.text = state.aiCaption;
         final status = state.status;
         if (status is ErrorStatus) {
-          log(status.exception.toString());
           String errorMessage = getErrorMessage(status.exception.toString());
-          _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+          await _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }
         if (status is UploadSuccess) {
+<<<<<<< HEAD
           await _getDialog("Your post will be uploaded soon!", 'Success !',
               () => Navigator.pop(context));
+=======
+            await _getDialog("Create post successfully.", 'Success !', () => Navigator.pop(context));
+>>>>>>> origin/NhanNT
           Navigator.of(context).pop(status.post);
         }
       },
@@ -91,6 +96,7 @@ class _UploadScreenState extends State<UploadScreen> {
           builder: (context, state) {
             if (state.contestId == null) {
               return Column(
+<<<<<<< HEAD
                 children: [
                   const SizedBox(
                     height: 20,
@@ -119,6 +125,35 @@ class _UploadScreenState extends State<UploadScreen> {
                 ],
               );
             } else {
+=======
+              children: [
+                const SizedBox(
+                  height: 20,
+                ),
+                state.contestList.isNotEmpty ? ListTile(
+                    title: const Text("Do you wanna join a poll ?"),
+                    trailing: IconButton(
+                        icon: joinContest
+                            ? const Icon(Icons.clear_rounded)
+                            : const Icon(Icons.check_box),
+                        onPressed: () {
+                          setState(() {
+                            joinContest = !joinContest;
+                            if (!joinContest) {
+                              selectedContestId = null;
+                            } else {
+                              selectedAlbumId = null;
+                            }
+                          });
+                        })) : const Text(""),
+                joinContest
+                    ? getItemPicker("Choose a poll for your picture",
+                        state.contestList, 2)
+                    : getItemPicker(
+                        "Choose an album for your picture", state.albumList, 1),
+              ],
+            );} else {
+>>>>>>> origin/NhanNT
               selectedContestId = state.contestId;
               return const SizedBox.shrink();
             }
@@ -219,7 +254,7 @@ class _UploadScreenState extends State<UploadScreen> {
           padding: const EdgeInsets.only(right: 5),
           child: IconButton(
             onPressed: () {
-              if (context.read<UploadBloc>().state.imgPath != null) {
+              if (context.read<UploadBloc>().state.imgPath != null && _formKey.currentState!.validate()) {
                 context.read<UploadBloc>().add(SaveUploadPost(
                     albumId: selectedAlbumId,
                     contestId: selectedContestId,
@@ -284,6 +319,8 @@ class _UploadScreenState extends State<UploadScreen> {
       ),
       child: TextFormField(
         controller: _captionController,
+        key: _formKey,
+        validator: Validation.blankValidation,
         style: const TextStyle(
           fontSize: 18,
         ),
@@ -314,8 +351,12 @@ class _UploadScreenState extends State<UploadScreen> {
           suffixIcon: IconButton(
             padding: const EdgeInsets.all(0),
             onPressed: () {
+<<<<<<< HEAD
               context.read<UploadBloc>().add(RequestCaption(
                   postImg: context.read<UploadBloc>().state.imgPath!));
+=======
+              context.read<UploadBloc>().add(RequestCaption(postImg: context.read<UploadBloc>().state.originalImgPath!));
+>>>>>>> origin/NhanNT
             },
             icon: const Icon(
               Icons.refresh_rounded,

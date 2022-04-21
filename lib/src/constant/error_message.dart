@@ -1,36 +1,42 @@
 class MessageCode {
   static Map<String, String> errorMap = {
-    userNotFound: "User not found",
-    addUserInfoNotValid: "User's info is invalid",
-    userEmailExist: "User's email already used",
-    userAccountInActivated: "User's account is not activated",
-    userAccountDeleted: "User's account has been deleted",
-    userStorageNotFound: "User's storage is not found",
-    userNameExist: "Username already used",
-    userMailNotFound: "User's mail is not found",
-    oldPassWord: "Old password",
+    userNotFound: "User not found.",
+    addUserInfoNotValid: "User's info is invalid.",
+    userEmailExist: "User's email already used.",
+    userAccountInActivated: "User's account is not activated.",
+    userAccountDeleted: "User's account has been deleted.",
+    userStorageNotFound: "User's storage is not found.",
+    userNameExist: "Username already used.",
+    userMailNotFound: "There is no account associated with this email.",
+    oldPassWord: "Old password.",
     userPassWordInCorrect: "Please check your username and password.",
-    getUserDetailFail: "Get user's details fail",
-    getMoreUserPostFail: "Get more user's posts fail",
-    getUserAccountFail: "Get user account fail",
-    noUserAccountToDisplay: "No user account to display",
-    postNotFound: "Post not found",
-    noPostToDisplay: "There is no post to display",
-    albumNotFound: "There is no album yet",
-    albumNameIsDuplicated: "There is already an album with this name",
-    addPostInforNotValid: "Post's info is invalid",
-    contestNotFound: "Contest not found",
-    contestNameIsDuplicated: "There is already a contest with this name",
-    commentNotFound: "Comment not found",
-    noCommentToDisplay: "There is no comment to display",
+    getUserDetailFail: "Get user's details fail.",
+    getMoreUserPostFail: "Get more user's posts fail.",
+    getUserAccountFail: "Get user account fail.",
+    noUserAccountToDisplay: "No user account to display.",
+    postNotFound: "Post not found.",
+    noPostToDisplay: "There is no post to display.",
+    albumNotFound: "There is no album yet.",
+    albumNameIsDuplicated: "There is already an album with this name.",
+    addPostInforNotValid: "Post's info is invalid.",
+    contestNotFound: "Poll has ended.",
+    commentNotFound: "Comment not found.",
+    noCommentToDisplay: "There is no comment to display.",
     codeIsExpired:
         "Your confirmation has already expired. Please click on resend code button.",
     postReferenceBelongtoRequestUser: "You cannot save your own post.",
     noNotificationToDisplay: "There is no notification to display.",
-    conversationNotFound: "Conversation not found",
+    conversationNotFound: "Conversation not found.",
     noConversationToDisplay: "There is no conversation to display.",
+<<<<<<< HEAD
     duplicatePostInContest: "You cannot post twice in a contest.",
     codeNotFound: "Wrong code"
+=======
+    codeNotFound: "Wrong code.",
+    duplicatePostInContest: "You have already posted in this poll.",
+    reportExist: "You have already reported this post. Please wait for the system to process.",
+    aiIsNotActive: "AI is not active"
+>>>>>>> origin/NhanNT
   };
 
   static const String genericError = "Something went wrong";
@@ -744,4 +750,14 @@ class MessageCode {
   /// PZ117 : get prize fail
   /// </summary>
   static const String getPrizeFail = "PZ117";
+
+  /// <summary>
+  /// RP116 : post is already reported
+  /// </summary>
+  static const String reportExist = "RP116";
+
+  /// <summary>
+  /// AI111 : AI server is inactive
+  /// </summary>
+  static const String aiIsNotActive = "AI111";
 }

@@ -1428,6 +1428,43 @@ class _RestClient implements RestClient {
     return value;
   }
 
+<<<<<<< HEAD
+=======
+  @override
+  Future<GetResponseMessage> updateIsRead() async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetResponseMessage>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(_dio.options, '/notifications/updateisread',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetResponseMessage.fromJson(_result.data!);
+    return value;
+  }
+
+  @override
+  Future<GetContestDetailsRespone> getContestDetailForTransaction(
+      contestId) async {
+    const _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{r'contestId': contestId};
+    final _headers = <String, dynamic>{};
+    final _data = <String, dynamic>{};
+    final _result = await _dio.fetch<Map<String, dynamic>>(
+        _setStreamType<GetContestDetailsRespone>(
+            Options(method: 'GET', headers: _headers, extra: _extra)
+                .compose(
+                    _dio.options, '/contests/getcontestdetailfortransaction',
+                    queryParameters: queryParameters, data: _data)
+                .copyWith(baseUrl: baseUrl ?? _dio.options.baseUrl)));
+    final value = GetContestDetailsRespone.fromJson(_result.data!);
+    return value;
+  }
+
+>>>>>>> origin/NhanNT
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

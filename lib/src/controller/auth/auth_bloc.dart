@@ -7,12 +7,12 @@ import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/controller/auth/authentication_status.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
-import 'package:imagecaptioning/src/model/user/user.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/repositories/auth/auth_repository.dart';
 import 'package:imagecaptioning/src/repositories/conversation/conversation_repostitory.dart';
 
 import 'package:imagecaptioning/src/repositories/data_repository.dart';
+import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
 import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
 
 part 'auth_event.dart';
@@ -23,11 +23,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final SignalRHelper _signalRHelper;
   final AuthRepository _authRepository;
   final ConversationRepository _conversationRepository;
+<<<<<<< HEAD
+=======
+  final NotificationRepository _notificationRepository;
+>>>>>>> origin/NhanNT
 
   AuthBloc(this.navigatorKey)
       : _signalRHelper = SignalRHelper(navigatorKey),
         _authRepository = AuthRepository(),
         _conversationRepository = ConversationRepository(),
+<<<<<<< HEAD
+=======
+         _notificationRepository = NotificationRepository(),
+>>>>>>> origin/NhanNT
         super(const AuthState()) {
     on<NavigateToPageEvent>(_onNavigate);
     on<AuthenticateEvent>(_onAuthenticate);
@@ -36,6 +44,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ReconnectSignalREvent>(_onReconnectSignalR);
     on<CheckMessageAndNoti>(_onCheckMessageAndNoti);
     on<ChangeReadNotiStatus>(_onChangeReadNotiStatus);
+<<<<<<< HEAD
+=======
+    on<CheckToken>(_onCheckToken);
+>>>>>>> origin/NhanNT
   }
 
   void _onNavigate(NavigateToPageEvent event, Emitter emit) {
@@ -45,6 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } else if (state.status is AuthenticationAuthenticated) {
       authen = true;
     }
+    log(authen.toString());
     if (authen) {
       navigatorKey.currentState!.pushNamed(event.route, arguments: event.args);
     }
@@ -53,6 +66,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onAuthenticate(AuthenticateEvent event, Emitter emit) async {
     try {
     DataRepository.setJwtInHeader();
+<<<<<<< HEAD
     final user = event.user;
     bool newMessage = await checkMessage();
     emit(state.copyWith(
@@ -60,6 +74,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       user: user,
       newMessage: newMessage
     ));
+=======
+    emit(state.copyWith(status: AuthenticationAuthenticated()));
+    add(CheckMessageAndNoti());
+>>>>>>> origin/NhanNT
     await _signalRHelper.initiateConnection();
 
     navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.rootScreen, ModalRoute.withName(AppRouter.rootScreen));
@@ -81,13 +99,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await _authRepository.deleteRefreshToken();
 
+    } catch (e) {
+      log(e.toString());
+    } finally {
       getIt<AppPref>().setToken("");
       getIt<AppPref>().setRefreshToken("");
       getIt<AppPref>().setUsername("");
       getIt<AppPref>().setUserID("");
       DataRepository.setJwtInHeader();
-    } catch (e) {
-      log(e.toString());
     }
   }
 
@@ -95,17 +114,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       await _signalRHelper.unregisterAll();
       emit(state.copyWith(status: AuthenticationUnauthenticated()));
+<<<<<<< HEAD
       
 
+=======
+    } catch (e) {
+      log(e.toString());
+    } finally {
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.loginScreen, ModalRoute.withName(AppRouter.loginScreen));
+>>>>>>> origin/NhanNT
       getIt<AppPref>().setToken("");
       getIt<AppPref>().setRefreshToken("");
       getIt<AppPref>().setUsername("");
       getIt<AppPref>().setUserID("");
       DataRepository.setJwtInHeader();
-    } catch (e) {
-      log(e.toString());
-    } finally {
-      navigatorKey.currentState!.pushNamed(AppRouter.loginScreen);
       //await _signalRHelper.closeConnection();
     }
   }
@@ -141,8 +163,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onCheckMessageAndNoti(CheckMessageAndNoti event, Emitter emit) async {
     try {
     bool newMessage = await checkMessage();
+<<<<<<< HEAD
     emit(state.copyWith(
       newMessage: newMessage
+=======
+    bool newNoti = await checkNoti();
+    emit(state.copyWith(
+      newMessage: newMessage,
+      newNoti: newNoti
+>>>>>>> origin/NhanNT
     ));
     } 
     catch (e) {
@@ -170,9 +199,46 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
+<<<<<<< HEAD
   void _onChangeReadNotiStatus(ChangeReadNotiStatus event, Emitter emit) async {
     try {
     bool newStatus = event.isRead;
+=======
+  Future<bool> checkNoti() async {
+    try {
+      final notificationData = await _notificationRepository.getNotification(limit: 1);
+    if (notificationData != null) {
+      if (notificationData.data != null) {
+        final lastNoti = notificationData.data?.first;
+        if (lastNoti?.isRead == false) {
+          return true;
+        }
+      }
+    }
+    return false;
+    } catch (e) {
+      log("Check Noti");
+      log(e.toString());
+      return false;
+    }
+  }
+
+  void _onChangeReadNotiStatus(ChangeReadNotiStatus event, Emitter emit) async {
+    try {
+    bool newStatus = event.isRead;
+    if (!newStatus) {
+      final resMessage = await _notificationRepository.updateIsRead();
+      if (resMessage == null) {
+        throw Exception();
+      }
+
+      String message = resMessage.messageCode ?? '';
+
+      if (message.isNotEmpty) {
+        throw Exception(message);
+      }
+    }
+>>>>>>> origin/NhanNT
     emit(state.copyWith(
       newNoti: newStatus
     ));
@@ -182,4 +248,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       log(e.toString());
     }
   }
+<<<<<<< HEAD
+=======
+
+  void _onCheckToken(CheckToken event, Emitter emit) async {
+    try {
+      String token = getIt<AppPref>().getToken;
+      String refreshToken = getIt<AppPref>().getRefreshToken;
+      String username = getIt<AppPref>().getUsername;
+      String userId = getIt<AppPref>().getUserID;
+      if (token.isNotEmpty && refreshToken.isNotEmpty && username.isNotEmpty && userId.isNotEmpty) {
+        final response = await _authRepository.refreshJwtToken(
+            token: token, refreshToken: refreshToken);
+        if (response == null) {
+          throw Exception("");
+        }
+        String? data = response.data;
+        int? status = response.statusCode;
+        String messageCode = response.messageCode ?? '';
+
+        if (status == StatusCode.successStatus && data != null) {
+          getIt<AppPref>().setToken(data);
+          add(AuthenticateEvent());
+        } else if(messageCode == MessageCode.tokenIsNotExpired) {
+          add(AuthenticateEvent());
+        } else {
+          throw Exception("RefreshToken expires");
+        }    
+      } else {
+        throw Exception("No token found");
+      }
+    } 
+    catch (e) {
+      log("Check token");
+      log(e.toString());
+    }
+  }
+>>>>>>> origin/NhanNT
 }

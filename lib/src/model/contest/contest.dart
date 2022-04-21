@@ -9,6 +9,7 @@ class Contest {
     this.timeLeft,
     this.userwinId,
     this.contestActive,
+    this.isPosted
   });
 
   String id;
@@ -20,6 +21,7 @@ class Contest {
   String? timeLeft;
   dynamic userwinId;
   int? contestActive;
+  int? isPosted;
 
   factory Contest.fromJson(Map<String, dynamic> json) => Contest(
         id: json["id"],
@@ -31,6 +33,7 @@ class Contest {
         timeLeft: json["time_left"],
         userwinId: json["userwin_id"],
         contestActive: json["contest_active"],
+        isPosted: json["isPosted"]
       );
 
   Map<String, dynamic> toJson() => {

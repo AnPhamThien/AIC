@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/controller/home/home_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 
 import 'package:imagecaptioning/src/model/post/post.dart';
@@ -42,6 +43,7 @@ class _StoragePageState extends State<StoragePage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProfileBloc, ProfileState>(
+      buildWhen: (previous, current) => previous.galleryPostList != current.galleryPostList,
       builder: (context, state) {
         List<Post> imageUrls = state.galleryPostList ?? [];
 
@@ -65,12 +67,18 @@ class _StoragePageState extends State<StoragePage> {
 
   Widget _createGridTileWidget(Post post) => Builder(
         builder: (context) => GestureDetector(
-          onTap: () {
+          onTap: () async {
             post.isSaved = 1;
             Map<String, dynamic> args = {'post': post};
 
-            Navigator.of(context)
+            await Navigator.of(context)
                 .pushNamed(AppRouter.postDetailScreen, arguments: args);
+            if (context.read<ProfileBloc?>() != null) {
+            context.read<ProfileBloc>().add(ProfileInitializing(''));
+          }
+            if (context.read<HomeBloc?>() != null) {
+            context.read<HomeBloc>().add(InitPostFetched());
+          }
           },
           onLongPress: () {
             _popupDialog = _createPopupDialog(post);

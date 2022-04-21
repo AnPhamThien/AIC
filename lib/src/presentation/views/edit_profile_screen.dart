@@ -25,7 +25,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   bool firstInit = true;
-
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -54,10 +53,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 final status = state.status;
                 if (status is EditProfileSuccess) {
                   if (state.user?.avataUrl != null) {
+                    await _getDialog(
+                      "Profile is updated successfully", 'Success !', () => Navigator.pop(context));
                     refreshNetworkImage(
                         avatarUrl + state.user!.avataUrl.toString());
                   }
-
                   Navigator.pop(context);
                 }
                 if (status is ErrorStatus) {
@@ -65,9 +65,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       getErrorMessage(status.exception.toString());
                   await _getDialog(
                       errorMessage, 'Error !', () => Navigator.pop(context));
-                  // context
-                  //     .read<EditProfileBloc>()
-                  //     .add(EditProfileInitializing());
                 }
               },
               child: BlocBuilder<EditProfileBloc, EditProfileState>(
@@ -163,6 +160,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           GetUserInput(
                             controller: _phoneController,
                             label: "Phone",
+                            validator: Validation.phoneValidation
                           ),
                           const SizedBox(
                             height: 20,

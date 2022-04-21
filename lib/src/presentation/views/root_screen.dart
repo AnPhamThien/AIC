@@ -110,7 +110,11 @@ class _RootScreenState extends State<RootScreen> {
                   return getSearchButton();
                 case 2:
                   return getUploadButton();
+<<<<<<< HEAD
                 case 3: //TODO nút notification nè
+=======
+                case 3:
+>>>>>>> origin/NhanNT
                   return BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       return IconButton(
@@ -207,12 +211,17 @@ class _RootScreenState extends State<RootScreen> {
           );
           list.add(
 <<<<<<< HEAD
+<<<<<<< HEAD
             getMenuItem(ImageSource.gallery, "Post",
                 Icons.camera_enhance_outlined, 1, AppRouter.postSearchScreen),
 =======
             getMenuItem(null, "Post", Icons.camera_enhance_outlined, 1,
                 AppRouter.postSearchScreen),
 >>>>>>> 91375e1 (Update Policy and Fix Bugs)
+=======
+            getMenuItem(null, "Post", Icons.camera_enhance_outlined, 1,
+                AppRouter.postSearchScreen),
+>>>>>>> origin/NhanNT
           );
           return list;
         },

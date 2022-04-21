@@ -1,5 +1,9 @@
 class Validation {
   static String? blankValidation(String? value) {
+    if (value != null) {
+      value = value.trim();
+    }
+    
     if (value == null || value.isEmpty) {
       return 'Cannot be empty';
     }
@@ -7,6 +11,10 @@ class Validation {
   }
 
   static String? usernameValidation(String? value) {
+    if (value != null) {
+      value = value.trim();
+    }
+
     if (value == null || value.isEmpty) {
       return 'Cannot be empty';
     } else if (value.length < 6) {
@@ -16,17 +24,46 @@ class Validation {
   }
 
   static String? passwordValidation(String? value) {
+<<<<<<< HEAD
+=======
+    if (value != null) {
+      value = value.trim();
+    }
+
+>>>>>>> origin/NhanNT
     final regexp = RegExp(r'^([A-Za-z]+[0-9|]|[0-9]+[A-Za-z])[A-Za-z0-9]*$');
 
     if (value == null || value.isEmpty) {
       return 'Cannot be empty';
     } else if (value.length < 6 || !regexp.hasMatch(value)) {
       return 'Password must have at least 6 characters which contains at least 1 number and 1 character';
+<<<<<<< HEAD
+=======
+    }
+    return null;
+  }
+
+  static String? phoneValidation(String? value) {
+    if (value != null) {
+      value = value.trim();
+    }
+
+    final regexp = RegExp(r"^\d{10}$");
+
+    if (value == null || value.isEmpty) {
+      return 'Cannot be empty';
+    } else if (!regexp.hasMatch(value)) {
+      return 'Phone number must have 10 digits';
+>>>>>>> origin/NhanNT
     }
     return null;
   }
 
   static String? emailValidation(String? value) {
+    if (value != null) {
+      value = value.trim();
+    }
+    
     if (value == null || value.isEmpty) {
       return 'Cannot be empty';
     } else if (!RegExp(

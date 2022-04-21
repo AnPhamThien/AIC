@@ -31,7 +31,7 @@ abstract class PostBehavior {
       String dateBoundary, int commentPerPage, String postId);
   Future<GetResponseMessage> addComment(PostAddCommentRequest request);
   Future<GetResponseMessage> deleteComment(String id);
-  Future<GetResponseMessage> addAndDeleteLike(String postId);
+  Future<GetResponseMessage?> addAndDeleteLike(String postId);
   Future<GetResponseMessage> checkSavePost(String postId);
   Future<GetResponseMessage> savePost(String postId);
   Future<GetResponseMessage> unsavePost(String postId);
@@ -194,15 +194,21 @@ class PostRepository extends PostBehavior {
   }
 
   @override
-  Future<GetResponseMessage> addAndDeleteLike(String postId) async {
+  Future<GetResponseMessage?> addAndDeleteLike(String postId) async {
     GetResponseMessage respone = GetResponseMessage();
     try {
       respone = await _dataRepository.addAndDeleteLike(postId);
       return respone;
     } catch (e) {
-      log(e.toString());
+      if (e is DioError) {
+        if (e.response != null) {
+          GetResponseMessage resMessage =
+              GetResponseMessage.fromJson(e.response!.data);
+          return resMessage;
+        }
+      }
+      return null;
     }
-    return respone;
   }
 
   @override
@@ -284,7 +290,6 @@ class PostRepository extends PostBehavior {
       {required int limitPost}) async {
     try {
       final resMessage = await _dataRepository.getPostStorage(limitPost);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -304,7 +309,6 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage =
           await _dataRepository.getMorePostStorage(limitPost, currentPage);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -326,7 +330,6 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage = await _dataRepository.getMoreUserPost(
           userID, limitPost, dateBoundary);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -368,7 +371,6 @@ class PostRepository extends PostBehavior {
     try {
       final resMessage =
           await _dataRepository.getUserContestPost(userID, limitPost);
-
       return resMessage;
     } catch (e) {
       if (e is DioError) {
@@ -429,7 +431,10 @@ class PostRepository extends PostBehavior {
 
       return resMessage;
     } catch (e) {
+<<<<<<< HEAD
       log(e.toString());
+=======
+>>>>>>> origin/NhanNT
       if (e is DioError) {
         if (e.response != null) {
           ListSearchPostResponseMessage resMessage =

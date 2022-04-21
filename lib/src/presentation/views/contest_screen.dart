@@ -19,9 +19,7 @@ import '../widgets/global_widgets.dart';
 import '../widgets/post_widgets.dart';
 
 class ContestScreen extends StatefulWidget {
-  const ContestScreen({Key? key, required this.contest}) : super(key: key);
-
-  final Contest contest;
+  const ContestScreen({Key? key}) : super(key: key);
 
   @override
   _ContestScreenState createState() => _ContestScreenState();
@@ -37,13 +35,12 @@ class _ContestScreenState extends State<ContestScreen> {
       RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
-    context.read<ContestBloc>().add(InitContestFetched(_contest));
+    context.read<ContestBloc>().add(InitContestFetched(_contest, null));
     _refreshController.refreshCompleted();
   }
 
   @override
   void initState() {
-    _contest = widget.contest;
     _scrollController.addListener(_onScroll);
     _scrollController.addListener(() {
       setState(() {
@@ -103,11 +100,15 @@ class _ContestScreenState extends State<ContestScreen> {
         builder: (context, state) {
           return BlocBuilder<ContestBloc, ContestState>(
             builder: (context, state) {
+              if (state.contest != null) {
+                _contest = state.contest!;
+              }
+              
               switch (state.status) {
                 case ContestStatus.success:
                   return Scaffold(
                     bottomNavigationBar:
-                        widget.contest.timeLeft!.contains("Closed")
+                        _contest.timeLeft!.contains("Closed")
                             ? BottomAppBar(
                                 child: Container(
                                     color: Colors.black,
@@ -176,7 +177,7 @@ class _ContestScreenState extends State<ContestScreen> {
                   return SomethingWentWrongScreen(onPressed: () {
                     context
                         .read<ContestBloc>()
-                        .add(InitContestFetched(_contest));
+                        .add(InitContestFetched(_contest, null));
                   });
                 default:
                   return const Center(
@@ -322,8 +323,14 @@ class _ContestScreenState extends State<ContestScreen> {
       title: AppBarTitle(title: _contest.contestName ?? ''),
       leadingWidth: 30,
       actions: [
+<<<<<<< HEAD
         !state.contest!.timeLeft!.contains("Closed")
             ? IconButton(
+=======
+        (!state.contest!.timeLeft!.contains("Closed") && state.contest!.isPosted == 0)
+            ? 
+            IconButton(
+>>>>>>> origin/NhanNT
                 onPressed: () {
                   //chuyển màn upload post
                   pickImage(ImageSource.gallery, context,
@@ -415,7 +422,7 @@ class _ContestScreenState extends State<ContestScreen> {
                   await Navigator.pushNamed(
                       context, AppRouter.contestUserScreen,
                       arguments: args);
-                  bloc.add(InitContestFetched(contest));
+                  bloc.add(InitContestFetched(contest, null));
                 },
                 child: Text(
                   "Participant: ${state.totalParticipaters}",

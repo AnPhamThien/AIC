@@ -43,12 +43,7 @@ class _UploadScreenState extends State<UploadScreen> {
           await _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         }
         if (status is UploadSuccess) {
-<<<<<<< HEAD
-          await _getDialog("Your post will be uploaded soon!", 'Success !',
-              () => Navigator.pop(context));
-=======
             await _getDialog("Create post successfully.", 'Success !', () => Navigator.pop(context));
->>>>>>> origin/NhanNT
           Navigator.of(context).pop(status.post);
         }
       },
@@ -96,36 +91,6 @@ class _UploadScreenState extends State<UploadScreen> {
           builder: (context, state) {
             if (state.contestId == null) {
               return Column(
-<<<<<<< HEAD
-                children: [
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  ListTile(
-                      title: const Text("Do you wanna join a contest ?"),
-                      trailing: IconButton(
-                          icon: joinContest
-                              ? const Icon(Icons.clear_rounded)
-                              : const Icon(Icons.check_box),
-                          onPressed: () {
-                            setState(() {
-                              joinContest = !joinContest;
-                              if (!joinContest) {
-                                selectedContestId = null;
-                              } else {
-                                selectedAlbumId = null;
-                              }
-                            });
-                          })),
-                  joinContest
-                      ? getItemPicker("Choose a contest for your picture",
-                          state.contestList, 2)
-                      : getItemPicker("Choose an album for your picture",
-                          state.albumList, 1),
-                ],
-              );
-            } else {
-=======
               children: [
                 const SizedBox(
                   height: 20,
@@ -153,7 +118,6 @@ class _UploadScreenState extends State<UploadScreen> {
                         "Choose an album for your picture", state.albumList, 1),
               ],
             );} else {
->>>>>>> origin/NhanNT
               selectedContestId = state.contestId;
               return const SizedBox.shrink();
             }
@@ -351,12 +315,7 @@ class _UploadScreenState extends State<UploadScreen> {
           suffixIcon: IconButton(
             padding: const EdgeInsets.all(0),
             onPressed: () {
-<<<<<<< HEAD
-              context.read<UploadBloc>().add(RequestCaption(
-                  postImg: context.read<UploadBloc>().state.imgPath!));
-=======
               context.read<UploadBloc>().add(RequestCaption(postImg: context.read<UploadBloc>().state.originalImgPath!));
->>>>>>> origin/NhanNT
             },
             icon: const Icon(
               Icons.refresh_rounded,

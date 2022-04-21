@@ -3,10 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-<<<<<<< HEAD
-=======
 import 'package:imagecaptioning/src/constant/error_message.dart';
->>>>>>> origin/NhanNT
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
@@ -82,12 +79,7 @@ class _HomePageState extends State<HomePage> {
                     context.read<ProfileBloc>().add(ProfileInitializing(''));
                     context.read<PostBloc>().add(Reset());
                   }
-<<<<<<< HEAD
-                  if (state.status == PostStatus.added ||
-                      state.status == PostStatus.updated) {
-=======
                   if (state.status == PostStatus.added) {
->>>>>>> origin/NhanNT
                     setState(() {
                       if (state.post != null) {
                         context.read<HomeBloc>().add(PostAdded(state.post!));

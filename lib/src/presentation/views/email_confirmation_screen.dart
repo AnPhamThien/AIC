@@ -43,13 +43,8 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
               Map<String, dynamic> args = {
                 "userId": state.userId,
               };
-<<<<<<< HEAD
-              Navigator.pushNamed(context, AppRouter.resetPasswordScreen,
-                  arguments: args);
-=======
               await _getDialog("", 'Success !', () => Navigator.pop(context));
               Navigator.pushNamed(context, AppRouter.resetPasswordScreen, arguments: args);
->>>>>>> origin/NhanNT
             }
           },
           child: SingleChildScrollView(

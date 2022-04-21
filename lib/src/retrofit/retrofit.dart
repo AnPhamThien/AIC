@@ -440,11 +440,6 @@ abstract class RestClient {
 
   @GET('/posts/searchmorepostbykey')
   Future<ListSearchPostResponseMessage> searchMorePostByKey(
-<<<<<<< HEAD
-      @Query('searchString') String searchString,
-      @Query('limitPost') int limitPost,
-      @Query('date_boundary') String dateBoundary);
-=======
     @Query('searchString') String searchString,
     @Query('limitPost') int limitPost,
     @Query('date_boundary') String dateBoundary);
@@ -455,5 +450,4 @@ abstract class RestClient {
   @GET('/contests/getcontestdetailfortransaction')
   Future<GetContestDetailsRespone> getContestDetailForTransaction(
     @Query('contestId') String contestId);
->>>>>>> origin/NhanNT
 }

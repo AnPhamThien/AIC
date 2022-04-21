@@ -37,11 +37,7 @@ class LoginScreenState extends State<LoginScreen> {
               _isLogin = true;
             }
             if (status is FormSubmissionSuccess) {
-<<<<<<< HEAD
-              context.read<AuthBloc>().add(AuthenticateEvent(state.user));
-=======
               context.read<AuthBloc>().add(AuthenticateEvent());
->>>>>>> origin/NhanNT
             } else if (status is ErrorStatus) {
               _isLogin = false;
               String errorMessage =

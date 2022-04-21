@@ -42,14 +42,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         } else if (status is FormSubmissionSuccess) {
           String userId = getIt<AppPref>().getUserID;
           getIt<AppPref>().setUserID('');
-<<<<<<< HEAD
-          Navigator.of(context)
-              .pushNamed(AppRouter.verificationScreen, arguments: userId);
-=======
           await _getDialog("Create a new account successfully. Please verify your account through the link in your email.",
            'Success !', () => Navigator.pop(context));
           Navigator.of(context).pushNamed(AppRouter.verificationScreen, arguments: userId);
->>>>>>> origin/NhanNT
         }
       },
       child: Container(
@@ -187,15 +182,9 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   if (!agreeToTerm) {
-<<<<<<< HEAD
-                    _getDialog("You must agree to Terms of use to continue",
-                        "Warning", () => Navigator.pop(context));
-                  } else {
-=======
                     _getDialog("You must agree to the Terms of use to continue", "Warning", () => Navigator.pop(context));
                   }
                   else {
->>>>>>> origin/NhanNT
                     context.read<RegistrationBloc>().add(RegistrationSubmitted(
                         _usernameController.text,
                         _passwordController.text,

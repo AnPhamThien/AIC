@@ -431,10 +431,6 @@ class PostRepository extends PostBehavior {
 
       return resMessage;
     } catch (e) {
-<<<<<<< HEAD
-      log(e.toString());
-=======
->>>>>>> origin/NhanNT
       if (e is DioError) {
         if (e.response != null) {
           ListSearchPostResponseMessage resMessage =

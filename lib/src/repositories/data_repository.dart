@@ -523,8 +523,6 @@ class DataRepository implements RestClient {
   Future<GetListOfPostResponseMessage> getRandomPost(
       int limitPost, int limitDay) {
     return _client.getRandomPost(limitPost, limitDay);
-<<<<<<< HEAD
-=======
   }
 
   @override
@@ -535,6 +533,5 @@ class DataRepository implements RestClient {
   @override
   Future<GetContestDetailsRespone> getContestDetailForTransaction(String contestId) {
     return _client.getContestDetailForTransaction(contestId);
->>>>>>> origin/NhanNT
   }
 }

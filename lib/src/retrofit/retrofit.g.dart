@@ -1428,8 +1428,6 @@ class _RestClient implements RestClient {
     return value;
   }
 
-<<<<<<< HEAD
-=======
   @override
   Future<GetResponseMessage> updateIsRead() async {
     const _extra = <String, dynamic>{};
@@ -1464,7 +1462,6 @@ class _RestClient implements RestClient {
     return value;
   }
 
->>>>>>> origin/NhanNT
   RequestOptions _setStreamType<T>(RequestOptions requestOptions) {
     if (T != dynamic &&
         !(requestOptions.responseType == ResponseType.bytes ||

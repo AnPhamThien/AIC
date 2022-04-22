@@ -36,7 +36,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
   ) async {
     try {
       GetAlbumResponseMessage? resMessage =
-          await _albumRepository.getAlbumInit(productPerPage: 6);
+          await _albumRepository.getAlbumInit(productPerPage: 8);
 
       if (resMessage == null) {
         throw Exception("");
@@ -71,7 +71,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
       if (!state.hasReachedMax) {
         int currentPage = state.currentPage;
         GetAlbumResponseMessage? resMessage = await _albumRepository
-            .getPageAlbum(currentPage: currentPage + 1, productPerPage: 6);
+            .getPageAlbum(currentPage: currentPage + 1, productPerPage: 8);
 
         if (resMessage == null) {
           throw Exception("");
@@ -118,7 +118,7 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
 
         if (resMessage is int) {
           if (resMessage == StatusCode.successStatus) {
-            add(FetchAlbum());
+            emit(state.copyWith(status: CreateAlbumStatus()));
           } else {
             throw Exception('');
           }
@@ -148,7 +148,6 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
 
         if (resMessage is int) {
           if (resMessage == StatusCode.successStatus) {
-            add(FetchAlbum());
           } else {
             throw Exception('');
           }
@@ -178,7 +177,6 @@ class AlbumListBloc extends Bloc<AlbumListEvent, AlbumListState> {
         if (resMessage is int) {
           if (resMessage == StatusCode.successStatus) {
             emit(state.copyWith(status: DeleteAlbumStatus()));
-            add(FetchAlbum());
           } else {
             throw Exception('');
           }

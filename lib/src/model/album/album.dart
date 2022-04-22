@@ -52,7 +52,8 @@ class Album {
       this.status,
       this.dateCreate,
       this.dateUpdate,
-      this.imgUrl});
+      this.imgUrl,
+      this.totalPost});
 
   String? id;
   String? albumName;
@@ -60,6 +61,7 @@ class Album {
   DateTime? dateCreate;
   DateTime? dateUpdate;
   String? imgUrl;
+  int? totalPost;
 
   factory Album.fromJson(Map<String, dynamic> json) => Album(
       id: json["id"],
@@ -71,7 +73,9 @@ class Album {
       dateUpdate: json["date_update"] != null
           ? DateTime.parse(json["date_update"])
           : null,
-      imgUrl: json["img_url"]);
+      imgUrl: json["img_url"],
+      totalPost: json["total_post"]);
+      
 
   Map<String, dynamic> toJson() => {
         "id": id,

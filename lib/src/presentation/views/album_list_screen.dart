@@ -121,6 +121,15 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
           ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+            },
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          )
         ],
       ),
     );
@@ -133,10 +142,15 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
           final status = state.status;
           if (status is ErrorStatus) {
             String errorMessage = getErrorMessage(status.exception.toString());
-            _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+            await _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
           } else if (status is DeleteAlbumStatus) {
             await _getDialog(
               "Delete Album successfully", 'Success !', () => Navigator.pop(context));
+              context.read<AlbumListBloc>().add(FetchAlbum());
+          } else if (status is CreateAlbumStatus) {
+            await _getDialog(
+              "Create Album successfully", 'Success !', () => Navigator.pop(context));
+              context.read<AlbumListBloc>().add(FetchAlbum());
           }
         },
         child: BlocBuilder<AlbumListBloc, AlbumListState>(
@@ -160,7 +174,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                     context.read<AlbumListBloc>().add(FetchAlbum());
                   },
                   onLongPress: () {
-                    getSheet(context, album.albumName ?? '', album.id ?? '');
+                    getSheet(context, album.albumName ?? '', album.id ?? '', album.totalPost ?? 0);
                   },
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +216,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
   }
 
   Future<dynamic> getSheet(
-      BuildContext context, String albumName, String albumId) {
+      BuildContext context, String albumName, String albumId, int totalPost) {
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
@@ -255,7 +269,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                     "",
                   ),
             // albumName != "Save Post Storage" &&
-            albumName != "Poll Post Storage"
+            (albumName != "Poll Post Storage" && totalPost == 0)
                 ? SizedBox(
                     width: MediaQuery.of(wrapContext).size.width,
                     child: ListTile(
@@ -274,7 +288,16 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                       },
                     ),
                   )
-                : const Text(""),
+                : albumName != "Poll Post Storage" ?
+                  Padding(
+                   padding: const EdgeInsets.only(left: 15.0),
+                   child: Text("This album has " + totalPost.toString() + ((totalPost > 1) ? " posts" : "posts"),
+                    style: const TextStyle(fontSize: 19), textAlign: TextAlign.center,),
+                 ) 
+                 : const Padding(
+                   padding: EdgeInsets.only(left: 15.0),
+                   child:  Text("This is a default album", style: TextStyle(fontSize: 19), textAlign: TextAlign.center),
+                 ),
             const SizedBox(
               height: 15,
             ),

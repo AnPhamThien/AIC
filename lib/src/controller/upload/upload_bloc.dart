@@ -64,6 +64,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
       final List<Contest>? _activeContestList = await _contestRepository
           .getActiveContestList('', _limitContest, '', '');
+      
 
       if (albumRes == null) {
         throw Exception("");
@@ -73,6 +74,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         final data = albumRes.data;
         data!.removeWhere(
             (element) => element.albumName == "Poll Post Storage");
+            if (_activeContestList != null) {
+              _activeContestList.removeWhere((element) => element.isPosted == 1);
+            }
 
             emit(state.copyWith(
             albumList: data,

@@ -101,7 +101,7 @@ Future pickImage(ImageSource source, BuildContext context, String destination, S
     Map<String, dynamic> arg = {"imgPath": croppedFile.path, "contestId": contestId, "oringinalImg" : chosenImage.path};
     Post? post = await Navigator.of(context).pushNamed(destination,
         arguments: arg) as Post?;
-    if (post != null) {
+    if (post != null && context.read<PostBloc?>() != null) {
       context.read<PostBloc>().add(AddPost(post));
     }
   } on PlatformException catch (e) {

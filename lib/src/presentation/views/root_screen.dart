@@ -6,6 +6,7 @@ import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
+import 'package:imagecaptioning/src/presentation/views/load_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
@@ -83,7 +84,9 @@ class _RootScreenState extends State<RootScreen> {
                         onPressed: () {
                           setState(() {
                             indexPage = index;
-                            context.read<AuthBloc>().add(ChangeReadNotiStatus(false));
+                            context
+                                .read<AuthBloc>()
+                                .add(ChangeReadNotiStatus(false));
                           });
                         },
                         icon: SvgPicture.asset(

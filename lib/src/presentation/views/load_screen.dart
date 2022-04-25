@@ -12,22 +12,29 @@ class _LoadScreenState extends State<LoadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
           decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/images/ISMAIA.png"),
               fit: BoxFit.cover,
             ),
           ),
-          child: Row(
-            children: const [
-              CircularProgressIndicator(
-                color: Colors.black87,
-              ),
-              Text(
-                'Loading ...',
-                style: TextStyle(fontWeight: FontWeight.w500),
-              )
-            ],
+          alignment: Alignment.bottomCenter,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 100.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                CircularProgressIndicator(
+                  color: Colors.black87,
+                ),
+                Text(
+                  '       Loading ...',
+                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                )
+              ],
+            ),
           )),
     );
   }

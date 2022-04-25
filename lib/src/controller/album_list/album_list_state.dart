@@ -35,6 +35,8 @@ class InitialStatus extends AlbumListStatus {
 
 class FinishInitializing extends AlbumListStatus {}
 
+class CreateAlbumStatus extends AlbumListStatus {}
+
 class DeleteAlbumStatus extends AlbumListStatus {}
 
 class ErrorStatus extends AlbumListStatus {

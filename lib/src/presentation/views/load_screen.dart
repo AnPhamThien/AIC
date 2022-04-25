@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class LoadScreen extends StatefulWidget {
   const LoadScreen({Key? key}) : super(key: key);
@@ -10,6 +13,7 @@ class LoadScreen extends StatefulWidget {
 class _LoadScreenState extends State<LoadScreen> {
   @override
   Widget build(BuildContext context) {
+    context.read<AuthBloc>();
     return Scaffold(
       body: Container(
           height: MediaQuery.of(context).size.height,

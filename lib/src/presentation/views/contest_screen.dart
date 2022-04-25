@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/model/contest/prize.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -95,6 +96,11 @@ class _ContestScreenState extends State<ContestScreen> {
           _postList.removeWhere((element) => element.postId == state.postId);
           context.read<PostBloc>().add(Reset());
         }
+        if (state.status == PostStatus.fail) {
+                    String error = getErrorMessage(state.error ?? '');
+                    _getDialog(error, "Error", () => Navigator.of(context).pop());
+                    context.read<PostBloc>().add(Reset());
+                  }
       },
       child: BlocBuilder<PostBloc, PostState>(
         builder: (context, state) {
@@ -326,10 +332,11 @@ class _ContestScreenState extends State<ContestScreen> {
         (!state.contest!.timeLeft!.contains("Closed") && state.contest!.isPosted == 0)
             ? 
             IconButton(
-                onPressed: () {
+                onPressed: () async {
                   //chuyển màn upload post
-                  pickImage(ImageSource.gallery, context,
+                  await pickImage(ImageSource.gallery, context,
                       AppRouter.uploadScreen, state.contest?.id);
+                      context.read<ContestBloc>().add(InitContestFetched(null, state.contest?.id));
                 },
                 icon: SvgPicture.asset(
                   'assets/icons/upload_icon.svg',
@@ -406,24 +413,29 @@ class _ContestScreenState extends State<ContestScreen> {
                 ],
               ),
             ),
-
             Padding(
               padding: const EdgeInsets.symmetric(
                 horizontal: 15,
               ),
               child: GestureDetector(
                 onTap: () async {
-                  Map<String, dynamic> args = {'contestId': contest.id};
+                Map<String, dynamic> args = {'contestId': contest.id};
                   await Navigator.pushNamed(
                       context, AppRouter.contestUserScreen,
                       arguments: args);
                   bloc.add(InitContestFetched(contest, null));
-                },
-                child: Text(
-                  "Participant: ${state.totalParticipaters}",
-                  style: TextStyle(color: Colors.black87, fontSize: 18.sp),
-                ),
-              ),
+              },
+                child: Row(
+                  children: [
+                    const Icon(
+                Icons.emoji_people,
+                color: Colors.black,
+                size: 32,
+                            ),
+                            Text("Total Participants: ${state.totalParticipaters}",
+                    style: TextStyle(color: Colors.black87, fontSize: 20.sp))
+                     ]),
+              ) ,
             ),
             //* description
             Container(
@@ -628,6 +640,38 @@ class _ContestScreenState extends State<ContestScreen> {
           style: const TextStyle(
               color: Colors.black87, fontSize: 16, fontWeight: FontWeight.w500),
         ),
+      ),
+    );
+  }
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? MessageCode.genericError,
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
       ),
     );
   }

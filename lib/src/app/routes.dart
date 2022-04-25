@@ -33,6 +33,7 @@ import 'package:imagecaptioning/src/presentation/views/edit_profile_screen.dart'
 import 'package:imagecaptioning/src/presentation/views/email_confirmation_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/forgot_password_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/leaderboard_screen.dart';
+import 'package:imagecaptioning/src/presentation/views/load_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/login_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/message_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
@@ -47,7 +48,7 @@ import 'package:imagecaptioning/src/presentation/views/upload_page.dart';
 import 'package:imagecaptioning/src/presentation/views/verification_screen.dart';
 
 class AppRouter {
-  static const String loginScreen = '/';
+  static const String loginScreen = '/login';
   static const String albumListScreen = '/albumlist';
   static const String albumScreen = '/album';
   static const String registrationScreen = '/registration';
@@ -69,7 +70,8 @@ class AppRouter {
   static const String uploadScreen = '/uploadscreen';
   static const String leaderboardScreen = '/leaderboardScreen';
   static const String userSearchScreen = '/userSearchScreen';
-    static const String postSearchScreen = '/postSearchScreen';
+  static const String postSearchScreen = '/postSearchScreen';
+  static const String loadingScreen = '/';
 
   static const List<String> noAuthNeededScreens = [
     loginScreen,
@@ -77,12 +79,17 @@ class AppRouter {
     verificationScreen,
     forgotPasswordScreen,
     emailConfirmScreen,
-    resetPasswordScreen
+    resetPasswordScreen,
+    loadingScreen
   ];
 
   Route? onGenerateRoute(RouteSettings routeSettings) {
     PostBloc _postBloc = PostBloc();
     switch (routeSettings.name) {
+      case loadingScreen:
+      return MaterialPageRoute(
+          builder: (context) => const LoadScreen()
+        );
       case albumListScreen:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(

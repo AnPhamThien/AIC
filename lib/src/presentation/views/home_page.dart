@@ -138,12 +138,7 @@ class _HomePageState extends State<HomePage> {
                   }
                   if (state.status == HomeStatus.failure) {
                     String error = getErrorMessage(state.error ?? '');
-                    if (error == MessageCode.errorMap[MessageCode.duplicatePostInContest]) {
-                      await _getDialog(error, "Warning", () => Navigator.of(context).pop());
-                    }
-                    else {
-                      await _getDialog(error, "Error", () => Navigator.of(context).pop());
-                    } 
+                    await _getDialog(error, "Error", () => Navigator.of(context).pop());
                     context.read<HomeBloc>().add(PostListReset());
                   }
                 },

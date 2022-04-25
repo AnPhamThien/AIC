@@ -30,8 +30,10 @@ class MessageCode {
     noConversationToDisplay: "There is no conversation to display.",
     codeNotFound: "Wrong code.",
     duplicatePostInContest: "You have already posted in this poll.",
-    reportExist: "You have already reported this post. Please wait for the system to process.",
-    aiIsNotActive: "AI is not active"
+    reportExist: "You have already reported this post. Please wait for the system to pr0ocess.",
+    aiIsNotActive: "AI is not active.",
+    stillPostInDeletedAlbum: "If you want to delete this album, please delete all of its posts beforehand.",
+    contestHasBeenClosed: "Contest has been closed."
   };
 
   static const String genericError = "Something went wrong";
@@ -755,4 +757,14 @@ class MessageCode {
   /// AI111 : AI server is inactive
   /// </summary>
   static const String aiIsNotActive = "AI111";
+
+  /// <summary>
+  /// ALB118 : There is still post in album
+  /// </summary>
+  static const String stillPostInDeletedAlbum = "ALB118";
+
+  /// <summary>
+  /// CT124 : Contest has been closed
+  /// </summary>
+  static const String contestHasBeenClosed = "CT124";
 }

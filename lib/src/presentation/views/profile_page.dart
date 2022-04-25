@@ -351,7 +351,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 onTap: () async {
                   context.read<AuthBloc>().add(LogoutEvent());
                   await Navigator.of(context).pushNamedAndRemoveUntil(
-                      AppRouter.loginScreen, ModalRoute.withName('/'));
+                      AppRouter.loginScreen, ModalRoute.withName(AppRouter.loginScreen));
                 },
               ),
             ),

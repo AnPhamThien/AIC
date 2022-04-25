@@ -133,12 +133,14 @@ class _MessageScreenState extends State<MessageScreen> {
           hintText: 'Message ..',
           suffixIcon: IconButton(
             onPressed: () {
-              List<dynamic> args = [];
+              if (_messageController.text.isNotEmpty) {
+                List<dynamic> args = [];
               args.add(_messageController.value.text);
               args.add(context.read<MessageBloc>().state.userId);
               invokeSendMessage(args);
               _messageController.clear();
               FocusScope.of(context).unfocus();
+              }
             },
             icon: const Icon(
               Icons.send,

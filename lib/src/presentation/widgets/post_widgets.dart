@@ -569,7 +569,7 @@ class PostImgWidget extends StatelessWidget {
               onError: (exception, stackTrace) => log(exception.toString()),
               image: postImage != ""
                   ? NetworkImage(postImageUrl + postImage)
-                  : const AssetImage("assets/images/Kroni.jpg")
+                  : const AssetImage("assets/images/avatar_placeholder.png")
                       as ImageProvider,
               fit: BoxFit.cover,
             ),

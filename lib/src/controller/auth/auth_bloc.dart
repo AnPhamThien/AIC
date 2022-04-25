@@ -243,6 +243,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } 
     catch (e) {
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.loginScreen, ModalRoute.withName(AppRouter.loginScreen));
       log("Check token");
       log(e.toString());
     }

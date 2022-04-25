@@ -115,7 +115,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            getSheet(context, state.album!, state.postList?.length ?? 0);
+            getSheet(context, state.album!, state.album?.totalPost ?? 0);
           },
           icon: const Icon(
             Icons.more_vert_rounded,
@@ -128,6 +128,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
   }
 
   Future<dynamic> getSheet(BuildContext context, Album album, int imagesNum) {
+    int totalPost = album.totalPost ?? 0;
     return showModalBottomSheet(
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
@@ -167,7 +168,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
                   ),
                   children: [
                     TextSpan(
-                      text: "Images: " + imagesNum.toString() + "\n\n",
+                      text: "Number of posts: " + imagesNum.toString() + "\n\n",
                     ),
                     TextSpan(
                       text: "Created on: " + album.dateCreate.toString(),
@@ -183,8 +184,9 @@ class _AlbumScreenState extends State<AlbumScreen> {
                 height: 25,
               ),
             ),
-            album.albumName != "Save Post Storage" &&
-                    album.albumName != "Contest Post Storage"
+            (album.albumName != "Save Post Storage" &&
+                    album.albumName != "Contest Post Storage" &&
+                    totalPost == 0)
                 ? SizedBox(
                     width: MediaQuery.of(wrapContext).size.width,
                     child: ListTile(
@@ -203,7 +205,13 @@ class _AlbumScreenState extends State<AlbumScreen> {
                       },
                     ),
                   )
-                : const Text(""),
+                : album.albumName != "Save Post Storage" &&
+                    album.albumName != "Contest Post Storage" ?
+                     const Text("")
+                 : const Padding(
+                   padding: EdgeInsets.only(left: 15.0),
+                   child:  Text("This is a default album", style: TextStyle(fontSize: 19), textAlign: TextAlign.center),
+                 ),
             const SizedBox(
               height: 15,
             ),

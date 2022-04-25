@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:imagecaptioning/src/utils/validations.dart';
 import '../../controller/get_it/get_it.dart';
@@ -40,7 +41,11 @@ class _UploadScreenState extends State<UploadScreen> {
         final status = state.status;
         if (status is ErrorStatus) {
           String errorMessage = getErrorMessage(status.exception.toString());
-          await _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+          if (errorMessage == MessageCode.errorMap[MessageCode.duplicatePostInContest]) {
+              await _getDialog(errorMessage, "Warning", () => Navigator.of(context).pop());
+            } else {
+             await _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
+            }
         }
         if (status is UploadSuccess) {
             await _getDialog("Create post successfully.", 'Success !', () => Navigator.pop(context));

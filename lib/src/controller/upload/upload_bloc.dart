@@ -42,8 +42,11 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
             originalImgPath: originalImgPath,
             status: FinishInitializing()));
       if (contestId != null) {
+        
         final response = await _postRepository.getCaption(
           img: File(originalImgPath));
+
+          
 
         if (response == null) {
         throw Exception("");

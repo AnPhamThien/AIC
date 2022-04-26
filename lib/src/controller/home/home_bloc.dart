@@ -87,7 +87,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final ListPostData? data =
           await _postRepository.getPost(_postPerPerson, _postDate);
       _listFollowee = data?.followees ?? [];
-      if (data!.posts.isEmpty) {
+      if (data == null) {
+        throw Exception();
+      }
+      if (data.posts.isEmpty) {
         final GetListOfPostResponseMessage? data =
             await _postRepository.getRandomPost(10, 100);
         emit(state.copyWith(

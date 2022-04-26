@@ -7,6 +7,7 @@ import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/post/post_bloc.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../app/routes.dart';
 import '../../controller/home/home_bloc.dart';
 import '../../model/post/post.dart';
@@ -23,6 +24,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    context.read<HomeBloc>().add(InitPostFetched());
+    _refreshController.refreshCompleted();
+  }
+
   final _scrollController = ScrollController();
 
   @override
@@ -51,131 +60,135 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: bgApp,
       appBar: getAppBar(),
-      body: SafeArea(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: MultiBlocListener(
-            listeners: [
-              BlocListener<PostBloc, PostState>(
-                listener: (context, state) {
-                  if (state.needUpdate == true) {
-                    int _index = _postList.indexWhere(
-                        (element) => element.postId == state.postId);
-                    if (_postList[_index].isLike == 0) {
-                      setState(() {
-                        _postList[_index].isLike = 1;
-                        _postList[_index].likecount =
-                            _postList[_index].likecount! + 1;
-                        log(_postList[_index].likecount.toString());
-                      });
-                    } else {
-                      setState(() {
-                        _postList[_index].isLike = 0;
-                        _postList[_index].likecount =
-                            _postList[_index].likecount! - 1;
-                        log(_postList[_index].likecount.toString());
-                      });
-                    }
-                    context.read<ProfileBloc>().add(ProfileInitializing(''));
-                    context.read<PostBloc>().add(Reset());
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<PostBloc, PostState>(
+            listener: (context, state) {
+              if (state.needUpdate == true) {
+                int _index = _postList
+                    .indexWhere((element) => element.postId == state.postId);
+                if (_postList[_index].isLike == 0) {
+                  setState(() {
+                    _postList[_index].isLike = 1;
+                    _postList[_index].likecount =
+                        _postList[_index].likecount! + 1;
+                    log(_postList[_index].likecount.toString());
+                  });
+                } else {
+                  setState(() {
+                    _postList[_index].isLike = 0;
+                    _postList[_index].likecount =
+                        _postList[_index].likecount! - 1;
+                    log(_postList[_index].likecount.toString());
+                  });
+                }
+                context.read<ProfileBloc>().add(ProfileInitializing(''));
+                context.read<PostBloc>().add(Reset());
+              }
+              if (state.status == PostStatus.added) {
+                setState(() {
+                  if (state.post != null) {
+                    context.read<HomeBloc>().add(PostAdded(state.post!));
                   }
-                  if (state.status == PostStatus.added) {
-                    setState(() {
-                      if (state.post != null) {
-                        context.read<HomeBloc>().add(PostAdded(state.post!));
-                      }
-                      //context.read<HomeBloc>().add(InitPostFetched());
-                      context.read<PostBloc>().add(Reset());
-                      context.read<ProfileBloc>().add(ProfileInitializing(''));
-                    });
+                  //context.read<HomeBloc>().add(InitPostFetched());
+                  context.read<PostBloc>().add(Reset());
+                  context.read<ProfileBloc>().add(ProfileInitializing(''));
+                });
+              }
+              if (state.status == PostStatus.updated) {
+                setState(() {
+                  if (state.postId.isNotEmpty && state.postCaption != null) {
+                    context
+                        .read<HomeBloc>()
+                        .add(PostUpdated(state.postId, state.postCaption!));
                   }
-                  if (state.status == PostStatus.updated) {
-                    setState(() {
-                      if (state.postId.isNotEmpty && state.postCaption != null) {
-                        context.read<HomeBloc>().add(PostUpdated(state.postId, state.postCaption!));
-                      }
-                      //context.read<HomeBloc>().add(InitPostFetched());
-                      context.read<PostBloc>().add(Reset());
-                      context.read<ProfileBloc>().add(ProfileInitializing(''));
-                    });
-                  }
-                  if (state.status == PostStatus.save &&
-                      state.isSaved == false) {
-                    int _index = _postList.indexWhere(
-                        (element) => element.postId == state.postId);
-                    setState(() {
-                      _postList[_index].isSaved = 0;
-                    });
-                    context.read<ProfileBloc>().add(ProfileInitializing(""));
-                    context.read<PostBloc>().add(Reset());
-                  }
-                  if (state.status == PostStatus.save &&
-                      state.isSaved == true) {
-                    int _index = _postList.indexWhere(
-                        (element) => element.postId == state.postId);
-                    setState(() {
-                      _postList[_index].isSaved = 1;
-                    });
-                    context.read<ProfileBloc>().add(ProfileInitializing(""));
-                    context.read<PostBloc>().add(Reset());
-                  }
+                  //context.read<HomeBloc>().add(InitPostFetched());
+                  context.read<PostBloc>().add(Reset());
+                  context.read<ProfileBloc>().add(ProfileInitializing(''));
+                });
+              }
+              if (state.status == PostStatus.save && state.isSaved == false) {
+                int _index = _postList
+                    .indexWhere((element) => element.postId == state.postId);
+                setState(() {
+                  _postList[_index].isSaved = 0;
+                });
+                context.read<ProfileBloc>().add(ProfileInitializing(""));
+                context.read<PostBloc>().add(Reset());
+              }
+              if (state.status == PostStatus.save && state.isSaved == true) {
+                int _index = _postList
+                    .indexWhere((element) => element.postId == state.postId);
+                setState(() {
+                  _postList[_index].isSaved = 1;
+                });
+                context.read<ProfileBloc>().add(ProfileInitializing(""));
+                context.read<PostBloc>().add(Reset());
+              }
 
-                  if (state.status == PostStatus.fail) {
-                    String error = getErrorMessage(state.error ?? '');
-                    _getDialog(error, "Error", () => Navigator.of(context).pop());
-                    context.read<PostBloc>().add(Reset());
-                  }
-                },
-              ),
-              BlocListener<HomeBloc, HomeState>(
-                listenWhen: (previous, current) => previous != current,
-                listener: (context, state) async {
-                  if (state.deletedPostId != '') {
-                    setState(() {
-                      context.read<HomeBloc>().add(PostListReset());
-                      context.read<HomeBloc>().add(InitPostFetched());
-                    });
-                  }
-                  if (state.status == HomeStatus.failure) {
-                    String error = getErrorMessage(state.error ?? '');
-                    await _getDialog(error, "Error", () => Navigator.of(context).pop());
-                    context.read<HomeBloc>().add(PostListReset());
-                  }
-                },
-              ),
-            ],
-            child: BlocBuilder<PostBloc, PostState>(
-              builder: (context, state) {
-                return BlocBuilder<HomeBloc, HomeState>(
-                  builder: (context, state) {
-                    switch (state.status) {
-                      case HomeStatus.failure:
-                        return const Center(
-                            child: Text('failed to fetch posts'));
-                      case HomeStatus.success:
-                        if (state.postsList.isEmpty) {
-                          return const Center(child: Text('no posts'));
-                        }
-                        return ListView.builder(
-                          itemBuilder: (BuildContext context, int index) {
-                            _postList = state.postsList;
-                            final Post post = _postList[index];
-                            return PostWidget(
-                              post: post,
-                              isInContest: false,
-                            );
-                          },
-                          itemCount: state.postsList.length,
-                          controller: _scrollController,
-                        );
-                      default:
-                        return const Center(child: CircularProgressIndicator());
-                    }
-                  },
-                );
-              },
-            ),
+              if (state.status == PostStatus.fail) {
+                String error = getErrorMessage(state.error ?? '');
+                _getDialog(error, "Error", () => Navigator.of(context).pop());
+                context.read<PostBloc>().add(Reset());
+              }
+            },
           ),
+          BlocListener<HomeBloc, HomeState>(
+            listenWhen: (previous, current) => previous != current,
+            listener: (context, state) async {
+              if (state.deletedPostId != '') {
+                setState(() {
+                  context.read<HomeBloc>().add(PostListReset());
+                  context.read<HomeBloc>().add(InitPostFetched());
+                });
+              }
+              if (state.status == HomeStatus.failure) {
+                log(state.error.toString());
+                String error = getErrorMessage(state.error ?? '');
+                await _getDialog(
+                    error, "Error", () => Navigator.of(context).pop());
+                context.read<HomeBloc>().add(PostListReset());
+              }
+            },
+          ),
+        ],
+        child: BlocBuilder<PostBloc, PostState>(
+          builder: (context, state) {
+            return BlocBuilder<HomeBloc, HomeState>(
+              builder: (context, state) {
+                switch (state.status) {
+                  case HomeStatus.failure:
+                    return const Center(child: Text('failed to fetch posts'));
+                  case HomeStatus.success:
+                    if (state.postsList.isEmpty) {
+                      return const Center(child: Text('no posts'));
+                    }
+                    return SmartRefresher(
+                        controller: _refreshController,
+                        onRefresh: _onRefresh,
+                        child: CustomScrollView(
+                            controller: _scrollController,
+                            slivers: [
+                              SliverList(
+                                delegate: SliverChildBuilderDelegate(
+                                  (BuildContext context, int index) {
+                                    _postList = state.postsList;
+                                    final Post post = _postList[index];
+                                    return PostWidget(
+                                      post: post,
+                                      isInContest: true,
+                                    );
+                                  },
+                                  childCount: state.postsList.length,
+                                ),
+                              )
+                            ]));
+                  default:
+                    return const Center(child: CircularProgressIndicator());
+                }
+              },
+            );
+          },
         ),
       ),
     );
@@ -229,6 +242,7 @@ class _HomePageState extends State<HomePage> {
       ],
     );
   }
+
   Future<String?> _getDialog(
       String? content, String? header, void Function()? func) {
     return showDialog<String>(

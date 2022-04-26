@@ -70,7 +70,15 @@ class _GalleryPageState extends State<GalleryPage> {
             Map<String, dynamic> args = {'post': post};
             await Navigator.of(context).pushNamed(AppRouter.postDetailScreen, arguments: args);
             if (context.read<ProfileBloc?>() != null) {
-            context.read<ProfileBloc>().add(ProfileInitializing(''));
+              String userId = '';
+              ProfileState state = context.read<ProfileBloc>().state;
+              if (!state.isCurrentUser) {
+                userId = context.read<ProfileBloc>().state.user?.id ?? '';
+              }
+              if (state.isCurrentUser || (userId.isNotEmpty)) {
+                context.read<ProfileBloc>().add(ProfileInitializing(userId));
+              }
+            
           }
             if (context.read<HomeBloc?>() != null) {
             context.read<HomeBloc>().add(InitPostFetched());

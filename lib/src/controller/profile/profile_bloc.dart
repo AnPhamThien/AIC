@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:equatable/equatable.dart';
@@ -65,43 +67,39 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       }
       if (userRes.statusCode == StatusCode.successStatus &&
           userRes.data != null) {
-        if (state.user?.posts != null) {
-          state.user?.posts?.clear();
+        if (state.userPostList != null) {
+          state.userPostList?.clear();
         }
 
         List<Post>? galleryPostList;
-
+        if (state.galleryPostList != null) {
+              state.galleryPostList?.clear();
+        }
         if (state.isCurrentUser) {
           GetListOfPostResponseMessage? savedPostResponse =
-              await _postRepository.getPostStorage(limitPost: 18);
+              await _postRepository.getPostStorage(limitPost: 20);
           if (savedPostResponse == null) {
-            throw Exception("");
+            throw Exception("savedPostResponse is null");
           }
           if (savedPostResponse.statusCode == StatusCode.successStatus &&
               savedPostResponse.data != null) {
-            if (state.galleryPostList != null) {
-              state.galleryPostList?.clear();
-            }
             galleryPostList = savedPostResponse.data;
           }
         } else {
           GetListOfPostResponseMessage? contestPostResponse =
               await _postRepository.getUserContestPost(
-                  userID: userID, limitPost: 18);
+                  userID: userID, limitPost: 20);
           if (contestPostResponse == null) {
-            throw Exception("");
+            throw Exception("contestPostResponse is null");
           }
           if (contestPostResponse.statusCode == StatusCode.successStatus &&
               contestPostResponse.data != null) {
-            if (state.galleryPostList != null) {
-              state.galleryPostList?.clear();
-            }
             galleryPostList = contestPostResponse.data;
           }
         }
         emit(state.copyWith(
             user: userRes.data,
-            galleryPostList: galleryPostList,
+            galleryPostList: galleryPostList ?? [],
             isFollow: (userRes.data?.isFollow == 1),
             postListPage: 1,
             galleryPostListPage: 1,
@@ -111,6 +109,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         throw Exception(userRes.messageCode);
       }
     } on Exception catch (_) {
+      log("Init Profile failed: " + _.toString());
       emit(state.copyWith(status: ErrorStatus(_)));
     }
   }

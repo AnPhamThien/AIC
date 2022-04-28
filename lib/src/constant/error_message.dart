@@ -30,7 +30,7 @@ class MessageCode {
     noConversationToDisplay: "There is no conversation to display.",
     codeNotFound: "Wrong code.",
     duplicatePostInContest: "You have already posted in this poll.",
-    reportExist: "You have already reported this post. Please wait for the system to pr0ocess.",
+    reportExist: "You have already reported this post. Please wait for the system to process.",
     aiIsNotActive: "AI is not active.",
     stillPostInDeletedAlbum: "If you want to delete this album, please delete all of its posts beforehand.",
     contestHasBeenClosed: "Contest has been closed."

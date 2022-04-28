@@ -116,7 +116,7 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
           children: [
             Center(
               child: Text(
-                'An activation code will be sent',
+                'A confirmation code will be sent',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,

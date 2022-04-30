@@ -12,6 +12,7 @@ import 'package:imagecaptioning/src/presentation/views/storage_page.dart';
 import 'package:imagecaptioning/src/presentation/widgets/global_widgets.dart';
 import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'gallery_page.dart';
 
@@ -23,6 +24,18 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    String userID = context.read<ProfileBloc>().state.user?.id ?? '';
+    bool isCurrentUser = context.read<ProfileBloc>().state.isCurrentUser;
+    if ((isCurrentUser && userID.isEmpty)  || (!isCurrentUser && userID.isNotEmpty)) {
+      context.read<ProfileBloc>().add(ProfileInitializing(userID));
+    }
+    context.read<ProfileBloc>().add(ProfileInitializing(userID));
+    _refreshController.refreshCompleted();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,35 +89,39 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ];
                 },
-                body: Column(
-                  children: const [
-                    TabBar(
-                      labelColor: Colors.black,
-                      unselectedLabelColor: Colors.grey,
-                      indicatorWeight: 1,
-                      indicatorColor: Colors.black,
-                      tabs: [
-                        Tab(
-                          icon: Icon(
-                            Icons.grid_on_rounded,
+                body: SmartRefresher(
+                  controller: _refreshController,
+                        onRefresh: _onRefresh,
+                  child: Column(
+                    children: [
+                      TabBar(
+                        labelColor: Colors.black,
+                        unselectedLabelColor: Colors.grey,
+                        indicatorWeight: 1,
+                        indicatorColor: Colors.black,
+                        tabs: [
+                          const Tab(
+                            icon: Icon(
+                              Icons.grid_on_rounded,
+                            ),
                           ),
-                        ),
-                        Tab(
-                          icon: Icon(
-                            Icons.save_alt_rounded,
-                          ),
-                        )
-                      ],
-                    ),
-                    Expanded(
-                      child: TabBarView(
-                        children: [
-                          GalleryPage(),
-                          StoragePage(),
+                          Tab(
+                            icon: Icon(
+                              state.isCurrentUser ? Icons.save_alt_rounded : Icons.emoji_events_outlined,
+                            ),
+                          )
                         ],
                       ),
-                    ),
-                  ],
+                      const Expanded(
+                        child: TabBarView(
+                          children: [
+                            GalleryPage(),
+                            StoragePage(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

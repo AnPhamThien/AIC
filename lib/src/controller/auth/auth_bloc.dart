@@ -121,13 +121,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
         String? data = response.data;
         int? status = response.statusCode;
-
-        if (status == StatusCode.successStatus && data != null) {
+        String messageCode = response.messageCode ?? '';
+          if (status == StatusCode.successStatus && data != null) {
           getIt<AppPref>().setToken(data);
           DataRepository.setJwtInHeader();
+        }
+        if (messageCode.isEmpty || messageCode == MessageCode.tokenIsNotExpired) {
           await _signalRHelper.initiateConnection();
         } else {
-          throw Exception("");
+          throw Exception(messageCode);
         }
       }
     } catch (_) {
@@ -232,12 +234,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         if (status == StatusCode.successStatus && data != null) {
           getIt<AppPref>().setToken(data);
-          add(AuthenticateEvent());
-        } else if(messageCode == MessageCode.tokenIsNotExpired) {
+        }
+        if (messageCode.isEmpty || messageCode == MessageCode.tokenIsNotExpired) {
+          await _signalRHelper.initiateConnection();
           add(AuthenticateEvent());
         } else {
-          throw Exception("RefreshToken expires");
-        }    
+          throw Exception(messageCode);
+        }
       } else {
         throw Exception("No token found");
       }

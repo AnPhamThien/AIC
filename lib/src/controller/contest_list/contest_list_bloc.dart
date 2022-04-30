@@ -17,7 +17,7 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-const _limitContest = 9;
+const _limitContest = 10;
 
 class ContestListBloc extends Bloc<ContestListEvent, ContestListState> {
   ContestListBloc() : super(const ContestListState()) {

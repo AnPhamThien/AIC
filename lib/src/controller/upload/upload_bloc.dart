@@ -40,7 +40,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
             imgPath: imgPath,
             contestId: contestId,
             originalImgPath: originalImgPath,
-            status: FinishInitializing()));
+            aiGenerationInProgress: true));
       if (contestId != null) {
         final response = await _postRepository.getCaption(
           img: File(originalImgPath));
@@ -57,14 +57,14 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
         emit(state.copyWith(
             aiCaption: response.data,
-            status: FinishInitializing()));
+            status: FinishInitializing(),
+            aiGenerationInProgress: false));
       } else {
         GetAlbumResponseMessage? albumRes =
           await _albumRepository.getAlbumInit(productPerPage: _limitAlbum);
 
       final List<Contest>? _activeContestList = await _contestRepository
           .getActiveContestList('', _limitContest, '', '');
-      
 
       if (albumRes == null) {
         throw Exception("");
@@ -98,7 +98,8 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
 
         emit(state.copyWith(
             aiCaption: response.data,
-            status: FinishInitializing()));
+            status: FinishInitializing(),
+            aiGenerationInProgress: false));
       } else {
         throw Exception(albumRes.messageCode);
       }}
@@ -144,6 +145,8 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
     try {
       String postImg = event.postImg;
 
+      emit(state.copyWith(aiGenerationInProgress: true));
+
       final response = await _postRepository.getCaption(
           img: File(postImg));
 
@@ -156,7 +159,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         if (message.isNotEmpty) {
           throw Exception(message);
         }
-        emit(state.copyWith(aiCaption: response.data));
+        emit(state.copyWith(aiCaption: response.data, aiGenerationInProgress: false));
     } on Exception catch (_) {
       emit(state.copyWith(status: ErrorStatus(_)));
     }

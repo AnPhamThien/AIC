@@ -19,7 +19,7 @@ import '../../repositories/contest/contest_repository.dart';
 part 'contest_event.dart';
 part 'contest_state.dart';
 
-const _limitPost = 2;
+const _limitPost = 10;
 
 const throttleDuration = Duration(milliseconds: 100);
 

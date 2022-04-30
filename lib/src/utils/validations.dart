@@ -41,14 +41,11 @@ class Validation {
   static String? phoneValidation(String? value) {
     if (value != null) {
       value = value.trim();
-    }
+      final regexp = RegExp(r"^\d{10}$");
 
-    final regexp = RegExp(r"^\d{10}$");
-
-    if (value == null || value.isEmpty) {
-      return 'Cannot be empty';
-    } else if (!regexp.hasMatch(value)) {
+    if (value.isNotEmpty && regexp.hasMatch(value)) {
       return 'Phone number must have 10 digits';
+    }
     }
     return null;
   }

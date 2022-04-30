@@ -8,6 +8,7 @@ class UploadState {
   final UploadStatus status;
   final String? contestId;
   final String? originalImgPath;
+  final bool aiGenerationInProgress;
 
   UploadState({
     this.imgPath,
@@ -16,7 +17,8 @@ class UploadState {
     this.aiCaption = '',
     this.status = const InitialStatus(),
     this.contestId,
-    this.originalImgPath
+    this.originalImgPath,
+    this.aiGenerationInProgress = true
   });
 
   UploadState copyWith({
@@ -26,7 +28,8 @@ class UploadState {
     String? aiCaption,
     UploadStatus? status,
     String? contestId,
-    String? originalImgPath
+    String? originalImgPath,
+    bool? aiGenerationInProgress
   }) {
     return UploadState(
       imgPath: imgPath ?? this.imgPath,
@@ -35,7 +38,8 @@ class UploadState {
       aiCaption: aiCaption ?? this.aiCaption,
       status: status ?? this.status,
       contestId: contestId ?? this.contestId,
-      originalImgPath: originalImgPath ?? this.originalImgPath
+      originalImgPath: originalImgPath ?? this.originalImgPath,
+      aiGenerationInProgress: aiGenerationInProgress ?? this.aiGenerationInProgress
     );
   }
 }

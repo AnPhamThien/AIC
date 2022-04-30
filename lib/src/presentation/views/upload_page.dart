@@ -320,7 +320,9 @@ class _UploadScreenState extends State<UploadScreen> {
           suffixIcon: IconButton(
             padding: const EdgeInsets.all(0),
             onPressed: () {
-              context.read<UploadBloc>().add(RequestCaption(postImg: context.read<UploadBloc>().state.originalImgPath!));
+              if (!context.read<UploadBloc>().state.aiGenerationInProgress) {
+                context.read<UploadBloc>().add(RequestCaption(postImg: context.read<UploadBloc>().state.originalImgPath!));
+              }
             },
             icon: const Icon(
               Icons.refresh_rounded,

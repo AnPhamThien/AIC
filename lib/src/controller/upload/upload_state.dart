@@ -14,7 +14,7 @@ class UploadState {
     this.imgPath,
     this.contestList = const <Contest>[],
     this.albumList = const <Album>[],
-    this.aiCaption = '',
+    this.aiCaption = 'Genereting caption ...',
     this.status = const InitialStatus(),
     this.contestId,
     this.originalImgPath,
@@ -56,7 +56,8 @@ class FinishInitializing extends UploadStatus {}
 
 class UploadSuccess extends UploadStatus {
   Post? post;
-  UploadSuccess(this.post);
+  bool joinContest;
+  UploadSuccess(this.post, this.joinContest);
 }
 
 class ErrorStatus extends UploadStatus {

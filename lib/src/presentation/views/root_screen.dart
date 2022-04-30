@@ -216,9 +216,13 @@ class _RootScreenState extends State<RootScreen> {
       IconData iconData, int? value, String? destination) {
     return PopupMenuItem(
       value: value,
-      onTap: () {
+      onTap: () async {
         if (source != null && destination != null) {
-          pickImage(source, context, destination, null);
+          String? message = await pickImage(source, context, destination, null);
+          if (message != null) {
+            await _getDialog(
+                message, 'Error !', () => Navigator.pop(context));
+          }
         }
       },
       textStyle: const TextStyle(
@@ -231,6 +235,39 @@ class _RootScreenState extends State<RootScreen> {
             iconData,
             color: Colors.black87,
             size: 30,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
           ),
         ],
       ),

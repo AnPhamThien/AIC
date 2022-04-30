@@ -104,7 +104,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         throw Exception(albumRes.messageCode);
       }}
     } on Exception catch (_) {
-      emit(state.copyWith(status: ErrorStatus(_)));
+      emit(state.copyWith(status: ErrorStatus(_), aiGenerationInProgress: false));
     }
   }
 
@@ -131,7 +131,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       Post? post = response.data;
 
       if (status == StatusCode.successStatus) {
-        emit(state.copyWith(status: UploadSuccess(post)));
+        emit(state.copyWith(status: UploadSuccess(post, contestId != null)));
       } else {
         throw Exception(response.messageCode);
       }
@@ -161,7 +161,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         }
         emit(state.copyWith(aiCaption: response.data, aiGenerationInProgress: false));
     } on Exception catch (_) {
-      emit(state.copyWith(status: ErrorStatus(_)));
+      emit(state.copyWith(status: ErrorStatus(_), aiGenerationInProgress: false));
     }
   }
 }

@@ -125,8 +125,9 @@ class SignalRHelper {
          if (conversationContext?.read<ConversationBloc?>() != null) {
           final conversation = Conversation.fromJson(data?['conversation']);
           if (conversation.userRealName != null) {
+            List<int> encoded = utf8.encode(conversation.userRealName!);
             conversation.userRealName =
-                utf8.decode(conversation.userRealName!.runes.toList());
+                utf8.decode(encoded);
           }
           if (conversation.messageContent != null) {
             List<int> encoded = utf8.encode(conversation.messageContent!);

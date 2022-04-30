@@ -50,6 +50,18 @@ class _UploadScreenState extends State<UploadScreen> {
           }
         }
         if (status is UploadSuccess) {
+          if (joinContest) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(
+                  content: Text(
+                      'Please wait for approval from the managers to successfully join the contest.'),
+                  duration: Duration(seconds: 5),
+                ))
+                .closed
+                .then(
+                    (value) => ScaffoldMessenger.of(context).clearSnackBars());
+          }
+
           await _getDialog("Create post successfully.", 'Success !',
               () => Navigator.pop(context));
           Navigator.of(context).pop(status.post);
@@ -285,7 +297,7 @@ class _UploadScreenState extends State<UploadScreen> {
   Container getPostCaption() {
     Size size = MediaQuery.of(context).size;
     String avatarPath = getIt<AppPref>().getAvatarPath;
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7),
       height: 120,
@@ -294,61 +306,67 @@ class _UploadScreenState extends State<UploadScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
       ),
-      child: TextFormField(
-        controller: _captionController,
-        key: _formKey,
-        validator: Validation.blankValidation,
-        style: const TextStyle(
-          fontSize: 18,
-        ),
-        textAlignVertical: TextAlignVertical.center,
-        // initialValue:
-        //     "1 con ngựa xòe ra 2 cái cánh",
-        minLines: null,
-        maxLines: null,
-        expands: true,
-        decoration: InputDecoration(
-          icon: SizedBox(
-            width: size.width * .13,
-            height: size.width * .13,
-            child: CircleAvatar(
-              child: ClipOval(
-                child: Image(
-                  width: size.width * .13,
-                  height: size.width * .13,
-                  image: avatarPath.isNotEmpty
-                      ? NetworkImage(avatarUrl + avatarPath)
-                      : const AssetImage("assets/images/avatar_placeholder.png")
-                          as ImageProvider,
-                  fit: BoxFit.cover,
+      child: BlocBuilder<UploadBloc, UploadState>(
+        builder: (context, state) {
+          return TextFormField(
+            enabled: !context.read<UploadBloc>().state.aiGenerationInProgress,
+            controller: _captionController,
+            key: _formKey,
+            validator: Validation.blankValidation,
+            style: const TextStyle(
+              fontSize: 18,
+            ),
+            textAlignVertical: TextAlignVertical.center,
+            // initialValue:
+            //     "1 con ngựa xòe ra 2 cái cánh",
+            minLines: null,
+            maxLines: null,
+            expands: true,
+            decoration: InputDecoration(
+              icon: SizedBox(
+                width: size.width * .13,
+                height: size.width * .13,
+                child: CircleAvatar(
+                  child: ClipOval(
+                    child: Image(
+                      width: size.width * .13,
+                      height: size.width * .13,
+                      image: avatarPath.isNotEmpty
+                          ? NetworkImage(avatarUrl + avatarPath)
+                          : const AssetImage(
+                                  "assets/images/avatar_placeholder.png")
+                              as ImageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
+              //   suffixIcon: BlocBuilder<UploadBloc, UploadState>(
+              //     builder: (context, state) {
+              //       bool aiGenerationInProgress =
+              // context.read<UploadBloc>().state.aiGenerationInProgress;
+              //       return IconButton(
+              //         padding: const EdgeInsets.all(0),
+              //         onPressed: () {
+              //           log(aiGenerationInProgress.toString());
+              //           if (!aiGenerationInProgress) {
+              //             context.read<UploadBloc>().add(RequestCaption(
+              //                 postImg:
+              //                     context.read<UploadBloc>().state.originalImgPath!));
+              //           }
+              //         },
+              //         icon: Icon(
+              //           aiGenerationInProgress ? Icons.stop : Icons.refresh_rounded,
+              //           size: 40,
+              //           color: Colors.blueAccent,
+              //         ),
+              //       );
+              //     },
+              //   ),
+              border: InputBorder.none,
             ),
-          ),
-        //   suffixIcon: BlocBuilder<UploadBloc, UploadState>(
-        //     builder: (context, state) {
-        //       bool aiGenerationInProgress =
-        // context.read<UploadBloc>().state.aiGenerationInProgress;
-        //       return IconButton(
-        //         padding: const EdgeInsets.all(0),
-        //         onPressed: () {
-        //           log(aiGenerationInProgress.toString());
-        //           if (!aiGenerationInProgress) {
-        //             context.read<UploadBloc>().add(RequestCaption(
-        //                 postImg:
-        //                     context.read<UploadBloc>().state.originalImgPath!));
-        //           }
-        //         },
-        //         icon: Icon(
-        //           aiGenerationInProgress ? Icons.stop : Icons.refresh_rounded,
-        //           size: 40,
-        //           color: Colors.blueAccent,
-        //         ),
-        //       );
-        //     },
-        //   ),
-          border: InputBorder.none,
-        ),
+          );
+        },
       ),
     );
   }

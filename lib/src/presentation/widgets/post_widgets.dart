@@ -14,7 +14,7 @@ import 'package:imagecaptioning/src/model/post/post.dart';
 import 'package:imagecaptioning/src/prefs/app_prefs.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:imagecaptioning/src/utils/validations.dart';
-
+import 'package:timeago/timeago.dart' as timeago;
 import 'get_user_input_field.dart';
 import 'global_widgets.dart';
 
@@ -56,8 +56,7 @@ class _PostWidgetState extends State<PostWidget> {
                 PostHeadlineWidget(
                   userId: post.userId!,
                   username: post.userName!,
-                  caption:
-                      post.userCaption ?? post.aiCaption ?? "",
+                  caption: post.userCaption ?? post.aiCaption ?? "",
                   time: post.dateCreate!,
                   postAvatar: post.avataUrl,
                   postId: post.postId!,
@@ -156,18 +155,23 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final _calculatedTime = timeCalculate(widget.time);
+    final _calculatedTime = timeago.format(
+      widget.time,
+    );
     Map<String, dynamic> args = {'userId': widget.userId};
     _updatePostController.text = widget.caption;
     return ListTile(
       contentPadding: const EdgeInsets.only(left: 15),
-      onTap: () async { widget.userId != getIt<AppPref>().getUserID
-          ? await Navigator.of(context).pushNamed(AppRouter.otherUserProfileScreen, arguments: args)
-          : await Navigator.of(context).pushNamed(AppRouter.currentUserProfileScreen, arguments: args);
-          if (context.read<ProfileBloc?>() != null) {
-            context.read<ProfileBloc>().add(ProfileInitializing(''));
-          }
-              },
+      onTap: () async {
+        widget.userId != getIt<AppPref>().getUserID
+            ? await Navigator.of(context)
+                .pushNamed(AppRouter.otherUserProfileScreen, arguments: args)
+            : await Navigator.of(context)
+                .pushNamed(AppRouter.currentUserProfileScreen, arguments: args);
+        if (context.read<ProfileBloc?>() != null) {
+          context.read<ProfileBloc>().add(ProfileInitializing(''));
+        }
+      },
       leading: Container(
         width: 45,
         height: 45,
@@ -206,10 +210,13 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                   ? RadiantGradientMask(
                       child: IconButton(
                         onPressed: () async {
-                          Map<String, dynamic> args = {"contestId" : widget.contestId};
+                          Map<String, dynamic> args = {
+                            "contestId": widget.contestId
+                          };
                           await Navigator.pushNamed(
-                              context, AppRouter.contestScreen, arguments: args);
-                          
+                              context, AppRouter.contestScreen,
+                              arguments: args);
+
                           context.read<HomeBloc>().add(InitPostFetched());
                         },
                         icon: const Icon(
@@ -226,7 +233,8 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 if (state.status == PostStatus.reported) {
                   ScaffoldMessenger.of(context)
                       .showSnackBar(const SnackBar(
-                        content: Text('This post has been reported! Please wait for the system to process.'),
+                        content: Text(
+                            'This post has been reported! Please wait for the system to process.'),
                         duration: Duration(seconds: 5),
                       ))
                       .closed
@@ -237,13 +245,14 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
                 if (state.status == PostStatus.save) {
                   if (state.isSaved == true) {
                     ScaffoldMessenger.of(context)
-                      .showSnackBar(const SnackBar(
-                        content: Text('This post has been saved! Please check your profile.'),
-                        duration: Duration(seconds: 5),
-                      ))
-                      .closed
-                      .then((value) =>
-                          ScaffoldMessenger.of(context).clearSnackBars());
+                        .showSnackBar(const SnackBar(
+                          content: Text(
+                              'This post has been saved! Please check your profile.'),
+                          duration: Duration(seconds: 5),
+                        ))
+                        .closed
+                        .then((value) =>
+                            ScaffoldMessenger.of(context).clearSnackBars());
                     setState(() {
                       widget.isSave == 1;
                       context.read<PostBloc>().add(Reset());
@@ -381,7 +390,7 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
               'Finish',
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
-          ), 
+          ),
           TextButton(
             onPressed: () {
               Navigator.of(dialogContext).pop();
@@ -391,7 +400,6 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
               style: TextStyle(color: Colors.black87, fontSize: 20),
             ),
           )
-          
         ],
       ),
     );

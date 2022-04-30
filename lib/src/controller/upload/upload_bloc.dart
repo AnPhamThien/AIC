@@ -114,7 +114,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       String? albumId = event.albumId;
       String? contestId = event.contestId;
       String aiCaption = state.aiCaption;
-      String userCaption = event.userCaption;
+      String userCaption = event.userCaption.trim();
       String postImg = event.postImg;
 
       final response = await _postRepository.addPost(

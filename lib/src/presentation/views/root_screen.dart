@@ -4,14 +4,15 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
-import 'package:imagecaptioning/src/presentation/views/load_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -136,15 +137,16 @@ class _RootScreenState extends State<RootScreen> {
             const DividerThemeData(color: Colors.grey, thickness: 0.5),
       ),
       child: PopupMenuButton(
-        onSelected: (result) {
+        onSelected: (result) async {
           if (result == 0) {
-            Navigator.pushNamed(
+            await Navigator.pushNamed(
               context,
               AppRouter.userSearchScreen,
             );
           } else if (result == 1) {
-            Navigator.pushNamed(context, AppRouter.postSearchScreen);
+            await Navigator.pushNamed(context, AppRouter.postSearchScreen);
           }
+          context.read<ProfileBloc>().add(ProfileInitializing(''));
         },
         color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

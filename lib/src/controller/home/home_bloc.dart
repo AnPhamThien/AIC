@@ -158,7 +158,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   void _postAdded(PostAdded event, Emitter<HomeState> emit) async {
     try {
       List<Post> list = state.postsList;
-      list.clear();
       list.insert(0, event.post);
       
       emit(state.copyWith(

@@ -128,10 +128,10 @@ class SignalRHelper {
             conversation.userRealName =
                 utf8.decode(conversation.userRealName!.runes.toList());
           }
-
           if (conversation.messageContent != null) {
+            List<int> encoded = utf8.encode(conversation.messageContent!);
             conversation.messageContent =
-                utf8.decode(conversation.messageContent!.runes.toList());
+                utf8.decode(encoded);
           }
 
           conversationId = conversation.conversationId ?? '';
@@ -149,7 +149,10 @@ class SignalRHelper {
               message.userId == messageContext!.read<MessageBloc>().state.userId 
               || message.userId == getIt<AppPref>().getUserID) {
             if (message.content != null) {
-              message.content = utf8.decode(message.content!.runes.toList());
+              // message.content = utf8.decode(message.content!.codeUnits.toList());
+              List<int> encoded = utf8.encode(message.content!);
+            message.content =
+                utf8.decode(encoded);
             }
             messageContext!.read<MessageBloc>().add(ReceiveNewMessage(message));
           }

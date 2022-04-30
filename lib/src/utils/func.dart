@@ -76,6 +76,13 @@ Future pickImage(ImageSource source, BuildContext context, String destination, S
   try {
     final chosenImage = await ImagePicker().pickImage(source: source);
     if (chosenImage == null) return;
+    String extension = chosenImage.name.substring(chosenImage.name.indexOf('.') + 1);
+    if (extension != 'jpg' && extension != 'jpeg' && extension != 'png') {
+      return;
+    }
+
+    int bytes = await chosenImage.length();
+    log("file size:" + bytes.toString());
 
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: chosenImage.path,
@@ -97,7 +104,13 @@ Future pickImage(ImageSource source, BuildContext context, String destination, S
         iosUiSettings: const IOSUiSettings(
           minimumAspectRatio: 1.0,
         ));
+        //129769
+        //119962
+
+        
     if (croppedFile == null) return;
+    int bytes1 = await croppedFile.length();
+    log("file size:" + bytes1.toString());
     Map<String, dynamic> arg = {"imgPath": croppedFile.path, "contestId": contestId, "oringinalImg" : chosenImage.path};
     Post? post = await Navigator.of(context).pushNamed(destination,
         arguments: arg) as Post?;

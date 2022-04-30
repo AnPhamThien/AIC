@@ -23,7 +23,7 @@ class ResetPasswordBloc extends Bloc<ResetPasswordEvent, ResetPasswordState> {
   ) async {
     try {
       String userId = state.userId;
-      String password = event.password;
+      String password = event.password.trim();
 
       var bytes = utf8.encode(password);
       var encodedPassword = sha256.convert(bytes).toString();

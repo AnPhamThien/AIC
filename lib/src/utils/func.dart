@@ -183,7 +183,7 @@ String timeCalculate(DateTime time) {
     } else {
       _calculatedTime = hourCount.toString() + " hours";
     }
-  } else if (hourCount > 24 && hourCount < 730) {
+  } else if (hourCount >= 24 && hourCount <= 720) {
     _bellow2 = DateTime.now().difference(time).inDays;
     if (_bellow2 < 2) {
       _calculatedTime = _bellow2.toString() + " day";

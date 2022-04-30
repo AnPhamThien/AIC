@@ -108,18 +108,20 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
                       if (state.status == PostStatus.updated) {
                         if (state.postCaption != null) {
-                          context.read<PostDetailBloc>().add(UpdatePostDetail(state.postCaption!));
+                          context
+                              .read<PostDetailBloc>()
+                              .add(UpdatePostDetail(state.postCaption!));
                         }
                         await _getDialog("Update post successfully", 'Success',
                             () => Navigator.pop(context));
                         context.read<PostBloc>().add(Reset());
                       }
 
-                  if (state.status == PostStatus.fail) {
-                    String error = getErrorMessage(state.error ?? '');
-                    await _getDialog(
-                      error, 'Error !', () => Navigator.pop(context));
-                  }
+                      if (state.status == PostStatus.fail) {
+                        String error = getErrorMessage(state.error ?? '');
+                        await _getDialog(
+                            error, 'Error !', () => Navigator.pop(context));
+                      }
                     },
                   ),
                 ],

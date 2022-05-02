@@ -27,8 +27,8 @@ EventTransformer<E> throttleDroppable<E>(Duration duration) {
   };
 }
 
-const _postPerPerson = 3;
-const _postDate = 100;
+const _postPerPerson = 5;
+const _postDate = 3;
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   HomeBloc() : super(const HomeState()) {
@@ -42,7 +42,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         transformer: throttleDroppable(throttleDuration));
     on<PostListReset>(_onReset,
         transformer: throttleDroppable(throttleDuration));
-    on<PostUpdated>(_postUpdated, transformer: throttleDroppable(throttleDuration));
+    on<PostUpdated>(_postUpdated,
+        transformer: throttleDroppable(throttleDuration));
   }
 
   List<Followee> _listFollowee = [];
@@ -88,16 +89,22 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           await _postRepository.getPost(_postPerPerson, _postDate);
       _listFollowee = data?.followees ?? [];
       if (data == null) {
-        throw Exception();
-      }
-      if (data.posts.isEmpty) {
         final GetListOfPostResponseMessage? data =
             await _postRepository.getRandomPost(10, 100);
         emit(state.copyWith(
             status: HomeStatus.success,
             hasReachedMax: true,
             postsList: data?.data ?? []));
-      } else {
+      }
+      // if (data!.posts.isEmpty) {
+      //   final GetListOfPostResponseMessage? data =
+      //       await _postRepository.getRandomPost(10, 100);
+      //   emit(state.copyWith(
+      //       status: HomeStatus.success,
+      //       hasReachedMax: true,
+      //       postsList: data?.data ?? []));
+      // }
+      else {
         emit(state.copyWith(
             status: HomeStatus.success,
             postsList: data.posts,
@@ -159,7 +166,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       List<Post> list = state.postsList;
       list.insert(0, event.post);
-      
+
       emit(state.copyWith(
           status: HomeStatus.success, postsList: list, hasReachedMax: false));
     } catch (_) {
@@ -171,7 +178,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     try {
       String postId = event.postId;
       String postCaption = event.postCaption;
-      int index = state.postsList.indexWhere((element) => element.postId == postId);
+      int index =
+          state.postsList.indexWhere((element) => element.postId == postId);
       List<Post> list = state.postsList;
       list[index].userCaption = postCaption;
 

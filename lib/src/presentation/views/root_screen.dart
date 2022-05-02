@@ -4,14 +4,15 @@ import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/app/routes.dart';
 import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
+import 'package:imagecaptioning/src/controller/profile/profile_bloc.dart';
 import 'package:imagecaptioning/src/presentation/theme/style.dart';
 import 'package:imagecaptioning/src/presentation/views/home_page.dart';
-import 'package:imagecaptioning/src/presentation/views/load_screen.dart';
 import 'package:imagecaptioning/src/presentation/views/notification_page.dart';
 import 'package:imagecaptioning/src/presentation/views/profile_page.dart';
 import 'package:imagecaptioning/src/utils/bottom_nav_bar_json.dart';
 import 'package:imagecaptioning/src/utils/func.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class RootScreen extends StatefulWidget {
   const RootScreen({Key? key}) : super(key: key);
@@ -136,15 +137,16 @@ class _RootScreenState extends State<RootScreen> {
             const DividerThemeData(color: Colors.grey, thickness: 0.5),
       ),
       child: PopupMenuButton(
-        onSelected: (result) {
+        onSelected: (result) async {
           if (result == 0) {
-            Navigator.pushNamed(
+            await Navigator.pushNamed(
               context,
               AppRouter.userSearchScreen,
             );
           } else if (result == 1) {
-            Navigator.pushNamed(context, AppRouter.postSearchScreen);
+            await Navigator.pushNamed(context, AppRouter.postSearchScreen);
           }
+          context.read<ProfileBloc>().add(ProfileInitializing(''));
         },
         color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -214,9 +216,13 @@ class _RootScreenState extends State<RootScreen> {
       IconData iconData, int? value, String? destination) {
     return PopupMenuItem(
       value: value,
-      onTap: () {
+      onTap: () async {
         if (source != null && destination != null) {
-          pickImage(source, context, destination, null);
+          String? message = await pickImage(source, context, destination, null);
+          if (message != null) {
+            await _getDialog(
+                message, 'Error !', () => Navigator.pop(context));
+          }
         }
       },
       textStyle: const TextStyle(
@@ -229,6 +235,39 @@ class _RootScreenState extends State<RootScreen> {
             iconData,
             color: Colors.black87,
             size: 30,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<String?> _getDialog(
+      String? content, String? header, void Function()? func) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: Text(header ?? 'Error !',
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(content ?? 'Something went wrong',
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: func,
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
           ),
         ],
       ),

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
@@ -72,14 +73,35 @@ String getErrorMessage(String errorCode) {
   return message;
 }
 
-Future pickImage(ImageSource source, BuildContext context, String destination, String? contestId) async {
+Future<String?> pickImage(ImageSource source, BuildContext context, String destination, String? contestId) async {
   try {
     final chosenImage = await ImagePicker().pickImage(source: source);
-    if (chosenImage == null) return;
+    if (chosenImage == null) return null;
+    String extension = chosenImage.name.substring(chosenImage.name.indexOf('.') + 1);
+    if (extension != 'jpg' && extension != 'jpeg' && extension != 'png') {
+      return "Wrong file format (only accept jpg or png)";
+    }
 
+    int bytes = await chosenImage.length();
+    log("file size:" + bytes.toString());
+
+    if (bytes > 1024 *1024 * 5) {
+      String kb = (bytes/(1024 * 1024)).toStringAsPrecision(2);
+      return "File size is over the size limit (max: 5mb, current: $kb mb)";
+    }
+    int compressQuality = 100;
+    if (bytes > 1024 * 500) {
+      compressQuality = (1024 * 500 * 100 / bytes).ceilToDouble().toInt();
+    }
+
+    if (compressQuality < 70) {
+      compressQuality = 70;
+    }
+      
     File? croppedFile = await ImageCropper.cropImage(
         sourcePath: chosenImage.path,
-        compressQuality: 100,
+        compressQuality: compressQuality,
+        compressFormat: extension == 'png' ? ImageCompressFormat.png : ImageCompressFormat.jpg,
         aspectRatioPresets: [
           CropAspectRatioPreset.square,
           CropAspectRatioPreset.ratio3x2,
@@ -97,7 +119,10 @@ Future pickImage(ImageSource source, BuildContext context, String destination, S
         iosUiSettings: const IOSUiSettings(
           minimumAspectRatio: 1.0,
         ));
-    if (croppedFile == null) return;
+        
+    if (croppedFile == null) return "Something went wrong while cropping file";
+    int bytes1 = await croppedFile.length();
+    log("file size:" + bytes1.toString());
     Map<String, dynamic> arg = {"imgPath": croppedFile.path, "contestId": contestId, "oringinalImg" : chosenImage.path};
     Post? post = await Navigator.of(context).pushNamed(destination,
         arguments: arg) as Post?;
@@ -106,7 +131,9 @@ Future pickImage(ImageSource source, BuildContext context, String destination, S
     }
   } on PlatformException catch (e) {
     log('Failed to pick image due to wrong platform: $e');
+    return ('Failed to pick image due to wrong platform');
   }
+  return null;
 }
 
 Future<String?> pickAvatar(ImageSource source, BuildContext context) async {

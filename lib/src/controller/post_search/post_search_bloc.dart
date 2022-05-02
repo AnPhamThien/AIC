@@ -34,7 +34,7 @@ class PostSearchBloc extends Bloc<PostSearchEvent, PostSearchState> {
     Emitter<PostSearchState> emit,
   ) async {
     try {
-      String searchString = event.searchString;
+      String searchString = event.searchString.trim();
 
       ListSearchPostResponseMessage? response =
           await _postRepository.searchPostByKey(searchString: searchString, limitPost: _limitPost);

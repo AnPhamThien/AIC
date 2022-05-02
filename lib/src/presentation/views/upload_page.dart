@@ -32,7 +32,6 @@ class _UploadScreenState extends State<UploadScreen> {
   final _captionController = TextEditingController();
   final _formKey = GlobalKey<FormFieldState>();
 
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<UploadBloc, UploadState>(
@@ -41,14 +40,30 @@ class _UploadScreenState extends State<UploadScreen> {
         final status = state.status;
         if (status is ErrorStatus) {
           String errorMessage = getErrorMessage(status.exception.toString());
-          if (errorMessage == MessageCode.errorMap[MessageCode.duplicatePostInContest]) {
-              await _getDialog(errorMessage, "Warning", () => Navigator.of(context).pop());
-            } else {
-             await _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
-            }
+          if (errorMessage ==
+              MessageCode.errorMap[MessageCode.duplicatePostInContest]) {
+            await _getDialog(
+                errorMessage, "Warning", () => Navigator.of(context).pop());
+          } else {
+            await _getDialog(
+                errorMessage, 'Error !', () => Navigator.pop(context));
+          }
         }
         if (status is UploadSuccess) {
-            await _getDialog("Create post successfully.", 'Success !', () => Navigator.pop(context));
+          if (joinContest) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(const SnackBar(
+                  content: Text(
+                      'Please wait for approval from the managers to successfully join the contest.'),
+                  duration: Duration(seconds: 5),
+                ))
+                .closed
+                .then(
+                    (value) => ScaffoldMessenger.of(context).clearSnackBars());
+          }
+
+          await _getDialog("Create post successfully.", 'Success !',
+              () => Navigator.pop(context));
           Navigator.of(context).pop(status.post);
         }
       },
@@ -96,33 +111,36 @@ class _UploadScreenState extends State<UploadScreen> {
           builder: (context, state) {
             if (state.contestId == null) {
               return Column(
-              children: [
-                const SizedBox(
-                  height: 20,
-                ),
-                state.contestList.isNotEmpty ? ListTile(
-                    title: const Text("Do you wanna join a poll ?"),
-                    trailing: IconButton(
-                        icon: joinContest
-                            ? const Icon(Icons.clear_rounded)
-                            : const Icon(Icons.check_box),
-                        onPressed: () {
-                          setState(() {
-                            joinContest = !joinContest;
-                            if (!joinContest) {
-                              selectedContestId = null;
-                            } else {
-                              selectedAlbumId = null;
-                            }
-                          });
-                        })) : const Text(""),
-                joinContest
-                    ? getItemPicker("Choose a poll for your picture",
-                        state.contestList, 2)
-                    : getItemPicker(
-                        "Choose an album for your picture", state.albumList, 1),
-              ],
-            );} else {
+                children: [
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  state.contestList.isNotEmpty
+                      ? ListTile(
+                          title: const Text("Do you wanna join a poll ?"),
+                          trailing: IconButton(
+                              icon: joinContest
+                                  ? const Icon(Icons.clear_rounded)
+                                  : const Icon(Icons.check_box),
+                              onPressed: () {
+                                setState(() {
+                                  joinContest = !joinContest;
+                                  if (!joinContest) {
+                                    selectedContestId = null;
+                                  } else {
+                                    selectedAlbumId = null;
+                                  }
+                                });
+                              }))
+                      : const Text(""),
+                  joinContest
+                      ? getItemPicker("Choose a poll for your picture",
+                          state.contestList, 2)
+                      : getItemPicker("Choose an album for your picture",
+                          state.albumList, 1),
+                ],
+              );
+            } else {
               selectedContestId = state.contestId;
               return const SizedBox.shrink();
             }
@@ -223,7 +241,8 @@ class _UploadScreenState extends State<UploadScreen> {
           padding: const EdgeInsets.only(right: 5),
           child: IconButton(
             onPressed: () {
-              if (context.read<UploadBloc>().state.imgPath != null && _formKey.currentState!.validate()) {
+              if (context.read<UploadBloc>().state.imgPath != null &&
+                  _formKey.currentState!.validate()) {
                 context.read<UploadBloc>().add(SaveUploadPost(
                     albumId: selectedAlbumId,
                     contestId: selectedContestId,
@@ -278,6 +297,7 @@ class _UploadScreenState extends State<UploadScreen> {
   Container getPostCaption() {
     Size size = MediaQuery.of(context).size;
     String avatarPath = getIt<AppPref>().getAvatarPath;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7),
       height: 120,
@@ -286,52 +306,67 @@ class _UploadScreenState extends State<UploadScreen> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
       ),
-      child: TextFormField(
-        controller: _captionController,
-        key: _formKey,
-        validator: Validation.blankValidation,
-        style: const TextStyle(
-          fontSize: 18,
-        ),
-        textAlignVertical: TextAlignVertical.center,
-        // initialValue:
-        //     "1 con ngựa xòe ra 2 cái cánh",
-        minLines: null,
-        maxLines: null,
-        expands: true,
-        decoration: InputDecoration(
-          icon: SizedBox(
-            width: size.width * .13,
-            height: size.width * .13,
-            child: CircleAvatar(
-              child: ClipOval(
-                child: Image(
-                  width: size.width * .13,
-                  height: size.width * .13,
-                  image: avatarPath.isNotEmpty
-                      ? NetworkImage(avatarUrl + avatarPath)
-                      : const AssetImage("assets/images/avatar_placeholder.png")
-                          as ImageProvider,
-                  fit: BoxFit.cover,
+      child: BlocBuilder<UploadBloc, UploadState>(
+        builder: (context, state) {
+          return TextFormField(
+            enabled: !context.read<UploadBloc>().state.aiGenerationInProgress,
+            controller: _captionController,
+            key: _formKey,
+            validator: Validation.blankValidation,
+            style: const TextStyle(
+              fontSize: 18,
+            ),
+            textAlignVertical: TextAlignVertical.center,
+            // initialValue:
+            //     "1 con ngựa xòe ra 2 cái cánh",
+            minLines: null,
+            maxLines: null,
+            expands: true,
+            decoration: InputDecoration(
+              icon: SizedBox(
+                width: size.width * .13,
+                height: size.width * .13,
+                child: CircleAvatar(
+                  child: ClipOval(
+                    child: Image(
+                      width: size.width * .13,
+                      height: size.width * .13,
+                      image: avatarPath.isNotEmpty
+                          ? NetworkImage(avatarUrl + avatarPath)
+                          : const AssetImage(
+                                  "assets/images/avatar_placeholder.png")
+                              as ImageProvider,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
               ),
+              //   suffixIcon: BlocBuilder<UploadBloc, UploadState>(
+              //     builder: (context, state) {
+              //       bool aiGenerationInProgress =
+              // context.read<UploadBloc>().state.aiGenerationInProgress;
+              //       return IconButton(
+              //         padding: const EdgeInsets.all(0),
+              //         onPressed: () {
+              //           log(aiGenerationInProgress.toString());
+              //           if (!aiGenerationInProgress) {
+              //             context.read<UploadBloc>().add(RequestCaption(
+              //                 postImg:
+              //                     context.read<UploadBloc>().state.originalImgPath!));
+              //           }
+              //         },
+              //         icon: Icon(
+              //           aiGenerationInProgress ? Icons.stop : Icons.refresh_rounded,
+              //           size: 40,
+              //           color: Colors.blueAccent,
+              //         ),
+              //       );
+              //     },
+              //   ),
+              border: InputBorder.none,
             ),
-          ),
-          suffixIcon: IconButton(
-            padding: const EdgeInsets.all(0),
-            onPressed: () {
-              if (!context.read<UploadBloc>().state.aiGenerationInProgress) {
-                context.read<UploadBloc>().add(RequestCaption(postImg: context.read<UploadBloc>().state.originalImgPath!));
-              }
-            },
-            icon: const Icon(
-              Icons.refresh_rounded,
-              size: 40,
-              color: Colors.blueAccent,
-            ),
-          ),
-          border: InputBorder.none,
-        ),
+          );
+        },
       ),
     );
   }

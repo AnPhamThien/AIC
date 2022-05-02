@@ -33,7 +33,9 @@ class MessageCode {
     reportExist: "You have already reported this post. Please wait for the system to process.",
     aiIsNotActive: "AI is not active.",
     stillPostInDeletedAlbum: "If you want to delete this album, please delete all of its posts beforehand.",
-    contestHasBeenClosed: "Contest has been closed."
+    contestHasBeenClosed: "Contest has been closed.",
+    accountIsBlocked: "Account has been blocked.",
+    getCaptionFail: "AI cannot generate caption for this"
   };
 
   static const String genericError = "Something went wrong";
@@ -132,6 +134,11 @@ class MessageCode {
   /// U129 : delete account fail
   /// </summary>
   static const String deleteAccountFail = "U129";
+
+  /// <summary>
+  /// U129 : account is blocked
+  /// </summary>
+  static const String accountIsBlocked = "U130";
 
   /// <summary>
   /// P111 : post not found
@@ -767,4 +774,9 @@ class MessageCode {
   /// CT124 : Contest has been closed
   /// </summary>
   static const String contestHasBeenClosed = "CT124";
+
+  /// <summary>
+  /// CP111 : Get caption fail
+  /// </summary>
+  static const String getCaptionFail = "CP111";
 }

@@ -45,7 +45,7 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
       final conversationId = event.conversationId;
       if (conversationId != null) {
         GetMessageResponseMessage? resMessage = await _conversationRepository
-            .getMessages(conversationId: conversationId, limitMessage: 10);
+            .getMessages(conversationId: conversationId, limitMessage: 30);
 
         if (resMessage == null) {
           throw Exception("");

@@ -334,9 +334,12 @@ class _ContestScreenState extends State<ContestScreen> {
             IconButton(
                 onPressed: () async {
                   //chuyển màn upload post
-                  await pickImage(ImageSource.gallery, context,
+                  String? message = await pickImage(ImageSource.gallery, context,
                       AppRouter.uploadScreen, state.contest?.id);
-                      context.read<ContestBloc>().add(InitContestFetched(null, state.contest?.id));
+                      if (message != null) {
+                        await _getDialog(message, 'Error !', () => Navigator.pop(context));
+                        }
+                       context.read<ContestBloc>().add(InitContestFetched(null, state.contest?.id));
                 },
                 icon: SvgPicture.asset(
                   'assets/icons/upload_icon.svg',
@@ -451,7 +454,7 @@ class _ContestScreenState extends State<ContestScreen> {
                     ),
                     TextSpan(
                       text: (contest.description ??
-                          "This contest does not have a description"),
+                          "This poll does not have a description"),
                     ),
                   ],
                 ),

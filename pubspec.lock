@@ -774,8 +774,7 @@ packages:
       name: test_api
       url: "https://pub.dartlang.org"
     source: hosted
-<<<<<<< HEAD
-    version: "0.4.3"
+    version: "0.4.8"
   timeago:
     dependency: "direct main"
     description:
@@ -783,9 +782,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.2.2"
-=======
-    version: "0.4.8"
->>>>>>> b7f7334d5b6c14d485961729e923709f2e57f3ff
   timing:
     dependency: transitive
     description:

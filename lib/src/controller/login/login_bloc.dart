@@ -28,8 +28,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     try {
       emit(state.copyWith(formStatus: FormSubmitting()));
-      String username = event.username;
-      String password = event.password;
+      String username = event.username.trim();
+      String password = event.password.trim();
 
       var bytes = utf8.encode(password);
       var encodedPassword = sha256.convert(bytes).toString();

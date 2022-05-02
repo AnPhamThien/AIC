@@ -104,7 +104,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         throw Exception(albumRes.messageCode);
       }}
     } on Exception catch (_) {
-      emit(state.copyWith(status: ErrorStatus(_)));
+      emit(state.copyWith(status: ErrorStatus(_), aiGenerationInProgress: false));
     }
   }
 
@@ -114,7 +114,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       String? albumId = event.albumId;
       String? contestId = event.contestId;
       String aiCaption = state.aiCaption;
-      String userCaption = event.userCaption;
+      String userCaption = event.userCaption.trim();
       String postImg = event.postImg;
 
       final response = await _postRepository.addPost(
@@ -131,7 +131,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       Post? post = response.data;
 
       if (status == StatusCode.successStatus) {
-        emit(state.copyWith(status: UploadSuccess(post)));
+        emit(state.copyWith(status: UploadSuccess(post, contestId != null)));
       } else {
         throw Exception(response.messageCode);
       }
@@ -161,7 +161,7 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         }
         emit(state.copyWith(aiCaption: response.data, aiGenerationInProgress: false));
     } on Exception catch (_) {
-      emit(state.copyWith(status: ErrorStatus(_)));
+      emit(state.copyWith(status: ErrorStatus(_), aiGenerationInProgress: false));
     }
   }
 }

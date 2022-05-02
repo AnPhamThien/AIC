@@ -127,11 +127,11 @@ class _ContestListScreenState extends State<ContestListScreen>
               builder: (context, state) {
                 switch (state.status) {
                   case ContestListStatus.failure:
-                    return const Center(child: Text('failed to fetch poll'));
+                    return const Center(child: Text('Failed to fetch poll'));
 
                   case ContestListStatus.success:
                     if (state.activeContestList.isEmpty) {
-                      return const Center(child: Text('no poll'));
+                      return const Center(child: Text('There is no on-going poll'));
                     }
                     return ListView.builder(
                       itemBuilder: (BuildContext context, int index) {
@@ -161,10 +161,10 @@ class _ContestListScreenState extends State<ContestListScreen>
               builder: (context, state) {
                 switch (state.status) {
                   case ContestListStatus.failure:
-                    return const Center(child: Text('failed to fetch poll'));
+                    return const Center(child: Text('Failed to fetch poll'));
                   case ContestListStatus.success:
                     if (state.inactiveContestList.isEmpty) {
-                      return const Center(child: Text('no poll'));
+                      return const Center(child: Text('There is no poll yet'));
                     }
                     return ListView.builder(
                       itemBuilder: (BuildContext context, int index) {

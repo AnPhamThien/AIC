@@ -182,7 +182,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
       UpdatePost event, Emitter<PostState> emit) async {
     try {
       String postId = event.postId;
-      String newCaption = event.newCaption;
+      String newCaption = event.newCaption.trim();
       GetResponseMessage? _respone = await _postRepository.updatePost(postId: postId, newCaption: newCaption);
       if (_respone == null) {
         throw Exception();

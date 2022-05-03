@@ -5,13 +5,13 @@ class AuthState {
     this.status = const InitialAuthenticationStatus(),
     this.newNoti = false,
     this.newMessage = false,
-    this.message
+    this.message = ''
   });
 
   final AuthenticationStatus status;
   final bool newNoti;
   final bool newMessage;
-  final String? message;
+  final String message;
 
   AuthState copyWith({
     AuthenticationStatus? status,

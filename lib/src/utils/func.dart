@@ -5,7 +5,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
 import 'package:imagecaptioning/src/constant/error_message.dart';
@@ -240,4 +239,15 @@ bool isUser(String id) {
   } else {
     return false;
   }
+}
+
+String utf8Decode(String value) {
+   try {
+    String decodedValue = utf8.decode(value.codeUnits.toList());
+    return decodedValue;
+    } on FormatException catch (e) {
+      log(e.toString());
+      List<int> encoded = utf8.encode(value);
+      return utf8.decode(encoded);
+    }
 }

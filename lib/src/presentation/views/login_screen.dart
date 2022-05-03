@@ -18,11 +18,18 @@ class LoginScreen extends StatefulWidget {
   LoginScreenState createState() => LoginScreenState();
 }
 
+
 class LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLogin = false;
+  String errorMessageFromForceLogout = '';
+  @override
+  void initState() {
+    errorMessageFromForceLogout = context.read<AuthBloc>().state.message;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -65,8 +72,9 @@ class LoginScreenState extends State<LoginScreen> {
           },
         ),
         BlocListener<AuthBloc, AuthState>(
+          listenWhen: (previous, current) => previous.message != current.message,
           listener: (context, state) {
-            if (state.message != null) {
+            if (state.message.isNotEmpty) {
               _getDialog(state.message, () => Navigator.pop(context));
               _isLogin = false;
             }
@@ -89,6 +97,10 @@ class LoginScreenState extends State<LoginScreen> {
               padding: EdgeInsets.symmetric(horizontal: size.width * .07),
               child: BlocBuilder<LoginBloc, LoginState>(
                 builder: (context, state) {
+                  if (errorMessageFromForceLogout.isNotEmpty) {
+      // _getDialog(errorMessageFromForceLogout, () => Navigator.pop(context));
+      // errorMessageFromForceLogout = '';
+    }
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

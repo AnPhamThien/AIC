@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:imagecaptioning/src/repositories/conversation/conversation_repos
 import 'package:imagecaptioning/src/repositories/data_repository.dart';
 import 'package:imagecaptioning/src/repositories/notification/notification_repository.dart';
 import 'package:imagecaptioning/src/signalr/signalr_helper.dart';
+import 'package:imagecaptioning/src/utils/func.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -24,6 +26,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
   final ConversationRepository _conversationRepository;
   final NotificationRepository _notificationRepository;
+  final timeout = const Duration(seconds: 10);
+  bool timeoutNeeded = false;
+
 
   AuthBloc(this.navigatorKey)
       : _signalRHelper = SignalRHelper(navigatorKey),
@@ -39,6 +44,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<CheckMessageAndNoti>(_onCheckMessageAndNoti);
     on<ChangeReadNotiStatus>(_onChangeReadNotiStatus);
     on<CheckToken>(_onCheckToken);
+    on<SendMessageEvent>(_onSendMessageEvent);
   }
 
   void _onNavigate(NavigateToPageEvent event, Emitter emit) {
@@ -60,6 +66,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(status: AuthenticationAuthenticated()));
     add(CheckMessageAndNoti());
     await _signalRHelper.initiateConnection();
+    timeoutNeeded = true;
+    startTimeout();
 
     navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.rootScreen, ModalRoute.withName(AppRouter.rootScreen));
     } 
@@ -72,6 +80,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onLogout(LogoutEvent event, Emitter emit) async {
     try {
+      timeoutNeeded = false;
       emit(state.copyWith(status: AuthenticationUnauthenticated()));
       //TODO: add logout screen
 
@@ -92,26 +101,60 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   void _onForceLogout(ForceLogoutEvent event, Emitter emit) async {
+    String message = event.message;
     try {
-      await _signalRHelper.unregisterAll();
+      timeoutNeeded = false;
       emit(state.copyWith(status: AuthenticationUnauthenticated()));
+      await _signalRHelper.unregisterAll();
     } catch (e) {
       log(e.toString());
     } finally {
-      navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.loginScreen, ModalRoute.withName(AppRouter.loginScreen));
+      emit(state.copyWith(message: message));
       getIt<AppPref>().setToken("");
       getIt<AppPref>().setRefreshToken("");
       getIt<AppPref>().setUsername("");
       getIt<AppPref>().setUserID("");
       DataRepository.setJwtInHeader();
+      navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.loginScreen, ModalRoute.withName(AppRouter.loginScreen));
+      navigatorKey.currentState!.push(
+              PageRouteBuilder(
+                barrierDismissible: true,
+                opaque: true,
+                pageBuilder: (_, anim1, anim2) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        actionsAlignment: MainAxisAlignment.center,
+        title: const Text('Warning !',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 25,
+                color: Colors.black87,
+                letterSpacing: 1.25,
+                fontWeight: FontWeight.bold)),
+        content: Text(message,
+            textAlign: TextAlign.left,
+            style: const TextStyle(
+                fontSize: 20,
+                color: Colors.black87,
+                fontWeight: FontWeight.w600)),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.pop(navigatorKey.currentState!.context),
+            child: const Text(
+              'OK',
+              style: TextStyle(color: Colors.black87, fontSize: 20),
+            ),
+          ),
+        ],
+      )
+              ),
+            );
       //await _signalRHelper.closeConnection();
     }
   }
 
-  void _onReconnectSignalR(ReconnectSignalREvent event, Emitter emit) async {
-    try {
-      if (state.status is AuthenticationAuthenticated) {
-        String token = getIt<AppPref>().getToken;
+  
+  Future<void> tryRefreshToken() async {
+    String token = getIt<AppPref>().getToken;
         String refreshToken = getIt<AppPref>().getRefreshToken;
         final response = await _authRepository.refreshJwtToken(
             token: token, refreshToken: refreshToken);
@@ -119,6 +162,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (response == null) {
           throw Exception("");
         }
+        
         String? data = response.data;
         int? status = response.statusCode;
         String messageCode = response.messageCode ?? '';
@@ -126,15 +170,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           getIt<AppPref>().setToken(data);
           DataRepository.setJwtInHeader();
         }
-        if (messageCode.isEmpty || messageCode == MessageCode.tokenIsNotExpired) {
+        if (status == StatusCode.successStatus || messageCode == MessageCode.tokenIsNotExpired) {
           await _signalRHelper.initiateConnection();
+          timeoutNeeded = true;
+          startTimeout();
         } else {
           throw Exception(messageCode);
         }
+  }
+
+  void _onReconnectSignalR(ReconnectSignalREvent event, Emitter emit) async {
+    try {
+      timeoutNeeded = false;
+      if (state.status is AuthenticationAuthenticated) {
+        await tryRefreshToken();
       }
     } catch (_) {
       log("Reconnect Failed: " + _.toString());
-      add(ForceLogoutEvent());
+      add(ForceLogoutEvent(message: getErrorMessage(_.toString())));
     }
   }
 
@@ -223,24 +276,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       String username = getIt<AppPref>().getUsername;
       String userId = getIt<AppPref>().getUserID;
       if (token.isNotEmpty && refreshToken.isNotEmpty && username.isNotEmpty && userId.isNotEmpty) {
-        final response = await _authRepository.refreshJwtToken(
-            token: token, refreshToken: refreshToken);
-        if (response == null) {
-          throw Exception("");
-        }
-        String? data = response.data;
-        int? status = response.statusCode;
-        String messageCode = response.messageCode ?? '';
+        await tryRefreshToken();
+        //add(AuthenticateEvent());
 
-        if (status == StatusCode.successStatus && data != null) {
-          getIt<AppPref>().setToken(data);
-        }
-        if (messageCode.isEmpty || messageCode == MessageCode.tokenIsNotExpired) {
-          await _signalRHelper.initiateConnection();
-          add(AuthenticateEvent());
-        } else {
-          throw Exception(messageCode);
-        }
+        DataRepository.setJwtInHeader();
+        emit(state.copyWith(status: AuthenticationAuthenticated()));
+        add(CheckMessageAndNoti());
+        navigatorKey.currentState!.pushNamedAndRemoveUntil(AppRouter.rootScreen, ModalRoute.withName(AppRouter.rootScreen));
       } else {
         throw Exception("No token found");
       }
@@ -251,4 +293,33 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       log(e.toString());
     }
   }
+
+  void _onSendMessageEvent(SendMessageEvent event, Emitter emit) async {
+    try {
+        if (!_signalRHelper.checkIsAlive()) {
+        await tryRefreshToken();
+        }
+        List<dynamic>? args = event.args;
+        await _signalRHelper.sendMessage(args);
+    } catch (_) {
+      log("Reconnect Failed on send message: " + _.toString());
+      add(ForceLogoutEvent(message: getErrorMessage(_.toString())));
+    }
+  }
+
+  Timer startTimeout() {
+  var duration = timeout;
+  return Timer(duration, handleTimeout);
+}
+
+void handleTimeout() {
+  log("Signalr check alive " + DateTime.now().toString());
+  if (!_signalRHelper.checkIsAlive()) {
+    add(ReconnectSignalREvent());
+  }
+
+  if (timeoutNeeded) {
+    startTimeout();
+  }
+}
 }

@@ -26,6 +26,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final _phoneController = TextEditingController();
   bool firstInit = true;
   final _formKey = GlobalKey<FormState>();
+  bool clickAble = true;
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +51,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
             child: BlocListener<EditProfileBloc, EditProfileState>(
               listener: (context, state) async {
+                clickAble = true;
                 final status = state.status;
                 if (status is EditProfileSuccess) {
                   if (state.user?.avataUrl != null) {
@@ -242,7 +244,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           builder: (context, state) {
             return IconButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
+                if (clickAble) {
+                  if (_formKey.currentState!.validate()) {
+                    clickAble = false;
                   context.read<EditProfileBloc>().add(SaveProfileChanges(
                       username: _usernameController.value.text,
                       email: _emailController.value.text,
@@ -251,6 +255,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       userRealName: _nameController.value.text,
                       avatar: state.avatarPath ?? ''));
                 }
+                }
+                
               },
               icon: const Icon(
                 Icons.done_rounded,

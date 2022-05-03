@@ -16,7 +16,7 @@ class ContestState extends Equatable {
     this.totalParticipaters = 0,
     this.hasReachMax = false,
     this.prizes = const <Prize>[],
-    this.error
+    this.error = ''
   });
 
   final ContestStatus status;
@@ -26,7 +26,7 @@ class ContestState extends Equatable {
   final int totalParticipaters;
   final bool hasReachMax;
   final List<Prize> prizes;
-  final String? error;
+  final String error;
 
   ContestState copyWith({
     ContestStatus? status,
@@ -51,8 +51,9 @@ class ContestState extends Equatable {
   }
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         status,
+        contest,
         post,
         topThreePost,
         totalParticipaters,

@@ -19,6 +19,7 @@ class VerificationScreen extends StatefulWidget {
 class _VerificationScreenState extends State<VerificationScreen> {
   final _codeController = TextEditingController();
   final _formFieldKey = GlobalKey<FormFieldState>();
+  bool sendButtonClickable = true;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +28,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
       listenWhen: (previous, current) =>
           previous.formStatus != current.formStatus,
       listener: (context, state) {
+        sendButtonClickable = true;
         final status = state.formStatus;
         if (status is ErrorStatus) {
           String errorMessage = getErrorMessage(status.exception.toString());
@@ -179,11 +181,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
           ),
           //verify button
           TextButton(
-            onPressed: () => _formFieldKey.currentState!.validate()
-                ? context
-                    .read<VerificationBloc>()
-                    .add(VerificationSubmitted(_codeController.text))
-                : "Must not be empty",
+            onPressed: () {
+              if (sendButtonClickable) {
+                if(_formFieldKey.currentState!.validate()) {
+                  sendButtonClickable = false; 
+                   context.read<VerificationBloc>().add(VerificationSubmitted(_codeController.text));
+                 }
+              }
+              } ,
             style: TextButton.styleFrom(
                 fixedSize: Size(size.width * .94, 55),
                 shape: RoundedRectangleBorder(

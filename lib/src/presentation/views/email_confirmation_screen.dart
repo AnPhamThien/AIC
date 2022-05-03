@@ -43,7 +43,7 @@ class _EmailConfirmationScreenState extends State<EmailConfirmationScreen> {
               Map<String, dynamic> args = {
                 "userId": state.userId,
               };
-              await _getDialog("", 'Success !', () => Navigator.pop(context));
+              await _getDialog("Your email has been confirmed!", 'Success !', () => Navigator.pop(context));
               Navigator.pushNamed(context, AppRouter.resetPasswordScreen, arguments: args);
             }
           },

@@ -141,6 +141,7 @@ class _UploadScreenState extends State<UploadScreen> {
                 ],
               );
             } else {
+              joinContest = true;
               selectedContestId = state.contestId;
               return const SizedBox.shrink();
             }

@@ -23,7 +23,7 @@ class MessageCode {
     commentNotFound: "Comment not found.",
     noCommentToDisplay: "There is no comment to display.",
     codeIsExpired:
-        "Your confirmation has already expired. Please click on resend code button.",
+        "Your confirmation code has already expired. Please click on resend code button.",
     postReferenceBelongtoRequestUser: "You cannot save your own post.",
     noNotificationToDisplay: "There is no notification to display.",
     conversationNotFound: "Conversation not found.",
@@ -35,10 +35,12 @@ class MessageCode {
     stillPostInDeletedAlbum: "If you want to delete this album, please delete all of its posts beforehand.",
     contestHasBeenClosed: "Contest has been closed.",
     accountIsBlocked: "Account has been blocked.",
-    getCaptionFail: "AI cannot generate caption for this"
+    getCaptionFail: "AI cannot generate caption for this.",
+    refreshTokenExpired: "Your session has expired."
   };
 
   static const String genericError = "Something went wrong";
+  static const String forceLogoutByManager = "You have been forced to logout by the System managers";
 
   /// <summary>
   /// U111 : user not found or deleted

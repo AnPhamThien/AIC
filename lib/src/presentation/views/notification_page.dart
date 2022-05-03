@@ -57,7 +57,7 @@ class _NotificationPageState extends State<NotificationPage> {
                   SignalRHelper.notificationContext = context;
                   List<NotificationItem>? notiList = state.notificationList;
                   if (notiList != null) {
-                    return ListView.builder(
+                    return notiList.isNotEmpty ? ListView.builder(
                       itemBuilder: (BuildContext context, int index) {
                         final NotificationItem noti = notiList[index];
                         return getNotificationItem(
@@ -69,7 +69,7 @@ class _NotificationPageState extends State<NotificationPage> {
                       },
                       itemCount: state.notificationList?.length,
                       controller: _scrollController,
-                    );
+                    ) : const Center(child: Text('There is no notification'));
                   } else {
                     return const Center(child: CircularProgressIndicator());
                   }

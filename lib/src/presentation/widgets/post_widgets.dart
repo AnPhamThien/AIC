@@ -171,6 +171,10 @@ class _PostHeadlineWidgetState extends State<PostHeadlineWidget> {
         if (context.read<ProfileBloc?>() != null) {
           context.read<ProfileBloc>().add(ProfileInitializing(''));
         }
+
+        if (context.read<HomeBloc?>() != null) {
+          context.read<HomeBloc>().add(InitPostFetched());
+        }
       },
       leading: Container(
         width: 45,

@@ -18,6 +18,7 @@ class ForgotPasswordScreen extends StatefulWidget {
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool clickAble = true;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +34,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         backgroundColor: Colors.black12,
         body: BlocListener<ForgotPasswordBloc, ForgotPasswordState>(
           listener: (context, state) {
+            clickAble = true;
             final status = state.formStatus;
             if (status is ErrorStatus) {
           String errorMessage = getErrorMessage(status.exception.toString());
@@ -129,9 +131,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
             TextButton(
               onPressed: () {
-                if (_formKey.currentState!.validate()) {
+                if (clickAble) {
+                  if (_formKey.currentState!.validate()) {
+                    clickAble = false;
                   context.read<ForgotPasswordBloc>().add(
                       ForgotPasswordSubmitted(_emailController.value.text));
+                }
                 }
               },
               style: TextButton.styleFrom(

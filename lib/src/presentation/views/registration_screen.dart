@@ -25,6 +25,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool agreeToTerm = false;
+  bool clickAble = true;
 
   @override
   Widget build(BuildContext context) {
@@ -34,15 +35,19 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           previous.formStatus != current.formStatus,
       listener: (context, state) async {
         final status = state.formStatus;
+        clickAble = true;
         if (status is ErrorStatus) {
           String errorMessage = getErrorMessage(status.exception.toString());
           _getDialog(errorMessage, 'Error !', () => Navigator.pop(context));
         } else if (status is FormSubmissionSuccess) {
           String userId = getIt<AppPref>().getUserID;
           getIt<AppPref>().setUserID('');
-          await _getDialog("Create a new account successfully. Please verify your account through the link in your email.",
-           'Success !', () => Navigator.pop(context));
-          Navigator.of(context).pushNamed(AppRouter.verificationScreen, arguments: userId);
+          await _getDialog(
+              "Create a new account successfully. Please verify your account through the link in your email.",
+              'Success !',
+              () => Navigator.pop(context));
+          Navigator.of(context)
+              .pushNamed(AppRouter.verificationScreen, arguments: userId);
         }
       },
       child: Container(
@@ -168,7 +173,6 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                       })),
               const Text("I agree to the"),
               TextButton(
-                  
                   onPressed: () => _getDialog(
                       appPolicies, "Policies", () => Navigator.pop(context)),
                   child: const Text("Terms of use"))
@@ -176,32 +180,42 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             SizedBox(
               height: 30.h,
             ),
-            TextButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  if (!agreeToTerm) {
-                    _getDialog("You must agree to the Terms of use to continue", "Warning", () => Navigator.pop(context));
-                  }
-                  else {
-                    context.read<RegistrationBloc>().add(RegistrationSubmitted(
-                        _usernameController.text,
-                        _passwordController.text,
-                        _emailController.text));
-                  }
-                }
+            BlocBuilder<RegistrationBloc, RegistrationState>(
+              builder: (context, state) {
+                return TextButton(
+                  onPressed: () {
+                    if (clickAble) {
+                    if (_formKey.currentState!.validate()) {
+                      if (!agreeToTerm) {
+                        _getDialog(
+                            "You must agree to the Terms of use to continue",
+                            "Warning",
+                            () => Navigator.pop(context));
+                      } else {
+                        clickAble = false;
+                        context.read<RegistrationBloc>().add(
+                            RegistrationSubmitted(
+                                _usernameController.text,
+                                _passwordController.text,
+                                _emailController.text));
+                      }
+                    }
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                      fixedSize: Size(size.width * .94, 55),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      backgroundColor: Colors.black87,
+                      alignment: Alignment.center,
+                      primary: Colors.white,
+                      textStyle: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 20)),
+                  child: const Text(
+                    "Register",
+                  ),
+                );
               },
-              style: TextButton.styleFrom(
-                  fixedSize: Size(size.width * .94, 55),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
-                  backgroundColor: Colors.black87,
-                  alignment: Alignment.center,
-                  primary: Colors.white,
-                  textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 20)),
-              child: const Text(
-                "Register",
-              ),
             )
           ],
         ),

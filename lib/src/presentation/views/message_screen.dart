@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:imagecaptioning/src/constant/env.dart';
+import 'package:imagecaptioning/src/controller/auth/auth_bloc.dart';
 import 'package:imagecaptioning/src/controller/get_it/get_it.dart';
 import 'package:imagecaptioning/src/controller/message/message_bloc.dart';
 import 'package:imagecaptioning/src/model/conversation/message.dart';
@@ -46,9 +47,7 @@ class _MessageScreenState extends State<MessageScreen> {
   void invokeSendMessage(List<dynamic>? args) async {
     try {
       if (SignalRHelper.hubConnection != null) {
-        final result = await SignalRHelper.hubConnection
-            ?.invoke("SendPrivate", args: args);
-        log("Result: '$result");
+        context.read<AuthBloc>().add(SendMessageEvent(args));
       }
     } catch (e) {
       log(e.toString());

@@ -15,7 +15,10 @@ class AuthenticateEvent extends AuthEvent {}
 
 class LogoutEvent extends AuthEvent {}
 
-class ForceLogoutEvent extends AuthEvent {}
+class ForceLogoutEvent extends AuthEvent {
+  final String message;
+  ForceLogoutEvent({required this.message});
+}
 
 class ConnectSignalREvent extends AuthEvent {}
 
@@ -31,3 +34,8 @@ class ChangeReadNotiStatus extends AuthEvent {
 }
 
 class CheckToken extends AuthEvent {}
+
+class SendMessageEvent extends AuthEvent {
+  List<dynamic>? args;
+  SendMessageEvent(this.args);
+}

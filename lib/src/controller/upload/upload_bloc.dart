@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:bloc/bloc.dart';
+import 'package:imagecaptioning/src/constant/error_message.dart';
 import 'package:imagecaptioning/src/constant/status_code.dart';
 import 'package:imagecaptioning/src/model/album/album.dart';
 import 'package:imagecaptioning/src/model/contest/contest.dart';
@@ -52,6 +53,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
         String message = response.messageCode ?? '';
 
         if (message.isNotEmpty) {
+          if (message == MessageCode.aiIsNotActive || message == MessageCode.getCaptionFail){
+            emit(state.copyWith(aiCaption: ""));
+          }
           throw Exception(message);
         }
 
@@ -93,6 +97,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       String message = response.messageCode ?? '';
 
         if (message.isNotEmpty) {
+          if (message == MessageCode.aiIsNotActive || message == MessageCode.getCaptionFail){
+            emit(state.copyWith(aiCaption: ""));
+          }
           throw Exception(message);
         }
 
@@ -115,6 +122,9 @@ class UploadBloc extends Bloc<UploadEvent, UploadState> {
       String? contestId = event.contestId;
       String aiCaption = state.aiCaption;
       String userCaption = event.userCaption.trim();
+      if (aiCaption.isEmpty) {
+        aiCaption = userCaption;
+      }
       String postImg = event.postImg;
 
       final response = await _postRepository.addPost(

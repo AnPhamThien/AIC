@@ -186,6 +186,7 @@ class _AlbumScreenState extends State<AlbumScreen> {
             ),
             (album.albumName != "Save Post Storage" &&
                     album.albumName != "Contest Post Storage" &&
+                    album.albumName != "Default Post Storage" &&
                     totalPost == 0)
                 ? SizedBox(
                     width: MediaQuery.of(wrapContext).size.width,
@@ -205,8 +206,8 @@ class _AlbumScreenState extends State<AlbumScreen> {
                       },
                     ),
                   )
-                : album.albumName != "Save Post Storage" &&
-                    album.albumName != "Contest Post Storage" ?
+                : (album.albumName != "Save Post Storage" &&
+                    album.albumName != "Poll Post Storage" && album.albumName != "Default Post Storage") ?
                      const Text("")
                  : const Padding(
                    padding: EdgeInsets.only(left: 15.0),

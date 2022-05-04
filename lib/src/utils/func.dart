@@ -93,8 +93,8 @@ Future<String?> pickImage(ImageSource source, BuildContext context, String desti
       compressQuality = (1024 * 500 * 100 / bytes).ceilToDouble().toInt();
     }
 
-    if (compressQuality < 70) {
-      compressQuality = 70;
+    if (compressQuality < 50) {
+      compressQuality = 50;
     }
       
     File? croppedFile = await ImageCropper.cropImage(
@@ -119,7 +119,7 @@ Future<String?> pickImage(ImageSource source, BuildContext context, String desti
           minimumAspectRatio: 1.0,
         ));
         
-    if (croppedFile == null) return "Something went wrong while cropping file";
+    if (croppedFile == null) return null;
     int bytes1 = await croppedFile.length();
     log("file size:" + bytes1.toString());
     Map<String, dynamic> arg = {"imgPath": croppedFile.path, "contestId": contestId, "oringinalImg" : chosenImage.path};

@@ -90,7 +90,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       _listFollowee = data?.followees ?? [];
       if (data == null) {
         final GetListOfPostResponseMessage? data =
-            await _postRepository.getRandomPost(10, 100);
+            await _postRepository.getRandomPost(10, 7);
         emit(state.copyWith(
             status: HomeStatus.success,
             hasReachedMax: true,

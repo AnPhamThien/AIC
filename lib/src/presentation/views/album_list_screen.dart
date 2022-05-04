@@ -247,7 +247,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
               ),
             ),
             // albumName != "Save Post Storage" &&
-            albumName != "Poll Post Storage"
+            (albumName != "Poll Post Storage" && albumName != "Default Post Storage")
                 ? SizedBox(
                     width: MediaQuery.of(wrapContext).size.width,
                     child: ListTile(
@@ -269,7 +269,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                     "",
                   ),
             // albumName != "Save Post Storage" &&
-            (albumName != "Poll Post Storage" && totalPost == 0)
+            (albumName != "Poll Post Storage" && albumName != "Default Post Storage" && totalPost == 0)
                 ? SizedBox(
                     width: MediaQuery.of(wrapContext).size.width,
                     child: ListTile(
@@ -288,7 +288,7 @@ class _AlbumListScreenState extends State<AlbumListScreen> {
                       },
                     ),
                   )
-                : albumName != "Poll Post Storage" ?
+                : (albumName != "Poll Post Storage" && albumName != "Default Post Storage") ?
                   Padding(
                    padding: const EdgeInsets.only(left: 15.0),
                    child: Text("This album has " + totalPost.toString() + ((totalPost > 1) ? " posts" : "posts"),

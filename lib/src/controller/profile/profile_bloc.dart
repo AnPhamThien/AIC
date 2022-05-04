@@ -84,6 +84,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           if (savedPostResponse.statusCode == StatusCode.successStatus &&
               savedPostResponse.data != null) {
             galleryPostList = savedPostResponse.data;
+            galleryPostList!.removeWhere((element) => element.postId == "00000000-0000-0000-0000-000000000000");
           }
         } else {
           GetListOfPostResponseMessage? contestPostResponse =
